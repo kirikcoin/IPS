@@ -33,19 +33,10 @@
          basedir="db/liquibase"/>
   </target>
 
-  <target name="retrieve">
-    <delete failonerror="false">
-      <fileset dir="site/lib"/>
-    </delete>
-    <mkdir dir="lib"/>
-
-    <ivy:retrieve type="jar,bundle" pattern="site/lib/[artifact]-[revision].[ext]" conf="site"/>
-    <ivy:retrieve type="js" pattern="src/main/webapp/js/[artifact].[ext]" conf="site"/>
-  </target>
-
   <target name="resolve" description="Retrieve dependencies">
     <ivy:settings file="${user.home}/.ivy2/ivysettings.xml"/>
     <ivy:resolve/>
+    <ivy:report/>
     <delete dir="${lib.dir}"/>
     <mkdir dir="${lib.dir}"/>
     <ivy:retrieve type="jar,bundle" pattern="${lib.dir}/[artifact]-[revision].[ext]" conf="site"/>
@@ -103,11 +94,11 @@
     </copy>
 
     <!-- Binary resources -->
-    <copy todir="${build.dir}/web/WEB-INF/classes/">
+    <!--<copy todir="${build.dir}/web/WEB-INF/classes/">
       <fileset dir="${resources.dir}/binary">
         <include name="*.*"/>
       </fileset>
-    </copy>
+    </copy>-->
 
     <!-- External dependencies -->
     <mkdir dir="${build.dir}/web/WEB-INF/lib"/>
