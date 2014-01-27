@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+        "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.2//EN"
+        "http://java.sun.com/dtd/web-facesconfig_1_1.dtd" >
+
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+              version="2.0">
+
+  <lifecycle>
+    <phase-listener>mobi.eyeline.ips.web.SessionPhaseListener</phase-listener>
+  </lifecycle>
+
+  <application>
+    <locale-config>
+      <default-locale>ru</default-locale>
+      <supported-locale>ru</supported-locale>
+      <supported-locale>en</supported-locale>
+    </locale-config>
+
+    <resource-bundle>
+      <base-name>mobi.eyeline.ips.web.ips</base-name>
+      <var>bundle</var>
+    </resource-bundle>
+  </application>
+
+  <!-- BEANS ======================================================================================================= -->
+
+  <managed-bean>
+    <managed-bean-name>userSession</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.login.UserSessionController</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>localeController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.LocaleController</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>login</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.login.LoginPageController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>adminDemoController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.admin.AdminDemoController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <!-- NAVIGATION ================================================================================================== -->
+
+  <navigation-rule>
+    <description>Навигация срабатывает при нажатии кнопки Login на странице входа</description>
+    <navigation-case>
+      <from-outcome>LOGIN</from-outcome>
+      <to-view-id>/enter.jsp</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Раздел 1</description>
+    <navigation-case>
+      <from-outcome>SECTION_1</from-outcome>
+      <to-view-id>/pages/section1/index.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Раздел 2</description>
+    <navigation-case>
+      <from-outcome>SECTION_2</from-outcome>
+      <to-view-id>/pages/section2/index.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+</faces-config>

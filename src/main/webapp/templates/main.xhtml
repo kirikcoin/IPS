@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:h="http://java.sun.com/jsf/html">
+
+  <html xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE"/>
+
+    <title>#{bundle['app.title']}</title>
+
+    <link rel="STYLESHEET" type="text/css"
+          href="#{facesContext.externalContext.requestContextPath}/resources/styles/jsf-components-ips-design.css"/>
+    <link rel="STYLESHEET" type="text/css"
+              href="#{facesContext.externalContext.requestContextPath}/resources/styles/jquery-ips-design.css"/>
+    <link rel="STYLESHEET" type="text/css"
+          href="#{facesContext.externalContext.requestContextPath}/resources/styles/main-menu.css"/>
+    <link rel="STYLESHEET" type="text/css"
+          href="#{facesContext.externalContext.requestContextPath}/resources/styles/style.less"/>
+
+    <script type="text/javascript" language="javascript"
+            src="#{facesContext.externalContext.requestContextPath}/resources/js/jquery.js"></script>
+    <script type="text/javascript" language="javascript"
+            src="#{facesContext.externalContext.requestContextPath}/resources/js/jquery-ui.js"></script>
+    <script type="text/javascript" language="javascript"
+            src="#{facesContext.externalContext.requestContextPath}/resources/js/jsf-components.js"></script>
+    <script type="text/javascript" language="javascript"
+                src="#{facesContext.externalContext.requestContextPath}/resources/js/ui.datepicker-ru.js"></script>
+    <script type="text/javascript" language="javascript"
+            src="#{facesContext.externalContext.requestContextPath}/resources/js/ips.js"></script>
+
+    <ui:insert name="head"/>
+
+  </head>
+
+  <body>
+
+  <h:panelGroup id="pageBackground" layout="block"/>
+
+  <table cellspacing="0" cellpadding="0" style="height: 100%">
+    <tr>
+      <td valign="top">
+        <ui:include src="main_menu.xhtml"/>
+      </td>
+    </tr>
+
+    <tr style="height: 100%">
+      <td valign="top">
+        <table cellspacing="0" cellpadding="0" style="height: 100%;">
+          <tr>
+            <td valign="top">
+              <div style="display: table; width: 1200px; margin-top: 10px; margin-bottom: 30px">
+
+                <table id="messages" style="z-index: 9999; position: fixed; top: 50px; left: 0; width: 100%; ">
+                  <tr>
+                    <td width="49%"></td>
+                    <td>
+                      <h:messages id="jsf_messages" errorClass="error-message" infoClass="info-message"/>
+                      <ul id="page_messages" style="display:none"></ul>
+                    </td>
+                    <td width="49%"></td>
+                  </tr>
+                </table>
+
+                <ui:insert name="content"/>
+
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+  </table>
+
+  <ui:insert name="scripts"/>
+
+  </body>
+  </html>
+
+</f:view>

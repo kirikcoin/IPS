@@ -1,0 +1,51 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+    >
+
+  <ui:composition>
+
+    <h:form>
+
+      <table width="100%" id="MAIN_MENU_TABLE" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td><div class="ipsLogo"></div></td>
+          <td width="100%">
+            <div class="menuTitle">
+              <h:outputText value="#{bundle['app.title']}"/>
+
+              <div class="settingButtons">
+                <h:panelGrid columns="3" rendered="#{userSession.logined}">
+                  <h:commandLink value="#{bundle['settings.exit.button']}" action="#{userSession.logout}" styleClass="exitButton"/>
+                  <h:commandLink title="Русский" action="#{localeController.changeLocale}" style="margin-left:15px">
+                    <h:graphicImage value="#{facesContext.externalContext.requestContextPath}/resources/images/ru.png"/>
+                    <f:param name="lang" value="ru"/>
+                  </h:commandLink>
+                  <h:commandLink title="English" action="#{localeController.changeLocale}" style="margin-left:3px">
+                    <h:graphicImage value="#{facesContext.externalContext.requestContextPath}/resources/images/us.png"/>
+                    <f:param name="lang" value="en"/>
+                  </h:commandLink>
+                </h:panelGrid>
+              </div>
+            </div>
+
+            <div class="menuButtons">
+              <c:set var="section1" value="${fn:contains(view.viewId, 'pages/section1')}"/>
+              <c:set var="section2" value="${fn:contains(view.viewId, 'pages/section2')}"/>
+              <h:panelGroup rendered="#{userSession.logined}">
+                <h:commandLink value="Раздел 1" action="SECTION_1" styleClass="#{section1 ? 'menuButtonSelected' : 'menuButton'}"/>
+                <h:commandLink value="Раздел 2" action="SECTION_2" styleClass="#{section2 ? 'menuButtonSelected' : 'menuButton'}"/>
+              </h:panelGroup>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+    </h:form>
+
+  </ui:composition>
+
+</f:view>

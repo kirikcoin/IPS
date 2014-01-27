@@ -1,0 +1,96 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+    >
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="content">
+
+      <h:form enctype="multipart/form-data" id="content">
+
+        <h:panelGroup layout="block" styleClass="border-shadow">
+
+          <h:panelGrid columns="2" styleClass="page-header">
+            <h:panelGroup layout="block">
+              <h:outputText value="ID-1 " style="font-weight:normal"/>
+              <h:outputText value="Опрос 1"/>
+            </h:panelGroup>
+            <h:panelGroup styleClass="page-header-buttons">
+              <h:commandLink styleClass="button-heading" value="&lt; Назад" action="SECTION_1"/>
+            </h:panelGroup>
+          </h:panelGrid>
+
+          <h:panelGroup layout="block" styleClass="tabs">
+            <h:panelGrid columns="3" columnClasses="#{adminDemoController.tabsStyles}" style="width:auto">
+              <h:commandLink id="tab1" value="Раздел 1" action="#{adminDemoController.selectTab}">
+                <f:param name="tab_id" value="0"/>
+              </h:commandLink>
+              <h:commandLink id="tab2" value="Раздел 2" action="#{adminDemoController.selectTab}">
+                <f:param name="tab_id" value="1"/>
+              </h:commandLink>
+              <h:commandLink id="tab3" value="Раздел 3" action="#{adminDemoController.selectTab}">
+                <f:param name="tab_id" value="2"/>
+              </h:commandLink>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" styleClass="page-body">
+
+            <eye:collapsingGroup opened="true">
+              <f:facet name="header">
+                <h:outputText value="Группа"/>
+              </f:facet>
+              <h:panelGroup>
+
+                <h:panelGroup layout="block" style="margin-top:10px">
+                  <h:outputText value="Hello, admin!"/>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" style="margin-top:10px">
+                  <eye:inputDate id="date" value="#{adminDemoController.date}"/>
+                </h:panelGroup>
+
+                <h:panelGroup layout="block" style="margin-top:10px">
+                  <eye:dynamicTable value="#{adminDemoController.selectedDynamicItems}" tableClass="table-narrow">
+                    <eye:selectColumn name="item" values="#{adminDemoController.dynamicItems}" allowEditAfterAdd="false" uniqueValues="true" var="t" itemLabel="#{t}" itemValue="#{t}"/>
+                  </eye:dynamicTable>
+                </h:panelGroup>
+
+              </h:panelGroup>
+            </eye:collapsingGroup>
+
+            <eye:buttons>
+              <eye:button>
+                <eye:menubar label="Сообщения..." menuBarStyle="button-green">
+                  <eye:menubaritem>
+                    <h:commandLink value="Показать ошибку" onclick="ips.message.error('Пример ошибки в inputDate', 'date'); return false"/>
+                  </eye:menubaritem>
+                  <eye:menubaritem>
+                    <h:commandLink value="Показать инфо" onclick="ips.message.info('Пример Информационного текста'); return false"/>
+                  </eye:menubaritem>
+                  <eye:menubaritem>
+                    <h:commandLink value="Скрыть сообщение" onclick="ips.message.hide('date'); return false"/>
+                  </eye:menubaritem>
+                </eye:menubar>
+              </eye:button>
+              <eye:space/>
+              <eye:button>
+                <h:commandLink value="Disabled" styleClass="button-green disabled" onclick="return false;" />
+              </eye:button>
+            </eye:buttons>
+
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" styleClass="page-footer"/>
+
+        </h:panelGroup>
+      </h:form>
+
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

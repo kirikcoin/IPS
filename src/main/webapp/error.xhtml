@@ -1,0 +1,48 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:c="http://java.sun.com/jstl/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css"
+                      href="#{facesContext.externalContext.requestContextPath}/resources/pages/error.less"/>
+    </ui:define>
+
+    <ui:define name="content">
+      <c:if test="${param['id'] == 403}">
+        <c:set var="errorText" value="Извините, на эту страницу доступ запрещен!"/>
+      </c:if>
+      <c:if test="${param['id'] == 404}">
+        <c:set var="errorText" value="Извините, запрошенная страница не найдена!"/>
+      </c:if>
+      <c:if test="${param['id'] == 500}">
+        <c:set var="errorText" value="Извините, произошла внутренняя серверная ошибка!"/>
+      </c:if>
+
+      <h:form prependId="false">
+        <h:panelGroup id="error" layout="block" styleClass="border-shadow">
+
+          <h:panelGroup layout="block" styleClass="page-header">
+            <h:outputText value="Ошибка на странице"/>
+          </h:panelGroup>
+
+          <h:panelGroup id="errorBody" layout="block">
+            <h:panelGroup layout="block">
+              #{errorText}
+            </h:panelGroup>
+          </h:panelGroup>
+
+          <h:panelGroup id="errorActionBtn" layout="block">
+            <a href="enter.jsp" class="button-green">На главную</a>
+          </h:panelGroup>
+
+        </h:panelGroup>
+      </h:form>
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

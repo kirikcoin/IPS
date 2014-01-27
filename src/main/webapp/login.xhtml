@@ -1,0 +1,68 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css"
+                href="#{facesContext.externalContext.requestContextPath}/resources/pages/login.less"/>
+
+      <script type="text/javascript"
+              src="#{facesContext.externalContext.requestContextPath}/resources/pages/login.js"></script>
+    </ui:define>
+
+    <ui:define name="scripts">
+      <script type="text/javascript">
+        //    <![CDATA[
+        $(function () {
+          var error = #{login.error};
+          page.init(error ? 'Логин или пароль неверен.' : null);
+        });
+        //    ]]>
+      </script>
+    </ui:define>
+
+    <ui:define name="content">
+      <div id="loginForm" class="border-shadow">
+        <div class="page-header">
+          <h:outputText value="#{bundle['login.form.title']}"/>
+        </div>
+
+        <div id="loginFormBody">
+          <form name="opForm" id="opForm" action="#{facesContext.externalContext.requestContextPath}/j_security_check" method="post"
+                enctype="application/x-www-form-urlencoded">
+
+            <table cellspacing="0" cellpadding="0" border="0">
+              <tr>
+                <td><label for="j_username">#{bundle['login.form.login']}</label></td>
+                <td align="right"><eye:inputText id="j_username" value="" maxlength="50"/></td>
+              </tr>
+              <tr>
+                <td><label for="j_password">#{bundle['login.form.password']}</label></td>
+                <td align="right"><eye:inputText secret="true" id="j_password" value="" maxlength="50"/></td>
+              </tr>
+            </table>
+          </form>
+
+          <h:form>
+            <table>
+              <tr>
+                <td align="left" valign="middle">
+                  <h:commandLink immediate="true" value="#{bundle['login.form.recovery.password']}"/>
+                </td>
+                <td align="right">
+                  <h:commandLink styleClass="button-green" onclick="page.login(); return false;" value="#{bundle['login.form.login.btn']}"/>
+                </td>
+              </tr>
+            </table>
+          </h:form>
+        </div>
+      </div>
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

@@ -1,0 +1,248 @@
+<?xml version = '1.0' encoding = 'utf-8'?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+  <listener>
+    <listener-class>mobi.eyeline.ips.web.InitListener</listener-class>
+  </listener>
+
+  <listener>
+    <listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
+  </listener>
+
+  <session-config>
+    <session-timeout>1000</session-timeout>
+  </session-config>
+
+  <!-- ===================================== CONTEXT INITIALIZATION ================================================ -->
+
+  <context-param>
+    <param-name>facelets.DEVELOPMENT</param-name>
+    <param-value>true</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>facelets.REFRESH_PERIOD</param-name>
+    <param-value>0</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>org.apache.myfaces.ERROR_HANDLING</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Maximum memory per request (in bytes)</description>
+    <param-name>org.apache.myfaces.trinidad.UPLOAD_MAX_MEMORY</param-name>
+    <param-value>5120000</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Maximum disk space per request (in bytes)</description>
+    <param-name>org.apache.myfaces.trinidad.UPLOAD_MAX_DISK_SPACE</param-name>
+    <param-value>1024000000</param-value>
+  </context-param>
+
+  <context-param>
+    <description>FaceletViewHandler configuration</description>
+    <param-name>org.apache.myfaces.trinidad.ALTERNATE_VIEW_HANDLER</param-name>
+    <param-value>mobi.eyeline.ips.web.IPSViewHandler</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Use documents saved as *.xhtml for Facelets</description>
+    <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+    <param-value>.xhtml</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>facelets.VIEW_MAPPINGS</param-name>
+    <param-value>*.xhtml</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>facelets.BUILD_BEFORE_RESTORE</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>facelets.RECREATE_VALUE_EXPRESSION_ON_BUILD_BEFORE_RESTORE</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>org.apache.myfaces.trinidad.CACHE_VIEW_ROOT</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <description>Use client-side state saving</description>
+    <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+    <param-value>client</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>org.apache.myfaces.trinidad.USE_APPLICATION_VIEW_CACHE</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>facelets.SKIP_COMMENTS</param-name>
+    <param-value>true</param-value>
+  </context-param>
+
+  <context-param>
+    <description>
+      If this parameter is enabled, Trinidad will automatically
+      check the modification date of your JSPs, and discard saved
+      state when they change
+    </description>
+    <param-name>org.apache.myfaces.trinidad.CHECK_FILE_MODIFICATION</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>org.apache.myfaces.trinidad.CHANGE_PERSISTENCE</param-name>
+    <param-value>request</param-value>
+  </context-param>
+
+  <!-- =============================================== FILTERS ===================================================== -->
+
+  <filter>
+    <filter-name>trinidad</filter-name>
+    <filter-class>org.apache.myfaces.trinidad.webapp.TrinidadFilter</filter-class>
+  </filter>
+
+  <filter>
+    <filter-name>extensionsFilter</filter-name>
+    <filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
+  </filter>
+
+  <filter>
+    <filter-name>lessFilter</filter-name>
+    <filter-class>mobi.eyeline.ips.util.LessFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>trinidad</filter-name>
+    <servlet-name>faces</servlet-name>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>extensionsFilter</filter-name>
+    <servlet-name>faces</servlet-name>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>extensionsFilter</filter-name>
+    <url-pattern>/faces/myFacesExtensionResource/*</url-pattern>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>lessFilter</filter-name>
+    <url-pattern>*.less</url-pattern>
+  </filter-mapping>
+
+  <!-- =============================================== SERVLETS ==================================================== -->
+
+  <servlet>
+    <description>Faces servlet</description>
+    <servlet-name>faces</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <description>Resource loader servlet</description>
+    <servlet-name>resources</servlet-name>
+    <servlet-class>org.apache.myfaces.trinidad.webapp.ResourceServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>faces</servlet-name>
+    <url-pattern>*.faces</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>resources</servlet-name>
+    <url-pattern>/adf/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- ======================================= PAGES =============================================================== -->
+
+  <welcome-file-list>
+    <welcome-file>index.faces</welcome-file>
+    <welcome-file>enter.jsp</welcome-file>
+  </welcome-file-list>
+
+  <login-config>
+    <auth-method>FORM</auth-method>
+    <form-login-config>
+      <form-login-page>/login.faces</form-login-page>
+      <form-error-page>/login.faces?loginError=true</form-error-page>
+    </form-login-config>
+  </login-config>
+
+  <!-- ======================================== SECURITY =========================================================== -->
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Страница редиректа</web-resource-name>
+      <url-pattern>/enter.jsp</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Консоль администратора</web-resource-name>
+      <url-pattern>/pages/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-role>
+    <description>Администратор</description>
+    <role-name>admin</role-name>
+  </security-role>
+
+  <!-- ============================================= ERROR PAGES ============================================= -->
+
+  <error-page>
+    <error-code>403</error-code>
+    <location>/error.jsp?id=403</location>
+  </error-page>
+
+  <error-page>
+    <error-code>404</error-code>
+    <location>/error.jsp?id=404</location>
+  </error-page>
+
+  <error-page>
+    <error-code>500</error-code>
+    <location>/error.jsp?id=500</location>
+  </error-page>
+
+  <error-page>
+    <error-code>408</error-code>
+    <location>/enter.jsp</location>
+  </error-page>
+
+  <error-page>
+    <error-code>400</error-code>
+    <location>/enter.jsp</location>
+  </error-page>
+
+</web-app>

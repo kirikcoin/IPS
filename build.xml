@@ -1,0 +1,236 @@
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="ips" basedir="." default="build">
+
+  <property name="project.name"       value="${ant.project.name}"/>
+  <property name="release.version"    value="snapshot"/>
+  <property name="build.environment"  value="development"
+            description="Either 'production' or 'development'"/>
+  <property name="war.name"           value="${project.name}-${release.version}"/>
+
+  <property name="build.dir"  location="${basedir}/.build"/>
+  <property name="distr.dir"  location="${build.dir}/distr"/>
+  <property name="lib.dir"    location="${basedir}/lib"/>
+
+  <property name="test.dir"   location="${build.dir}/test"
+            description="Path to the generated test reports"/>
+
+  <property name="web.lib" location="web/WEB-INF/lib"/>
+
+  <property name="src.dir" location="${basedir}/src/main/java"/>
+  <property name="web.dir" location="${basedir}/src/main/webapp"/>
+  <property name="resources.dir" location="${basedir}/src/main/resources"/>
+
+  <property name="test.src.dir" location="${basedir}/src/test/java"/>
+  <property name="test.res.dir" location="${basedir}/src/test/resources"/>
+
+  <path id="classpath">
+    <fileset dir="${lib.dir}" includes="*.jar"/>
+  </path>
+
+  <target name="build" depends="build-war, test, liquibase-schema" description="Build WAR artifact"/>
+
+  <target name="liquibase-schema" description="Archive database migration scripts">
+    <zip destfile="${distr.dir}/liquibase.zip"
+         basedir="db/liquibase"/>
+  </target>
+
+  <target name="retrieve">
+    <delete failonerror="false">
+      <fileset dir="site/lib"/>
+    </delete>
+    <mkdir dir="lib"/>
+
+    <ivy:retrieve type="jar,bundle" pattern="site/lib/[artifact]-[revision].[ext]" conf="site"/>
+    <ivy:retrieve type="js" pattern="src/main/webapp/js/[artifact].[ext]" conf="site"/>
+  </target>
+
+  <target name="resolve" description="Retrieve dependencies">
+    <ivy:settings file="${user.home}/.ivy2/ivysettings.xml"/>
+    <ivy:resolve/>
+    <delete dir="${lib.dir}"/>
+    <mkdir dir="${lib.dir}"/>
+    <ivy:retrieve type="jar,bundle" pattern="${lib.dir}/[artifact]-[revision].[ext]" conf="site"/>
+    <ivy:retrieve type="js" pattern="${web.dir}/js/[artifact].[ext]" conf="site"/>
+  </target>
+
+  <target name="clean" description="Clean output directories and resolved dependencies">
+    <delete dir="${build.dir}" failonerror="false"/>
+    <delete dir="${lib.dir}" failonerror="false"/>
+  </target>
+
+  <target name="init" depends="clean">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dir}/classes"/>
+    <mkdir dir="${build.dir}/web"/>
+  </target>
+
+  <target name="compile" depends="init, resolve">
+    <javac destdir="${build.dir}/classes"
+           optimize="off"
+           debug="on"
+           encoding="UTF-8"
+           nowarn="off"
+           includeantruntime="false">
+      <compilerarg value="-Xlint:all"/>
+      <src path="${src.dir}"/>
+      <classpath refid="classpath"/>
+    </javac>
+  </target>
+
+  <target name="build-exploded" depends="compile">
+    <!-- Web resources -->
+    <mkdir dir="${build.dir}/web"/>
+    <copy todir="${build.dir}/web">
+      <fileset dir="${web.dir}">
+        <include name="**/*.*"/>
+      </fileset>
+    </copy>
+
+    <!-- Classes -->
+    <copy todir="${build.dir}/web/WEB-INF/classes/">
+      <fileset dir="${build.dir}/classes">
+        <include name="**/*.*"/>
+      </fileset>
+    </copy>
+
+    <!-- Resources (with filtering) -->
+    <copy todir="${build.dir}/web/WEB-INF/classes/">
+      <filterset begintoken="$${" endtoken="}">
+        <filter token="build.environment" value="${build.environment}"/>
+      </filterset>
+      <fileset dir="${resources.dir}">
+        <include name="*.*"/>
+      </fileset>
+    </copy>
+
+    <!-- Binary resources -->
+    <copy todir="${build.dir}/web/WEB-INF/classes/">
+      <fileset dir="${resources.dir}/binary">
+        <include name="*.*"/>
+      </fileset>
+    </copy>
+
+    <!-- External dependencies -->
+    <mkdir dir="${build.dir}/web/WEB-INF/lib"/>
+    <copy todir="${build.dir}/web/WEB-INF/lib/">
+      <fileset dir="${lib.dir}">
+
+        <!-- Provided -->
+        <exclude name="servlet-api*.jar"/>
+        <exclude name="jsp-api*.jar"/>
+
+        <!-- Test -->
+        <exclude name="junit*.jar"/>
+        <exclude name="emma*.jar"/>
+        <exclude name="hsqldb*.jar"/>
+        <exclude name="hamcrest*.jar"/>
+        <exclude name="groovy*.jar"/>
+
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="build-war" depends="build-exploded">
+    <tstamp>
+      <format property="build.date" pattern="yyyy.MM.dd"/>
+      <format property="build.time" pattern="hh.mm ZZ" timezone="UTC"/>
+    </tstamp>
+    <mkdir dir="${distr.dir}"/>
+    <jar jarfile="${distr.dir}/${war.name}.war"
+         basedir="${build.dir}/web" >
+      <manifest>
+        <attribute name="Release-Version"   value="${release.version}"/>
+        <attribute name="Built-On"          value="${build.date}"/>
+        <attribute name="Built-At"          value="${build.time}"/>
+      </manifest>
+    </jar>
+  </target>
+
+
+  <!-- Tests -->
+
+
+  <target name="compile-test" depends="compile">
+    <mkdir dir="${build.dir}/test-classes"/>
+
+    <taskdef name="groovyc"
+             classname="org.codehaus.groovy.ant.Groovyc"
+             classpathref="classpath"/>
+
+    <groovyc destdir="${build.dir}/test-classes"
+             encoding="UTF-8">
+      <src path="${test.src.dir}"/>
+      <classpath refid="classpath"/>
+      <classpath path="${build.dir}/classes"/>
+    </groovyc>
+  </target>
+
+  <target name="instrument" depends="compile">
+    <mkdir dir="${build.dir}/classes-instrumented"/>
+
+    <taskdef name="emma"
+             classname="com.vladium.emma.emmaTask"
+             classpathref="classpath"/>
+
+    <emma>
+      <instr instrpath="${build.dir}/classes"
+             destdir="${build.dir}/classes-instrumented"
+             metadatafile="${build.dir}/test/metadata.emma"
+             merge="true">
+        <!--<filter includes="ussd.poll.backend.db.*"/>-->
+        <filter includes="mobi.eyeline.ips.*"/>
+      </instr>
+    </emma>
+  </target>
+
+  <target name="test" description="Execute unit tests"
+          depends="compile-test, instrument">
+    <mkdir dir="${test.dir}"/>
+    <mkdir dir="${test.dir}/xml"/>
+
+    <junit printsummary="true" failureproperty="junit.failure" fork="true" dir="${test.dir}">
+      <classpath>
+        <pathelement location="${test.res.dir}"/>
+        <pathelement location="${resources.dir}"/>
+        <pathelement location="${build.dir}/classes-instrumented"/>
+        <pathelement location="${build.dir}/classes"/>
+        <pathelement location="${build.dir}/test-classes"/>
+      </classpath>
+
+      <classpath refid="classpath"/>
+
+      <batchtest fork="yes" todir="${test.dir}/xml">
+        <fileset dir="${build.dir}/test-classes">
+          <include name="**/*Test.class"/>
+          <!-- a '$' in the filename means it's an inner class -->
+          <exclude name="**/*$*"/>
+        </fileset>
+
+        <formatter type="xml"/>
+      </batchtest>
+
+      <!-- Workaround for Emma instrumentation
+           making JDK7 bytecode verification fail. -->
+      <jvmarg value="-XX:-UseSplitVerifier"/>
+
+      <jvmarg value="-Demma.coverage.out.file=${test.dir}/coverage.emma"/>
+      <jvmarg value="-Demma.coverage.out.merge=true"/>
+    </junit>
+
+    <junitreport todir="${test.dir}/xml">
+      <fileset dir="${test.dir}/xml"/>
+      <report todir="${test.dir}/junit"/>
+    </junitreport>
+
+    <emma enabled="true">
+      <report sourcepath="${src.dir}">
+        <fileset dir="${test.dir}" includes="*.emma"/>
+        <html outfile="${test.dir}/emma/index.html"/>
+        <xml outfile="${test.dir}/emma/index.xml"/>
+      </report>
+    </emma>
+
+    <fail if="junit.failure" message="Unit test(s) failed. See reports!"/>
+  </target>
+
+</project>

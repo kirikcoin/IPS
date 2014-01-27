@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Context path="/" reloadable="true">
+  <Realm className="org.apache.catalina.realm.JAASRealm"
+         appName="ips"
+         userClassNames="mobi.eyeline.ips.web.auth.WebUser"
+         roleClassNames="mobi.eyeline.ips.web.auth.WebRole" debug="99"/>
+</Context>
+
