@@ -17,7 +17,7 @@ class TemplateServiceTest extends GroovyTestCase {
 
     void setUp() {
         configClass = new MockFor(Config)
-        configClass.demand.loadProperty("login.url") {"http://example.com"}
+        configClass.demand.getLoginUrl() {"http://example.com"}
 
         config = configClass.proxyDelegateInstance() as Config
         templateService = new TemplateService(config)

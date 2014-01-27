@@ -36,7 +36,7 @@ public class Services {
     private final UserService userService;
 
     public Services(Config config) {
-        db = new DB(config.getAppProperties());
+        db = new DB(config.getDatabaseProperties());
 
         userRepository = new UserRepository(db);
         respondentRepository = new RespondentRepository(db);
@@ -58,11 +58,11 @@ public class Services {
 
         mailService = new MailService(templateService,
                 new SmtpSender(
-                        config.loadProperty("mail.smtp.host"),
-                        config.loadInteger("mail.smtp.port"),
-                        config.loadProperty("mail.smtp.username"),
-                        config.loadProperty("mail.smtp.password"),
-                        config.loadProperty("mail.from")));
+                        config.getSmtpHost(),
+                        config.getSmtpPort(),
+                        config.getSmtpUsername(),
+                        config.getSmtpPassword(),
+                        config.getMailFrom()));
 
         userService = new UserService(userRepository, mailService);
     }

@@ -2,7 +2,6 @@ package mobi.eyeline.ips.repository;
 
 import mobi.eyeline.ips.exceptions.LoginException;
 import mobi.eyeline.ips.model.User;
-import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.util.HashUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
@@ -21,7 +20,6 @@ import static org.hibernate.criterion.Restrictions.eq;
 public class UserRepository extends BaseRepository<User, Integer> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserRepository.class);
-    private static final Config CFG = Config.ConfigImpl.instance();
 
     public UserRepository(DB db) {
         super(db);
@@ -52,13 +50,6 @@ public class UserRepository extends BaseRepository<User, Integer> {
         if (!StringUtils.equalsIgnoreCase(user.getPassword(), providedHash)) {
             throw new LoginException(WrongPassword);
         }
-    }
-
-    public User getAnonymousUser() throws LoginException {
-        final String login = CFG.loadProperty("limeSurveyAnonymousUser");
-        final String password = CFG.loadProperty("limeSurveyAnonymousPassword");
-
-        return getUser(login, password);
     }
 
     public User getUser(String login, String password) throws LoginException {

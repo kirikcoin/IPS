@@ -1,120 +1,80 @@
 package mobi.eyeline.ips.properties;
 
-import java.io.IOException;
+import com.eyeline.utils.config.ConfigException;
+import com.eyeline.utils.config.xml.XmlConfig;
+import com.eyeline.utils.config.xml.XmlConfigSection;
+
 import java.util.Properties;
 
-/**
- * Created by IntelliJ IDEA.
- * User: maxim.romanovsky
- * Date: 18.04.11
- * Time: 13:13
- */
 public interface Config {
 
-    public Properties loadProperties(String fileName);
+    public String getSmtpHost();
+    public int getSmtpPort();
+    public String getSmtpUsername();
+    public String getSmtpPassword();
+    public String getMailFrom();
+    public String getLoginUrl();
 
-    public Properties getAppProperties();
+    public Properties getDatabaseProperties();
 
-    public String limeSurveyHome() throws IOException;
 
-    public String ussdPushUrl() throws IOException;
+    public static class XmlConfigImpl implements Config {
 
-    public boolean isProduction() throws IOException;
+        private final String smtpHost;
+        private final int smtpPort;
 
-    public String ussdPushService() throws IOException;
+        private final String smtpUsername;
+        private final String smtpPassword;
 
-    public int threadCountPostPush() throws IOException;
+        private final String mailFrom;
+        private final String loginUrl;
 
-    public String loadProperty(String name);
+        private final Properties databaseProperties;
 
-    public int loadInteger(String name);
+        public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
-    public static class ConfigImpl implements Config {
-        private static Config _instance = null;
+            final XmlConfigSection mail = xmlConfig.getSection("mail");
+            {
+                smtpHost = mail.getString("smtp.host");
+                smtpPort = mail.getInt("smtp.port");
+                smtpUsername = mail.getString("smtp.username");
+                smtpPassword = mail.getString("smtp.password");
+                mailFrom = mail.getString("from");
 
-        protected PropertiesController props;
-
-        private static final String PROPERTIES_FILE_NAME    = "config.properties";
-        private static final String PROPERTIES_PARAM_NAME   = "ips.config.dir";
-
-        protected ConfigImpl() {
-            props = loadPropertiesController(PROPERTIES_FILE_NAME);
-        }
-
-        private PropertiesController loadPropertiesController(String fileName) {
-            final String configDirName = System.getProperty(PROPERTIES_PARAM_NAME);
-            if (configDirName != null) {
-                try {
-                    final PropertiesController props =
-                            new PropertiesPathController(configDirName, fileName);
-                    props.getProperties();
-                    return props;
-
-                } catch (IOException ignored) {}
+                loginUrl = mail.getString("login.url");
             }
 
-            return new PropertiesResourceController(fileName);
+            final XmlConfigSection database = xmlConfig.getSection("database");
+            databaseProperties = database.toProperties(null);
         }
 
-        public Properties loadProperties(String fileName) {
-            try {
-                return loadPropertiesController(fileName).getProperties();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        public String getSmtpHost() {
+            return smtpHost;
         }
 
-        public Properties getAppProperties() {
-            return loadProperties(PROPERTIES_FILE_NAME);
+        public int getSmtpPort() {
+            return smtpPort;
         }
 
-        public static Config instance() {
-            if (_instance == null)
-                _instance = new ConfigImpl();
-            return _instance;
+        public String getSmtpUsername() {
+            return smtpUsername;
         }
 
-        public String limeSurveyHome() throws IOException {
-            if (isProduction())
-                return loadProperty("limeSurveyHome");
-            else
-                return loadProperty("limeSurveyHome.debug");
+        public String getSmtpPassword() {
+            return smtpPassword;
         }
 
-        public String ussdPushUrl() throws IOException {
-            if (isProduction())
-                return loadProperty("ussdPushUrl");
-            else
-                return loadProperty("ussdPushUrl.debug");
+        public String getMailFrom() {
+            return mailFrom;
         }
 
-        public boolean isProduction() throws IOException {
-            return "production".equalsIgnoreCase(loadProperty("isProduction"));
+        public String getLoginUrl() {
+            return loginUrl;
         }
 
-        public String ussdPushService() throws IOException {
-            return loadProperty("ussdPushService");
+        @Override
+        public Properties getDatabaseProperties() {
+            return databaseProperties;
         }
-
-        public int threadCountPostPush() throws IOException {
-            return Integer.parseInt(loadProperty("threadCountPostPush"));
-        }
-
-        public String loadProperty(String name) {
-            try {
-                return props.loadProperty(name);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        public int loadInteger(String name) {
-            try {
-                return Integer.valueOf(props.loadProperty(name));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
     }
 }

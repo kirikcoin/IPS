@@ -89,7 +89,7 @@ public class TemplateService {
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
             put("password", rawPassword);
-            put("loginUrl", properties.loadProperty("login.url"));
+            put("loginUrl", properties.getLoginUrl());
         }};
 
         return processTemplate(template, data);
@@ -100,7 +100,7 @@ public class TemplateService {
 
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
-            put("loginUrl", properties.loadProperty("login.url"));
+            put("loginUrl", properties.getLoginUrl());
         }};
 
         return processTemplate(template, data);
@@ -113,7 +113,7 @@ public class TemplateService {
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
             put("password", rawNewPassword);
-            put("loginUrl", properties.loadProperty("login.url"));
+            put("loginUrl", properties.getLoginUrl());
         }};
 
         return processTemplate(template, data);

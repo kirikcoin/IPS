@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<config>
+
+  <section name="mail">
+
+    <param name="smtp.host" type="string">max.sibinco.ru</param>
+    <param name="smtp.port" type="int">25</param>
+    <param name="smtp.username" type="string">user</param>
+    <param name="smtp.password" type="string">password</param>
+
+    <param name="from" type="string">ips@ips.eyeline.mobi</param>
+    <param name="login.url" type="string">http://localhost:8080</param>
+
+  </section>
+
+  <section name="database">
+    <!--<param name="hibernate.connection.datasource" type="string">java:comp/env/jdbc/Limesurvey</param>-->
+
+    <param name="hibernate.connection.driver_class" type="string">com.mysql.jdbc.Driver</param>
+    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test</param>
+
+    <param name="hibernate.connection.username" type="string">user</param>
+    <param name="hibernate.connection.password" type="string">password</param>
+
+    <param name="hibernate.connection.pool_size" type="string">2</param>
+  </section>
+
+</config>
