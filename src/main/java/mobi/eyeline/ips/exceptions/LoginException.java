@@ -11,7 +11,8 @@ public class LoginException extends Exception{
 
     public enum LoginErrorKind{
         NotFoundUser,
-        WrongPassword,
+        WrongPassword
+
     }
 
     public LoginException(LoginErrorKind kind) {

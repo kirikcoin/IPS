@@ -22,6 +22,7 @@ public class UserService {
         if(user == null || user.isBlocked()) {
             throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
         }
+
         String password = RandomStringUtils.randomAlphabetic(8);
         String hashedPassword = HashUtils.hashPassword(password);
         user.setPassword(hashedPassword);

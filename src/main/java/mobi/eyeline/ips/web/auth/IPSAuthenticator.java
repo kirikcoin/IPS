@@ -22,6 +22,10 @@ public class IPSAuthenticator
           throw new LoginException(e.getMessage());
       }
 
+      if(user.isBlocked()) {
+          return null;
+      }
+
       return user.getRole().getName();
 
   }

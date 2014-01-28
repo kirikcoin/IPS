@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
+
 import static mobi.eyeline.ips.exceptions.LoginException.LoginErrorKind.NotFoundUser;
 import static mobi.eyeline.ips.exceptions.LoginException.LoginErrorKind.WrongPassword;
 import static org.hibernate.criterion.Restrictions.eq;
