@@ -9,6 +9,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,6 +24,7 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -62,8 +64,8 @@ public class Survey implements Serializable {
      * При удалении опрос помечается флагом {@code active = false} в БД и
      * перестает отображаться в веб-интерфейсе.
      */
-    @Column(name = "active")
-    @Type(type = "org.hibernate.type.YesNoType")
+    @Column(name = "active", columnDefinition = "BIT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean active;
 
     /**
@@ -82,6 +84,16 @@ public class Survey implements Serializable {
     @OrderColumn(name = "question_order")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Question> questions = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(name = "surveys_users",
+            joinColumns = {
+                    @JoinColumn(name = "survey_id")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "user_id")
+            })
+    private User client;
 
     public Survey() {
     }
@@ -140,6 +152,14 @@ public class Survey implements Serializable {
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
+    }
+
+    public User getClient() {
+        return client;
+    }
+
+    public void setClient(User client) {
+        this.client = client;
     }
 
     public void moveUp(Question question) {
