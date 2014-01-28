@@ -1,6 +1,6 @@
 package mobi.eyeline.ips.web.controllers.admin;
 
-import mobi.eyeline.ips.web.controllers.IPSController;
+import mobi.eyeline.ips.web.controllers.BaseController;
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel;
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder;
 import mobi.eyeline.util.jsf.components.data_table.model.ModelException;
@@ -13,7 +13,7 @@ import java.util.*;
  * author: Denis Enenko
  * date: 21.01.2014
  */
-public class AdminDemoController extends IPSController
+public class AdminDemoController extends BaseController
 {
   private List<String> dynamicItems;
   private List<String> selectedDynamicItems;

@@ -1,5 +1,13 @@
 package mobi.eyeline.ips.web;
 
+import mobi.eyeline.ips.service.Services;
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.faces.component.UIViewRoot;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
@@ -7,44 +15,65 @@ import javax.faces.event.PhaseListener;
 /**
  * author: Denis Enenko
  * date: 20.01.2014
- *
+ * <p/>
  * Реализация шаблона session-per-request.
  * До начала обработки запроса создается сессия и открывается транзакция.
  * После окончания обработки запроса транзакция откатывается (если она ранее не закоммитана).
  */
-public class SessionPhaseListener implements PhaseListener
-{
-  @Override
-  public void beforePhase(PhaseEvent phaseEvent) {
-    try {
-//      System.out.println("------ BEFORE PHASE " + phaseEvent.getPhaseId() + ' ' + phaseEvent.getFacesContext().getViewRoot().getViewId());
-      if(phaseEvent.getPhaseId() == PhaseId.RESTORE_VIEW) {
-        //todo: Берем текущую сессию hibernate, если транзакция не активна, открываем новую транзакцию.
-      }
-    }
-    catch(Exception ex) {
-      System.err.println("Error in phase listener. " + ex.getMessage());
-      ex.printStackTrace();
-    }
-  }
+public class SessionPhaseListener implements PhaseListener {
 
-  @Override
-  public void afterPhase(PhaseEvent phaseEvent) {
-    try {
-//      System.out.println("------ AFTER PHASE " + phaseEvent.getPhaseId() + ' ' + phaseEvent.getFacesContext().getViewRoot().getViewId());
-      if(phaseEvent.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-//        System.out.println("REQUEST END\n\n");
-        //todo: Берем текущую сессию hibernate, если транзакция активна, откатываем ее.
-      }
-    }
-    catch(Exception ex) {
-      System.err.println("Error in phase listener. " + ex.getMessage());
-      ex.printStackTrace();
-    }
-  }
+    private static final Logger logger = LoggerFactory.getLogger(SessionPhaseListener.class);
 
-  @Override
-  public PhaseId getPhaseId() {
-    return PhaseId.ANY_PHASE;
-  }
+    @Override
+    public void beforePhase(PhaseEvent phaseEvent) {
+        try {
+            final UIViewRoot viewRoot = phaseEvent.getFacesContext().getViewRoot();
+            logger.debug("------ BEFORE PHASE " +
+                    phaseEvent.getPhaseId() +
+                    ' ' +
+                    (viewRoot != null ? viewRoot.getViewId() : ""));
+
+            if (phaseEvent.getPhaseId() == PhaseId.RESTORE_VIEW) {
+                Services.instance().getDb().getSessionFactory().getCurrentSession().beginTransaction();
+            }
+
+        } catch (Exception e) {
+            logger.error("Error in phase listener", e);
+        }
+    }
+
+    @Override
+    public void afterPhase(PhaseEvent phaseEvent) {
+        try {
+            final UIViewRoot viewRoot = phaseEvent.getFacesContext().getViewRoot();
+            logger.debug("------ AFTER PHASE " +
+                    phaseEvent.getPhaseId() +
+                    ' ' +
+                    (viewRoot != null ? viewRoot.getViewId() : ""));
+
+            if (phaseEvent.getPhaseId() == PhaseId.RENDER_RESPONSE) {
+                logger.debug("REQUEST END");
+
+                final SessionFactory sessionFactory = Services.instance().getDb().getSessionFactory();
+                final Transaction transaction = sessionFactory.getCurrentSession().getTransaction();
+                try {
+                    transaction.commit();
+
+                } catch (HibernateException e) {
+                    logger.error("Transaction commit failed", e);
+                    if (transaction.isActive()) {
+                        transaction.rollback();
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            logger.error("Error in phase listener", e);
+        }
+    }
+
+    @Override
+    public PhaseId getPhaseId() {
+        return PhaseId.ANY_PHASE;
+    }
 }

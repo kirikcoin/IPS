@@ -4,7 +4,6 @@ import mobi.eyeline.ips.exceptions.SurveyNotFound;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.repository.DB;
-import mobi.eyeline.ips.repository.PermissionsRepository;
 import mobi.eyeline.ips.repository.QuestionStatsRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
@@ -19,20 +18,17 @@ public class SurveyService {
 
     private final DB db;
     private final SurveyRepository surveyRepository;
-    private final PermissionsRepository permissionsRepository;
     private final RespondentRepository respondentRepository;
     private final SurveyStatsRepository surveyStatsRepository;
     private final QuestionStatsRepository questionStatsRepository;
 
     public SurveyService(DB db,
                          SurveyRepository surveyRepository,
-                         PermissionsRepository permissionsRepository,
                          RespondentRepository respondentRepository,
                          SurveyStatsRepository surveyStatsRepository,
                          QuestionStatsRepository questionStatsRepository) {
         this.db = db;
         this.surveyRepository = surveyRepository;
-        this.permissionsRepository = permissionsRepository;
         this.respondentRepository = respondentRepository;
         this.surveyStatsRepository = surveyStatsRepository;
         this.questionStatsRepository = questionStatsRepository;
@@ -47,8 +43,8 @@ public class SurveyService {
             throw new SurveyNotFound(surveyId);
         }
 
-        if ((active && !survey.isActive()) ||
-            (permissionsRepository.get(survey, user) == null)) {
+        if ((active && !survey.isActive()) /*||
+            (permissionsRepository.get(survey, user) == null)*/) {
             throw new SurveyNotFound(surveyId);
         }
 

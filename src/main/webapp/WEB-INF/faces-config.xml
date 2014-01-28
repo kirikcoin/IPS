@@ -20,7 +20,7 @@
     </locale-config>
 
     <resource-bundle>
-      <base-name>mobi.eyeline.ips.web.ips</base-name>
+      <base-name>ips</base-name>
       <var>bundle</var>
     </resource-bundle>
   </application>
@@ -51,6 +51,12 @@
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
+  <managed-bean>
+    <managed-bean-name>surveyListController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyListController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
   <!-- NAVIGATION ================================================================================================== -->
 
   <navigation-rule>
@@ -76,6 +82,15 @@
     <navigation-case>
       <from-outcome>SECTION_2</from-outcome>
       <to-view-id>/pages/section2/index.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Surveys list</description>
+    <navigation-case>
+      <from-outcome>SURVEY_LIST</from-outcome>
+      <to-view-id>/pages/surveys/index.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

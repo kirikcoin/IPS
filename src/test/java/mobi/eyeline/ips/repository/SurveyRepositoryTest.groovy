@@ -12,7 +12,6 @@ class SurveyRepositoryTest extends DbTestCase {
     private QuestionRepository questionRepository
     private QuestionOptionRepository questionOptionRepository
     private UserRepository userRepository
-    private PermissionsRepository permissionsRepository
 
     void setUp() {
         super.setUp()
@@ -20,7 +19,6 @@ class SurveyRepositoryTest extends DbTestCase {
         questionRepository = new QuestionRepository(db)
         questionOptionRepository = new QuestionOptionRepository(db)
         userRepository = new UserRepository(db)
-        permissionsRepository = new PermissionsRepository(db)
     }
 
     void testSaveAndLoad() {
@@ -50,91 +48,6 @@ class SurveyRepositoryTest extends DbTestCase {
         assertThat surveyRepository.load(1).questions, hasSize(3)
         assertThat questionRepository.list(), hasSize(3)
         assertThat questionRepository.load(3).options, hasSize(3)
-    }
-
-    void testListGroupByUser1() {
-        def user = new User(
-                login: "user",
-                password: "password".pw(),
-                email: "username@example.com",
-                fullName: "John Doe",
-                role: Role.CLIENT)
-        userRepository.saveOrUpdate(user)
-
-        def ids = [
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date())
-        ].each {surveyRepository.save it}
-
-        [
-                new UserSurveyPermissions(survey: ids[0], user: user),
-                new UserSurveyPermissions(survey: ids[1], user: user)
-        ].each {permissionsRepository.save it}
-
-        assertThat surveyRepository.listGroupByUser(user, Integer.MAX_VALUE, 0), hasSize(2)
-        assertEquals 2, surveyRepository.countGroupByUser(user)
-    }
-
-    void testListGroupByUserNoPermissions() {
-        def user = new User(
-                login: "user",
-                password: "password".pw(),
-                email: "username@example.com",
-                fullName: "John Doe",
-                role: Role.CLIENT)
-        userRepository.saveOrUpdate(user)
-
-        [
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date())
-        ].each {surveyRepository.save it}
-
-        assertThat surveyRepository.listGroupByUser(user, Integer.MAX_VALUE, 0), hasSize(0)
-        assertEquals surveyRepository.countGroupByUser(user), 0
-    }
-
-    void testListGroupByUserManager() {
-        def user = new User(
-                login: "user",
-                password: "password".pw(),
-                email: "username@example.com",
-                fullName: "John Doe",
-                role: Role.MANAGER)
-        userRepository.saveOrUpdate(user)
-
-        [
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date())
-        ].each {surveyRepository.save it}
-
-        assertThat surveyRepository.listGroupByUser(user, Integer.MAX_VALUE, 0), hasSize(4)
-        assertEquals 4, surveyRepository.countGroupByUser(user)
-    }
-
-    void testListGroupByUserAdmin() {
-        def user = new User(
-                login: "user",
-                password: "password".pw(),
-                email: "username@example.com",
-                fullName: "John Doe",
-                role: Role.ADMIN)
-        userRepository.saveOrUpdate(user)
-
-        [
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date()),
-                new Survey(startDate: new Date(), endDate: new Date())
-        ].each {surveyRepository.save it}
-
-        assertThat surveyRepository.listGroupByUser(user, Integer.MAX_VALUE, 0), hasSize(4)
-        assertEquals 4, surveyRepository.countGroupByUser(user)
     }
 
     void testQuestionOrdering() {

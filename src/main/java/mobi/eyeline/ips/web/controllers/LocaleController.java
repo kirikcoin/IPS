@@ -10,7 +10,7 @@ import java.util.Locale;
  * author: Denis Enenko
  * date: 22.01.2014
  */
-public class LocaleController extends IPSController
+public class LocaleController extends BaseController
 {
   public void changeLocale() {
     String language = getParamValue("lang").asString();

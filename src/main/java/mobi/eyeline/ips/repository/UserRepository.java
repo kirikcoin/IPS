@@ -75,6 +75,14 @@ public class UserRepository extends BaseRepository<User, Integer> {
         }
     }
 
+    public User getByLogin(String login) {
+        final Session session = getSessionFactory().getCurrentSession();
+        return (User) session
+                .createCriteria(User.class)
+                .add(eq("login", login))
+                .uniqueResult();
+    }
+
     public User getUserByEmail(String email) {
         final Session session = getSessionFactory().openSession();
         try{

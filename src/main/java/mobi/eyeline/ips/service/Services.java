@@ -3,7 +3,6 @@ package mobi.eyeline.ips.service;
 
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.DB;
-import mobi.eyeline.ips.repository.PermissionsRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.QuestionStatsRepository;
@@ -28,7 +27,6 @@ public class Services {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final QuestionOptionRepository questionOptionRepository;
-    private final PermissionsRepository permissionsRepository;
 
     private final SurveyService surveyService;
     private final TemplateService templateService;
@@ -45,12 +43,10 @@ public class Services {
         surveyStatsRepository = new SurveyStatsRepository(db);
         surveyRepository = new SurveyRepository(db);
         questionOptionRepository = new QuestionOptionRepository(db);
-        permissionsRepository =  new PermissionsRepository(db);
 
         surveyService = new SurveyService(
                 db,
                 surveyRepository,
-                permissionsRepository,
                 respondentRepository,
                 surveyStatsRepository,
                 questionStatsRepository);
@@ -113,10 +109,6 @@ public class Services {
 
     public QuestionOptionRepository getQuestionOptionRepository() {
         return questionOptionRepository;
-    }
-
-    public PermissionsRepository getPermissionsRepository() {
-        return permissionsRepository;
     }
 
     public SurveyService getSurveyService() {

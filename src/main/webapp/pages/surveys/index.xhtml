@@ -1,0 +1,128 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+    >
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css"
+            href="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/index.less"/>
+
+      <script type="text/javascript"
+              src="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/index.js">
+      </script>
+    </ui:define>
+
+    <ui:define name="scripts">
+      <script type="text/javascript">
+        $(function () {
+          page.init();
+        })
+      </script>
+    </ui:define>
+
+    <ui:define name="content">
+
+      <h:form enctype="multipart/form-data" id="content">
+
+        <h:panelGroup layout="block" styleClass="border-shadow">
+
+          <h:panelGrid columns="2" styleClass="page-header">
+            <h:outputText value="#{bundle['survey.list.title']}"/>
+            <h:panelGroup styleClass="page-header-input">
+              <h:outputLabel value="#{bundle['search.label']}"/>
+              <eye:inputText id="search" value="#{surveyListController.search}"
+                             onkeydown="return page.filterKeyDown(event)"/>
+            </h:panelGroup>
+          </h:panelGrid>
+
+          <eye:dataTable id="table"
+                         value="#{surveyListController.tableModel}"
+                         var="row"
+                         pageSize="50"
+                         tableClass="grid">
+            <f:facet name="ifEmpty">
+              <h:outputText value="#{bundle['survey.list.empty']}"/>
+            </f:facet>
+            <eye:row>
+              <eye:column name="id" title="#{bundle['survey.list.table.id']}"
+                          sortable="true" defaultSortOrder="desc">
+                <h:commandLink value="#{row.id}" action="null"/>
+              </eye:column>
+              <eye:column name="title" title="#{bundle['survey.list.table.title']}"
+                          sortable="true" defaultSortOrder="desc">
+                <h:commandLink value="#{row.title}" action="null"/>
+              </eye:column>
+              <eye:column name="client" title="#{bundle['survey.list.table.client']}"
+                          sortable="true" visible="#{userSession.managerRole}">
+                <h:outputText value="#{row.client}"/>
+              </eye:column>
+              <eye:column name="state" title="#{bundle['survey.list.table.state']}"
+                          sortable="true">
+                <h:outputText value="#{bundle['survey.state.not.started']}"
+                              styleClass="survey_state_not_started"
+                              rendered="#{row.state == 'NOT_STARTED'}"/>
+                <h:outputText value="#{bundle['survey.state.in.progress']}"
+                              styleClass="survey_state_in_progress"
+                              rendered="#{row.state == 'IN_PROGRESS'}"/>
+                <h:outputText value="#{bundle['survey.state.finished']}"
+                              styleClass="survey_state_finished"
+                              rendered="#{row.state == 'FINISHED'}"/>
+              </eye:column>
+              <eye:column name="period" title="#{bundle['survey.list.table.period']}"
+                          sortable="true">
+                <span>
+                <h:outputText value="#{row.startDate}">
+                  <f:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+                </span>
+                &#x2014;
+                <span>
+                <h:outputText value="#{row.endDate}">
+                  <f:convertDateTime type="both" dateStyle="short"/>
+                </h:outputText>
+                </span>
+              </eye:column>
+              <eye:column name="accessNumber" title="#{bundle['survey.list.table.access.number']}"
+                          sortable="true">
+                <h:outputText value="#{row.accessNumber}"/>
+              </eye:column>
+            </eye:row>
+          </eye:dataTable>
+
+          <h:panelGroup layout="block" styleClass="page-footer"/>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" style="margin-top: 15px;">
+          <h:commandLink value="#{bundle['survey.list.create.survey']}"
+                         styleClass="button-black" onclick="jsfc('dialog').show(); return false"/>
+        </h:panelGroup>
+
+        <eye:dialog id="dialog" title="Welcome" width="250">
+          <h:panelGroup layout="block">
+            <h:outputText value="Survey creation stub."/>
+          </h:panelGroup>
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green" value="OK"
+                             onclick="jsfc('dialog').hide(); return false;"/>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green" value="Cancel"
+                             onclick="jsfc('dialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+        </eye:dialog>
+
+      </h:form>
+
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

@@ -2,16 +2,26 @@ package mobi.eyeline.ips.repository;
 
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
+import mobi.eyeline.ips.util.StringUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static mobi.eyeline.ips.model.Role.ADMIN;
-import static mobi.eyeline.ips.model.Role.MANAGER;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.hibernate.criterion.Restrictions.ilike;
+import static org.hibernate.criterion.Restrictions.or;
+import static org.hibernate.criterion.Restrictions.sqlRestriction;
 
 
 public class SurveyRepository extends BaseRepository<Survey, Integer> {
@@ -22,87 +32,109 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
         super(db);
     }
 
-    // TODO: quite a strange request. Are we sure we want only the Group-By-Group type here?
-    public List<Survey> listGroupByUser(User user,
-                                        int limit,
-                                        int offset) {
+    public List<Survey> list(User user,
+                             String filter,
+                             Boolean active,
+                             String orderProperty,
+                             boolean asc,
+                             int limit,
+                             int offset) {
 
-        final Session session = getSessionFactory().openSession();
-        try {
-            final Query query;
+        final Session session = getSessionFactory().getCurrentSession();
 
-            if (user.getRole() == ADMIN || user.getRole() == MANAGER) {
-                // Don't filter on restrictions.
-                query = session.createQuery(
-                        "select survey" +
-                        " from Survey survey");
+        final Criteria criteria = session.createCriteria(Survey.class);
 
-            } else {
-                query = session.createQuery(
-                        "select distinct perm.survey" +
-                        " from UserSurveyPermissions perm" +
-                        " where (perm.user.id = :id)")
-                        .setProperties(user);
+        criteria.createAlias("details", "details");
+        criteria.createAlias("statistics", "statistics");
+        criteria.createAlias("client", "client");
+
+        if (active != null) {
+            criteria.add(Restrictions.eq("active", active));
+        }
+
+        if (user != null) {
+            criteria.add(Restrictions.eq("client.id", user.getId()));
+        }
+
+        if (isNotBlank(filter)) {
+            filter = filter.trim();
+
+            final List<Criterion> filters = new ArrayList<>();
+//            filters.add(sqlRestriction("id LIKE '%" + filter + "%'"));
+            filters.add(ilike("details.title", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
+            if (user == null) {
+                filters.add(ilike("client.fullName", filter, MatchMode.ANYWHERE));
             }
 
-            query.setFirstResult(offset).setMaxResults(limit);
-
-            //noinspection unchecked
-            return query.list();
-
-        } finally {
-            session.close();
+            criteria.add(or(
+                    filters.toArray(new Criterion[filters.size()])
+            ));
         }
+
+        criteria.setFirstResult(offset).setMaxResults(limit);
+
+        if (orderProperty != null) {
+
+            final String property;
+            switch (orderProperty) {
+                case "id":          property = "id"; break;
+                case "title":       property = "details.title"; break;
+                case "client":      property = "client.fullName"; break;
+                case "state":       property = "startDate"; break;
+                case "period":       property = "startDate"; break;
+                case "accessNumber":       property = "statistics.accessNumber"; break;
+                default:
+                    throw new RuntimeException("Unexpected sort column: " + orderProperty);
+            }
+
+            criteria.addOrder(asc ? Order.asc(property) : Order.desc(property));
+        }
+
+        //noinspection unchecked
+        return (List<Survey>) criteria.list();
     }
 
-    public List<Survey> listByUser(User user) {
-        final Session session = getSessionFactory().openSession();
-        try {
-            if (user.getRole() == ADMIN || user.getRole() == MANAGER) {
-                return list();
+    public int count(User user,
+                     String filter,
+                     Boolean active) {
 
-            } else {
-                final Query query =
-                        session.createQuery(
-                        "select distinct perm.survey" +
-                        " from UserSurveyPermissions perm" +
-                        " where perm.user.id = :id")
-                        .setProperties(user);
+        final Session session = getSessionFactory().getCurrentSession();
 
-                //noinspection unchecked
-                return query.list();
+        final Criteria criteria = session.createCriteria(Survey.class);
+
+        criteria.createAlias("details", "details");
+        criteria.createAlias("statistics", "statistics");
+        criteria.createAlias("client", "client");
+
+        if (active != null) {
+            criteria.add(Restrictions.eq("active", active));
+        }
+
+        if (user != null) {
+            criteria.add(Restrictions.eq("client.id", user.getId()));
+        }
+
+        if (isNotBlank(filter)) {
+            filter = filter.trim();
+
+            final List<Criterion> filters = new ArrayList<>();
+//            filters.add(sqlRestriction("id LIKE '%" + filter + "%'"));
+            filters.add(ilike("details.title", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
+            if (user == null) {
+                filters.add(ilike("client.fullName", filter, MatchMode.ANYWHERE));
             }
 
-        } finally {
-            session.close();
+            criteria.add(or(
+                    filters.toArray(new Criterion[filters.size()])
+            ));
         }
-    }
 
-    public int countGroupByUser(User user) {
-        final Session session = getSessionFactory().openSession();
-        try {
-            final Query query;
+        criteria.setProjection(Projections.rowCount());
 
-            if (user.getRole() == ADMIN || user.getRole() == MANAGER) {
-                // Don't filter on restrictions.
-                query = session.createQuery(
-                        "select count(survey)" +
-                        " from Survey survey");
-
-            } else {
-                query = session.createQuery(
-                        "select count(distinct perm.survey)" +
-                        " from UserSurveyPermissions perm" +
-                        " where (perm.user.id = :id)")
-                        .setProperties(user);
-            }
-
-            final Number count = (Number) query.uniqueResult();
-            return count.intValue();
-
-        } finally {
-            session.close();
-        }
+        //noinspection unchecked
+        return ((Number) criteria.uniqueResult()).intValue();
     }
 
     public List<Survey> listActiveGroup() {

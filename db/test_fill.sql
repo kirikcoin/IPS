@@ -80,19 +80,19 @@ INSERT INTO surveys_users (survey_id, user_id) VALUES
   (14,  5),
   (15,  6);
 
-INSERT INTO survey_stats (survey_id) VALUES
-  (1),
-  (2),
-  (3),
-  (4),
-  (5),
-  (6),
-  (7),
-  (8),
-  (9),
-  (10),
-  (11),
-  (12),
-  (13),
-  (14),
-  (15);
+INSERT INTO survey_stats (survey_id, accessNumber) VALUES
+  (1, NULL),
+  (2, NULL),
+  (3, NULL),
+  (4, NULL),
+  (5, NULL),
+  (6, NULL),
+  (7, NULL),
+  (8, '+44-123-456-78'),
+  (9, NULL),
+  (10, NULL),
+  (11, NULL),
+  (12, NULL),
+  (13, '*123#'),
+  (14, NULL),
+  (15, NULL);
