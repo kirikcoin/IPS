@@ -7,6 +7,7 @@ delete from users where id >= 2;
 
 delete from surveys_users;
 delete from surveys_text;
+delete from survey_stats;
 delete from surveys;
 
 
@@ -79,3 +80,19 @@ INSERT INTO surveys_users (survey_id, user_id) VALUES
   (14,  5),
   (15,  6);
 
+INSERT INTO survey_stats (survey_id) VALUES
+  (1),
+  (2),
+  (3),
+  (4),
+  (5),
+  (6),
+  (7),
+  (8),
+  (9),
+  (10),
+  (11),
+  (12),
+  (13),
+  (14),
+  (15);
