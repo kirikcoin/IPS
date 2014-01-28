@@ -37,7 +37,7 @@
               <c:set var="section2" value="${fn:contains(view.viewId, 'pages/section2')}"/>
               <h:panelGroup rendered="#{userSession.logined}">
                 <h:commandLink value="Раздел 1" action="SECTION_1" styleClass="#{section1 ? 'menuButtonSelected' : 'menuButton'}"/>
-                <h:commandLink value="Раздел 2" action="SECTION_2" styleClass="#{section2 ? 'menuButtonSelected' : 'menuButton'}"/>
+                <h:commandLink value="Раздел 2" action="SECTION_2" styleClass="#{section2 ? 'menuButtonSelected' : 'menuButton'}" rendered="#{not userSession.userInClientRole}"/>
               </h:panelGroup>
             </div>
           </td>

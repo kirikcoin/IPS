@@ -194,6 +194,8 @@
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
+      <role-name>manager</role-name>
+      <role-name>client</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>
@@ -202,11 +204,27 @@
 
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>Консоль администратора</web-resource-name>
-      <url-pattern>/pages/*</url-pattern>
+      <web-resource-name>Раздел опросы</web-resource-name>
+      <url-pattern>/pages/section1/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
+      <role-name>manager</role-name>
+      <role-name>client</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+    <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Раздел заказчики</web-resource-name>
+      <url-pattern>/pages/section2/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+      <role-name>manager</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>
@@ -216,6 +234,16 @@
   <security-role>
     <description>Администратор</description>
     <role-name>admin</role-name>
+  </security-role>
+
+  <security-role>
+    <description>Менеджер</description>
+    <role-name>manager</role-name>
+  </security-role>
+
+  <security-role>
+    <description>Клиент</description>
+    <role-name>client</role-name>
   </security-role>
 
   <!-- ============================================= ERROR PAGES ============================================= -->

@@ -1,7 +1,9 @@
 package mobi.eyeline.ips.web.controllers.login;
 
+import mobi.eyeline.ips.model.Role;
 import mobi.eyeline.ips.web.controllers.IPSController;
 
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -21,5 +23,9 @@ public class UserSessionController extends IPSController
   public boolean isLogined() {
     return getUserPrincipal() != null;
   }
+
+    public boolean getUserInClientRole() {
+        return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(Role.CLIENT.getName());
+    }
 
 }

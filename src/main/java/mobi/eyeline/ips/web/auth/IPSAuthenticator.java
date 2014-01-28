@@ -1,5 +1,9 @@
 package mobi.eyeline.ips.web.auth;
 
+import mobi.eyeline.ips.model.User;
+import mobi.eyeline.ips.service.Services;
+import org.hibernate.HibernateException;
+
 import javax.security.auth.login.LoginException;
 
 /**
@@ -9,10 +13,16 @@ import javax.security.auth.login.LoginException;
 public class IPSAuthenticator
 {
   public String getUserRole(String login, String password) throws LoginException {
-    if(login == null || password == null || !"admin".equals(login) || !"password".equals(password)) {
-      return null;
-    }
+      User user;
+      try {
+         user = Services.instance().getUserRepository().getUser(login,password);
+      } catch (mobi.eyeline.ips.exceptions.LoginException e) {
+          return null;
+      } catch (HibernateException e){
+          throw new LoginException(e.getMessage());
+      }
 
-    return "admin";
+      return user.getRole().getName();
+
   }
 }
