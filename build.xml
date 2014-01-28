@@ -55,16 +55,19 @@
   </target>
 
   <target name="compile" depends="init, resolve">
-    <javac destdir="${build.dir}/classes"
-           optimize="off"
-           debug="on"
-           encoding="UTF-8"
-           nowarn="off"
-           includeantruntime="false">
-      <compilerarg value="-Xlint:all"/>
+    <taskdef name="groovyc"
+             classname="org.codehaus.groovy.ant.Groovyc"
+             classpathref="classpath"/>
+
+    <groovyc destdir="${build.dir}/classes">
       <src path="${src.dir}"/>
       <classpath refid="classpath"/>
-    </javac>
+
+      <javac source="1.7" target="1.7"
+             debug="on"
+             encoding="UTF-8"
+             includeantruntime="false"/>
+    </groovyc>
   </target>
 
   <target name="build-exploded" depends="compile">
@@ -114,7 +117,6 @@
         <exclude name="emma*.jar"/>
         <exclude name="hsqldb*.jar"/>
         <exclude name="hamcrest*.jar"/>
-        <exclude name="groovy*.jar"/>
 
         <include name="*.jar"/>
       </fileset>
