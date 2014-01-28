@@ -18,7 +18,7 @@
     <!--<param name="hibernate.connection.datasource" type="string">java:comp/env/jdbc/Limesurvey</param>-->
 
     <param name="hibernate.connection.driver_class" type="string">com.mysql.jdbc.Driver</param>
-    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test</param>
+    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8</param>
 
     <param name="hibernate.connection.username" type="string">user</param>
     <param name="hibernate.connection.password" type="string">password</param>
