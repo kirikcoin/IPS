@@ -3,76 +3,32 @@ package mobi.eyeline.ips.repository;
 import mobi.eyeline.ips.exceptions.LoginException;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.util.HashUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-
-import static mobi.eyeline.ips.exceptions.LoginException.LoginErrorKind.NotFoundUser;
-import static mobi.eyeline.ips.exceptions.LoginException.LoginErrorKind.WrongPassword;
 import static org.hibernate.criterion.Restrictions.eq;
 
 public class UserRepository extends BaseRepository<User, Integer> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
     public UserRepository(DB db) {
         super(db);
     }
 
-    private String hash(String value)
-            throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public User getUser(String login, String password) {
+        final Session session = getSessionFactory().getCurrentSession();
 
-        // Note: this should correspond to DB contents.
-        return HashUtils.hash(value, "SHA-256", "UTF-8");
-    }
-
-    /**
-     * @throws LoginException if password is incorrect or any error occurred.
-     */
-    private void checkPassword(User user,
-                               String password) throws LoginException {
-
-        final String providedHash;
-        try {
-            providedHash = hash(password);
-
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            LOG.error(e.getMessage(), e);
-            throw new LoginException(NotFoundUser);
-        }
-
-        if (!StringUtils.equalsIgnoreCase(user.getPassword(), providedHash)) {
-            throw new LoginException(WrongPassword);
-        }
-    }
-
-    public User getUser(String login, String password) throws LoginException {
-
-        final Session session = getSessionFactory().openSession();
-        try {
-            final User user = (User) session
-                    .createCriteria(User.class)
-                    .add(eq("login", login))
-                    .uniqueResult();
-
-            if (user == null) {
-                throw new LoginException(NotFoundUser);
-            }
-
-            checkPassword(user, password);
-
-            return user;
-
-        } finally {
-            session.close();
-        }
+        final String providedHash = HashUtils.hashPassword(password);
+        return (User) session
+                .createCriteria(User.class)
+                .add(eq("login", login))
+                .add(eq("password", providedHash).ignoreCase())
+                .uniqueResult();
     }
 
     public User getByLogin(String login) {
