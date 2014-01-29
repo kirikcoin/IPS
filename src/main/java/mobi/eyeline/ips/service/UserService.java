@@ -18,7 +18,7 @@ public class UserService {
     }
     // TODO: in one transaction
     public void restorePassword(String email) throws LoginException {
-        User user = userRepository.getUserByEmail(email);
+        User user = userRepository.getByEmail(email);
         if(user == null || user.isBlocked()) {
             throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
         }

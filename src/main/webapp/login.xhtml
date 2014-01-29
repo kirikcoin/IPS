@@ -51,7 +51,7 @@
             <table>
               <tr>
                 <td align="left" valign="middle">
-                  <h:commandLink immediate="true" value="#{bundle['login.form.recovery.password']}"/>
+                  <h:commandLink  immediate="true" value="#{bundle['login.form.recovery.password']}" action="#{login.recoveryPassword}"/>
                 </td>
                 <td align="right">
                   <h:commandLink id="logbutton" styleClass="button-green" onclick="page.login(); return false;" value="#{bundle['login.form.login.btn']}"/>

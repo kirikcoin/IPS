@@ -46,6 +46,12 @@
   </managed-bean>
 
   <managed-bean>
+    <managed-bean-name>recovery</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.login.RecoveryPasswordController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
     <managed-bean-name>adminDemoController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.admin.AdminDemoController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
@@ -66,6 +72,27 @@
       <to-view-id>/enter.jsp</to-view-id>
       <redirect/>
     </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+     <description>Восстановление пароля</description>
+     <navigation-case>
+         <from-outcome>recoverypassword</from-outcome>
+         <to-view-id>/passwrecovery.xhtml</to-view-id>
+         <redirect/>
+      </navigation-case>
+
+      <navigation-case>
+          <from-outcome>retryrecovery</from-outcome>
+          <to-view-id>/passwrecovery.xhtml</to-view-id>
+          <redirect/>
+      </navigation-case>
+
+      <navigation-case>
+          <from-outcome>donerecovery</from-outcome>
+          <to-view-id>/login.xhtml</to-view-id>
+          <redirect/>
+      </navigation-case>
   </navigation-rule>
 
   <navigation-rule>

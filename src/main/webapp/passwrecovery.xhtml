@@ -1,0 +1,59 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:composition template="/templates/main.xhtml">
+
+        <ui:define name="head">
+            <link rel="STYLESHEET" type="text/css"
+                  href="#{facesContext.externalContext.requestContextPath}/resources/pages/login.less"/>
+
+        </ui:define>
+
+
+
+        <ui:define name="content">
+            <div id="passwRecoveryForm" class="border-shadow">
+                <div class="page-header">
+                    <h:outputText value="#{bundle['passwrecovery.form.title']}"/>
+                </div>
+
+                <div id="passwRecoveryFormBody">
+                    <h:form name="rpForm" id="rpForm" action="" method="post"
+                          enctype="application/x-www-form-urlencoded">
+
+                        <table cellspacing="0" cellpadding="0" border="0">
+
+                            <tr>
+                                <td colspan="2">#{bundle['passwrecovery.form.entermailtext']}</td>
+                            </tr>
+
+                            <tr>
+                                <td><label for="recoveryEmail">email:</label></td>
+                                <td align="right"><eye:inputText id="recoveryEmail" value="#{recovery.email}" maxlength="50"/></td>
+                            </tr>
+
+                        </table>
+
+                        <table>
+                            <tr>
+                                <td align="left" valign="middle">
+                                    <eye:button> <h:commandLink id="sendButton" styleClass="button-green" action="#{recovery.recovery}" value="#{bundle['passwrecovery.form.send.btn']}"/> </eye:button>
+                                </td>
+                                <td align="right">
+                                    <h:commandLink id="cancelButton" styleClass="button-green" onclick="" value="#{bundle['passwrecovery.form.cancel.btn']}"/>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </h:form>
+
+                </div>
+            </div>
+        </ui:define>
+
+    </ui:composition>
+
+</f:view>

@@ -68,19 +68,15 @@ public class UserRepository extends BaseRepository<User, Integer> {
                 .list();
     }
 
-    public User getUserByEmail(String email) {
-        final Session session = getSessionFactory().openSession();
-        try{
-            final  User user = (User) session
-                    .createCriteria(User.class)
-                    .add(eq("email",email))
-                    .uniqueResult();
 
-            return user;
-        } finally {
-            session.close();
-        }
+    public User getByEmail(String email) {
+        final Session session = getSessionFactory().getCurrentSession();
+        return (User) session
+                .createCriteria(User.class)
+                .add(eq("email", email))
+                .uniqueResult();
     }
+
 
     // TODO: do we need this?
     public void insertOneTimePass(int userId, String onePass)

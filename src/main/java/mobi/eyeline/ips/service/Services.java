@@ -118,4 +118,8 @@ public class Services {
     public MailService getMailService() {
         return mailService;
     }
+
+    public UserService getUserService() {
+        return userService;
+    }
 }

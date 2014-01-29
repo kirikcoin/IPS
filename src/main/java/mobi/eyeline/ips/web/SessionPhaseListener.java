@@ -2,6 +2,7 @@ package mobi.eyeline.ips.web;
 
 import mobi.eyeline.ips.service.Services;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
@@ -34,7 +35,10 @@ public class SessionPhaseListener implements PhaseListener {
                     (viewRoot != null ? viewRoot.getViewId() : ""));
 
             if (phaseEvent.getPhaseId() == PhaseId.RESTORE_VIEW) {
-                Services.instance().getDb().getSessionFactory().getCurrentSession().beginTransaction();
+                Session session = Services.instance().getDb().getSessionFactory().getCurrentSession();
+                if (!session.getTransaction().isActive()) {
+                    session.beginTransaction();
+                }
             }
 
         } catch (Exception e) {
