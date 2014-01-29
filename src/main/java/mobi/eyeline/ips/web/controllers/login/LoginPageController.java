@@ -25,9 +25,5 @@ public class LoginPageController
     return error;
   }
 
-  public String recoveryPassword(){
-      return "recoverypassword";
-  }
-
 
 }

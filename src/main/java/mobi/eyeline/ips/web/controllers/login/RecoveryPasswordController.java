@@ -4,12 +4,14 @@ package mobi.eyeline.ips.web.controllers.login;
 import mobi.eyeline.ips.exceptions.LoginException;
 import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.service.UserService;
+import mobi.eyeline.ips.web.controllers.BaseController;
 
 import java.io.Serializable;
 
-public class RecoveryPasswordController implements Serializable {
+public class RecoveryPasswordController extends BaseController {
     private UserService userService;
     private String email;
+    private boolean retry;
     public RecoveryPasswordController(){
         userService = Services.instance().getUserService();
     }
@@ -17,9 +19,9 @@ public class RecoveryPasswordController implements Serializable {
     public String recovery() {
         try {
             userService.restorePassword(email);
-            return "donerecovery";
+            return "DONE_RECOVERY";
         } catch (LoginException e) {
-            return "retryrecovery";
+            return "RETRY_RECOVERY";
         }
     }
 
@@ -29,5 +31,13 @@ public class RecoveryPasswordController implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean isRetry() {
+        return retry;
+    }
+
+    public void setRetry(boolean retry) {
+        this.retry = retry;
     }
 }
