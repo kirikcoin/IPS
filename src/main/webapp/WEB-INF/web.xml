@@ -237,7 +237,6 @@
       <url-pattern>/pages/surveys/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
-      <role-name>admin</role-name>
       <role-name>client</role-name>
       <role-name>manager</role-name>
     </auth-constraint>
