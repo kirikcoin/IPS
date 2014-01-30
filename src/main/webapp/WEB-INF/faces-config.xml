@@ -83,13 +83,13 @@
      <description>Восстановление пароля</description>
      <navigation-case>
        <from-outcome>RECOVERY_PASSWORD</from-outcome>
-       <to-view-id>/passwrecovery.xhtml</to-view-id>
+       <to-view-id>/passwordreset.xhtml</to-view-id>
        <redirect/>
       </navigation-case>
 
       <navigation-case>
         <from-outcome>RETRY_RECOVERY</from-outcome>
-        <to-view-id>/passwrecovery.faces?recovery=false</to-view-id>
+        <to-view-id>/passwordreset.faces?recovery=false</to-view-id>
         <redirect/>
       </navigation-case>
 
