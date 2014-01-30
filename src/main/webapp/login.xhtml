@@ -23,11 +23,9 @@
           if("#{param['recovery']}".length!=0) {
                 ips.message.info("#{bundle['passwrecovery.form.sentmessage']}");
           }
-
           if (error)
             ips.message.error("Логин или пароль неверен.");
-           //if (fromrecovery)
-          //  ips.message.info("Done");
+
           page.init();
         });
         //    ]]>
