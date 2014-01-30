@@ -13,9 +13,9 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.isEmptyString
 
 class UserServiceTest extends DbTestCase {
-    private UserRepository userRepository;
-    private MailService mailService;
-    private UserService userService;
+    private UserRepository userRepository
+    private MailService mailService
+    private UserService userService
 
     def configClass
     def config
@@ -35,7 +35,7 @@ class UserServiceTest extends DbTestCase {
     }
 
     void setUp() {
-        super.setUp();
+        super.setUp()
 
         configClass = new MockFor(Config)
         config = configClass.proxyDelegateInstance() as Config
@@ -45,7 +45,7 @@ class UserServiceTest extends DbTestCase {
                 assertThat message.subject, not(isEmptyString())
             }
         }
-        userRepository = new UserRepository(db);
+        userRepository = new UserRepository(db)
 
         def templateService = new StubTemplateService(config) {
             String formatPasswordRestore(User u, String s) { "" }
@@ -55,6 +55,8 @@ class UserServiceTest extends DbTestCase {
     }
 
     void testRestorePassword() {
+        def tx = db.currentSession.beginTransaction()
+
         user =  new User(
                 login: "user",
                 password: "password".pw(),
@@ -67,9 +69,8 @@ class UserServiceTest extends DbTestCase {
         userService.restorePassword("username@example.com")
         user = userRepository.getByEmail("username@example.com")
         assertFalse user.password.equals("password".pw())
+
+        tx.commit()
     }
-
-
-
 
 }
