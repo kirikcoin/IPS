@@ -21,12 +21,17 @@
               <h:outputText value="#{bundle['app.title']}"/>
 
               <div class="settingButtons">
-                <h:panelGrid columns="3">
+                <h:panelGrid columns="4">
+                  <h:commandLink value="#{bundle['settings.profile.button']} |"
+
+                                 rendered="#{userSession.authenticated}"
+                                 styleClass="exitButton"/>
+
+
                   <h:commandLink value="#{bundle['settings.exit.button']}"
                                  action="#{userSession.logout}"
                                  rendered="#{userSession.authenticated}"
                                  styleClass="exitButton"/>
-
 
                   <h:commandLink title="Русский"
                                  action="#{localeController.changeLocale}"
