@@ -19,9 +19,9 @@
             <script type="text/javascript">
                 //    <![CDATA[
                 $(function () {
-                    var ifdone= #{param['recovery']};
-                     if (!ifdone)
-                        ips.message.error("Not done");
+                    var ifdone= "#{param['recovery']}";
+                     if (ifdone == "false")
+                        ips.message.error("#{bundle['passwrecovery.form.nosuchemail']}");
                     page.init();
                 });
                 //    ]]>
@@ -46,7 +46,9 @@
 
                             <tr>
                                 <td><label for="recoveryEmail">email:</label></td>
-                                <td align="right"><eye:inputText id="recoveryEmail" value="#{recovery.email}" maxlength="50"/></td>
+                                <td align="right">
+                                    <eye:inputText id="recoveryEmail" value="#{recovery.email}" maxlength="50" validator="email" validatorMessage="#{bundle['passwrecovery.form.incorrectemail']}"/>
+                                </td>
                             </tr>
                         </table>
 

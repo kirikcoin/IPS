@@ -63,6 +63,11 @@
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
+    <validator>
+      <validator-id>email</validator-id>
+      <validator-class>mobi.eyeline.ips.web.validators.EmailValidator</validator-class>
+    </validator>
+
   <!-- NAVIGATION ================================================================================================== -->
 
   <navigation-rule>
