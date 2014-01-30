@@ -2,6 +2,9 @@ package mobi.eyeline.ips.web.controllers
 
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.util.RequestParam
+import mobi.eyeline.ips.web.validators.LocalizedMessageInterpolator
+import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator
+import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator
 
 import javax.faces.application.FacesMessage
 import javax.faces.context.ExternalContext
@@ -9,9 +12,12 @@ import javax.faces.context.FacesContext
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.validation.ConstraintViolation
+import javax.validation.Validation
+import javax.validation.Validator
 import java.security.Principal
 
 import static java.util.Collections.emptyMap
+import static mobi.eyeline.ips.util.RequestParam.*
 
 public abstract class BaseController implements Serializable {
 
@@ -61,11 +67,11 @@ public abstract class BaseController implements Serializable {
         return context.getSession(createIfNeeded) as HttpSession
     }
 
-    protected RequestParam getParam() {
+    protected mobi.eyeline.ips.util.RequestParam getParam() {
         return new RequestParam(request)
     }
 
-    RequestParam.Value getParamValue(String name) {
+    mobi.eyeline.ips.util.RequestParam.Value getParamValue(String name) {
         return getParam().get(name)
     }
 
@@ -147,5 +153,14 @@ public abstract class BaseController implements Serializable {
 
     boolean renderViolationMessage(Set<ConstraintViolation<?>> violations) {
         renderViolationMessage(violations, emptyMap())
+    }
+
+    Validator getValidator() {
+        return Validation
+                .byDefaultProvider()
+                .configure()
+                .messageInterpolator(new LocalizedMessageInterpolator("ips"))
+                .buildValidatorFactory()
+                .validator
     }
 }

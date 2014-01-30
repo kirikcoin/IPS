@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.ilike;
 import static org.hibernate.criterion.Restrictions.or;
 import static org.hibernate.criterion.Restrictions.sqlRestriction;
@@ -46,6 +47,10 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
         return criteria;
     }
 
+
+    // TODO: Extract complex `list' methods to static `DetachedQuery` properties
+    //       for direct use in controllers. This should result in code reuse, reduce
+    //       duplication and clean up method signatures.
     public List<Survey> list(User user,
                              String filter,
                              Boolean active,
@@ -74,8 +79,10 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
             filter = filter.trim();
 
             final List<Criterion> filters = new ArrayList<>();
-//            filters.add(sqlRestriction("id LIKE '%" + filter + "%'"));
-            filters.add(ilike("id", filter, MatchMode.ANYWHERE));
+
+            if (StringUtils.isInteger(filter)) {
+                filters.add(eq("id", Integer.parseInt(filter)));
+            }
             filters.add(ilike("details.title", filter, MatchMode.ANYWHERE));
             filters.add(ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
             if (user == null) {
@@ -89,16 +96,18 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
         criteria.setFirstResult(offset).setMaxResults(limit);
 
+        // TODO: Order property to object graph path conversion should
+        //       better be performed on controller level.
         if (orderProperty != null) {
 
             final String property;
             switch (orderProperty) {
-                case "id":          property = "id"; break;
-                case "title":       property = "details.title"; break;
-                case "client":      property = "client.fullName"; break;
-                case "state":       property = "startDate"; break;
-                case "period":       property = "startDate"; break;
-                case "accessNumber":       property = "statistics.accessNumber"; break;
+                case "id":              property = "id";                        break;
+                case "title":           property = "details.title";             break;
+                case "client":          property = "client.fullName";           break;
+                case "state":           property = "startDate";                 break;
+                case "period":          property = "startDate";                 break;
+                case "accessNumber":    property = "statistics.accessNumber";   break;
                 default:
                     throw new RuntimeException("Unexpected sort column: " + orderProperty);
             }
@@ -134,7 +143,11 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
             filter = filter.trim();
 
             final List<Criterion> filters = new ArrayList<>();
-//            filters.add(sqlRestriction("id LIKE '%" + filter + "%'"));
+
+            if (StringUtils.isInteger(filter)) {
+                filters.add(eq("id", Integer.parseInt(filter)));
+            }
+
             filters.add(ilike("details.title", filter, MatchMode.ANYWHERE));
             filters.add(ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
             if (user == null) {

@@ -69,7 +69,7 @@ var ips = new (function() {
       $(PAGE_MESSAGES_ELEMENT_ID).hide();
 
       if(elementId) {
-        var $element = $byId(elementId);
+        var $element = ips.$byId(elementId);
         $element.removeClass(VALIDATION_ERROR_CLASS);
         if($element.next().is('span.error'))
           $element.next().remove();
@@ -83,6 +83,14 @@ var ips = new (function() {
           }
         });
       }
+    };
+
+    /**
+     * Hides on-screen messages along with removing error markup on input elements (if any).
+     */
+    this.hideAll = function() {
+      this.hide();
+      $('.' + VALIDATION_ERROR_CLASS).each(function (i, e) { ips.message.hide(e.id); });
     };
 
     $(function() {

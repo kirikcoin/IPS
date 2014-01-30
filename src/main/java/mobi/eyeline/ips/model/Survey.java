@@ -51,14 +51,14 @@ public class Survey implements Serializable {
      * Дата начала опроса.
      */
     @Column(name = "startdate", nullable = false)
-    @NotNull
+    @NotNull(message = "{survey.validation.start.date.empty}")
     private Date startDate;
 
     /**
      * Дата окончания опроса.
      */
     @Column(name = "expires", nullable = false)
-    @NotNull
+    @NotNull(message = "{survey.validation.end.date.empty}")
     private Date endDate;
 
     /**
@@ -175,7 +175,7 @@ public class Survey implements Serializable {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    @AssertTrue(message = "endDate has to be after startDate")
+    @AssertTrue(message = "{survey.validation.end.must.be.after.start}")
     private boolean isEndDate() {
         return (getStartDate() != null) &&
                (getEndDate() != null) &&

@@ -10,12 +10,10 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
-import org.hibernate.HibernateException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import javax.faces.model.SelectItem
-import javax.validation.Validation
 
 import static mobi.eyeline.ips.web.controllers.surveys.SurveyListController.SurveyState.*
 
@@ -27,7 +25,16 @@ class SurveyListController extends BaseController {
     private final SurveyRepository surveyRepository = Services.instance().surveyRepository
     private final UserRepository userRepository = Services.instance().userRepository
 
+    //
+    //  List
+    //
+
     String search
+
+
+    //
+    //  New survey creation.
+    //
 
     String newSurveyTitle
 
@@ -37,8 +44,6 @@ class SurveyListController extends BaseController {
     int newSurveyClientId
 
     boolean newSurveyValidationError = false
-
-    def validator = Validation.buildDefaultValidatorFactory().validator
 
     public DataTableModel getTableModel() {
 
@@ -95,10 +100,16 @@ class SurveyListController extends BaseController {
         survey.details = new SurveyDetails(survey: survey, title: newSurveyTitle)
         survey.statistics = new SurveyStats(survey: survey)
 
-        newSurveyValidationError =
-                renderViolationMessage(validator.validate(survey))
+        newSurveyValidationError = renderViolationMessage(
+                validator.validate(survey),
+                [
+                        'details.title': 'newSurveyTitle',
+                        'startDate': 'newSurveyStartDate',
+                        'endDate': 'newSurveyEndDate',
+                ])
 
         if (newSurveyValidationError) {
+            // Stay on the current page.
             return null
         }
 

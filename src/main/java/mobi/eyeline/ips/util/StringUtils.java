@@ -35,23 +35,23 @@ public class StringUtils {
         return result;
     }
 
-  public static String toString(List<Integer> list, String delim){
-    StringBuilder result = new StringBuilder();
-    for (int i = 0; i < list.size(); i++) {
-      if (i > 0)
-          result.append(delim);
-       result.append(list.get(i));
+    public static String toString(List<Integer> list, String delim){
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0)
+                result.append(delim);
+            result.append(list.get(i));
+        }
+        return result.toString();
     }
-    return result.toString();
-  }
 
-  public static boolean isInteger(String value){
-    boolean result = true;
-    try {
-      Integer.parseInt(value);
-    } catch (NumberFormatException e) {
-      result = false;
+    public static boolean isInteger(String value) {
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
-    return result;
-  }
 }
