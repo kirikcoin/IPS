@@ -20,6 +20,10 @@
       <script type="text/javascript">
         $(function () {
           page.init();
+
+          if ("#{surveyListController.newSurveyValidationError}" == "true") {
+            jsfc('newSurveyDialog').show();
+          }
         })
       </script>
     </ui:define>
@@ -99,24 +103,47 @@
 
         <h:panelGroup layout="block" style="margin-top: 15px;">
           <h:commandLink value="#{bundle['survey.list.create.survey']}"
-                         styleClass="button-black" onclick="jsfc('dialog').show(); return false"/>
+                         styleClass="button-black" onclick="jsfc('newSurveyDialog').show(); return false"/>
         </h:panelGroup>
 
-        <eye:dialog id="dialog" title="Welcome" width="250">
-          <h:panelGroup layout="block">
-            <h:outputText value="Survey creation stub."/>
-          </h:panelGroup>
+        <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="600">
+
+          <h:panelGrid columns="2">
+            <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
+            <eye:inputText id="newSurveyTitle"
+                           value="#{surveyListController.newSurveyTitle}"/>
+
+            <h:outputLabel value="#{bundle['survey.properties.period']}" for="period"/>
+            <h:panelGroup id="period" layout="block">
+              <h:panelGrid columns="3">
+                <eye:inputDate id="newSurveyStartDate"
+                               inputTime="true"
+                               value="#{surveyListController.newSurveyStartDate}"/>
+                <h:outputText value="&#x2014;" style="padding-right: 7px"/>
+                <eye:inputDate id="newSurveyEndDate"
+                               inputTime="true"
+                               value="#{surveyListController.newSurveyEndDate}"/>
+              </h:panelGrid>
+            </h:panelGroup>
+
+            <h:outputLabel value="#{bundle['survey.properties.client']}" for="clients"/>
+            <h:selectOneMenu id="clients" value="#{surveyListController.newSurveyClientId}">
+              <f:selectItems value="#{surveyListController.clients}" />
+            </h:selectOneMenu>
+
+          </h:panelGrid>
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green" value="OK"
-                             onclick="jsfc('dialog').hide(); return false;"/>
+              <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.save']}"
+                             action="#{surveyListController.createSurvey}"/>
             </eye:button>
             <eye:button>
-              <h:commandLink styleClass="button-green" value="Cancel"
-                             onclick="jsfc('dialog').hide(); return false;"/>
+              <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
+                             onclick="jsfc('newSurveyDialog').hide(); return false;"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>
+
         </eye:dialog>
 
       </h:form>

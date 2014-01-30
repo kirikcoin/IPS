@@ -40,10 +40,7 @@ class UserRepositoryTest extends DbTestCase {
 
         userRepository.save(user)
 
-        shouldFail(LoginException) {
-            userRepository.getUser("user", "password")
-        }
-
+        assertNull userRepository.getUser("user", "password")
     }
 
     void testLoginError() {
@@ -56,9 +53,7 @@ class UserRepositoryTest extends DbTestCase {
 
         userRepository.save(user)
 
-        shouldFail(LoginException) {
-            userRepository.getUser("user", "password")
-        }
+        assertNull userRepository.getUser("user", "password")
     }
 
     void testUserModelValidation() {

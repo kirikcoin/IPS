@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.repository;
 
+import mobi.eyeline.ips.model.Role;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.util.StringUtils;
@@ -7,6 +8,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -30,6 +32,18 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
     public SurveyRepository(DB db) {
         super(db);
+    }
+
+    static DetachedCriteria getCriteriaSurvey(User user) {
+        final DetachedCriteria criteria = DetachedCriteria
+                .forClass(Survey.class)
+                .createAlias("details", "details")
+                .createAlias("client", "client");
+
+        if (user.getRole() == Role.CLIENT) {
+            criteria.add(Restrictions.eq("client.id", user.getId()));
+        }
+        return criteria;
     }
 
     public List<Survey> list(User user,
@@ -61,6 +75,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
             final List<Criterion> filters = new ArrayList<>();
 //            filters.add(sqlRestriction("id LIKE '%" + filter + "%'"));
+            filters.add(ilike("id", filter, MatchMode.ANYWHERE));
             filters.add(ilike("details.title", filter, MatchMode.ANYWHERE));
             filters.add(ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
             if (user == null) {

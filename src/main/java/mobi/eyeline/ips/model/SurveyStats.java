@@ -51,7 +51,7 @@ public class SurveyStats implements Serializable {
      */
     @Column(name = "channel")
     @Enumerated(EnumType.STRING)
-    private DistributionChannel channel;
+    private DistributionChannel channel = DistributionChannel.CLIENT_BASE;
 
     /**
      * Произвольный идентификатор кампании.

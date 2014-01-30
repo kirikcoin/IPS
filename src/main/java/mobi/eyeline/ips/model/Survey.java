@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -71,12 +72,14 @@ public class Survey implements Serializable {
     /**
      * Статистика результатов опроса,
      */
+    @Valid
     @OneToOne(mappedBy = "survey", cascade = ALL)
     private SurveyStats statistics;
 
     /**
      * Дополнительная информация об опросе.
      */
+    @Valid
     @OneToOne(mappedBy = "survey", cascade = ALL)
     private SurveyDetails details;
 
@@ -85,6 +88,7 @@ public class Survey implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Question> questions = new ArrayList<>();
 
+    @Valid
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "surveys_users",
             joinColumns = {
@@ -172,7 +176,7 @@ public class Survey implements Serializable {
 
     @SuppressWarnings("UnusedDeclaration")
     @AssertTrue(message = "endDate has to be after startDate")
-    private boolean isValidTimeframe() {
+    private boolean isEndDate() {
         return (getStartDate() != null) &&
                (getEndDate() != null) &&
                getStartDate().compareTo(getEndDate()) <= 0;

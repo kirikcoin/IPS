@@ -24,11 +24,10 @@ class SurveyRepositoryTest extends DbTestCase {
     void testSaveAndLoad() {
         def survey =
                 new Survey(startDate: new Date(), endDate: new Date())
-        surveyRepository.save survey
 
         def details = new SurveyDetails(survey: survey, title: 'Foo')
         survey.details = details
-        surveyRepository.update(survey)
+        surveyRepository.save survey
 
         def q1 = new Question(survey: survey, kind: LongFreeText,  title: "First one")
         def q2 = new Question(survey: survey, kind: LongFreeText,  title: "Second one")

@@ -1,24 +1,44 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.Survey
+import mobi.eyeline.ips.model.SurveyDetails
+import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
+import org.hibernate.HibernateException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
-import static mobi.eyeline.ips.web.controllers.surveys.SurveyListController.SurveyState.FINISHED
-import static mobi.eyeline.ips.web.controllers.surveys.SurveyListController.SurveyState.IN_PROGRESS
-import static mobi.eyeline.ips.web.controllers.surveys.SurveyListController.SurveyState.NOT_STARTED
+import javax.faces.model.SelectItem
+import javax.validation.Validation
+
+import static mobi.eyeline.ips.web.controllers.surveys.SurveyListController.SurveyState.*
 
 class SurveyListController extends BaseController {
 
-    String search
+    private static final Logger logger =
+            LoggerFactory.getLogger(SurveyListController.class);
 
     private final SurveyRepository surveyRepository = Services.instance().surveyRepository
     private final UserRepository userRepository = Services.instance().userRepository
 
+    String search
+
+    String newSurveyTitle
+
+    Date newSurveyStartDate = new Date().plus(1).clearTime()
+    Date newSurveyEndDate = newSurveyStartDate.plus(7)
+
+    int newSurveyClientId
+
+    boolean newSurveyValidationError = false
+
+    def validator = Validation.buildDefaultValidatorFactory().validator
 
     public DataTableModel getTableModel() {
 
@@ -29,7 +49,7 @@ class SurveyListController extends BaseController {
                                 DataTableSortOrder sortOrder) {
 
                 def list = surveyRepository.list(
-                        managerRole ? null : userRepository.getByLogin(userName),
+                        isManagerRole() ? null : userRepository.getByLogin(userName),
                         search,
                         true,
                         sortOrder.columnId,
@@ -51,11 +71,42 @@ class SurveyListController extends BaseController {
             @Override
             public int getRowsCount() {
                 surveyRepository.count(
-                        managerRole ? null : userRepository.getByLogin(userName),
+                        isManagerRole() ? null : userRepository.getByLogin(userName),
                         search,
                         true)
             }
         }
+    }
+
+    List<SelectItem> getClients() {
+        return userRepository
+                .listByRole(Role.CLIENT)
+                .findAll { !it.blocked }
+                .collect { new SelectItem(it.id, it.fullName) }
+    }
+
+    String createSurvey() {
+
+        def survey = new Survey(
+                startDate: newSurveyStartDate,
+                endDate: newSurveyEndDate,
+                active: true,
+                client: userRepository.load(newSurveyClientId))
+        survey.details = new SurveyDetails(survey: survey, title: newSurveyTitle)
+        survey.statistics = new SurveyStats(survey: survey)
+
+        newSurveyValidationError =
+                renderViolationMessage(validator.validate(survey))
+
+        if (newSurveyValidationError) {
+            return null
+        }
+
+        surveyRepository.save survey
+
+        // getRequest().setAttribute("id", id);
+        // TODO: redirect to survey details page.
+        return 'SURVEY_LIST';
     }
 
     static enum SurveyState {
@@ -91,9 +142,9 @@ class SurveyListController extends BaseController {
         public SurveyState getState() {
             final Date now = new Date()
 
-            if (startDate.after(now))                           return NOT_STARTED
-            if (startDate.before(now) && now.before(endDate))   return IN_PROGRESS
-            if (endDate.before(now))                            return FINISHED
+            if (startDate.after(now)) return NOT_STARTED
+            if (startDate.before(now) && now.before(endDate)) return IN_PROGRESS
+            if (endDate.before(now)) return FINISHED
 
             throw new AssertionError("Could not determine survey execution state")
         }
