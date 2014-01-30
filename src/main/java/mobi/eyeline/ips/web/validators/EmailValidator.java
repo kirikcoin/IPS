@@ -16,10 +16,18 @@ import java.util.regex.Pattern;
  * To change this template use File | Settings | File Templates.
  */
 public class EmailValidator implements Validator {
-    private Pattern emailPattern = Pattern.compile("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,4}$");
+
     @Override
-    public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-        Matcher m = emailPattern.matcher(String.valueOf(value));
-        if(!m.matches()) throw new ValidatorException(new FacesMessage());
+    public void validate(FacesContext context, UIComponent component, Object value)
+            throws ValidatorException {
+
+        // TODO: what happens if `value' is null?
+
+        final org.hibernate.validator.internal.constraintvalidators.EmailValidator delegate =
+                new org.hibernate.validator.internal.constraintvalidators.EmailValidator();
+
+        if (!delegate.isValid(String.valueOf(value), null)) {
+            throw new ValidatorException(new FacesMessage());
+        }
     }
 }
