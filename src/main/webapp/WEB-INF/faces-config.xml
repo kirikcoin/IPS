@@ -63,6 +63,12 @@
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
+  <managed-bean>
+    <managed-bean-name>profilePageController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.profile.ProfilePageController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
     <validator>
       <validator-id>email</validator-id>
       <validator-class>mobi.eyeline.ips.web.validators.EmailValidator</validator-class>
