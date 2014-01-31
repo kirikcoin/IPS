@@ -24,7 +24,7 @@
                 ips.message.info("#{bundle['passwrecovery.form.sentmessage']}");
           }
           if (error)
-            ips.message.error("Логин или пароль неверен.");
+            ips.message.error("#{bundle['login.form.errormessage']}");
 
           page.init();
         });

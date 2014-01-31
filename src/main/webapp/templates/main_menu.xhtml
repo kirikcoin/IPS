@@ -24,7 +24,7 @@
               <div class="settingButtons">
                 <h:panelGrid columns="4">
                   <h:commandLink value="#{bundle['settings.profile.button']} |"
-                                 onclick="jsfc('profileEditDialog').show(); return false;"
+                                 action="PROFILE"
                                  rendered="#{userSession.authenticated}"
                                  styleClass="exitButton"/>
 

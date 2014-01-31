@@ -98,8 +98,15 @@
         <to-view-id>/login.faces?recovery=true</to-view-id>
         <redirect/>
       </navigation-case>
+  </navigation-rule>
 
-
+  <navigation-rule>
+    <description>Страница профиля</description>
+    <navigation-case>
+      <from-outcome>PROFILE</from-outcome>
+      <to-view-id>/profilepage.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
   </navigation-rule>
 
   <navigation-rule>
