@@ -24,7 +24,7 @@
     <ui:define name="content">
 
       <div id="profilePage">
-        <h:form enctype="multipart/form-data" id="content">
+        <h:form enctype="multipart/form-data" id="content" prependId="false">
 
           <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -32,19 +32,19 @@
               <h:outputText value="#{bundle['profile.edit.title']}"/>
             </h:panelGrid>
 
-            <div id="profilePageBody">
+            <h:panelGroup id="profilePageBody" layout="block" styleClass="page-body">
               <div style="margin:10px"></div>
 
               <h:panelGrid columns="2">
                 <h:outputLabel value="#{bundle['profile.edit.fio']}"
                                for="profileEditFio"/>
                 <eye:inputText id="profileEditFio"
-                               value=""/>
+                               value="#{profilePageController.userFio}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.email']}"
                                for="profileEditEmail" />
                 <eye:inputText id="profileEditEmail"
-                               value=""/>
+                               value="#{profilePageController.userEmail}"/>
               </h:panelGrid>
 
               <h:panelGroup layout="block" styleClass="headerWithBottomSeparator">
@@ -55,30 +55,32 @@
                 <h:outputLabel value="#{bundle['profile.edit.currentpassword']}"
                                for="profileEditCurrentPassword"/>
                 <eye:inputText id="profileEditCurrentPassword"
+                               secret="true"
                                value=""/>
 
                 <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
                                for="profileNewPassword" />
                 <eye:inputText id="profileNewPassword"
+                               secret="true"
                                value=""/>
 
                 <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
                                for="profileConfirmPassword" />
                 <eye:inputText id="profileConfirmPassword"
+                               secret="true"
                                value=""/>
               </h:panelGrid>
                <div style="margin:10px"></div>
               <eye:buttons>
                 <eye:button>
-                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.save.btn']}" onclick="jsfc('profileEditDialog').hide(); return false;"/>
+                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.save.btn']}" action="#{profilePageController.saveProfile}" />
                 </eye:button>
                 <eye:button>
-                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.cancel.btn']}" onclick="jsfc('profileEditDialog').hide(); return false;"/>
+                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.cancel.btn']}" action="LOGIN"/>
                 </eye:button>
                 <eye:space/>
               </eye:buttons>
-            </div>
-
+            </h:panelGroup>
 
 
             <h:panelGroup layout="block" styleClass="page-footer"/>
