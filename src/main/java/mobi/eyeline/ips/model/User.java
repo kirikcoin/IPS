@@ -42,12 +42,12 @@ public class User {
      * Полное имя пользователя.
      */
     @Column(name = "full_name", nullable = false)
-    @NotEmpty
+    @NotEmpty(message = "{profile.edit.message.validationErrorFullName}")
     private String fullName;
 
     @Column(name = "email", nullable = false)
     @Email
-    @NotEmpty
+    @NotEmpty(message = "{profile.edit.message.validationErrorEmail}")
     private String email;
 
     @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(255)")

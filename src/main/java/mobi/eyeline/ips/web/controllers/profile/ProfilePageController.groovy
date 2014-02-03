@@ -21,6 +21,7 @@ class ProfilePageController extends BaseController {
     String currentPassword
     String newPassword
     String passwordForConfirm
+    boolean userDataValidationError
     boolean error
     boolean success
 
@@ -35,6 +36,16 @@ class ProfilePageController extends BaseController {
         if(currentPassword==null && newPassword==null && passwordForConfirm==null){
             user.email = userEmail
             user.fullName = userFio
+            userDataValidationError= renderViolationMessage(
+                    validator.validate(user),
+                    [
+                        'fullName':'profileEditFullName',
+                        'email':'profileEditEmail',
+                    ])
+            if(userDataValidationError){
+                return null
+            }
+
             userRepository.update(user)
             success=true
         } else {

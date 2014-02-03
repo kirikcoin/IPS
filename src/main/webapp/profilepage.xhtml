@@ -18,11 +18,13 @@
         $(function () {
           var error = #{profilePageController.error};
           var success = #{profilePageController.success}
+
           if (error)
             ips.message.error("#{bundle['profile.edit.message.error']}");
 
           if (success)
-            ips.message.info("#{bundle['profile.edit.message.success']}")
+            ips.message.info("#{bundle['profile.edit.message.success']}");
+
         });
       </script>
     </ui:define>
@@ -43,8 +45,8 @@
 
               <h:panelGrid columns="2">
                 <h:outputLabel value="#{bundle['profile.edit.fio']}"
-                               for="profileEditFio"/>
-                <eye:inputText id="profileEditFio"
+                               for="profileEditFullName"/>
+                <eye:inputText id="profileEditFullName"
                                value="#{profilePageController.userFio}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.email']}"
