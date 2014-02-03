@@ -10,48 +10,50 @@ import org.apache.commons.lang3.StringUtils
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase
 
 class ProfilePageController extends BaseController {
-    private final UserRepository userRepository = Services.instance().userRepository;
-    private User user;
-    private String userName;
-    def String userFio;
-    def String userEmail;
+    
+    private final UserRepository userRepository = Services.instance().userRepository
+    
+    private User user
+    private String userName
+    String userFio
+    String userEmail
 
-    def String currentPassword;
-    def String newPassword;
-    def String passwordForConfirm;
-    def boolean error;
-    def boolean success;
+    String currentPassword
+    String newPassword
+    String passwordForConfirm
+    boolean error
+    boolean success
 
     ProfilePageController() {
-        userName = getUserName();
-        user = userRepository.getByLogin(userName);
-        userFio = user.fullName;
-        userEmail = user.email;
+        userName = getUserName()
+        user = userRepository.getByLogin(userName)
+        userFio = user.fullName
+        userEmail = user.email
     }
 
-    public String saveProfile() {
+    String saveProfile() {
         if(currentPassword==null && newPassword==null && passwordForConfirm==null){
-            user.email = userEmail;
-            user.fullName = userFio;
-            userRepository.update(user);
-            success=true;
+            user.email = userEmail
+            user.fullName = userFio
+            userRepository.update(user)
+            success=true
         } else {
             if(currentPassword!= null && newPassword!=null && passwordForConfirm!=null){
-                String hashedCurrentPassword=HashUtils.hashPassword(currentPassword);
+                String hashedCurrentPassword=HashUtils.hashPassword(currentPassword)
 
                 if (equalsIgnoreCase(hashedCurrentPassword, user.password)) {
                     if(newPassword==passwordForConfirm){
-                        user.password=HashUtils.hashPassword(newPassword);
-                        userRepository.update(user);
-                        success=true;
+                        user.password=HashUtils.hashPassword(newPassword)
+                        userRepository.update(user)
+                        success=true
                     } else {
-                        error=true;
+                        error=true
                     }
                 } else {
-                    error=true;
+                    error=true
                 }
             } else {
-                error=true;
+                error=true
             }
 
         }
