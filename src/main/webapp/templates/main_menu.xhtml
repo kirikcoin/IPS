@@ -56,13 +56,19 @@
 
             <div class="menuButtons">
               <c:set var="surveyList" value="${fn:contains(view.viewId, 'pages/surveys')}"/>
+              <c:set var="clientsList" value="${fn:contains(view.viewId, 'pages/clients')}"/>
               <c:set var="section1" value="${fn:contains(view.viewId, 'pages/section1')}"/>
               <c:set var="section2" value="${fn:contains(view.viewId, 'pages/section2')}"/>
+
               <h:panelGroup rendered="#{userSession.authenticated}">
                 <h:commandLink value="Опросы"
                                action="SURVEY_LIST"
                                styleClass="#{surveyList ? 'menuButtonSelected' : 'menuButton'}"
                                rendered="#{userSession.clientRole or userSession.managerRole}"/>
+                <h:commandLink value="#{bundle['main.menu.clients']}"
+                               action="CLIENT_LIST"
+                               styleClass="#{clientsList ? 'menuButtonSelected' : 'menuButton'}"
+                               rendered="#{userSession.managerRole}"/>
                 <h:commandLink value="Раздел 1"
                                action="SECTION_1"
                                styleClass="#{section1 ? 'menuButtonSelected' : 'menuButton'}"/>

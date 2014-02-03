@@ -142,4 +142,13 @@
     </navigation-case>
   </navigation-rule>
 
+  <navigation-rule>
+    <description>Clients list</description>
+    <navigation-case>
+      <from-outcome>CLIENT_LIST</from-outcome>
+      <to-view-id>/pages/clients/index.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
 </faces-config>

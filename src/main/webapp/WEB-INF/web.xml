@@ -204,7 +204,7 @@
 
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>Раздел опросы</web-resource-name>
+      <web-resource-name>Тест1</web-resource-name>
       <url-pattern>/pages/section1/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
@@ -219,8 +219,22 @@
 
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>Раздел заказчики</web-resource-name>
+      <web-resource-name>Тест2</web-resource-name>
       <url-pattern>/pages/section2/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+      <role-name>manager</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Clients list</web-resource-name>
+      <url-pattern>/pages/clients/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
