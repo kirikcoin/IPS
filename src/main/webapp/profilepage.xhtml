@@ -13,13 +13,19 @@
             href="#{facesContext.externalContext.requestContextPath}/resources/pages/profilepage.less"/>
     </ui:define>
 
-    <!--<ui:define name="scripts">-->
-      <!--<script type="text/javascript">-->
-        <!--$(function(){-->
-          <!--page.init();-->
-        <!--})-->
-      <!--</script>-->
-    <!--</ui:define>-->
+    <ui:define name="scripts">
+      <script type="text/javascript">
+        $(function () {
+          var error = #{profilePageController.error};
+          var success = #{profilePageController.success}
+          if (error)
+            ips.message.error("#{bundle['profile.edit.message.error']}");
+
+          if (success)
+            ips.message.info("#{bundle['profile.edit.message.success']}")
+        });
+      </script>
+    </ui:define>
 
     <ui:define name="content">
 
@@ -56,27 +62,29 @@
                                for="profileEditCurrentPassword"/>
                 <eye:inputText id="profileEditCurrentPassword"
                                secret="true"
-                               value=""/>
+                               value="#{profilePageController.currentPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
                                for="profileNewPassword" />
                 <eye:inputText id="profileNewPassword"
                                secret="true"
-                               value=""/>
+                               value="#{profilePageController.newPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
                                for="profileConfirmPassword" />
                 <eye:inputText id="profileConfirmPassword"
                                secret="true"
-                               value=""/>
+                               value="#{profilePageController.passwordForConfirm}"/>
               </h:panelGrid>
                <div style="margin:10px"></div>
               <eye:buttons>
                 <eye:button>
-                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.save.btn']}" action="#{profilePageController.saveProfile}" />
+                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.save.btn']}"
+                                 action="#{profilePageController.saveProfile}" />
                 </eye:button>
                 <eye:button>
-                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.cancel.btn']}" action="LOGIN"/>
+                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.cancel.btn']}"
+                                 action="LOGIN"/>
                 </eye:button>
                 <eye:space/>
               </eye:buttons>
