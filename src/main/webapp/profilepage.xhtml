@@ -17,12 +17,11 @@
       <script type="text/javascript">
         $(function () {
           var error = #{profilePageController.error};
-          var success = #{profilePageController.success}
+
 
           if (error)
             ips.message.error("#{bundle['profile.edit.message.error']}");
-
-          if (success)
+          else
             ips.message.info("#{bundle['profile.edit.message.success']}");
 
         });
@@ -45,14 +44,14 @@
 
               <h:panelGrid columns="2">
                 <h:outputLabel value="#{bundle['profile.edit.fio']}"
-                               for="profileEditFullName"/>
-                <eye:inputText id="profileEditFullName"
-                               value="#{profilePageController.userFio}"/>
+                               for="fullName"/>
+                <eye:inputText id="fullName"
+                               value="#{profilePageController.user.fullName}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.email']}"
-                               for="profileEditEmail" />
-                <eye:inputText id="profileEditEmail"
-                               value="#{profilePageController.userEmail}"/>
+                               for="email" />
+                <eye:inputText id="email"
+                               value="#{profilePageController.user.email}"/>
               </h:panelGrid>
 
               <h:panelGroup layout="block" styleClass="headerWithBottomSeparator">
@@ -61,20 +60,20 @@
 
               <h:panelGrid columns="2">
                 <h:outputLabel value="#{bundle['profile.edit.currentpassword']}"
-                               for="profileEditCurrentPassword"/>
-                <eye:inputText id="profileEditCurrentPassword"
+                               for="currentPassword"/>
+                <eye:inputText id="currentPassword"
                                secret="true"
                                value="#{profilePageController.currentPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
-                               for="profileNewPassword" />
-                <eye:inputText id="profileNewPassword"
+                               for="newPassword" />
+                <eye:inputText id="newPassword"
                                secret="true"
                                value="#{profilePageController.newPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
-                               for="profileConfirmPassword" />
-                <eye:inputText id="profileConfirmPassword"
+                               for="confirmPassword" />
+                <eye:inputText id="confirmPassword"
                                secret="true"
                                value="#{profilePageController.passwordForConfirm}"/>
               </h:panelGrid>
