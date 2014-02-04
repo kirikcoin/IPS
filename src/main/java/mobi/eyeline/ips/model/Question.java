@@ -46,17 +46,6 @@ public class Question implements Serializable {
     private String title;
 
     /**
-     * Тип вопроса.
-     */
-    @Column(name = "type", columnDefinition = "CHAR", nullable = false)
-    @Type(type = "mobi.eyeline.ips.model.GenericEnumUserType", parameters = {
-            @Parameter(name = "enumClass", value = "mobi.eyeline.ips.model.QuestionKind"),
-            @Parameter(name = "identifierMethod", value = "getShortName"),
-            @Parameter(name = "valueOfMethod", value = "fromShortName")
-    })
-    private QuestionKind kind;
-
-    /**
      * Варианты ответа на вопрос (если тип вопроса подразумевает их наличие).
      */
     @OneToMany(mappedBy = "question", cascade = ALL)
@@ -104,14 +93,6 @@ public class Question implements Serializable {
         this.title = title;
     }
 
-    public QuestionKind getKind() {
-        return kind;
-    }
-
-    public void setKind(QuestionKind kind) {
-        this.kind = kind;
-    }
-
     public List<QuestionOption> getOptions() {
         return options;
     }
@@ -120,24 +101,24 @@ public class Question implements Serializable {
         this.options = options;
     }
 
-    /**
-     * @return Something like {@code QuestionTitle (Option1, Option2, ..)}.
-     */
-    public String getTitleWithOptions() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(getTitle());
-        if (getKind() == QuestionKind.ListRadio) {
-            builder.append(" (");
-            for (int i = 0; i < getOptions().size(); i++) {
-                builder.append(getOptions().get(i).getAnswer());
-                if (i < options.size() - 1) {
-                    builder.append(", ");
-                }
-            }
-            builder.append(")");
-        }
-        return builder.toString();
-    }
+//    /**
+//     * @return Something like {@code QuestionTitle (Option1, Option2, ..)}.
+//     */
+//    public String getTitleWithOptions() {
+//        final StringBuilder builder = new StringBuilder();
+//        builder.append(getTitle());
+//        if (getKind() == QuestionKind.ListRadio) {
+//            builder.append(" (");
+//            for (int i = 0; i < getOptions().size(); i++) {
+//                builder.append(getOptions().get(i).getAnswer());
+//                if (i < options.size() - 1) {
+//                    builder.append(", ");
+//                }
+//            }
+//            builder.append(")");
+//        }
+//        return builder.toString();
+//    }
 
     public String getAnswerField() {
         //return LimeSurveyUtils.answerField(getSurvey().getId(), getId(), getGroupId());
