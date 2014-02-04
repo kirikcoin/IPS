@@ -80,6 +80,7 @@ INSERT INTO surveys_users (survey_id, user_id) VALUES
   (14,  5),
   (15,  6);
 
+
 INSERT INTO survey_stats (survey_id, accessNumber) VALUES
   (1, NULL),
   (2, NULL),
@@ -96,3 +97,26 @@ INSERT INTO survey_stats (survey_id, accessNumber) VALUES
   (13, '*123#'),
   (14, NULL),
   (15, NULL);
+
+
+insert into questions(id, survey_id, title, question_order) values
+  (1, 1, 'Please select your age', 1),
+  (2, 1, 'Please select your occupation', 2),
+  (3, 1, 'What is your favorite color?', 3);
+
+
+insert into question_options(question_id, code, answer) values
+  (1, 'O1', '<18'),
+  (1, 'O2', '18-30'),
+  (1, 'O3', '>30'),
+
+  (2, 'O1', 'Unemployed'),
+  (2, 'O2', 'Own business'),
+  (2, 'O3', 'Other'),
+
+  (3, 'O1', 'Reg'),
+  (3, 'O2', 'Orange'),
+  (3, 'O3', 'Yellow'),
+  (3, 'O4', 'Green'),
+  (3, 'O5', 'Blue'),
+  (3, 'O6', 'Violet');

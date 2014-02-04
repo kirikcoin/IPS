@@ -2,8 +2,6 @@ package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.*
 
-import static mobi.eyeline.ips.model.QuestionKind.ListRadio
-import static mobi.eyeline.ips.model.QuestionKind.LongFreeText
 import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertThat
 
@@ -29,9 +27,9 @@ class SurveyRepositoryTest extends DbTestCase {
         survey.details = details
         surveyRepository.save survey
 
-        def q1 = new Question(survey: survey, kind: LongFreeText,  title: "First one")
-        def q2 = new Question(survey: survey, kind: LongFreeText,  title: "Second one")
-        def q3 = new Question(survey: survey, kind: ListRadio,     title: "With options")
+        def q1 = new Question(survey: survey, title: "First one")
+        def q2 = new Question(survey: survey, title: "Second one")
+        def q3 = new Question(survey: survey, title: "With options")
 
         (q1, q2, q3) = [q1, q2, q3].each {questionRepository.save it}
 
@@ -56,7 +54,7 @@ class SurveyRepositoryTest extends DbTestCase {
 
         def loadSurvey = {surveyRepository.load sid}
 
-        def newQuestion = {title -> new Question(survey: survey, kind: LongFreeText, title: title)}
+        def newQuestion = {title -> new Question(survey: survey, title: title)}
 
         def q1 = newQuestion 'Q1'
         def q2 = newQuestion 'Q2'
