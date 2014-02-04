@@ -54,11 +54,15 @@
             <eye:row>
               <eye:column name="id" title="#{bundle['survey.list.table.id']}"
                           sortable="true" defaultSortOrder="desc">
-                <h:commandLink value="#{row.id}" action="null"/>
+                <h:commandLink value="#{row.id}" action="#{surveyListController.surveyClickHandler}">
+                  <f:param name="surveyId" value="#{row.id}"/>
+                </h:commandLink>
               </eye:column>
               <eye:column name="title" title="#{bundle['survey.list.table.title']}"
                           sortable="true">
-                <h:commandLink value="#{row.title}" action="null"/>
+                <h:commandLink value="#{row.title}" action="#{surveyListController.surveyClickHandler}">
+                  <f:param name="surveyId" value="#{row.id}"/>
+                </h:commandLink>
               </eye:column>
               <eye:column name="client" title="#{bundle['survey.list.table.client']}"
                           sortable="true" visible="#{userSession.managerRole}">
@@ -106,7 +110,7 @@
                          styleClass="button-black" onclick="return page.onCreateSurveyClick();"/>
         </h:panelGroup>
 
-        <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="600">
+        <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="400">
 
           <h:panelGrid columns="2">
             <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>

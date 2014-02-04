@@ -40,6 +40,7 @@
                     <h:graphicImage
                         value="#{facesContext.externalContext.requestContextPath}/resources/images/ru.png"/>
                     <f:param name="lang" value="ru"/>
+                    <f:param name="param" value="#{param}"/>
                   </h:commandLink>
 
                   <h:commandLink title="English"
@@ -48,6 +49,7 @@
                     <h:graphicImage
                         value="#{facesContext.externalContext.requestContextPath}/resources/images/us.png"/>
                     <f:param name="lang" value="en"/>
+                    <f:param name="param" value="#{param}"/>
                   </h:commandLink>
 
                 </h:panelGrid>

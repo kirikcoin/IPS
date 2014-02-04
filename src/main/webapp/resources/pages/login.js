@@ -8,7 +8,7 @@ var page = {
 
   init: function () {
     var loginFunc = this.login;
-    $('#j_password').keypress(function (e) {
+    $('#j_password,#j_username').keypress(function (e) {
       if (e.which == 10 || e.which == 13) //Enter pressed
         loginFunc();
     });

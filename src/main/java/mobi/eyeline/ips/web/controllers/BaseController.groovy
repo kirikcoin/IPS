@@ -5,6 +5,8 @@ import mobi.eyeline.ips.util.RequestParam
 import mobi.eyeline.ips.web.validators.LocalizedMessageInterpolator
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator
 import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import javax.faces.application.FacesMessage
 import javax.faces.context.ExternalContext
@@ -20,6 +22,12 @@ import static java.util.Collections.emptyMap
 import static mobi.eyeline.ips.util.RequestParam.*
 
 public abstract class BaseController implements Serializable {
+
+    private static final Logger logger = LoggerFactory.getLogger(BaseController)
+
+    BaseController() {
+        logger.trace("Controller instantiated: [" + this.class.name + "]")
+    }
 
     //
     //  Auth routines.

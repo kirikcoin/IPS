@@ -13,6 +13,6 @@ abstract class DbTestCase extends GroovyTestCase {
     }
 
     void tearDown() {
-        db.getSessionFactory().close()
+        db.sessionFactory.close()
     }
 }

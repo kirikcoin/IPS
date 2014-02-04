@@ -64,15 +64,27 @@
   </managed-bean>
 
   <managed-bean>
+    <managed-bean-name>surveySettingsController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>clientController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.clients.ClientController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
     <managed-bean-name>profilePageController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.profile.ProfilePageController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
-    <validator>
-      <validator-id>email</validator-id>
-      <validator-class>mobi.eyeline.ips.web.validators.EmailValidator</validator-class>
-    </validator>
+  <validator>
+    <validator-id>email</validator-id>
+    <validator-class>mobi.eyeline.ips.web.validators.EmailValidator</validator-class>
+  </validator>
 
   <!-- NAVIGATION ================================================================================================== -->
 
@@ -134,10 +146,19 @@
   </navigation-rule>
 
   <navigation-rule>
-    <description>Surveys list</description>
+    <description>Survey list</description>
     <navigation-case>
       <from-outcome>SURVEY_LIST</from-outcome>
       <to-view-id>/pages/surveys/index.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Survey settings</description>
+    <navigation-case>
+      <from-outcome>SURVEY_SETTINGS</from-outcome>
+      <to-view-id>/pages/surveys/settings.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

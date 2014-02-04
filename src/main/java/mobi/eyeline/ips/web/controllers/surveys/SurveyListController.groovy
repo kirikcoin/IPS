@@ -13,14 +13,14 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 
 import static mobi.eyeline.ips.web.controllers.surveys.SurveyListController.SurveyState.*
 
 class SurveyListController extends BaseController {
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(SurveyListController.class);
+    private static final Logger logger = LoggerFactory.getLogger(SurveyListController)
 
     private final SurveyRepository surveyRepository = Services.instance().surveyRepository
     private final UserRepository userRepository = Services.instance().userRepository
@@ -90,7 +90,7 @@ class SurveyListController extends BaseController {
                 .collect { new SelectItem(it.id, it.fullName) }
     }
 
-    String createSurvey() {
+    void createSurvey() {
 
         def survey = new Survey(
                 startDate: newSurveyStartDate,
@@ -110,14 +110,17 @@ class SurveyListController extends BaseController {
 
         if (newSurveyValidationError) {
             // Stay on the current page.
-            return null
+            return
         }
 
-        surveyRepository.save survey
+        def surveyId = surveyRepository.save(survey)
+        SurveySettingsController.goToSurvey(surveyId)
+    }
 
-        // getRequest().setAttribute("id", id);
-        // TODO: redirect to survey details page.
-        return 'SURVEY_LIST';
+    void surveyClickHandler() {
+        def surveyId = getParamValue("surveyId").asInteger()
+
+        SurveySettingsController.goToSurvey(surveyId)
     }
 
     static enum SurveyState {
