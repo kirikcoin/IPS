@@ -60,7 +60,7 @@ public class Question implements Serializable {
 
     @PrePersist
     @PreUpdate
-    private void prepareIndex() {
+    public void prepareIndex() {
         if (getSurvey() != null) {
             order = getSurvey().getQuestions().indexOf(this);
         }
@@ -101,7 +101,15 @@ public class Question implements Serializable {
         this.options = options;
     }
 
-//    /**
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    //    /**
 //     * @return Something like {@code QuestionTitle (Option1, Option2, ..)}.
 //     */
 //    public String getTitleWithOptions() {

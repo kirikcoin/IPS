@@ -129,7 +129,7 @@
 
             <h:outputLabel value="#{bundle['survey.properties.client']}" for="clients"/>
             <h:selectOneMenu id="clients" value="#{surveyListController.newSurveyClientId}">
-              <f:selectItems value="#{surveyListController.clients}" />
+              <f:selectItems value="#{clientController.clients}"/>
             </h:selectOneMenu>
 
           </h:panelGrid>

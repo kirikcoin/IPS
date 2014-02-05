@@ -182,6 +182,10 @@ public class Survey implements Serializable {
                getStartDate().compareTo(getEndDate()) <= 0;
     }
 
+    public int getQuestionsCount() {
+        return getQuestions().size();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

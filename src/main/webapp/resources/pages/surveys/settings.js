@@ -1,18 +1,49 @@
 var page = {
 
-  onCreateSurveyClick: function() {
+  onCreateSurveyClick: function () {
     jsfc('newSurveyDialog').show();
 
     return false;
   },
 
   init: function () {
-    ips.$byId("search").focus();
+
+    function wireModificationLink(groupId) {
+      var $header = ips.$byId(groupId + '_header');
+      $header.click(function () {
+        var $link = $header.find('a');
+        var $body = ips.$byId(groupId + '_body');
+
+        if ($body.is(':visible')) {
+          $link.show();
+        } else {
+          $link.hide();
+        }
+      });
+    }
+
+    $(function () {
+      ['groupWelcomeMessage', 'groupEndMessage', 'groupSettings', 'questionsList']
+          .forEach(wireModificationLink);
+    });
+
   },
 
-  onDialogCancel: function(id) {
+  showQuestionDeleteDialog: function (id) {
+    ips.$byId('questionId').val(id);
+    jsfc('questionDeleteDialog').show();
+    return false;
+  },
+
+  onDialogCancel: function (id) {
     jsfc(id).hide();
     ips.message.hideAll();
+    return false;
+  },
+
+  addQuestion: function () {
+    ips.$byId('questionId').val('');
+
     return false;
   }
 };

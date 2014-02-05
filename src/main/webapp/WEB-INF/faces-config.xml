@@ -70,6 +70,24 @@
   </managed-bean>
 
   <managed-bean>
+    <managed-bean-name>surveyResultsController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyResultsController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>surveyStatsController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyStatsController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>surveyInvitesController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyInvitesController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
     <managed-bean-name>clientController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.clients.ClientController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
@@ -159,6 +177,33 @@
     <navigation-case>
       <from-outcome>SURVEY_SETTINGS</from-outcome>
       <to-view-id>/pages/surveys/settings.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Survey results</description>
+    <navigation-case>
+      <from-outcome>SURVEY_RESULTS</from-outcome>
+      <to-view-id>/pages/surveys/results.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Survey statistics</description>
+    <navigation-case>
+      <from-outcome>SURVEY_STATS</from-outcome>
+      <to-view-id>/pages/surveys/statistics.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Survey results</description>
+    <navigation-case>
+      <from-outcome>SURVEY_INVITES</from-outcome>
+      <to-view-id>/pages/surveys/invitations.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

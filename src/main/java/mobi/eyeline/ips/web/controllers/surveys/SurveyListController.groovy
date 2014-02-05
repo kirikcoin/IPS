@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
-import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
@@ -12,9 +11,6 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import javax.faces.context.FacesContext
-import javax.faces.model.SelectItem
 
 import static mobi.eyeline.ips.web.controllers.surveys.SurveyListController.SurveyState.*
 
@@ -81,13 +77,6 @@ class SurveyListController extends BaseController {
                         true)
             }
         }
-    }
-
-    List<SelectItem> getClients() {
-        return userRepository
-                .listByRole(Role.CLIENT)
-                .findAll { !it.blocked }
-                .collect { new SelectItem(it.id, it.fullName) }
     }
 
     void createSurvey() {

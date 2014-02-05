@@ -1,59 +1,30 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
-import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.repository.SurveyRepository
+import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
-import mobi.eyeline.ips.web.controllers.BaseController
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import javax.faces.FacesException
-import javax.faces.component.UIViewRoot
-import javax.faces.context.ExternalContext
 import javax.faces.context.FacesContext
 
-class SurveySettingsController extends BaseController {
+class SurveySettingsController extends BaseSurveyController {
 
     private static final Logger logger = LoggerFactory.getLogger(SurveySettingsController)
 
-    private final SurveyRepository surveyRepository = Services.instance().surveyRepository
+    private final QuestionRepository questionRepository = Services.instance().questionRepository
     private final UserRepository userRepository = Services.instance().userRepository
-
-//    String tabStyles = "tab_active,tab,tab,tab"
-
-    Survey survey
-
-    Integer surveyId
-
-//    int selectedTab = 0
 
     String errorId
 
     int newSurveyClientId
 
-    SurveySettingsController() {
-        surveyId = getRequest().getParameter("id")?.toInteger()
+    Integer questionId
 
-        survey = surveyRepository.load(surveyId)
+    SurveySettingsController() {
+        super()
         newSurveyClientId = survey.client.id
     }
-
-//    void selectTab() {
-//        selectedTab = getParamValue("tab_id").asInteger()
-//
-//        def sb = new StringBuilder()
-//        for (i in 0..3) {
-//            if (sb.length() > 0) {
-//                sb << ","
-//            }
-//
-//            sb << ((i == selectedTab) ? "tab_active" : "tab")
-//        }
-//        tabStyles = sb.toString()
-//
-//        redirect()
-//    }
 
     void saveMessage() {
         boolean validationError =
@@ -82,7 +53,6 @@ class SurveySettingsController extends BaseController {
 
         if (validationError) {
             surveyRepository.refresh(survey)
-            survey.details.title = '111'
             this.errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
             return
@@ -99,6 +69,32 @@ class SurveySettingsController extends BaseController {
         surveyRepository.update(survey)
 
         return "SURVEY_LIST"
+    }
+
+    void moveUp() {
+        int questionId = getParamValue("questionId").asInteger()
+        survey.moveUp(questionRepository.load(questionId))
+        surveyRepository.update(survey)
+
+        survey = surveyRepository.load(surveyId)
+    }
+
+    void moveDown() {
+        int questionId = getParamValue("questionId").asInteger()
+        survey.moveDown(questionRepository.load(questionId))
+        surveyRepository.update(survey)
+
+        survey = surveyRepository.load(surveyId)
+    }
+
+    void deleteQuestion() {
+        int questionId = getParamValue("questionId").asInteger()
+        def question = questionRepository.load(questionId)
+
+        survey.questions.remove(question)
+        surveyRepository.update(survey)
+
+        survey = surveyRepository.load(surveyId)
     }
 
     static void goToSurvey(int surveyId) {

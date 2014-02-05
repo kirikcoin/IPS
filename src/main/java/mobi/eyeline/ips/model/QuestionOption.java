@@ -74,4 +74,8 @@ public class QuestionOption implements Serializable {
     public void setQuestion(Question question) {
         this.question = question;
     }
+
+    public int getOrder() {
+        return getQuestion().getOptions().indexOf(this);
+    }
 }
