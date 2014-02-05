@@ -21,13 +21,13 @@ public class LocaleController extends BaseController {
     }
 
     private String getFullUrl() {
-        // XXX: need to filter parameters here.
         def context = FacesContext.currentInstance.externalContext
 
-        def searchParams = (context.request as HttpServletRequest).getParameter("param")
-        String search =
-                searchParams?.replaceAll('\\{', '?')?.replaceAll(', ', '&')?.replaceAll('}', '')
+        def id = (context.request as HttpServletRequest)
+                .getParameter("param")
+                .split('\\{|\\|}|, ')
+                .find {it.startsWith('id=')}
 
-        return context.requestServletPath + (search.length() <= 1 ? '' : search)
+        return context.requestServletPath + ((id != null) ? "?${id}" : '')
     }
 }

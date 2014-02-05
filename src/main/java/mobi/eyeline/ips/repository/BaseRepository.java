@@ -138,8 +138,21 @@ public abstract class BaseRepository<E, K extends Serializable> {
 
     public void saveOrUpdate(E entity) {
         final Session session = getSessionFactory().openSession();
+        Transaction transaction = null;
         try {
+            transaction = session.beginTransaction();
             session.saveOrUpdate(entity);
+            transaction.commit();
+
+        } catch (HibernateException e) {
+            if ((transaction != null) && transaction.isActive()) {
+                try {
+                    transaction.rollback();
+                } catch (HibernateException ee) {
+                    LOG.error(e.getMessage(), e);
+                }
+            }
+            throw e;
 
         } finally {
             session.close();

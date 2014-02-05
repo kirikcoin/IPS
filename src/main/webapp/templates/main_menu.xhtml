@@ -63,7 +63,7 @@
               <c:set var="section2" value="${fn:contains(view.viewId, 'pages/section2')}"/>
 
               <h:panelGroup rendered="#{userSession.authenticated}">
-                <h:commandLink value="Опросы"
+                <h:commandLink value="#{bundle['main.menu.surveys']}"
                                action="SURVEY_LIST"
                                styleClass="#{surveyList ? 'menuButtonSelected' : 'menuButton'}"
                                rendered="#{userSession.clientRole or userSession.managerRole}"/>

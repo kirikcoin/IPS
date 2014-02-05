@@ -1,8 +1,12 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import mobi.eyeline.ips.model.Question
+import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
+import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -20,6 +24,11 @@ class SurveySettingsController extends BaseSurveyController {
     int newSurveyClientId
 
     Integer questionId
+
+    // Question modification
+    boolean questionEditMode
+    Question question = new Question()
+    DynamicTableModel questionOptions = new DynamicTableModel()
 
     SurveySettingsController() {
         super()
@@ -95,6 +104,84 @@ class SurveySettingsController extends BaseSurveyController {
         surveyRepository.update(survey)
 
         survey = surveyRepository.load(surveyId)
+    }
+
+    String modifyQuestion() {
+        int questionId = getParamValue("questionId").asInteger()
+        question = questionRepository.load(questionId)
+        
+        questionOptions = new DynamicTableModel()
+
+        question.options.each {
+            def row = new DynamicTableRow()
+            row.setValue("answer", it.answer)
+            row.setValue("id", it.id)
+            questionOptions.addRow(row)
+        }
+
+        questionEditMode = true
+
+        return null
+    }
+
+    void saveQuestion() {
+        questionEditMode = true
+
+        def persistedQuestion = (questionId != null) ?
+                questionRepository.load(questionId) : new Question(survey: survey)
+
+        updateQuestionModel(persistedQuestion)
+
+        boolean validationError = renderViolationMessage(
+                validator.validate(persistedQuestion))
+        if (validationError) {
+            surveyRepository.refresh(survey)
+            this.errorId =
+                    FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
+            return
+        }
+
+        questionRepository.saveOrUpdate(persistedQuestion)
+
+        goToSurvey(surveyId)
+    }
+
+    private void updateQuestionModel(Question persistedQuestion) {
+        def getId = { row -> row.getValue('id') as String }
+        def getAnswer = { row -> row.getValue('answer') as String }
+
+        persistedQuestion.title = question.title
+
+        def handleRemoved = {
+            def retainedOptionIds = questionOptions.rows
+                    .collect { getId(it) }
+                    .findAll { !it.empty }
+                    .collect { it.toInteger() }
+
+            persistedQuestion.options.retainAll { it.id in retainedOptionIds }
+        }
+
+        def handleUpdated = {
+            persistedQuestion.options.each { option ->
+                def row = questionOptions.rows
+                        .findAll { !getId(it).empty }
+                        .find { getId(it).toInteger() == option.id }
+                option.answer = getAnswer(row)
+            }
+        }
+
+        def handleAdded = {
+            questionOptions.rows
+                    .findAll { getId(it).empty }
+                    .each {
+                persistedQuestion.options.add new QuestionOption(
+                        question: persistedQuestion, answer: getAnswer(it))
+            }
+        }
+
+        handleRemoved()
+        handleUpdated()
+        handleAdded()
     }
 
     static void goToSurvey(int surveyId) {
