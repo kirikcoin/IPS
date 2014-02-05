@@ -2,11 +2,16 @@ package mobi.eyeline.ips.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -17,17 +22,13 @@ import java.io.Serializable;
 @Table(name = "question_options")
 public class QuestionOption implements Serializable {
 
-    @Id
-    @Column(name = "question_id")
-    private Integer id;
-
     /**
      * Идентификатор ответа.
      */
     @Id
-    @Column(name = "code", nullable = false)
-    @NotEmpty
-    private String code;
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     /**
      * Текст ответа.
@@ -36,27 +37,31 @@ public class QuestionOption implements Serializable {
     @NotEmpty
     private String answer;
 
-    @ManyToOne
-    @JoinColumn(name = "question_id", insertable = false, updatable = false)
+    /**
+     * Порядок отображения вопроса в опросе.
+     */
+    @Column(name = "option_order")
+    private int order;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "question_id")
     private Question question;
 
     public QuestionOption() {
+    }
+
+    void prepareIndex() {
+        if (getQuestion() != null) {
+            order = getQuestion().getOptions().indexOf(this);
+        }
     }
 
     public Integer getId() {
         return id;
     }
 
-    public void setId(Integer question) {
-        this.id = question;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getAnswer() {
@@ -67,6 +72,10 @@ public class QuestionOption implements Serializable {
         this.answer = answer;
     }
 
+    public int getOrder() {
+        return order;
+    }
+
     public Question getQuestion() {
         return question;
     }
@@ -75,7 +84,20 @@ public class QuestionOption implements Serializable {
         this.question = question;
     }
 
-    public int getOrder() {
-        return getQuestion().getOptions().indexOf(this);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof QuestionOption)) return false;
+
+        QuestionOption that = (QuestionOption) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

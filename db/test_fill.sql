@@ -10,6 +10,10 @@ delete from surveys_text;
 delete from survey_stats;
 delete from surveys;
 
+delete from question_options;
+delete from questions;
+
+
 
 SELECT SHA2('bagel', 256) INTO @pw;
 
@@ -105,18 +109,18 @@ insert into questions(id, survey_id, title, question_order) values
   (3, 1, 'What is your favorite color?', 2);
 
 
-insert into question_options(question_id, code, answer) values
-  (1, 'O1', '<18'),
-  (1, 'O2', '18-30'),
-  (1, 'O3', '>30'),
+insert into question_options(question_id, option_order, answer) values
+  (1, 0, '<18'),
+  (1, 1, '18-30'),
+  (1, 2, '>30'),
 
-  (2, 'O1', 'Unemployed'),
-  (2, 'O2', 'Own business'),
-  (2, 'O3', 'Other'),
+  (2, 0, 'Unemployed'),
+  (2, 1, 'Own business'),
+  (2, 2, 'Other'),
 
-  (3, 'O1', 'Reg'),
-  (3, 'O2', 'Orange'),
-  (3, 'O3', 'Yellow'),
-  (3, 'O4', 'Green'),
-  (3, 'O5', 'Blue'),
-  (3, 'O6', 'Violet');
+  (3, 0, 'Red'),
+  (3, 1, 'Orange'),
+  (3, 2, 'Yellow'),
+  (3, 3, 'Green'),
+  (3, 4, 'Blue'),
+  (3, 5, 'Violet');

@@ -31,16 +31,19 @@ class SurveyRepositoryTest extends DbTestCase {
         def q2 = new Question(survey: survey, title: "Second one")
         def q3 = new Question(survey: survey, title: "With options")
 
-        (q1, q2, q3) = [q1, q2, q3].each {questionRepository.save it}
-
         survey.questions.addAll([q1, q2, q3])
+
         surveyRepository.update(survey)
 
+        q3 = questionRepository.load(3)
+
         [
-            new QuestionOption(code: "O1", answer: "Option 1"),
-            new QuestionOption(code: "O2", answer: "Option 2"),
-            new QuestionOption(code: "O3", answer: "Option 3")
-        ].each {q3.options.add it; it.id = q3.id; it.question = q3; questionOptionRepository.save it}
+            new QuestionOption(answer: "Option 1", question: q3),
+            new QuestionOption(answer: "Option 2", question: q3),
+            new QuestionOption(answer: "Option 3", question: q3)
+        ].each {q3.options.add it}
+
+        questionRepository.update(q3)
 
         assertThat surveyRepository.load(1).questions, hasSize(3)
         assertThat questionRepository.list(), hasSize(3)
@@ -80,5 +83,47 @@ class SurveyRepositoryTest extends DbTestCase {
         surveyRepository.update(survey)
 
         assertEquals([q2, q1, q3, q4], loadSurvey().questions)
+    }
+
+    void testOptionOrdering() {
+
+        def prepare = {
+            def survey =
+                    new Survey(startDate: new Date(), endDate: new Date())
+
+            def details = new SurveyDetails(survey: survey, title: 'Foo')
+            survey.details = details
+            surveyRepository.save survey
+
+            survey.questions.addAll([
+                    new Question(survey: survey, title: "First one"),
+                    new Question(survey: survey, title: "Second one")])
+
+            surveyRepository.update(survey)
+        }
+
+        prepare()
+
+        def survey = surveyRepository.load(1)
+
+        def question = new Question(survey: survey, title: "With options")
+        survey.questions.add(question)
+        surveyRepository.update(survey)
+
+        // For ordering
+        surveyRepository.refresh(survey)
+        question = survey.questions.last()
+
+        [
+                new QuestionOption(answer: "Option 1", question: question),
+                new QuestionOption(answer: "Option 2", question: question),
+                new QuestionOption(answer: "Option 3", question: question)
+        ].each {question.options.add it}
+
+        questionRepository.update(question)
+
+        assertThat survey.questions, hasSize(3)
+        assertThat questionRepository.list(), hasSize(3)
+        assertThat questionRepository.load(3).options, hasSize(3)
     }
 }

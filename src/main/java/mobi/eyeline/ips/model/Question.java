@@ -15,10 +15,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,11 +48,12 @@ public class Question implements Serializable {
     private String title;
 
     /**
-     * Варианты ответа на вопрос (если тип вопроса подразумевает их наличие).
+     * Варианты ответа на вопрос.
      */
-    @OneToMany(mappedBy = "question", cascade = ALL)
+    @OneToMany(mappedBy = "question", cascade = ALL, orphanRemoval = true)
+    @OrderColumn(name = "option_order")
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<QuestionOption> options = new LinkedList<>();
+    private List<QuestionOption> options = new ArrayList<>();
 
     /**
      * Порядок отображения вопроса в опросе.
@@ -63,6 +66,10 @@ public class Question implements Serializable {
     public void prepareIndex() {
         if (getSurvey() != null) {
             order = getSurvey().getQuestions().indexOf(this);
+        }
+
+        for (QuestionOption option : getOptions()) {
+            option.prepareIndex();
         }
     }
 
