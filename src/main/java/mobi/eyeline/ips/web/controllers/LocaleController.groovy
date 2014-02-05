@@ -25,7 +25,7 @@ public class LocaleController extends BaseController {
 
         def id = (context.request as HttpServletRequest)
                 .getParameter("param")
-                .split('\\{|\\|}|, ')
+                .split('\\{|\\}|, ')
                 .find {it.startsWith('id=')}
 
         return context.requestServletPath + ((id != null) ? "?${id}" : '')

@@ -171,11 +171,9 @@
                 <h:panelGroup>
                   <h:outputText value="#{bundle['survey.settings.questions']}"/>
 
-                  <h:outputLink value="#"
-                                styleClass="modify"
-                                onclick="return page.addQuestion();">
-                    <h:outputText value="#{bundle['survey.settings.question.add']}"/>
-                  </h:outputLink>
+                  <h:commandLink value="#{bundle['survey.settings.question.add']}"
+                                 action="#{surveySettingsController.modifyQuestion}"
+                                 styleClass="modify"/>
                 </h:panelGroup>
               </f:facet>
 
@@ -186,7 +184,7 @@
                               styleClass="placeholder"/>
 
                 <ui:repeat value="#{surveySettingsController.survey.questions}" var="question">
-                  <h:panelGrid columns="1">
+                  <h:panelGrid columns="1" styleClass="question">
 
                     <!-- Question header -->
                     <f:facet name="header">
@@ -234,7 +232,7 @@
                                    value="#{question.options}"
                                    style="padding-left: 20px">
                         <h:column>
-                          <h:outputText value="#{option.order + 1}. " style="padding-right: 5px"/>
+                          <h:outputText value="#{option.order + 1}. " styleClass="option-number"/>
                           <h:outputText value="#{option.answer}"/>
                         </h:column>
                       </h:dataTable>
@@ -458,7 +456,9 @@
           <eye:dynamicTable id="questionOptions"
                             value="#{surveySettingsController.questionOptions}"
                             tableClass="table-narrow">
-            <eye:textColumn name="id" allowEmpty="true" columnClass="hidden"/>
+            <eye:textColumn name="id"
+                            allowEmpty="true"
+                            columnClass="hidden"/>
             <eye:textColumn name="answer" allowEditAfterAdd="true"/>
           </eye:dynamicTable>
 

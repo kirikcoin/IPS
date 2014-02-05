@@ -19,6 +19,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -44,7 +45,7 @@ public class Question implements Serializable {
      * Текст вопроса, отображается для респондентов.
      */
     @Column(name = "title", nullable = false)
-    @NotEmpty
+    @NotEmpty(message = "{question.validation.title.empty}")
     private String title;
 
     /**
@@ -53,6 +54,8 @@ public class Question implements Serializable {
     @OneToMany(mappedBy = "question", cascade = ALL, orphanRemoval = true)
     @OrderColumn(name = "option_order")
     @LazyCollection(LazyCollectionOption.FALSE)
+    @NotEmpty(message = "{question.validation.options.empty}")
+    @Valid
     private List<QuestionOption> options = new ArrayList<>();
 
     /**

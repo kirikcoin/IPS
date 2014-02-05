@@ -19,6 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
@@ -100,6 +102,14 @@ public class Survey implements Serializable {
     private User client;
 
     public Survey() {
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void prepareIndex() {
+        for (Question question : getQuestions()) {
+            question.prepareIndex();
+        }
     }
 
     public Integer getId() {

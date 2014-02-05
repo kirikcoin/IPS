@@ -107,16 +107,20 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     String modifyQuestion() {
-        int questionId = getParamValue("questionId").asInteger()
-        question = questionRepository.load(questionId)
-        
-        questionOptions = new DynamicTableModel()
+        Integer questionId = getParamValue("questionId").asInteger()
 
-        question.options.each {
-            def row = new DynamicTableRow()
-            row.setValue("answer", it.answer)
-            row.setValue("id", it.id)
-            questionOptions.addRow(row)
+        if (questionId != null) {
+            question = questionRepository.load(questionId)
+
+            questionOptions = new DynamicTableModel()
+            question.options.each {
+                def row = new DynamicTableRow()
+                row.setValue("answer", it.answer)
+                row.setValue("id", it.id)
+                questionOptions.addRow(row)
+            }
+        } else {
+            // Nothing here
         }
 
         questionEditMode = true
@@ -135,13 +139,19 @@ class SurveySettingsController extends BaseSurveyController {
         boolean validationError = renderViolationMessage(
                 validator.validate(persistedQuestion))
         if (validationError) {
-            surveyRepository.refresh(survey)
+//            surveyRepository.refresh(survey)
             this.errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
             return
         }
 
-        questionRepository.saveOrUpdate(persistedQuestion)
+        if (questionId == null) {
+            survey.questions.add(persistedQuestion)
+            surveyRepository.update(survey)
+
+        } else {
+            questionRepository.saveOrUpdate(persistedQuestion)
+        }
 
         goToSurvey(surveyId)
     }
