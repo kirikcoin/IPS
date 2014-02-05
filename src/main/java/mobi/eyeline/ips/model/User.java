@@ -50,6 +50,12 @@ public class User {
     @NotEmpty(message = "{profile.edit.message.validationErrorEmail}")
     private String email;
 
+    /**
+     * Компания (юридическое лицо и т.п.). Опционально.
+     */
+    @Column(name = "company")
+    private String company;
+
     @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(255)")
     @Type(type = "mobi.eyeline.ips.model.GenericEnumUserType", parameters = {
             @Parameter(name = "enumClass", value = "mobi.eyeline.ips.model.Role"),
@@ -108,6 +114,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 
     public Role getRole() {

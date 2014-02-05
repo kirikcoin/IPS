@@ -13,18 +13,18 @@ delete from surveys;
 
 SELECT SHA2('bagel', 256) INTO @pw;
 
-INSERT INTO users (`id`, `email`, `full_name`, `users_name`, `password`, `blocked`, `role`) VALUES
+INSERT INTO users (`id`, `email`, `full_name`, `users_name`, `password`, `blocked`, `role`, `company`) VALUES
 
-  (2, 'username-2@example.com', 'Менеджер Первый', 'manager1', @pw, FALSE, 'manager'),
-  (3, 'username-3@example.com', 'Менеджер Второй', 'manager2', @pw, FALSE, 'manager'),
-  (4, 'username-4@example.com', 'Менеджер Третий', 'manager3', @pw, FALSE, 'manager'),
+  (2, 'username-2@example.com', 'Менеджер Первый', 'manager1', @pw, FALSE, 'manager', 'Рога и копыта'),
+  (3, 'username-3@example.com', 'Менеджер Второй', 'manager2', @pw, FALSE, 'manager', 'Рога и копыта'),
+  (4, 'username-4@example.com', 'Менеджер Третий', 'manager3', @pw, FALSE, 'manager', null),
 
-  (5,  'username-5@example.com',  'Заказчик Иванович Первый',    'client1', @pw, FALSE, 'client'),
-  (6,  'username-6@example.com',  'Заказчик Иванович Второй',    'client2', @pw, FALSE, 'client'),
-  (7,  'username-7@example.com',  'Заказчик Иванович Третий',    'client3', @pw, FALSE, 'client'),
-  (8,  'username-8@example.com',  'Заказчик Иванович Четвертый', 'client4', @pw, FALSE, 'client'),
-  (9,  'username-9@example.com',  'Заказчик Иванович Пятый',     'client5', @pw, FALSE, 'client'),
-  (10, 'username-10@example.com', 'Заказчик Иванович Шестой',    'client6', @pw, FALSE, 'client');
+  (5,  'username-5@example.com',  'Заказчик Иванович Первый',    'client1', @pw, FALSE, 'client', 'Хвост и хобот'),
+  (6,  'username-6@example.com',  'Заказчик Иванович Второй',    'client2', @pw, FALSE, 'client', 'Хвост и хобот'),
+  (7,  'username-7@example.com',  'Заказчик Иванович Третий',    'client3', @pw, FALSE, 'client', 'Рога и копыта'),
+  (8,  'username-8@example.com',  'Заказчик Иванович Четвертый', 'client4', @pw, FALSE, 'client', 'Хвост и хобот'),
+  (9,  'username-9@example.com',  'Заказчик Иванович Пятый',     'client5', @pw, FALSE, 'client', null),
+  (10, 'username-10@example.com', 'Заказчик Иванович Шестой',    'client6', @pw, FALSE, 'client', null);
 
 
 INSERT INTO surveys (id, active, startdate, expires) VALUES
@@ -100,9 +100,9 @@ INSERT INTO survey_stats (survey_id, accessNumber) VALUES
 
 
 insert into questions(id, survey_id, title, question_order) values
-  (1, 1, 'Please select your age', 1),
-  (2, 1, 'Please select your occupation', 2),
-  (3, 1, 'What is your favorite color?', 3);
+  (1, 1, 'Please select your age', 0),
+  (2, 1, 'Please select your occupation', 1),
+  (3, 1, 'What is your favorite color?', 2);
 
 
 insert into question_options(question_id, code, answer) values
