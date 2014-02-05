@@ -26,7 +26,9 @@ public class AdminDemoController extends BaseController
 
 
   public AdminDemoController() {
-    admins = Arrays.asList(new TableItem("Админ 1", "79130000001", "a1@a.com"), new TableItem("Админ 2", "79130000002", "a2@a.com"), new TableItem("Админ 3", "79130000003", "a3@a.com"));
+    admins = Arrays.asList(new TableItem("Админ 1", "79130000001", "a1@a.com"),
+                           new TableItem("Админ 2", "79130000002", "a2@a.com"),
+                           new TableItem("Админ 3", "79130000003", "a3@a.com"));
     dynamicItems = Arrays.asList("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", "Item 8", "Item 9");
     selectedDynamicItems = new ArrayList<String>();
     tabsStyles = "tab_active,tab,tab";

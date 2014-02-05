@@ -77,6 +77,11 @@ public class UserRepository extends BaseRepository<User, Integer> {
                 .uniqueResult();
     }
 
+    public int count(Session filter) {
+        //noinspection unchecked
+        return 1;
+    }
+
 
     // TODO: do we need this?
     public void insertOneTimePass(int userId, String onePass)

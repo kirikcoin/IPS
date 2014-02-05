@@ -31,7 +31,7 @@ class ProfilePageController extends BaseController {
 
         if(currentPassword==null && newPassword==null && passwordForConfirm==null){
             userDataValidationError =
-                    renderViolationMessage(validator.validate(user))               // ?
+                    renderViolationMessage(validator.validate(user))  // ?
             if(userDataValidationError){
                 return null
             }
@@ -45,7 +45,7 @@ class ProfilePageController extends BaseController {
                     if(newPassword==passwordForConfirm){
                         user.password=HashUtils.hashPassword(newPassword)
                         userDataValidationError =
-                                renderViolationMessage(validator.validate(user))               // ?
+                                renderViolationMessage(validator.validate(user))  // ?
                         if(userDataValidationError){
                             return null
                         }
