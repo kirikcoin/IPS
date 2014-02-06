@@ -113,9 +113,9 @@ public class UserRepository extends BaseRepository<User, Integer> {
         if(orderColumn != null) {
             final String property;
             switch (orderColumn) {
-                case "fullname":     property = "full_name";       break;
+                case "fullname":     property = "fullName";       break;
                 case "company":      property = "company";         break;
-                case "login":        property = "users_name";      break;
+                case "login":        property = "login";      break;
                 case "email":        property = "email";           break;
                 case "status":       property = "blocked";         break;
                 default:
