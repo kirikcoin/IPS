@@ -55,18 +55,15 @@
               </eye:column>
               <eye:column name="company" title="#{bundle['client.list.table.company']}"
                           sortable="true">
-                <h:commandLink value="#{row.company}"
-                               onclick="jsfc('clientSettingsDialog').show(); return false"/>
+                <h:outputText value="#{row.company}"/>
               </eye:column>
               <eye:column name="login" title="#{bundle['client.list.table.login']}"
                           sortable="true">
-                <h:commandLink value="#{row.login}"
-                               onclick="jsfc('clientSettingsDialog').show(); return false"/>
+                <h:outputText value="#{row.login}"/>
               </eye:column>
               <eye:column name="email" title="#{bundle['client.list.table.email']}"
                           sortable="true">
-                <h:commandLink value="#{row.email}"
-                               onclick="jsfc('clientSettingsDialog').show(); return false"/>
+                <h:outputText value="#{row.email}"/>
               </eye:column>
               <eye:column name="status" title="#{bundle['client.list.table.status']}"
                           sortable="true">
