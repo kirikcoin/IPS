@@ -13,6 +13,7 @@ import mobi.eyeline.util.jsf.components.data_table.model.ModelException
 class ClientListController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
+    String search
 
     public DataTableModel getTableModel() {
         return new DataTableModel() {
@@ -21,12 +22,28 @@ class ClientListController extends BaseController {
             List getRows(int offset,
                          int limit,
                          DataTableSortOrder sortOrder){
-                return null
+                def list = userRepository.list(
+                        search,
+                        sortOrder.columnId,
+                        sortOrder.asc,
+                        limit,
+                        offset
+                )
+
+                return list.collect {
+                    new TableItem(
+                            fullname: it.fullName,
+                            company: it.company,
+                            login: it.login,
+                            email: it.email,
+                            isBlocked: it.blocked
+                    )
+                }
             }
 
             @Override
             public int getRowsCount() {
-                userRepository.count()
+                userRepository.count(search)
             }
         }
     }

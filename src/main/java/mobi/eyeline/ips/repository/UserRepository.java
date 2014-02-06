@@ -4,17 +4,26 @@ import mobi.eyeline.ips.exceptions.LoginException;
 import mobi.eyeline.ips.model.Role;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.util.HashUtils;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.criterion.Restrictions.eq;
+import static org.hibernate.criterion.Restrictions.ilike;
+import static org.hibernate.criterion.Restrictions.or;
 
 public class UserRepository extends BaseRepository<User, Integer> {
 
@@ -77,9 +86,68 @@ public class UserRepository extends BaseRepository<User, Integer> {
                 .uniqueResult();
     }
 
-    public int count(Session filter) {
-        //noinspection unchecked
-        return 1;
+    public List<User> list(String filter,
+                           String orderColumn,
+                           boolean orderAsc,
+                           int limit,
+                           int offset) {
+        final Session session = getSessionFactory().openSession();
+        final Criteria criteria = session.createCriteria(User.class);
+
+        if (isNotBlank(filter)) {
+            filter = filter.trim();
+            final List<Criterion> filters = new ArrayList<>();
+
+            filters.add(ilike("full_name", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("company", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("users_name", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("email", filter, MatchMode.ANYWHERE));
+
+            criteria.add(or(filters.toArray(new Criterion[filters.size()])));
+
+        }
+
+        criteria.setFirstResult(offset).setMaxResults(limit);
+
+        // TODO: may be in controller too
+        if(orderColumn != null) {
+            final String property;
+            switch (orderColumn) {
+                case "fullname":     property = "full_name";       break;
+                case "company":      property = "company";         break;
+                case "login":        property = "users_name";      break;
+                case "email":        property = "email";           break;
+                case "status":       property = "blocked";         break;
+                default:
+                    throw new RuntimeException("Unexpected sort column: " + orderColumn);
+            }
+
+            criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
+        }
+
+        return (List<User>) criteria.list();
+    }
+
+    public int count(String filter) {
+        final Session session = getSessionFactory().getCurrentSession();
+        final Criteria criteria = session.createCriteria(User.class);
+
+        if(isNotBlank(filter)){
+            filter = filter.trim();
+            final List<Criterion> filters = new ArrayList<>();
+
+            filters.add(ilike("full_name", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("company", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("users_name", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("email", filter, MatchMode.ANYWHERE));
+
+            criteria.add(or(filters.toArray(new Criterion[filters.size()])));
+
+        }
+
+        criteria.setProjection(Projections.rowCount());
+
+        return ((Number) criteria.uniqueResult()).intValue();
     }
 
 
