@@ -28,8 +28,13 @@ class SurveyRepositoryTest extends DbTestCase {
         surveyRepository.save survey
 
         def q1 = new Question(survey: survey, title: "First one")
+        q1.options.add(new QuestionOption(answer: 'O1', question: q1))
+
         def q2 = new Question(survey: survey, title: "Second one")
+        q2.options.add(new QuestionOption(answer: 'O2', question: q2))
+
         def q3 = new Question(survey: survey, title: "With options")
+        q3.options.add(new QuestionOption(answer: 'O3', question: q3))
 
         survey.questions.addAll([q1, q2, q3])
 
@@ -47,7 +52,7 @@ class SurveyRepositoryTest extends DbTestCase {
 
         assertThat surveyRepository.load(1).questions, hasSize(3)
         assertThat questionRepository.list(), hasSize(3)
-        assertThat questionRepository.load(3).options, hasSize(3)
+        assertThat questionRepository.load(3).options, hasSize(4)
     }
 
     void testQuestionOrdering() {
@@ -57,7 +62,11 @@ class SurveyRepositoryTest extends DbTestCase {
 
         def loadSurvey = {surveyRepository.load sid}
 
-        def newQuestion = {title -> new Question(survey: survey, title: title)}
+        def newQuestion = {title ->
+            def q = new Question(survey: survey, title: title);
+            q.options.add(new QuestionOption(answer: "${q.title}-option", question: q))
+            q
+        }
 
         def q1 = newQuestion 'Q1'
         def q2 = newQuestion 'Q2'
@@ -95,9 +104,15 @@ class SurveyRepositoryTest extends DbTestCase {
             survey.details = details
             surveyRepository.save survey
 
+            def newQuestion = {title ->
+                def q = new Question(survey: survey, title: title);
+                q.options.add(new QuestionOption(answer: "${q.title}-option", question: q))
+                q
+            }
+
             survey.questions.addAll([
-                    new Question(survey: survey, title: "First one"),
-                    new Question(survey: survey, title: "Second one")])
+                    newQuestion("First one"),
+                    newQuestion("Second one")])
 
             surveyRepository.update(survey)
         }
@@ -107,6 +122,8 @@ class SurveyRepositoryTest extends DbTestCase {
         def survey = surveyRepository.load(1)
 
         def question = new Question(survey: survey, title: "With options")
+        question.options.add(new QuestionOption(answer: 'Foo', question: question))
+
         survey.questions.add(question)
         surveyRepository.update(survey)
 
@@ -124,6 +141,6 @@ class SurveyRepositoryTest extends DbTestCase {
 
         assertThat survey.questions, hasSize(3)
         assertThat questionRepository.list(), hasSize(3)
-        assertThat questionRepository.load(3).options, hasSize(3)
+        assertThat questionRepository.load(3).options, hasSize(4)
     }
 }
