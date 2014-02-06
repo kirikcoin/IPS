@@ -11,7 +11,7 @@
       <link rel="STYLESHEET" type="text/css"
             href="#{facesContext.externalContext.requestContextPath}/resources/pages/clients/index.less"/>
 
-      <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/resources/pages/section1/index.js"></script>
+      <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/resources/pages/clients/index.js"></script>
     </ui:define>
 
     <ui:define name="scripts">
@@ -31,31 +31,42 @@
           <h:panelGrid columns="2" styleClass="page-header">
             <h:outputText value="#{bundle['client.list.title']}"/>
             <h:panelGroup styleClass="page-header-input">
-              <h:outputLabel value="Поиск:"/>
-              <eye:inputText id="search" value="#{clientListController.search}" onkeydown="return page.nameFilterKeyDown(event)"/>
+              <h:outputLabel value="#{bundle['search.label']}"/>
+              <eye:inputText id="search"
+                             value="#{clientListController.search}"
+                             onkeydown="return page.nameFilterKeyDown(event)"/>
             </h:panelGroup>
           </h:panelGrid>
 
-          <eye:dataTable id="table" value="#{clientListController.tableModel}" var="row" pageSize="50" tableClass="grid">
+          <eye:dataTable id="table"
+                         value="#{clientListController.tableModel}"
+                         var="row"
+                         pageSize="50"
+                         tableClass="grid">
             <f:facet name="ifEmpty">
               <h:outputText value="Нет элементов"/>
             </f:facet>
             <eye:row>
               <eye:column name="fullname" title="#{bundle['client.list.table.fullname']}"
                           sortable="true" defaultSortOrder="desc">
-                <h:commandLink value="#{row.fullname}" action="null"/>
+                <h:commandLink value="#{row.fullname}"
+                               action="null"
+                               onclick="jsfc('clientSettingsDialog').show(); return false"/>
               </eye:column>
               <eye:column name="company" title="#{bundle['client.list.table.company']}"
                           sortable="true">
-                <h:outputText value="#{row.company}"/>
+                <h:commandLink value="#{row.company}"
+                               onclick="jsfc('clientSettingsDialog').show(); return false"/>
               </eye:column>
               <eye:column name="login" title="#{bundle['client.list.table.login']}"
                           sortable="true">
-                <h:commandLink value="#{row.login}"/>
+                <h:commandLink value="#{row.login}"
+                               onclick="jsfc('clientSettingsDialog').show(); return false"/>
               </eye:column>
               <eye:column name="email" title="#{bundle['client.list.table.email']}"
                           sortable="true">
-                <h:commandLink value="#{row.email}"/>
+                <h:commandLink value="#{row.email}"
+                               onclick="jsfc('clientSettingsDialog').show(); return false"/>
               </eye:column>
               <eye:column name="status" title="#{bundle['client.list.table.status']}"
                           sortable="true">
@@ -74,25 +85,97 @@
         </h:panelGroup>
 
         <h:panelGroup layout="block" style="margin-top: 15px;">
-          <h:commandLink value="Диалог" styleClass="button-black" onclick="jsfc('dialog').show(); return false"/>
+          <h:commandLink value="#{bundle['client.list.button.createclient']}"
+                         styleClass="button-black"
+                         onclick="jsfc('newClientDialog').show(); return false"/>
         </h:panelGroup>
 
-        <eye:dialog id="dialog" title="Welcome" width="250">
-          <h:panelGroup layout="block">
-            <h:outputText value="Hello, admin!"/>
-          </h:panelGroup>
+
+        <eye:dialog id="newClientDialog" title="#{bundle['client.dialog.newclient.title']}" width="400">
+
+          <h:panelGrid columns="2">
+            <h:outputLabel value="#{bundle['client.dialog.newclient.field.fullname']}"
+                           for="newClientFullName"/>
+            <eye:inputText id="newClientFullName"
+                           value=""/>
+
+            <h:outputLabel value="#{bundle['client.dialog.newclient.field.company']}"
+                           for="newClientCompany"/>
+            <eye:inputText id="newClientCompany"
+                           value=""/>
+
+            <h:outputLabel value="#{bundle['client.dialog.newclient.field.login']}"
+                           for="newClientLogin"/>
+            <eye:inputText id="newClientLogin"
+                           value=""/>
+
+            <h:outputLabel value="#{bundle['client.dialog.newclient.field.email']}"
+                           for="newClientEmail"/>
+            <eye:inputText id="newClientEmail"
+                           value=""/>
+
+
+          </h:panelGrid>
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green" value="OK" onclick="jsfc('dialog').hide(); return false;"/>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.newclient.button.create']}"
+                             />
             </eye:button>
             <eye:button>
-              <h:commandLink styleClass="button-green" value="Cancel" onclick="jsfc('dialog').hide(); return false;"/>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.newclient.button.cancel']}"
+                             onclick="jsfc('newClientDialog').hide(); ips.message.hideAll(); return false;"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>
+
+        </eye:dialog>
+
+        <eye:dialog id="clientSettingsDialog" title="#{bundle['client.dialog.settings.title']}" width="400">
+
+          <h:panelGrid columns="2">
+            <h:outputLabel value="#{bundle['client.dialog.settings.field.fullname']}"
+                           for="clientSettingsFullName"/>
+            <eye:inputText id="clientSettingsFullName"
+                           value=""/>
+
+            <h:outputLabel value="#{bundle['client.dialog.settings.field.company']}"
+                           for="clientSettingsCompany"/>
+            <eye:inputText id="clientSettingsCompany"
+                           value=""/>
+
+            <h:outputLabel value="#{bundle['client.dialog.settings.field.login']}"
+                           for="clientSettingsLogin"/>
+            <eye:inputText id="clientSettingsLogin"
+                           value=""/>
+
+            <h:outputLabel value="#{bundle['client.dialog.settings.field.email']}"
+                           for="clientSettingsEmail"/>
+            <eye:inputText id="clientSettingsEmail"
+                           value=""/>
+
+
+          </h:panelGrid>
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.newclient.button.create']}"
+                      />
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.newclient.button.cancel']}"
+                             onclick="jsfc('clientSettingsDialog').hide(); ips.message.hideAll(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
         </eye:dialog>
 
       </h:form>
+
+
 
     </ui:define>
 

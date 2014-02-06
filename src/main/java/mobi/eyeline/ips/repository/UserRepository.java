@@ -98,9 +98,9 @@ public class UserRepository extends BaseRepository<User, Integer> {
             filter = filter.trim();
             final List<Criterion> filters = new ArrayList<>();
 
-            filters.add(ilike("full_name", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("fullName", filter, MatchMode.ANYWHERE));
             filters.add(ilike("company", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("users_name", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("login", filter, MatchMode.ANYWHERE));
             filters.add(ilike("email", filter, MatchMode.ANYWHERE));
 
             criteria.add(or(filters.toArray(new Criterion[filters.size()])));
@@ -113,9 +113,9 @@ public class UserRepository extends BaseRepository<User, Integer> {
         if(orderColumn != null) {
             final String property;
             switch (orderColumn) {
-                case "fullname":     property = "fullName";       break;
+                case "fullname":     property = "fullName";        break;
                 case "company":      property = "company";         break;
-                case "login":        property = "login";      break;
+                case "login":        property = "login";           break;
                 case "email":        property = "email";           break;
                 case "status":       property = "blocked";         break;
                 default:
@@ -136,9 +136,9 @@ public class UserRepository extends BaseRepository<User, Integer> {
             filter = filter.trim();
             final List<Criterion> filters = new ArrayList<>();
 
-            filters.add(ilike("full_name", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("fullName", filter, MatchMode.ANYWHERE));
             filters.add(ilike("company", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("users_name", filter, MatchMode.ANYWHERE));
+            filters.add(ilike("login", filter, MatchMode.ANYWHERE));
             filters.add(ilike("email", filter, MatchMode.ANYWHERE));
 
             criteria.add(or(filters.toArray(new Criterion[filters.size()])));
