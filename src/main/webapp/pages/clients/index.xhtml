@@ -23,15 +23,15 @@
 
 
           if (blockError=="true")
-            ips.message.error("ERROR block");
+            ips.message.error("#{bundle['client.dialog.block.error']}");
           else if (blockError=="false")
-            ips.message.info("blokirovan");
+            ips.message.info("#{bundle['client.dialog.block.done']}");
 
 
           if (unblockError=="true")
-            ips.message.error("ERROR unblock");
+            ips.message.error("#{bundle['client.dialog.unblock.error']}");
           else if (unblockError=="false")
-            ips.message.info("razblokirovan");
+            ips.message.info("#{bundle['client.dialog.unblock.done']}");
 
         })
       </script>
