@@ -111,6 +111,7 @@
         <!-- Provided -->
         <exclude name="servlet-api*.jar"/>
         <exclude name="jsp-api*.jar"/>
+        <exclude name="javax.el*.jar"/>
 
         <!-- Test -->
         <exclude name="junit*.jar"/>
