@@ -19,5 +19,7 @@
   <include file="2014-02-04.0_ips_schema.sql"     relativeToChangelogFile="true"/>
   <include file="2014-02-05.0_ips_schema.sql"     relativeToChangelogFile="true"/>
   <include file="2014-02-05.1_ips_schema.sql"     relativeToChangelogFile="true"/>
+  <include file="2014-02-07.0_ips_schema.sql"     relativeToChangelogFile="true"/>
+  <include file="2014-02-07.1_ips_schema.sql"     relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

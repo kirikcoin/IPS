@@ -2,6 +2,7 @@ package mobi.eyeline.ips.service;
 
 
 import mobi.eyeline.ips.properties.Config;
+import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.DB;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
@@ -27,11 +28,13 @@ public class Services {
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
     private final QuestionOptionRepository questionOptionRepository;
+    private final AnswerRepository answerRepository;
 
     private final SurveyService surveyService;
     private final TemplateService templateService;
     private final MailService mailService;
     private final UserService userService;
+    private final UssdService ussdService;
 
     public Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -43,6 +46,7 @@ public class Services {
         surveyStatsRepository = new SurveyStatsRepository(db);
         surveyRepository = new SurveyRepository(db);
         questionOptionRepository = new QuestionOptionRepository(db);
+        answerRepository = new AnswerRepository(db);
 
         surveyService = new SurveyService(
                 db,
@@ -61,6 +65,7 @@ public class Services {
                         config.getMailFrom()));
 
         userService = new UserService(userRepository, mailService);
+        ussdService = new UssdService(surveyRepository, respondentRepository, answerRepository, questionOptionRepository);
     }
 
     public static synchronized void initialize(Config properties) {
@@ -111,6 +116,10 @@ public class Services {
         return questionOptionRepository;
     }
 
+    public AnswerRepository getAnswerRepository() {
+        return answerRepository;
+    }
+
     public SurveyService getSurveyService() {
         return surveyService;
     }
@@ -121,5 +130,9 @@ public class Services {
 
     public UserService getUserService() {
         return userService;
+    }
+
+    public UssdService getUssdService() {
+        return ussdService;
     }
 }

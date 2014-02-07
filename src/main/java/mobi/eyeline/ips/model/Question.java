@@ -119,28 +119,12 @@ public class Question implements Serializable {
         this.order = order;
     }
 
-    //    /**
-//     * @return Something like {@code QuestionTitle (Option1, Option2, ..)}.
-//     */
-//    public String getTitleWithOptions() {
-//        final StringBuilder builder = new StringBuilder();
-//        builder.append(getTitle());
-//        if (getKind() == QuestionKind.ListRadio) {
-//            builder.append(" (");
-//            for (int i = 0; i < getOptions().size(); i++) {
-//                builder.append(getOptions().get(i).getAnswer());
-//                if (i < options.size() - 1) {
-//                    builder.append(", ");
-//                }
-//            }
-//            builder.append(")");
-//        }
-//        return builder.toString();
-//    }
-
-    public String getAnswerField() {
-        //return LimeSurveyUtils.answerField(getSurvey().getId(), getId(), getGroupId());
-        throw new AssertionError("Not implemented yet.");
+    public Question getNext() {
+        if ((getOrder() + 1) >= getSurvey().getQuestionsCount()) {
+            return null;
+        } else {
+            return getSurvey().getQuestions().get(getOrder() + 1);
+        }
     }
 
     @Override

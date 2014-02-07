@@ -3,17 +3,16 @@
 -- Cleanup
 --
 
-delete from users where id >= 2;
-
 delete from surveys_users;
 delete from surveys_text;
 delete from survey_stats;
-delete from surveys;
 
 delete from question_options;
 delete from questions;
 
+delete from surveys;
 
+delete from users where id >= 2;
 
 SELECT SHA2('bagel', 256) INTO @pw;
 
