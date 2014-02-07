@@ -92,7 +92,7 @@
         <filter token="build.environment" value="${build.environment}"/>
       </filterset>
       <fileset dir="${resources.dir}">
-        <include name="*.*"/>
+        <include name="**/*.*"/>
       </fileset>
     </copy>
 
