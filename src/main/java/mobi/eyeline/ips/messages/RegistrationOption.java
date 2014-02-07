@@ -10,7 +10,7 @@ import static mobi.eyeline.ips.messages.ParseUtils.getInt;
 import static mobi.eyeline.ips.messages.UssdOption.UssdOptionType.REGISTRATION_ACCEPTED;
 import static mobi.eyeline.ips.messages.UssdOption.UssdOptionType.REGISTRATION_DECLINED;
 
-public class RegistrationOption extends UssdOption {
+public abstract class RegistrationOption extends UssdOption {
 
     protected RegistrationOption(int key,
                                  String text,
@@ -23,8 +23,8 @@ public class RegistrationOption extends UssdOption {
                                                              String textYes,
                                                              String textNo) {
         return Arrays.asList(
-                new RegistrationOption(1, textYes, survey.getId(), REGISTRATION_ACCEPTED),
-                new RegistrationOption(2, textNo, survey.getId(), REGISTRATION_DECLINED)
+                new RegistrationAccepted(1, textYes, survey.getId()),
+                new RegistrationDeclined(2, textNo, survey.getId())
         );
     }
 
@@ -42,6 +42,11 @@ public class RegistrationOption extends UssdOption {
                     getInt(options, "survey_id")
             );
         }
+
+        @Override
+        public UssdModel handle(String msisdn, MessageHandler handler) {
+            return handler.handle(msisdn, this);
+        }
     }
 
     public static class RegistrationDeclined extends RegistrationOption {
@@ -57,6 +62,11 @@ public class RegistrationOption extends UssdOption {
                     null,
                     getInt(options, "survey_id")
             );
+        }
+
+        @Override
+        public UssdModel handle(String msisdn, MessageHandler handler) {
+            return handler.handle(msisdn, this);
         }
     }
 }

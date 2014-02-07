@@ -1,5 +1,7 @@
 package mobi.eyeline.ips.messages;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,6 +57,8 @@ public abstract class UssdOption {
 
         return uri.toString();
     }
+
+    public abstract UssdModel handle(String msisdn, MessageHandler handler);
 
     /**
      * @return {@code null} if the provided options do not match any valid message.

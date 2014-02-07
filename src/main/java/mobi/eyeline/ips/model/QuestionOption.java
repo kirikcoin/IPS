@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import org.hibernate.annotations.Proxy;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.annotation.Generated;
@@ -20,6 +21,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "question_options")
+@Proxy(lazy = false)
 public class QuestionOption implements Serializable {
 
     /**

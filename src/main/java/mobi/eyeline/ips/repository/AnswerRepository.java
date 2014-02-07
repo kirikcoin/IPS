@@ -25,8 +25,8 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
             transaction = session.beginTransaction();
 
             session.createQuery(
-                    "delete Answer where question.survey = :survey and respondent = :respondent")
-                    .setEntity("survey", survey)
+                    "delete Answer where question in :questions and respondent = :respondent")
+                    .setParameterList("questions", survey.getQuestions())
                     .setEntity("respondent", respondent)
                     .executeUpdate();
 

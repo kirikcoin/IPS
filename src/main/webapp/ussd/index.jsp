@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="mobi.eyeline.ips.messages.MissingParameterException" %>
 <%@ page import="mobi.eyeline.ips.messages.UssdModel" %>
 <%@ page import="mobi.eyeline.ips.service.Services" %>
@@ -29,7 +30,7 @@
       <navigation>
 
         <c:forEach items="${model.options}" var="option">
-          <link accesskey="${option.key}" pageId="index.jsp?${option.uri}">
+          <link accesskey="${option.key}" pageId="index.jsp?${fn:escapeXml(option.uri)}">
             <c:out value="${option.text}"/>
           </link>
         </c:forEach>

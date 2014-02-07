@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.service;
 
 import mobi.eyeline.ips.messages.AnswerOption;
+import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
 import mobi.eyeline.ips.messages.ParseUtils;
 import mobi.eyeline.ips.messages.RegistrationOption;
@@ -31,7 +32,7 @@ import static mobi.eyeline.ips.messages.RegistrationOption.RegistrationDeclined;
 /**
  * Mobilizer landing page rendering.
  */
-public class UssdService {
+public class UssdService implements MessageHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(UssdService.class);
 
@@ -72,15 +73,14 @@ public class UssdService {
             return handleStartPage(msisdn, surveyId);
 
         } else {
-            return handle(msisdn, answer);
+            return answer.handle(msisdn, this);
         }
     }
 
     private UssdModel handleStartPage(String msisdn, int surveyId) {
         final Survey survey = surveyRepository.get(surveyId);
 
-
-        if ((survey == null)) {
+        if (survey == null) {
             logger.info("Survey not found for ID = [" + surveyId + "]");
             return new UssdModel("Survey not found");
 
@@ -114,12 +114,18 @@ public class UssdService {
             }
 
         } else {
-            // Respondent is not registered yet, show welcome message.
-            return renderWelcome(survey);
+            if (respondent.isAnswered()) {
+                // Respondent has already answered to the prompt,
+                return renderFirstQuestion(survey, respondent);
+            } else {
+                // Respondent is not registered yet, show welcome message.
+                return renderWelcome(survey);
+            }
         }
     }
 
-    private UssdModel handle(String msisdn, RegistrationAccepted request) {
+    @Override
+    public UssdModel handle(String msisdn, RegistrationAccepted request) {
         final Survey survey = surveyRepository.get(request.getSurveyId());
         if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
             return new UssdModel("Survey not found");
@@ -131,7 +137,8 @@ public class UssdService {
         return renderFirstQuestion(survey, respondent);
     }
 
-    private UssdModel handle(String msisdn, RegistrationDeclined request) {
+    @Override
+    public UssdModel handle(String msisdn, RegistrationDeclined request) {
         final Survey survey = surveyRepository.get(request.getSurveyId());
         if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
             return new UssdModel("Survey not found");
@@ -140,7 +147,8 @@ public class UssdService {
         return new UssdModel(survey.getDetails().getEndText());
     }
 
-    private UssdModel handle(String msisdn, AnswerOption request) {
+    @Override
+    public UssdModel handle(String msisdn, AnswerOption request) {
         final Survey survey = surveyRepository.get(request.getSurveyId());
         if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
             return new UssdModel("Survey not found");
@@ -164,7 +172,8 @@ public class UssdService {
         }
     }
 
-    private UssdModel handle(String msisdn, UssdOption request) {
+    @Override
+    public UssdModel handle(String msisdn, UssdOption request) {
         throw new AssertionError("Unsupported request type: " + request.getClass());
     }
 

@@ -55,6 +55,11 @@ public class AnswerOption extends UssdOption {
         return properties;
     }
 
+    @Override
+    public UssdModel handle(String msisdn, MessageHandler handler) {
+        return handler.handle(msisdn, this);
+    }
+
     public static AnswerOption parse(Map<String, String[]> options)
             throws MissingParameterException {
         return new AnswerOption(
