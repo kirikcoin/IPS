@@ -18,6 +18,21 @@
       <script type="text/javascript">
         $(function(){
           page.init();
+          var blockError = "#{clientListController.blockError}";
+          var unblockError = "#{clientListController.unblockError}";
+
+
+          if (blockError=="true")
+            ips.message.error("ERROR block");
+          else if (blockError=="false")
+            ips.message.info("blokirovan");
+
+
+          if (unblockError=="true")
+            ips.message.error("ERROR unblock");
+          else if (unblockError=="false")
+            ips.message.info("razblokirovan");
+
         })
       </script>
     </ui:define>
@@ -25,6 +40,7 @@
     <ui:define name="content">
 
       <h:form enctype="multipart/form-data" id="content">
+       <h:inputHidden id="userLogin" value="#{clientListController.userLogin}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -52,28 +68,53 @@
                 <h:commandLink value="#{row.fullname}"
                                action="null"
                                onclick="jsfc('clientSettingsDialog').show(); return false"/>
+
               </eye:column>
+
               <eye:column name="company" title="#{bundle['client.list.table.company']}"
                           sortable="true">
                 <h:outputText value="#{row.company}"/>
               </eye:column>
+
               <eye:column name="login" title="#{bundle['client.list.table.login']}"
                           sortable="true">
                 <h:outputText value="#{row.login}"/>
               </eye:column>
+
               <eye:column name="email" title="#{bundle['client.list.table.email']}"
                           sortable="true">
                 <h:outputText value="#{row.email}"/>
               </eye:column>
+
+
               <eye:column name="status" title="#{bundle['client.list.table.status']}"
                           sortable="true">
+
                 <h:outputText value="#{bundle['client.list.table.status.active']}"
                               styleClass="clientStatusActive"
                               rendered="#{row.isBlocked == false}" />
+
                 <h:outputText value="#{bundle['client.list.table.status.blocked']}"
                               styleClass="clientStatusBlocked"
                               rendered="#{row.isBlocked == true}" />
+
+                <h:outputText value=" ("/>
+                <h:commandLink value="#{bundle['client.list.table.status.active.block']}"
+                               onclick="return page.showBlockDialog('#{row.login}');"
+                               rendered="#{row.isBlocked == false}">
+                </h:commandLink>
+
+                <h:commandLink value="#{bundle['client.list.table.status.blocked.unblock']}"
+                               onclick="return page.showUnblockDialog('#{row.login}');"
+                               rendered="#{row.isBlocked == true}">
+                </h:commandLink>
+                <h:outputText value=" | "/>
+                <h:commandLink value="#{bundle['client.list.table.status.resetpassword']}"
+                               action="null"
+                               onclick="jsfc('clientPasswordResetDialog').show(); return false"/>
+                <h:outputText value=")"/>
               </eye:column>
+
             </eye:row>
           </eye:dataTable>
 
@@ -169,6 +210,67 @@
           </eye:buttons>
 
         </eye:dialog>
+
+        <eye:dialog id="clientBlockDialog" title="#{bundle['client.dialog.block.title']}" width="450">
+          <h:panelGroup layout="block">
+            <h:outputText value="#{bundle['client.dialog.block.text']}"/>
+          </h:panelGroup>
+          <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.button.confirm']}"
+                             action="#{clientListController.blockUser}"/>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.button.cancel']}"
+                             onclick="jsfc('clientBlockDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+        </eye:dialog>
+
+        <eye:dialog id="clientUnblockDialog" title="#{bundle['client.dialog.unblock.title']}" width="450">
+          <h:panelGroup layout="block">
+            <h:outputText value="#{bundle['client.dialog.unblock.text']}"/>
+          </h:panelGroup>
+          <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.button.confirm']}"
+                             action="#{clientListController.unblockUser}"/>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.button.cancel']}"
+                             onclick="jsfc('clientUnblockDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+        </eye:dialog>
+
+        <eye:dialog id="clientPasswordResetDialog" title="#{bundle['client.dialog.passwordreset.title']}" width="450">
+          <h:panelGroup layout="block">
+            <h:outputText value="#{bundle['client.dialog.passwordreset.text']}"/>
+          </h:panelGroup>
+          <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.passwordreset.confirm']}"
+                             onclick="jsfc('clientPasswordResetDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['client.dialog.passwordreset.cancel']}"
+                             onclick="jsfc('clientPasswordResetDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+        </eye:dialog>
+
 
       </h:form>
 

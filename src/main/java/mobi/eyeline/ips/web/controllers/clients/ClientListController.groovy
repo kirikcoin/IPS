@@ -1,11 +1,12 @@
 package mobi.eyeline.ips.web.controllers.clients
 
+import mobi.eyeline.ips.exceptions.LoginException
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
-import mobi.eyeline.util.jsf.components.data_table.model.ModelException
 
 /**
  * Created by dizan on 05.02.14.
@@ -13,6 +14,11 @@ import mobi.eyeline.util.jsf.components.data_table.model.ModelException
 class ClientListController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
+    private final UserService userService = Services.instance().userService
+
+    def String userLogin
+    Boolean blockError
+    Boolean unblockError
     String search
 
     public DataTableModel getTableModel() {
@@ -47,6 +53,29 @@ class ClientListController extends BaseController {
             }
         }
     }
+
+
+
+    void blockUser() {
+        String userLogin = getParamValue("userLogin").asString()
+            try {
+                userService.blockUser(userLogin);
+                blockError = false
+            } catch (LoginException e) {
+                blockError = true
+            }
+    }
+
+    void unblockUser() {
+        String userLogin = getParamValue("userLogin").asString()
+            try {
+                userService.unblockUser(userLogin);
+                unblockError = false
+            } catch (LoginException e) {
+                unblockError = true
+            }
+    }
+
 
 
     static class TableItem implements Serializable {

@@ -29,4 +29,23 @@ public class UserService {
         userRepository.update(user);
         mailService.sendPasswordRestore(user, password);
     }
+
+    public void blockUser(String login) throws LoginException {
+        User user = userRepository.getByLogin(login);
+        if(user == null || user.isBlocked()) {
+            throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
+        }
+        user.setBlocked(true);
+        userRepository.update(user);
+    }
+
+    public void unblockUser(String login) throws LoginException {
+        User user = userRepository.getByLogin(login);
+        if(user == null || !user.isBlocked()) {
+            throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
+        }
+        user.setBlocked(false);
+        userRepository.update(user);
+    }
+
 }

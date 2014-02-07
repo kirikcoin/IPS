@@ -223,4 +223,34 @@
     </navigation-case>
   </navigation-rule>
 
+  <navigation-rule>
+    <description>Блокирование/разблокирование пользователя на странице заказчиков</description>
+
+    <navigation-case>
+      <from-outcome>DONE_BLOCK</from-outcome>
+      <to-view-id>/pages/clients/index.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
+      <from-outcome>ERROR_BLOCK</from-outcome>
+      <to-view-id>/passwordreset.faces?recovery=false</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
+      <from-outcome>DONE_UNBLOCK</from-outcome>
+      <to-view-id>/pages/clients/index.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+    <navigation-case>
+      <from-outcome>ERROR_UNBLOCK</from-outcome>
+      <to-view-id>/passwordreset.faces?recovery=false</to-view-id>
+      <redirect/>
+    </navigation-case>
+
+
+  </navigation-rule>
+
 </faces-config>
