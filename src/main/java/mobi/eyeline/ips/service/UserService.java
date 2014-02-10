@@ -37,6 +37,8 @@ public class UserService {
         }
         user.setBlocked(true);
         userRepository.update(user);
+        mailService.sendUserDeactivation(user);
+
     }
 
     public void unblockUser(String login) throws LoginException {
@@ -46,6 +48,7 @@ public class UserService {
         }
         user.setBlocked(false);
         userRepository.update(user);
+        mailService.sendUserActivation(user);
     }
 
     public String generatePassword() {

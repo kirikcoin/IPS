@@ -46,6 +46,13 @@ public class MailService {
                 templateService.formatUserDeactivation(user)
         ));
     }
+    public void sendUserActivation(User user) {
+        send(new Message(
+                user.getEmail(),
+                getSubject("email.subject.user.activation"),
+                templateService.formatUserActivation(user)
+        ));
+    }
 
     public void sendPasswordRestore(User user, String rawNewPassword) {
         send(new Message(
