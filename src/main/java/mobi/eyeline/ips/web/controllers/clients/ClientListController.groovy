@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.web.controllers.clients
 
 import mobi.eyeline.ips.exceptions.LoginException
+import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
@@ -17,9 +18,19 @@ class ClientListController extends BaseController {
     private final UserService userService = Services.instance().userService
 
     def String userLogin
+    def String userLoginForEdit
+    def User userForEdit
     Boolean blockError
     Boolean unblockError
     String search
+
+    ClientListController() {
+        userForEdit= new User()
+        userForEdit.fullName=""
+        userForEdit.company=""
+        userForEdit.login=""
+        userForEdit.email=""
+    }
 
     public DataTableModel getTableModel() {
         return new DataTableModel() {
@@ -53,7 +64,18 @@ class ClientListController extends BaseController {
             }
         }
     }
+    void saveModifiedUser() {
+      //  userLoginForEdit = getParamValue("userLoginForEdit").asString()
+        User user = userRepository.getByLogin(userLoginForEdit)
+        user.fullName = userForEdit.fullName;
+        user.company = userForEdit.company;
+        user.login = userForEdit.login;
+        user.email = userForEdit.email;
+        userRepository.update(user)
 
+
+
+    }
 
 
     void blockUser() {

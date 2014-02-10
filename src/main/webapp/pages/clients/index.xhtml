@@ -41,6 +41,8 @@
 
       <h:form enctype="multipart/form-data" id="content">
        <h:inputHidden id="userLogin" value="#{clientListController.userLogin}"/>
+       <h:inputHidden id="userLoginForEdit" value="#{clientListController.userLoginForEdit}"/>
+
 
         <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -67,7 +69,10 @@
                           sortable="true" defaultSortOrder="desc">
                 <h:commandLink value="#{row.fullname}"
                                action="null"
-                               onclick="jsfc('clientSettingsDialog').show(); return false"/>
+                               onclick="return page.showSettingsDialog('#{row.fullname}',
+                                                                      '#{row.company}',
+                                                                      '#{row.login}',
+                                                                      '#{row.email}');"/>
 
               </eye:column>
 
@@ -176,22 +181,22 @@
             <h:outputLabel value="#{bundle['client.dialog.settings.field.fullname']}"
                            for="clientSettingsFullName"/>
             <eye:inputText id="clientSettingsFullName"
-                           value=""/>
+                           value="#{clientListController.userForEdit.fullName}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.settings.field.company']}"
                            for="clientSettingsCompany"/>
             <eye:inputText id="clientSettingsCompany"
-                           value=""/>
+                           value="#{clientListController.userForEdit.company}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.settings.field.login']}"
                            for="clientSettingsLogin"/>
             <eye:inputText id="clientSettingsLogin"
-                           value=""/>
+                           value="#{clientListController.userForEdit.login}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.settings.field.email']}"
                            for="clientSettingsEmail"/>
             <eye:inputText id="clientSettingsEmail"
-                           value=""/>
+                           value="#{clientListController.userForEdit.email}"/>
 
 
           </h:panelGrid>
@@ -199,7 +204,7 @@
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['client.dialog.newclient.button.create']}"
-                      />
+                             action="#{clientListController.saveModifiedUser}"/>
             </eye:button>
             <eye:button>
               <h:commandLink styleClass="button-green"
