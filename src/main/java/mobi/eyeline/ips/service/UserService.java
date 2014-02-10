@@ -23,7 +23,7 @@ public class UserService {
             throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
         }
 
-        String password = RandomStringUtils.randomAlphabetic(8);
+        String password = generatePassword();
         String hashedPassword = HashUtils.hashPassword(password);
         user.setPassword(hashedPassword);
         userRepository.update(user);
@@ -46,6 +46,12 @@ public class UserService {
         }
         user.setBlocked(false);
         userRepository.update(user);
+    }
+
+    public String generatePassword() {
+        String password = RandomStringUtils.randomAlphabetic(8);
+
+        return password;
     }
 
 }

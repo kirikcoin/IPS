@@ -135,35 +135,33 @@
 
 
         <eye:dialog id="newClientDialog" title="#{bundle['client.dialog.newclient.title']}" width="400">
-
           <h:panelGrid columns="2">
             <h:outputLabel value="#{bundle['client.dialog.newclient.field.fullname']}"
                            for="newClientFullName"/>
             <eye:inputText id="newClientFullName"
-                           value=""/>
+                           value="#{clientListController.newUser.fullName}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.newclient.field.company']}"
                            for="newClientCompany"/>
             <eye:inputText id="newClientCompany"
-                           value=""/>
+                           value="#{clientListController.newUser.company}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.newclient.field.login']}"
                            for="newClientLogin"/>
             <eye:inputText id="newClientLogin"
-                           value=""/>
+                           value="#{clientListController.newUser.login}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.newclient.field.email']}"
                            for="newClientEmail"/>
             <eye:inputText id="newClientEmail"
-                           value=""/>
-
+                           value="#{clientListController.newUser.email}"/>
 
           </h:panelGrid>
           <eye:buttons>
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['client.dialog.newclient.button.create']}"
-                             />
+                             action="#{clientListController.createUser}" />
             </eye:button>
             <eye:button>
               <h:commandLink styleClass="button-green"
@@ -172,8 +170,10 @@
             </eye:button>
             <eye:space/>
           </eye:buttons>
-
         </eye:dialog>
+
+
+
 
         <eye:dialog id="clientSettingsDialog" title="#{bundle['client.dialog.settings.title']}" width="400">
 
@@ -203,16 +203,19 @@
           <eye:buttons>
             <eye:button>
               <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.newclient.button.create']}"
+                             value="#{bundle['client.dialog.settings.button.save']}"
                              action="#{clientListController.saveModifiedUser}"/>
             </eye:button>
             <eye:button>
               <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.newclient.button.cancel']}"
+                             value="#{bundle['client.dialog.settings.button.cancel']}"
                              onclick="jsfc('clientSettingsDialog').hide(); ips.message.hideAll(); return false;"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>
+
+
+
 
         </eye:dialog>
 

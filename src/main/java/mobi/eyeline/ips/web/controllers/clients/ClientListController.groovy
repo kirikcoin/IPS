@@ -1,10 +1,13 @@
 package mobi.eyeline.ips.web.controllers.clients
 
 import mobi.eyeline.ips.exceptions.LoginException
+import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
+import mobi.eyeline.ips.service.MailService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
+import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
@@ -16,10 +19,12 @@ class ClientListController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
     private final UserService userService = Services.instance().userService
+    private final MailService mailService = Services.instance().mailService
 
     def String userLogin
     def String userLoginForEdit
     def User userForEdit
+    def User newUser
     Boolean blockError
     Boolean unblockError
     String search
@@ -30,6 +35,12 @@ class ClientListController extends BaseController {
         userForEdit.company=""
         userForEdit.login=""
         userForEdit.email=""
+
+        newUser= new User()
+        newUser.fullName=""
+        newUser.company=""
+        newUser.login=""
+        newUser.email=""
     }
 
     public DataTableModel getTableModel() {
@@ -64,24 +75,38 @@ class ClientListController extends BaseController {
             }
         }
     }
+
+    //TODO: validation
     void saveModifiedUser() {
       //  userLoginForEdit = getParamValue("userLoginForEdit").asString()
         User user = userRepository.getByLogin(userLoginForEdit)
-        user.fullName = userForEdit.fullName;
-        user.company = userForEdit.company;
-        user.login = userForEdit.login;
-        user.email = userForEdit.email;
+        user.fullName = userForEdit.fullName
+        user.company = userForEdit.company
+        user.login = userForEdit.login
+        user.email = userForEdit.email
         userRepository.update(user)
+    }
 
+    //TODO: validation
+    void createUser() {
+        String password = userService.generatePassword()
+        User user = new User(
+                fullName: newUser.fullName,
+                company: newUser.company,
+                login: newUser.login,
+                email: newUser.email,
+                password: HashUtils.hashPassword(password),
+                role: Role.CLIENT)
 
-
+        userRepository.save(user)
+        mailService.sendUserRegistration(user, password)
     }
 
 
     void blockUser() {
         String userLogin = getParamValue("userLogin").asString()
             try {
-                userService.blockUser(userLogin);
+                userService.blockUser(userLogin)
                 blockError = false
             } catch (LoginException e) {
                 blockError = true
@@ -91,7 +116,7 @@ class ClientListController extends BaseController {
     void unblockUser() {
         String userLogin = getParamValue("userLogin").asString()
             try {
-                userService.unblockUser(userLogin);
+                userService.unblockUser(userLogin)
                 unblockError = false
             } catch (LoginException e) {
                 unblockError = true
