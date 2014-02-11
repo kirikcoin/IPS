@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import static mobi.eyeline.ips.messages.ParseUtils.getInt;
 import static mobi.eyeline.ips.messages.ParseUtils.getString;
@@ -41,6 +42,11 @@ public class UssdService implements MessageHandler {
     private final AnswerRepository answerRepository;
     private final QuestionOptionRepository questionOptionRepository;
 
+    /**
+     * Generic non-localized messages.
+     */
+    private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
+
     public UssdService(SurveyRepository surveyRepository,
                        RespondentRepository respondentRepository,
                        AnswerRepository answerRepository,
@@ -53,6 +59,17 @@ public class UssdService implements MessageHandler {
     }
 
     public UssdModel handle(HttpServletRequest request)
+            throws MissingParameterException {
+
+        try {
+            return handle0(request);
+
+        } catch (RuntimeException e) {
+            return new UssdModel(bundle.getString("ussd.error"));
+        }
+    }
+
+    private UssdModel handle0(HttpServletRequest request)
             throws MissingParameterException {
 
         @SuppressWarnings("unchecked")
@@ -80,17 +97,20 @@ public class UssdService implements MessageHandler {
     private UssdModel handleStartPage(String msisdn, int surveyId) {
         final Survey survey = surveyRepository.get(surveyId);
 
-        if (survey == null) {
-            logger.info("Survey not found for ID = [" + surveyId + "]");
-            return new UssdModel("Survey not found");
+        // Ensure survey is valid and accessible.
+        {
+            if (survey == null) {
+                logger.info("Survey not found for ID = [" + surveyId + "]");
+                return getSurveyNotFound();
 
-        } else if (!survey.isRunningNow()) {
-            logger.info("Survey is not active now, ID = [" + surveyId + "]");
-            return new UssdModel("Survey not found");
+            } else if (!survey.isRunningNow()) {
+                logger.info("Survey is not active now, ID = [" + surveyId + "]");
+                return getSurveyNotFound();
 
-        } else if (!survey.isActive()) {
-            logger.info("Survey is disabled, ID = [" + surveyId + "]");
-            return new UssdModel("Survey not found");
+            } else if (!survey.isActive()) {
+                logger.info("Survey is disabled, ID = [" + surveyId + "]");
+                return getSurveyNotFound();
+            }
         }
 
         // Ensure we've got an entry in `respondents' for this survey.
@@ -106,7 +126,7 @@ public class UssdService implements MessageHandler {
             if (next == null) {
                 // All the questions are already answered.
                 // This means survey restart, so we render a welcome message.
-                return renderWelcome(survey);
+                return renderRestartPrompt(survey, respondent);
 
             } else {
                 // There are unanswered questions, so render the next one.
@@ -114,21 +134,19 @@ public class UssdService implements MessageHandler {
             }
 
         } else {
-            if (respondent.isAnswered()) {
-                // Respondent has already answered to the prompt,
-                return renderFirstQuestion(survey, respondent);
-            } else {
-                // Respondent is not registered yet, show welcome message.
-                return renderWelcome(survey);
-            }
+            return renderFirstQuestion(survey, respondent);
         }
+    }
+
+    private UssdModel renderRestartPrompt(Survey survey, Respondent respondent) {
+        return renderFirstQuestion(survey, respondent);
     }
 
     @Override
     public UssdModel handle(String msisdn, RegistrationAccepted request) {
         final Survey survey = surveyRepository.get(request.getSurveyId());
         if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
-            return new UssdModel("Survey not found");
+            return getSurveyNotFound();
         }
 
         final Respondent respondent =
@@ -141,7 +159,7 @@ public class UssdService implements MessageHandler {
     public UssdModel handle(String msisdn, RegistrationDeclined request) {
         final Survey survey = surveyRepository.get(request.getSurveyId());
         if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
-            return new UssdModel("Survey not found");
+            return getSurveyNotFound();
         }
 
         return new UssdModel(survey.getDetails().getEndText());
@@ -151,7 +169,7 @@ public class UssdService implements MessageHandler {
     public UssdModel handle(String msisdn, AnswerOption request) {
         final Survey survey = surveyRepository.get(request.getSurveyId());
         if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
-            return new UssdModel("Survey not found");
+            return getSurveyNotFound();
         }
 
         final Respondent respondent =
@@ -226,5 +244,9 @@ public class UssdService implements MessageHandler {
             // Send the first question.
             return renderQuestion(survey.getQuestions().get(0));
         }
+    }
+
+    private UssdModel getSurveyNotFound() {
+        return new UssdModel(bundle.getString("ussd.survey.not.available"));
     }
 }

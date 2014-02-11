@@ -1,12 +1,11 @@
 package mobi.eyeline.ips.service;
 
 import mobi.eyeline.ips.model.User;
-import mobi.eyeline.ips.properties.AvailableLocales;
-import mobi.eyeline.ips.properties.Msg;
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ResourceBundle;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -63,7 +62,8 @@ public class MailService {
     }
 
     private String getSubject(String key) {
-        return Msg.getFmt(AvailableLocales.findLocale("ru").locale, key);
+        final ResourceBundle bundle = ResourceBundle.getBundle("email");
+        return bundle.getString(key);
     }
 
     private void send(Message message) {
