@@ -160,7 +160,9 @@
             <h:outputLabel value="#{bundle['client.dialog.newclient.field.login']}"
                            for="newClientLogin"/>
             <eye:inputText id="newClientLogin"
-                           value="#{clientListController.newUser.login}"/>
+                           value="#{clientListController.newUser.login}"
+                           validator="latin"
+                           validatorMessage="notlatin"/>
 
             <h:outputLabel value="#{bundle['client.dialog.newclient.field.email']}"
                            for="newClientEmail"/>

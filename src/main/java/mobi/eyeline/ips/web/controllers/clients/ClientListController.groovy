@@ -105,6 +105,7 @@ class ClientListController extends BaseController {
             return
         }
         userRepository.update(user)
+
     }
 
     //TODO: validation
