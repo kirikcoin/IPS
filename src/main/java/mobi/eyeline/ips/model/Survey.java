@@ -102,6 +102,7 @@ public class Survey implements Serializable {
     public Survey() {
     }
 
+    // TODO: consider making private / package local.
     @PrePersist
     @PreUpdate
     public void prepareIndex() {

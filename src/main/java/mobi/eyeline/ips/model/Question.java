@@ -64,6 +64,7 @@ public class Question implements Serializable {
     @Column(name = "question_order")
     private int order;
 
+    // TODO: consider making private / package local.
     @PrePersist
     @PreUpdate
     public void prepareIndex() {

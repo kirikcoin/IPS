@@ -21,10 +21,6 @@
         page.init();
 
         $(function() {
-          if (window.history && window.history.replaceState) {
-            history.replaceState({}, null, '?id=#{surveySettingsController.surveyId}');
-          }
-
           $('#surveyId').val("#{param['id']}");
 
           if ("#{surveySettingsController.errorId}".length) {
@@ -34,6 +30,8 @@
           if ("#{surveySettingsController.questionEditMode}" == "true") {
             jsfc('questionModificationDialog').show();
           }
+
+          $('#content').attr('action', '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
         });
         //    ]]>
       </script>
@@ -162,7 +160,9 @@
                   <h:commandLink value="#{bundle['survey.settings.question.add']}"
                                  action="#{surveySettingsController.modifyQuestion}"
                                  styleClass="modify"
-                                 rendered="#{userSession.surveyModificationAllowed}"/>
+                                 rendered="#{userSession.surveyModificationAllowed}">
+                    <f:param name="questionId" value=""/>
+                  </h:commandLink>
                 </h:panelGroup>
               </f:facet>
 

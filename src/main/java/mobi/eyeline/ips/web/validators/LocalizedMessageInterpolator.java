@@ -16,6 +16,11 @@ public class LocalizedMessageInterpolator extends ResourceBundleMessageInterpola
     public String interpolate(String messageTemplate, Context context) {
         final Locale locale =
                 FacesContext.getCurrentInstance().getViewRoot().getLocale();
+        if (messageTemplate.contains("javax.validation.constraints")) {
+            // XXX: dirty hack for NoClassDefFound on implicit `@Size' constraints.
+            return messageTemplate;
+        }
+
         return interpolate(messageTemplate, context, locale);
     }
 

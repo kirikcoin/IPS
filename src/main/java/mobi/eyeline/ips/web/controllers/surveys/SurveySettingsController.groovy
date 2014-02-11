@@ -128,7 +128,8 @@ class SurveySettingsController extends BaseSurveyController {
                 questionOptions.addRow(row)
             }
         } else {
-            // Nothing here
+            question = new Question()
+            questionOptions = new DynamicTableModel()
         }
 
         questionEditMode = true

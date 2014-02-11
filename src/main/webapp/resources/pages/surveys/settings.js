@@ -23,8 +23,9 @@ var page = {
     }
 
     $(function () {
-      ['groupEndMessage', 'groupSettings', 'questionsList']
-          .forEach(wireModificationLink);
+      $.each(['groupEndMessage', 'groupSettings', 'questionsList'], function(i, e) {
+        wireModificationLink(e);
+      });
     });
 
   },
