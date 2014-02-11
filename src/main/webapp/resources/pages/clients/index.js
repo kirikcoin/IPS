@@ -34,5 +34,10 @@ var page = {
         ips.$byId('clientSettingsEmail').val(email);
         jsfc('clientSettingsDialog').show();
         return false;
+    },
+    showPasswordResetDialog: function (email) {
+        ips.$byId('userEmail').val(email);
+        jsfc('clientPasswordResetDialog').show();
+        return false;
     }
 };

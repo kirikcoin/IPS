@@ -35,19 +35,19 @@ public class User {
      * Логин пользователя для входа в систему.
      */
     @Column(name = "users_name", nullable = false)
-    @NotEmpty
+    @NotEmpty(message = "{profile.edit.message.validationErrorLoginEmpty}")
     private String login;
 
     /**
      * Полное имя пользователя.
      */
     @Column(name = "full_name", nullable = false)
-    @NotEmpty(message = "{profile.edit.message.validationErrorFullName}")
+    @NotEmpty(message = "{profile.edit.message.validationErrorFullNameEmpty}")
     private String fullName;
 
     @Column(name = "email", nullable = false)
-    @Email
-    @NotEmpty(message = "{profile.edit.message.validationErrorEmail}")
+    @Email(message = "{profile.edit.message.validationErrorEmail}" )
+    @NotEmpty(message = "{profile.edit.message.validationErrorEmailEmpty}" )
     private String email;
 
     /**

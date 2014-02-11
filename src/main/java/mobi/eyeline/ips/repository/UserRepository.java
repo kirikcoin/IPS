@@ -12,6 +12,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +108,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
 
         }
 
+        criteria.add(Restrictions.eq("role", Role.CLIENT));
         criteria.setFirstResult(offset).setMaxResults(limit);
 
         // TODO: may be in controller too
@@ -144,7 +146,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
             criteria.add(or(filters.toArray(new Criterion[filters.size()])));
 
         }
-
+        criteria.add(Restrictions.eq("role",Role.CLIENT));
         criteria.setProjection(Projections.rowCount());
 
         return ((Number) criteria.uniqueResult()).intValue();

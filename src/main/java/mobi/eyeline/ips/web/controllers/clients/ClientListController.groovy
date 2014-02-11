@@ -23,11 +23,19 @@ class ClientListController extends BaseController {
 
     def String userLogin
     def String userLoginForEdit
+
+    def String userEmail
+
     def User userForEdit
     def User newUser
+
+    String search
     Boolean blockError
     Boolean unblockError
-    String search
+
+    boolean newUserDataValidationError
+    boolean modifiedUserDataValidationError
+    Boolean passwordResetError
 
     ClientListController() {
         userForEdit= new User()
@@ -84,6 +92,18 @@ class ClientListController extends BaseController {
         user.company = userForEdit.company
         user.login = userForEdit.login
         user.email = userForEdit.email
+
+        modifiedUserDataValidationError =
+                renderViolationMessage(validator.validate(user),
+                        [
+                                'fullName': 'clientSettingsFullName',
+                                'company': 'clientSettingsCompany',
+                                'login': 'clientSettingsLogin',
+                                'email': 'clientSettingsEmail',
+                        ])
+        if(modifiedUserDataValidationError){
+            return
+        }
         userRepository.update(user)
     }
 
@@ -97,6 +117,18 @@ class ClientListController extends BaseController {
                 email: newUser.email,
                 password: HashUtils.hashPassword(password),
                 role: Role.CLIENT)
+
+        newUserDataValidationError =
+                renderViolationMessage(validator.validate(user),
+                [
+                        'fullName': 'newClientFullName',
+                        'company': 'newClientCompany',
+                        'login': 'newClientLogin',
+                        'email': 'newClientEmail',
+                ])
+        if(newUserDataValidationError){
+            return
+        }
 
         userRepository.save(user)
         mailService.sendUserRegistration(user, password)
@@ -123,6 +155,14 @@ class ClientListController extends BaseController {
             }
     }
 
+    void resetPassword() {
+        try {
+            userService.restorePassword(userEmail);
+            passwordResetError = false
+        } catch (LoginException e) {
+            passwordResetError = true
+        }
+    }
 
 
     static class TableItem implements Serializable {
