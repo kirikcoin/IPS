@@ -141,6 +141,14 @@
                                  for="accessNumber"/>
                   <h:outputText id="accessNumber"
                                 value="#{surveySettingsController.survey.statistics.accessNumber}"/>
+
+                  <!-- Poll external URL -->
+                  <h:outputLabel value="#{bundle['survey.external.url']}"
+                                 for="externalUrl"
+                                 rendered="#{userSession.managerRole}"/>
+                  <h:outputText id="externalUrl"
+                                value="#{surveySettingsController.surveyUrl}"
+                                rendered="#{userSession.managerRole}"/>
                 </h:panelGrid>
 
               </h:panelGroup>

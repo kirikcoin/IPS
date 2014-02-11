@@ -5,6 +5,7 @@ import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.UssdService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
@@ -19,6 +20,7 @@ class SurveySettingsController extends BaseSurveyController {
 
     private final QuestionRepository questionRepository = Services.instance().questionRepository
     private final UserRepository userRepository = Services.instance().userRepository
+    private final UssdService ussdService = Services.instance().ussdService
 
     String errorId
 
@@ -37,6 +39,8 @@ class SurveySettingsController extends BaseSurveyController {
         super()
         newSurveyClientId = survey.client.id
     }
+
+    String getSurveyUrl() { ussdService.getSurveyUrl(survey) }
 
     void saveMessage() {
         boolean validationError =

@@ -3,7 +3,6 @@ package mobi.eyeline.ips.service;
 import mobi.eyeline.ips.messages.AnswerOption;
 import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
-import mobi.eyeline.ips.util.RequestParseUtils;
 import mobi.eyeline.ips.messages.UssdModel;
 import mobi.eyeline.ips.messages.UssdOption;
 import mobi.eyeline.ips.model.Answer;
@@ -11,9 +10,11 @@ import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Respondent;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
+import mobi.eyeline.ips.util.RequestParseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,12 +39,15 @@ public class UssdService implements MessageHandler {
     private final QuestionOptionRepository questionOptionRepository;
     private final SurveyService surveyService;
 
+    private final String baseUrl;
+
     /**
      * Generic non-localized messages.
      */
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
 
-    public UssdService(SurveyService surveyService,
+    public UssdService(Config config,
+                       SurveyService surveyService,
                        RespondentRepository respondentRepository,
                        AnswerRepository answerRepository,
                        QuestionOptionRepository questionOptionRepository) {
@@ -52,6 +56,8 @@ public class UssdService implements MessageHandler {
         this.answerRepository = answerRepository;
         this.questionOptionRepository = questionOptionRepository;
         this.surveyService = surveyService;
+
+        baseUrl = config.getLoginUrl();
     }
 
     public UssdModel handle(Map<String, String[]> parameters)
@@ -143,6 +149,10 @@ public class UssdService implements MessageHandler {
     @Override
     public UssdModel handle(String msisdn, UssdOption request) {
         throw new AssertionError("Unsupported request type: " + request.getClass());
+    }
+
+    public String getSurveyUrl(Survey survey) {
+        return baseUrl + "/ussd/index.jsp?survey_id=" + survey.getId();
     }
 
 
