@@ -5,6 +5,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
+import mobi.eyeline.ips.util.HashUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;

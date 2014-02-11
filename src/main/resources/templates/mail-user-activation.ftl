@@ -1,3 +1,7 @@
+<#-- @ftlvariable name="user" type="ussd.poll.backend.db.model.User" -->
+<#-- @ftlvariable name="loginUrl" type="java.lang.String" -->
+
+
 <#include "mail-base.ftl"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -23,6 +27,14 @@
           Логин: ${user.login}
         </li>
       </ul>
+    </td>
+  </tr>
+
+  <tr>
+    <td>
+      <p>
+        Для входа перейдите по <a href="${loginUrl}" target="_blank">ссылке</a>.
+      </p>
     </td>
   </tr>
 
