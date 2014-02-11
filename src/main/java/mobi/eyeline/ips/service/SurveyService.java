@@ -60,4 +60,33 @@ public class SurveyService {
         session.update(survey);
     }
 
+    /**
+     * Loads survey by ID.
+     * <br/>
+     * Returns {@code null} if at least one of these conditions is not met:
+     * <ol>
+     *     <li>Survey with this ID exists,</li>
+     *     <li>This survey is running now,
+     *     i.e. current date is between {@link Survey#startDate} and {@link Survey#endDate}</li>
+     *     <li>Survey is not marked as deleted</li>
+     * </ol>
+     */
+    public Survey findSurvey(int surveyId) {
+        final Survey survey = surveyRepository.get(surveyId);
+
+        if (survey == null) {
+            logger.info("Survey not found for ID = [" + surveyId + "]");
+            return null;
+
+        } else if (!survey.isRunningNow()) {
+            logger.info("Survey is not active now, ID = [" + surveyId + "]");
+            return null;
+
+        } else if (!survey.isActive()) {
+            logger.info("Survey is disabled, ID = [" + surveyId + "]");
+            return null;
+        }
+
+        return survey;
+    }
 }

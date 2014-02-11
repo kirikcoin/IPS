@@ -3,13 +3,18 @@
 -- Cleanup
 --
 
+delete from respondents;
+
+delete from answers;
+
 delete from surveys_users;
-delete from surveys_text;
 delete from survey_stats;
 
 delete from question_options;
 delete from questions;
 
+delete from survey_stats;
+delete from surveys_text;
 delete from surveys;
 
 delete from users where id >= 2;
@@ -31,7 +36,8 @@ INSERT INTO users (`id`, `email`, `full_name`, `users_name`, `password`, `blocke
 
 
 INSERT INTO surveys (id, active, startdate, expires) VALUES
-  (1, TRUE,   '2014-01-01 12:15:00', '2014-01-01 13:15:00'),
+  (31483, TRUE,   '2014-01-01 12:15:00', '2015-01-01 13:15:00'),
+
   (2, TRUE,   '2014-02-10 14:00:00', '2014-03-10 14:00:00'),
   (3, TRUE,   '2012-02-10 14:00:00', '2015-03-10 14:00:00'),
   (4, TRUE,   '2014-02-10 14:00:00', '2014-03-10 14:00:00'),
@@ -48,8 +54,10 @@ INSERT INTO surveys (id, active, startdate, expires) VALUES
   (15, TRUE,  '2014-02-10 14:00:00', '2014-03-10 14:00:00');
 
 
+INSERT INTO surveys_text (survey_id, title, end_text) VALUES
+  (31483,   'Опрос 1', 'Thanks for your time');
+
 INSERT INTO surveys_text (survey_id, title) VALUES
-  (1,   'Опрос 1'),
   (2,   'Опрос 2'),
   (3,   'Опрос 3'),
   (4,   'Опрос 4'),
@@ -67,7 +75,8 @@ INSERT INTO surveys_text (survey_id, title) VALUES
 
 
 INSERT INTO surveys_users (survey_id, user_id) VALUES
-  (1,   5),
+  (31483,   5),
+
   (2,   5),
   (3,   5),
   (4,   5),
@@ -85,7 +94,8 @@ INSERT INTO surveys_users (survey_id, user_id) VALUES
 
 
 INSERT INTO survey_stats (survey_id, accessNumber) VALUES
-  (1, NULL),
+  (31483, NULL),
+
   (2, NULL),
   (3, NULL),
   (4, NULL),
@@ -103,9 +113,9 @@ INSERT INTO survey_stats (survey_id, accessNumber) VALUES
 
 
 insert into questions(id, survey_id, title, question_order) values
-  (1, 1, 'Please select your age', 0),
-  (2, 1, 'Please select your occupation', 1),
-  (3, 1, 'What is your favorite color?', 2);
+  (1, 31483, 'Please select your age', 0),
+  (2, 31483, 'Please select your occupation', 1),
+  (3, 31483, 'What is your favorite color?', 2);
 
 
 insert into question_options(question_id, option_order, answer) values

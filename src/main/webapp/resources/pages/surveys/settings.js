@@ -23,7 +23,7 @@ var page = {
     }
 
     $(function () {
-      ['groupWelcomeMessage', 'groupEndMessage', 'groupSettings', 'questionsList']
+      ['groupEndMessage', 'groupSettings', 'questionsList']
           .forEach(wireModificationLink);
     });
 

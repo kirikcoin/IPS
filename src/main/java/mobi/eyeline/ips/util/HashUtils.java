@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import static mobi.eyeline.ips.util.StringUtils.getHex;
+import static mobi.eyeline.ips.util.StringUtils.asHex;
 
 public class HashUtils {
 
@@ -29,6 +29,6 @@ public class HashUtils {
 
         final MessageDigest md = MessageDigest.getInstance(algorithm);
         md.update(value.getBytes(charset));
-        return getHex(md.digest());
+        return asHex(md.digest());
     }
 }

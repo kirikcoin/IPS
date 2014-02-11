@@ -1,9 +1,14 @@
-package mobi.eyeline.ips.messages;
+package mobi.eyeline.ips.util;
+
+import mobi.eyeline.ips.messages.MissingParameterException;
 
 import java.util.Arrays;
 import java.util.Map;
 
-public class ParseUtils {
+/**
+ * Utilities for {@code String -> String[]} maps handing.
+ */
+public class RequestParseUtils {
 
     public static int getInt(Map<String, String[]> map, String key)
             throws MissingParameterException {

@@ -171,4 +171,9 @@ public abstract class BaseController implements Serializable {
                 .buildValidatorFactory()
                 .validator
     }
+
+    public static ResourceBundle getResourceBundle() {
+        def context = FacesContext.currentInstance
+        return context.application.getResourceBundle(context, "bundle")
+    }
 }

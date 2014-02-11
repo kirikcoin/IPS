@@ -5,6 +5,7 @@ import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 import org.slf4j.Logger
@@ -29,6 +30,8 @@ class SurveySettingsController extends BaseSurveyController {
     boolean questionEditMode
     Question question = new Question()
     DynamicTableModel questionOptions = new DynamicTableModel()
+
+    List<TerminalOption> terminalValues = [TerminalOption.TRUE, TerminalOption.FALSE]
 
     SurveySettingsController() {
         super()
@@ -116,6 +119,7 @@ class SurveySettingsController extends BaseSurveyController {
             question.options.each {
                 def row = new DynamicTableRow()
                 row.setValue("answer", it.answer)
+                row.setValue("terminal", it.terminal)
                 row.setValue("id", it.id)
                 questionOptions.addRow(row)
             }
@@ -139,7 +143,6 @@ class SurveySettingsController extends BaseSurveyController {
         boolean validationError = renderViolationMessage(
                 validator.validate(persistedQuestion))
         if (validationError) {
-//            surveyRepository.refresh(survey)
             this.errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
             return
@@ -159,6 +162,7 @@ class SurveySettingsController extends BaseSurveyController {
     private void updateQuestionModel(Question persistedQuestion) {
         def getId = { row -> row.getValue('id') as String }
         def getAnswer = { row -> row.getValue('answer') as String }
+        def getTerminal = { row -> (row.getValue('terminal') as String).toBoolean() }
 
         persistedQuestion.title = question.title
 
@@ -177,6 +181,7 @@ class SurveySettingsController extends BaseSurveyController {
                         .findAll { !getId(it).empty }
                         .find { getId(it).toInteger() == option.id }
                 option.answer = getAnswer(row)
+                option.terminal = getTerminal(row)
             }
         }
 
@@ -197,6 +202,23 @@ class SurveySettingsController extends BaseSurveyController {
     static void goToSurvey(int surveyId) {
         FacesContext.currentInstance.externalContext
                 .redirect("/pages/surveys/settings.faces?id=${surveyId}")
+    }
+
+    static abstract class TerminalOption {
+        abstract boolean getValue()
+        abstract String getLabel()
+
+        static final TerminalOption TRUE = new TerminalOption() {
+            boolean getValue() { true }
+            String getLabel() { BaseController.getResourceBundle().getString("question.option.terminal.yes") }
+        }
+
+        static final TerminalOption FALSE = new TerminalOption() {
+            boolean getValue() { false }
+            String getLabel() { BaseController.getResourceBundle().getString("question.option.terminal.no") }
+        }
+
+        static TerminalOption forValue(boolean value) { value ? TRUE : FALSE }
     }
 
 //    private void redirect() {

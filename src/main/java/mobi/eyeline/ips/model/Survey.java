@@ -1,9 +1,8 @@
 package mobi.eyeline.ips.model;
 
-import mobi.eyeline.ips.util.Utils;
+import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 
@@ -27,7 +26,6 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -177,11 +175,11 @@ public class Survey implements Serializable {
     }
 
     public void moveUp(Question question) {
-        Utils.moveUp(getQuestions(), question);
+        ListUtils.moveUp(getQuestions(), question);
     }
 
     public void moveDown(Question question) {
-        Utils.moveDown(getQuestions(), question);
+        ListUtils.moveDown(getQuestions(), question);
     }
 
     @SuppressWarnings("UnusedDeclaration")

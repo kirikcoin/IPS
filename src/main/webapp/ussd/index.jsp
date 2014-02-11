@@ -4,12 +4,17 @@
 <%@ page import="mobi.eyeline.ips.messages.MissingParameterException" %>
 <%@ page import="mobi.eyeline.ips.messages.UssdModel" %>
 <%@ page import="mobi.eyeline.ips.service.Services" %>
+<%@ page import="java.util.Map" %>
 <%@page language="java" contentType="text/xml; charset=utf-8" %>
 
 <%
   UssdModel model = null;
   try {
-    model = Services.instance().getUssdService().handle(request);
+    @SuppressWarnings("unchecked")
+    final Map<String, String[]> parameters =
+        (Map<String, String[]>) request.getParameterMap();
+
+    model = Services.instance().getUssdService().handle(parameters);
 
   } catch (MissingParameterException e) {
     response.sendError(HttpServletResponse.SC_BAD_REQUEST);

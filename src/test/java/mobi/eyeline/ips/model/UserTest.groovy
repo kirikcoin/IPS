@@ -28,7 +28,7 @@ class UserTest extends ValidationTestCase {
                 role: Role.CLIENT)
 
         assertThat violations, hasSize(1)
-        assertEquals "not a well-formed email address", violations[0].message
+        assertEquals 'email', violations[0].propertyPath.toString()
     }
 
     void test3() {

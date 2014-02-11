@@ -3,8 +3,7 @@ package mobi.eyeline.ips.service;
 import mobi.eyeline.ips.messages.AnswerOption;
 import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
-import mobi.eyeline.ips.messages.ParseUtils;
-import mobi.eyeline.ips.messages.RegistrationOption;
+import mobi.eyeline.ips.util.RequestParseUtils;
 import mobi.eyeline.ips.messages.UssdModel;
 import mobi.eyeline.ips.messages.UssdOption;
 import mobi.eyeline.ips.model.Answer;
@@ -15,20 +14,17 @@ import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
-import mobi.eyeline.ips.repository.SurveyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import static mobi.eyeline.ips.messages.ParseUtils.getInt;
-import static mobi.eyeline.ips.messages.ParseUtils.getString;
-import static mobi.eyeline.ips.messages.RegistrationOption.RegistrationAccepted;
-import static mobi.eyeline.ips.messages.RegistrationOption.RegistrationDeclined;
+import static mobi.eyeline.ips.util.RequestParseUtils.getInt;
+import static mobi.eyeline.ips.util.RequestParseUtils.getString;
 
 /**
  * Mobilizer landing page rendering.
@@ -37,80 +33,65 @@ public class UssdService implements MessageHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(UssdService.class);
 
-    private final SurveyRepository surveyRepository;
     private final RespondentRepository respondentRepository;
     private final AnswerRepository answerRepository;
     private final QuestionOptionRepository questionOptionRepository;
+    private final SurveyService surveyService;
 
     /**
      * Generic non-localized messages.
      */
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
 
-    public UssdService(SurveyRepository surveyRepository,
+    public UssdService(SurveyService surveyService,
                        RespondentRepository respondentRepository,
                        AnswerRepository answerRepository,
                        QuestionOptionRepository questionOptionRepository) {
 
-        this.surveyRepository = surveyRepository;
         this.respondentRepository = respondentRepository;
         this.answerRepository = answerRepository;
         this.questionOptionRepository = questionOptionRepository;
+        this.surveyService = surveyService;
     }
 
-    public UssdModel handle(HttpServletRequest request)
+    public UssdModel handle(Map<String, String[]> parameters)
             throws MissingParameterException {
 
         try {
-            return handle0(request);
+            return handle0(parameters);
 
         } catch (RuntimeException e) {
-            return new UssdModel(bundle.getString("ussd.error"));
+            logger.error("Error processing USSD request, parameters: " +
+                    RequestParseUtils.toString(parameters), e);
+            return fatalError();
         }
     }
 
-    private UssdModel handle0(HttpServletRequest request)
+    private UssdModel handle0(Map<String, String[]> parameters)
             throws MissingParameterException {
 
-        @SuppressWarnings("unchecked")
-        final Map<String, String[]> parameters =
-                (Map<String, String[]>) request.getParameterMap();
-
-        logger.debug("Handling request: " + ParseUtils.toString(parameters));
+        logger.debug("Handling request: " + RequestParseUtils.toString(parameters));
 
         final String msisdn = getString(parameters, "abonent");
 
-        final UssdOption answer = UssdOption.parse(parameters);
+        final UssdOption request = UssdOption.parse(parameters);
 
-        if (answer == null) {
+        if (request == null) {
             // Respondent just loaded the start page.
             // It might be either an unregistered msisdn (new respondent),
-            // survey restart or resumption.
+            // survey surveyStart or resumption.
             final int surveyId = getInt(parameters, "survey_id");
             return handleStartPage(msisdn, surveyId);
 
         } else {
-            return answer.handle(msisdn, this);
+            return request.handle(msisdn, this);
         }
     }
 
     private UssdModel handleStartPage(String msisdn, int surveyId) {
-        final Survey survey = surveyRepository.get(surveyId);
-
-        // Ensure survey is valid and accessible.
-        {
-            if (survey == null) {
-                logger.info("Survey not found for ID = [" + surveyId + "]");
-                return getSurveyNotFound();
-
-            } else if (!survey.isRunningNow()) {
-                logger.info("Survey is not active now, ID = [" + surveyId + "]");
-                return getSurveyNotFound();
-
-            } else if (!survey.isActive()) {
-                logger.info("Survey is disabled, ID = [" + surveyId + "]");
-                return getSurveyNotFound();
-            }
+        final Survey survey = surveyService.findSurvey(surveyId);
+        if (survey == null) {
+            return surveyNotFound();
         }
 
         // Ensure we've got an entry in `respondents' for this survey.
@@ -119,57 +100,23 @@ public class UssdService implements MessageHandler {
 
         final Answer lastAnswer =
                 answerRepository.getLast(survey, respondent);
-        if (lastAnswer != null) {
-            // Respondent is already registered in this survey.
 
+        if (!respondent.isFinished() && lastAnswer != null) {
             final Question next = lastAnswer.getQuestion().getNext();
-            if (next == null) {
-                // All the questions are already answered.
-                // This means survey restart, so we render a welcome message.
-                return renderRestartPrompt(survey, respondent);
-
-            } else {
+            if (next != null) {
                 // There are unanswered questions, so render the next one.
-                return renderQuestion(next);
+                return question(next);
             }
-
-        } else {
-            return renderFirstQuestion(survey, respondent);
-        }
-    }
-
-    private UssdModel renderRestartPrompt(Survey survey, Respondent respondent) {
-        return renderFirstQuestion(survey, respondent);
-    }
-
-    @Override
-    public UssdModel handle(String msisdn, RegistrationAccepted request) {
-        final Survey survey = surveyRepository.get(request.getSurveyId());
-        if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
-            return getSurveyNotFound();
         }
 
-        final Respondent respondent =
-                respondentRepository.findOrCreate(msisdn, survey);
-
-        return renderFirstQuestion(survey, respondent);
-    }
-
-    @Override
-    public UssdModel handle(String msisdn, RegistrationDeclined request) {
-        final Survey survey = surveyRepository.get(request.getSurveyId());
-        if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
-            return getSurveyNotFound();
-        }
-
-        return new UssdModel(survey.getDetails().getEndText());
+        return surveyStart(survey, respondent);
     }
 
     @Override
     public UssdModel handle(String msisdn, AnswerOption request) {
-        final Survey survey = surveyRepository.get(request.getSurveyId());
-        if ((survey == null) || !survey.isRunningNow() || !survey.isActive()) {
-            return getSurveyNotFound();
+        final Survey survey = surveyService.findSurvey(request.getSurveyId());
+        if (survey == null) {
+            return surveyNotFound();
         }
 
         final Respondent respondent =
@@ -179,14 +126,17 @@ public class UssdService implements MessageHandler {
 
         answerRepository.save(respondent, option);
 
+        if (option.isTerminal()) {
+            return surveyFinish(respondent, survey);
+        }
+
         final Question next = option.getQuestion().getNext();
         if (next != null) {
-            // Render next question.
-            return renderQuestion(next);
+            return question(next);
 
         } else {
-            // All the questions are answered, meaning we just show end message.
-            return renderEnd(option.getQuestion().getSurvey());
+            // All the questions are answered.
+            return surveyFinish(respondent, option.getQuestion().getSurvey());
         }
     }
 
@@ -195,28 +145,46 @@ public class UssdService implements MessageHandler {
         throw new AssertionError("Unsupported request type: " + request.getClass());
     }
 
-    /**
-     * @return Survey welcome message.
-     */
-    private UssdModel renderWelcome(Survey survey) {
-        // TODO: Should we make option labels here editable in the survey?
-        //       This basically means adding two fixed options to the welcome message.
-        return new UssdModel(
-                survey.getDetails().getWelcomeText(),
-                RegistrationOption.getDefaultOptions(survey, "Yes", "No"));
+
+    //
+    //  Message generators.
+    //
+
+    private UssdModel surveyNotFound() {
+        return new UssdModel(bundle.getString("ussd.survey.not.available"));
     }
 
-    /**
-     * @return Survey end message.
-     */
-    private UssdModel renderEnd(Survey survey) {
+    private UssdModel fatalError() {
+        return new UssdModel(bundle.getString("ussd.error"));
+    }
+
+    private UssdModel surveyFinish(Respondent respondent, Survey survey) {
+        respondent.setFinished(true);
+        respondentRepository.update(respondent);
+
         return new UssdModel(survey.getDetails().getEndText());
+    }
+
+    private UssdModel surveyStart(Survey survey, Respondent respondent) {
+        respondent.setFinished(false);
+        respondentRepository.update(respondent);
+
+        answerRepository.clear(survey, respondent);
+
+        final Iterator<Question> questions = survey.getQuestions().iterator();
+        if (questions.hasNext()) {
+            return question(questions.next());
+
+        } else {
+            // This survey has no questions (if it's even allowed), so just end it.
+            return surveyFinish(respondent, survey);
+        }
     }
 
     /**
      * @return Form for the specified question.
      */
-    private UssdModel renderQuestion(Question question) {
+    private UssdModel question(Question question) {
         final List<AnswerOption> renderedOptions = new ArrayList<>();
         {
             List<QuestionOption> questionOptions = question.getOptions();
@@ -228,25 +196,5 @@ public class UssdService implements MessageHandler {
         }
 
         return new UssdModel(question.getTitle(), renderedOptions);
-    }
-
-    private UssdModel renderFirstQuestion(Survey survey, Respondent respondent) {
-        respondent.setAnswered(true);
-        respondentRepository.update(respondent);
-
-        answerRepository.clear(survey, respondent);
-
-        if (survey.getQuestions().isEmpty()) {
-            // This survey has no questions (if it's even allowed), so just end it.
-            return renderEnd(survey);
-
-        } else {
-            // Send the first question.
-            return renderQuestion(survey.getQuestions().get(0));
-        }
-    }
-
-    private UssdModel getSurveyNotFound() {
-        return new UssdModel(bundle.getString("ussd.survey.not.available"));
     }
 }

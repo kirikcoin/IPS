@@ -144,28 +144,6 @@
               </h:panelGroup>
             </eye:collapsingGroup>
 
-            <eye:collapsingGroup opened="true" id="groupWelcomeMessage">
-              <f:facet name="header">
-                <h:panelGroup>
-                  <h:outputText value="#{bundle['survey.settings.welcome.message']}"/>
-                  <h:commandLink value="#{bundle['survey.settings.modify']}"
-                                 onclick="jsfc('welcomeMessageDialog').show(); return false;"
-                                 styleClass="modify"/>
-                </h:panelGroup>
-              </f:facet>
-              <h:panelGroup>
-                <h:panelGrid columns="2">
-                  <h:panelGroup>
-                    <h:outputText id="surveyTitle"
-                                  value="#{surveySettingsController.survey.details.welcomeText}"/>
-                    <h:outputText rendered="#{surveySettingsController.survey.details.welcomeText == null}"
-                                  value="#{bundle['survey.settings.not.specified']}"
-                                  styleClass="placeholder"/>
-                  </h:panelGroup>
-                </h:panelGrid>
-              </h:panelGroup>
-            </eye:collapsingGroup>
-
             <eye:collapsingGroup opened="true" id="questionsList">
               <f:facet name="header">
                 <h:panelGroup>
@@ -234,6 +212,9 @@
                         <h:column>
                           <h:outputText value="#{option.order + 1}. " styleClass="option-number"/>
                           <h:outputText value="#{option.answer}"/>
+                          <h:outputText value="#{bundle['question.option.terminal.list.label']}"
+                                        rendered="#{option.terminal}"
+                                        styleClass="terminal-label"/>
                         </h:column>
                       </h:dataTable>
 
@@ -273,35 +254,6 @@
           <h:panelGroup layout="block" styleClass="page-footer"/>
 
         </h:panelGroup>
-
-        <!--
-            Welcome message dialog
-        -->
-        <eye:dialog id="welcomeMessageDialog"
-                    title="#{bundle['survey.settings.welcome.message']}" width="600">
-
-          <h:panelGrid columns="2">
-            <h:outputLabel value="#{bundle['survey.settings.welcome.message']}"
-                           for="welcomeText"/>
-            <eye:inputText id="welcomeText"
-                           rows="3"
-                           value="#{surveySettingsController.survey.details.welcomeText}"/>
-          </h:panelGrid>
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"
-                             action="#{surveySettingsController.saveMessage}">
-                <f:param name="errorId" value="welcomeMessageDialog"/>
-              </h:commandLink>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
-                             onclick="return page.onDialogCancel('welcomeMessageDialog');"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-
-        </eye:dialog>
 
         <!--
             End message dialog
@@ -450,8 +402,8 @@
 
           <br/>
 
-          <h:outputLabel value="#{bundle['survey.settings.question.modify.options']}:"
-                         for="questionOptions"/>
+          <!--<h:outputLabel value="#{bundle['survey.settings.question.modify.options']}:"-->
+                         <!--for="questionOptions"/>-->
 
           <eye:dynamicTable id="questionOptions"
                             value="#{surveySettingsController.questionOptions}"
@@ -459,7 +411,14 @@
             <eye:textColumn name="id"
                             allowEmpty="true"
                             columnClass="hidden"/>
-            <eye:textColumn name="answer" allowEditAfterAdd="true"/>
+            <eye:textColumn name="answer"
+                            allowEditAfterAdd="true"
+                            title="#{bundle['question.option.label']}"/>
+            <eye:selectColumn name="terminal"
+                              values="#{surveySettingsController.terminalValues}"
+                              var="t" itemLabel="#{t.label}" itemValue="#{t.value}"
+                              allowEditAfterAdd="true"
+                              title="#{bundle['question.option.terminal.label']}"/>
           </eye:dynamicTable>
 
           <eye:buttons>

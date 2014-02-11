@@ -34,12 +34,6 @@ public class SurveyDetails implements Serializable {
     private String description;
 
     /**
-     * Сообщение, отображаемое при регистрации респондента на опрос.
-     */
-    @Column(name = "welcome_text", columnDefinition = "TEXT")
-    private String welcomeText;
-
-    /**
      * Сообщение, отображаемое про завершении опроса - после ответа на последний вопрос.
      */
     @Column(name = "end_text", columnDefinition = "TEXT")
@@ -72,14 +66,6 @@ public class SurveyDetails implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getWelcomeText() {
-        return welcomeText;
-    }
-
-    public void setWelcomeText(String welcomeText) {
-        this.welcomeText = welcomeText;
     }
 
     public String getEndText() {

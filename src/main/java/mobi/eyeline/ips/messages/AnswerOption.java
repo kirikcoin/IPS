@@ -5,7 +5,7 @@ import mobi.eyeline.ips.model.QuestionOption;
 import java.util.HashMap;
 import java.util.Map;
 
-import static mobi.eyeline.ips.messages.ParseUtils.getInt;
+import static mobi.eyeline.ips.util.RequestParseUtils.getInt;
 import static mobi.eyeline.ips.messages.UssdOption.UssdOptionType.ANSWER;
 
 public class AnswerOption extends UssdOption {

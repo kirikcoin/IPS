@@ -3,7 +3,6 @@ package mobi.eyeline.ips.model;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -44,11 +42,11 @@ public class Respondent {
     private String msisdn;
 
     /**
-     * Флаг, указывает, ответил ли данный респондент на (хотя бы один) вопрос указанного вопроса.
+     * Флаг, указывает, закончил ли респондент прохождение опроса.
      */
     @Column(name = "answered", columnDefinition = "BIT", nullable = false)
     @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean answered;
+    private boolean finished;
 
     public Integer getId() {
         return id;
@@ -74,11 +72,11 @@ public class Respondent {
         this.msisdn = msisdn;
     }
 
-    public boolean isAnswered() {
-        return answered;
+    public boolean isFinished() {
+        return finished;
     }
 
-    public void setAnswered(boolean answered) {
-        this.answered = answered;
+    public void setFinished(boolean answered) {
+        this.finished = answered;
     }
 }

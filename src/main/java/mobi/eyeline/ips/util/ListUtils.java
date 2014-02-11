@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public class Utils {
+public class ListUtils {
 
     public static <T> void moveUp(List<T> list, T elem) {
         final int idx = list.indexOf(elem);

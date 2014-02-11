@@ -1,12 +1,9 @@
 package mobi.eyeline.ips.messages;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import mobi.eyeline.ips.util.RequestParseUtils;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import static mobi.eyeline.ips.messages.RegistrationOption.RegistrationAccepted;
-import static mobi.eyeline.ips.messages.RegistrationOption.RegistrationDeclined;
 
 public abstract class UssdOption {
     private final int key;
@@ -71,27 +68,15 @@ public abstract class UssdOption {
         }
 
         final UssdOptionType type =
-                UssdOptionType.valueOf(ParseUtils.getString(options, "type"));
+                UssdOptionType.valueOf(RequestParseUtils.getString(options, "type"));
 
         switch (type) {
-            case REGISTRATION_ACCEPTED:     return RegistrationAccepted.parse(options);
-            case REGISTRATION_DECLINED:     return RegistrationDeclined.parse(options);
             case ANSWER:                    return AnswerOption.parse(options);
             default:                        throw new AssertionError();
         }
     }
 
     public static enum UssdOptionType {
-
-        /**
-         * Confirm participation.
-         */
-        REGISTRATION_ACCEPTED,
-
-        /**
-         * Decline participation.
-         */
-        REGISTRATION_DECLINED,
 
         /**
          * Answer to a question.

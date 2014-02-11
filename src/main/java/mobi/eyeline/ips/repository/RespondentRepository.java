@@ -135,7 +135,7 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
         try {
             session.createQuery(
                     "UPDATE Respondent" +
-                    " SET answered = TRUE" +
+                    " SET finished = TRUE" +
                     " WHERE msisdn = :msisdn AND sid = :sid")
                     .setString("msisdn", msisdn)
                     .setInteger("sid", sid)
@@ -210,7 +210,7 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
                 respondent = new Respondent();
                 respondent.setMsisdn(msisdn);
                 respondent.setSurvey(survey);
-                respondent.setAnswered(false);
+                respondent.setFinished(false);
                 session.save(respondent);
 
                 respondent = find(session, survey, msisdn);

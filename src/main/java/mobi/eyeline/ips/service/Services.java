@@ -65,7 +65,7 @@ public class Services {
                         config.getMailFrom()));
 
         userService = new UserService(userRepository, mailService);
-        ussdService = new UssdService(surveyRepository, respondentRepository, answerRepository, questionOptionRepository);
+        ussdService = new UssdService(surveyService, respondentRepository, answerRepository, questionOptionRepository);
     }
 
     public static synchronized void initialize(Config properties) {

@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.model;
 
 import org.hibernate.annotations.Proxy;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.annotation.Generated;
@@ -45,6 +46,15 @@ public class QuestionOption implements Serializable {
     @Column(name = "option_order")
     private int order;
 
+    /**
+     * Индикатор прекращения опроса. <br/>
+     * В случае, если (1) флаг выставлен и (2) выбирается именно эта опция,
+     * опрос завершается.
+     */
+    @Column(name = "terminal", columnDefinition = "BIT", nullable = false)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean terminal;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "question_id")
     private Question question;
@@ -76,6 +86,14 @@ public class QuestionOption implements Serializable {
 
     public int getOrder() {
         return order;
+    }
+
+    public boolean isTerminal() {
+        return terminal;
+    }
+
+    public void setTerminal(boolean terminal) {
+        this.terminal = terminal;
     }
 
     public Question getQuestion() {
