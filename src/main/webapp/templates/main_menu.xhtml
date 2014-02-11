@@ -66,18 +66,18 @@
                 <h:commandLink value="#{bundle['main.menu.surveys']}"
                                action="SURVEY_LIST"
                                styleClass="#{surveyList ? 'menuButtonSelected' : 'menuButton'}"
-                               rendered="#{userSession.clientRole or userSession.managerRole}"/>
+                               rendered="#{userSession.surveyViewAllowed}"/>
                 <h:commandLink value="#{bundle['main.menu.clients']}"
                                action="CLIENT_LIST"
                                styleClass="#{clientsList ? 'menuButtonSelected' : 'menuButton'}"
                                rendered="#{userSession.managerRole}"/>
-                <h:commandLink value="Раздел 1"
+                <!--<h:commandLink value="Раздел 1"
                                action="SECTION_1"
                                styleClass="#{section1 ? 'menuButtonSelected' : 'menuButton'}"/>
                 <h:commandLink value="Раздел 2"
                                action="SECTION_2"
                                styleClass="#{section2 ? 'menuButtonSelected' : 'menuButton'}"
-                               rendered="#{not userSession.clientRole}"/>
+                               rendered="#{not userSession.clientRole}"/>-->
               </h:panelGroup>
             </div>
           </td>

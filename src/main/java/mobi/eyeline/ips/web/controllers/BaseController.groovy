@@ -42,7 +42,7 @@ public abstract class BaseController implements Serializable {
 
     boolean isAuthenticated() { userPrincipal != null }
 
-    private boolean inRole(Role role) {
+    boolean inRole(Role role) {
         final ExternalContext context = FacesContext.currentInstance.externalContext
         return context.isUserInRole(role.name)
     }

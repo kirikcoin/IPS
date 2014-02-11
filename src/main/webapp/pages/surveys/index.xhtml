@@ -107,7 +107,8 @@
 
         <h:panelGroup layout="block" style="margin-top: 15px;">
           <h:commandLink value="#{bundle['survey.list.create.survey']}"
-                         styleClass="button-black" onclick="return page.onCreateSurveyClick();"/>
+                         styleClass="button-black" onclick="return page.onCreateSurveyClick();"
+                         rendered="#{userSession.surveyModificationAllowed}"/>
         </h:panelGroup>
 
         <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="400">

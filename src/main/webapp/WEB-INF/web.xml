@@ -202,7 +202,7 @@
     </user-data-constraint>
   </security-constraint>
 
-  <security-constraint>
+  <!--<security-constraint>
     <web-resource-collection>
       <web-resource-name>Тест1</web-resource-name>
       <url-pattern>/pages/section1/*</url-pattern>
@@ -229,7 +229,7 @@
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>
     </user-data-constraint>
-  </security-constraint>
+  </security-constraint>-->
 
   <security-constraint>
     <web-resource-collection>
@@ -247,12 +247,27 @@
 
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>Surveys list</web-resource-name>
+      <web-resource-name>Surveys list/modification/stats</web-resource-name>
       <url-pattern>/pages/surveys/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>client</role-name>
       <role-name>manager</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Surveys list/modification/stats</web-resource-name>
+      <url-pattern>/profilepage.faces</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+      <role-name>manager</role-name>
+      <role-name>client</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>

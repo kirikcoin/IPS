@@ -63,7 +63,8 @@
               <h:outputLink value="#"
                             styleClass="button-heading"
                             onclick="jsfc('deleteDialog').show(); return false;"
-                            style="margin-left: 5px;">
+                            style="margin-left: 5px;"
+                            rendered="#{userSession.surveyModificationAllowed}">
                 <h:outputText value="#{bundle['survey.details.delete']}"/>
               </h:outputLink>
             </h:panelGroup>
@@ -100,7 +101,8 @@
                   <h:outputText value="#{bundle['survey.settings.settings']}"/>
                   <h:commandLink value="#{bundle['survey.settings.modify']}"
                                  onclick="jsfc('settingsDialog').show(); return false;"
-                                 styleClass="modify"/>
+                                 styleClass="modify"
+                                 rendered="#{userSession.surveyModificationAllowed}"/>
                 </h:panelGroup>
               </f:facet>
               <h:panelGroup>
@@ -151,7 +153,8 @@
 
                   <h:commandLink value="#{bundle['survey.settings.question.add']}"
                                  action="#{surveySettingsController.modifyQuestion}"
-                                 styleClass="modify"/>
+                                 styleClass="modify"
+                                 rendered="#{userSession.surveyModificationAllowed}"/>
                 </h:panelGroup>
               </f:facet>
 
@@ -171,7 +174,7 @@
                           <h:outputText value="#{question.order + 1}. " style="padding-right: 5px"/>
                           <h:outputText value="#{question.title}"/>
                         </h:panelGroup>
-                        <h:panelGroup>
+                        <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
                           <h:outputLink value="#"
                                         styleClass="modify"
                                         onclick="return page.showQuestionDeleteDialog(#{question.id});">
@@ -235,7 +238,8 @@
                   <h:outputText value="#{bundle['survey.settings.end.message']}"/>
                   <h:commandLink value="#{bundle['survey.settings.modify']}"
                                  onclick="jsfc('endMessageDialog').show(); return false;"
-                                 styleClass="modify"/>
+                                 styleClass="modify"
+                                 rendered="#{userSession.surveyModificationAllowed}"/>
                 </h:panelGroup>
               </f:facet>
               <h:panelGroup>

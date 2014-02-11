@@ -50,7 +50,7 @@ class SurveyListController extends BaseController {
                                 DataTableSortOrder sortOrder) {
 
                 def list = surveyRepository.list(
-                        isManagerRole() ? null : userRepository.getByLogin(userName),
+                        isManagerRole() ? null : userRepository.getByLogin(SurveyListController.this.userName),
                         search,
                         true,
                         sortOrder.columnId,
@@ -72,7 +72,7 @@ class SurveyListController extends BaseController {
             @Override
             public int getRowsCount() {
                 surveyRepository.count(
-                        isManagerRole() ? null : userRepository.getByLogin(userName),
+                        isManagerRole() ? null : userRepository.getByLogin(SurveyListController.this.userName),
                         search,
                         true)
             }
