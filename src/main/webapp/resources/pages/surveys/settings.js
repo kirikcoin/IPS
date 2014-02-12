@@ -1,11 +1,5 @@
 var page = {
 
-  onCreateSurveyClick: function () {
-    jsfc('newSurveyDialog').show();
-
-    return false;
-  },
-
   init: function () {
 
     function wireModificationLink(groupId) {
@@ -36,15 +30,67 @@ var page = {
     return false;
   },
 
+  lookup: function(id) {
+    var elem = jsfc(id);
+    if (!elem) {
+      elem = $('#' + id);
+    }
+
+    return elem;
+  },
+
   onDialogCancel: function (id) {
-    jsfc(id).hide();
+    var elem = page.lookup(id);
+
+    elem.hide();
     ips.message.hideAll();
     return false;
   },
 
-  addQuestion: function () {
-    ips.$byId('questionId').val('');
+  disableEditables: function() {
+    $('#deleteButton, a.modify, a.modify-left, #questionsList_body .eyeline_buttons').hide();
+  },
+
+  enableEditables: function() {
+    $('#deleteButton, a.modify, a.modify-left, #questionsList_body .eyeline_buttons').show();
+  },
+
+  onEditEndMessageClick: function() {
+    $('span[id^=surveyEndText]').hide();
+    $('#endMessageDialog').show();
+
+    page.disableEditables();
+
+    return false;
+  },
+
+  onEditEndMessageCancel: function() {
+    $('span[id^=surveyEndText]').show();
+    $('#endMessageDialog').hide();
+
+    $('#endText').val($('#surveyEndText').text());
+
+    page.enableEditables();
+
+    return false;
+  },
+
+  onEditSettingsClick: function() {
+    $('#settingsDisplay').hide();
+    $('#settingsDialog').show();
+
+    page.disableEditables();
+
+    return false;
+  },
+
+  onEditSettingsCancel: function() {
+    $('#settingsDialog').hide();
+    $('#settingsDisplay').show();
+
+    page.enableEditables();
 
     return false;
   }
+
 };

@@ -33,7 +33,7 @@ class SurveySettingsController extends BaseSurveyController {
     Question question = new Question()
     DynamicTableModel questionOptions = new DynamicTableModel()
 
-    List<TerminalOption> terminalValues = [TerminalOption.TRUE, TerminalOption.FALSE]
+    List<TerminalOption> terminalValues = [TerminalOption.FALSE, TerminalOption.TRUE]
 
     SurveySettingsController() {
         super()

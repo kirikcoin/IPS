@@ -9,11 +9,13 @@ class BaseSurveyController extends BaseController {
     protected final SurveyRepository surveyRepository = Services.instance().surveyRepository
 
     Survey survey
+    Survey persistedSurvey
+
     Integer surveyId
 
     BaseSurveyController() {
         surveyId = getRequest().getParameter("id")?.toInteger()
         survey = surveyRepository.load(surveyId)
-
+        persistedSurvey = surveyRepository.load(surveyId)
     }
 }

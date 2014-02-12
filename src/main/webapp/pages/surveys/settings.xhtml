@@ -23,15 +23,18 @@
         $(function() {
           $('#surveyId').val("#{param['id']}");
 
-          if ("#{surveySettingsController.errorId}".length) {
-            jsfc('#{surveySettingsController.errorId}').show();
+          if ("#{surveySettingsController.errorId}" == 'settingsDialog') {
+            page.onEditSettingsClick();
+          } else if ("#{surveySettingsController.errorId}" == 'endMessageDialog') {
+            page.onEditEndMessageClick();
           }
 
           if ("#{surveySettingsController.questionEditMode}" == "true") {
             jsfc('questionModificationDialog').show();
           }
 
-          $('#content').attr('action', '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
+          $('#content').attr('action',
+              '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
         });
         //    ]]>
       </script>
@@ -58,7 +61,8 @@
                             styleClass="button-heading">
                 <h:outputText value="&lt; #{bundle['survey.details.link.back']}"/>
               </h:outputLink>
-              <h:outputLink value="#"
+              <h:outputLink id="deleteButton"
+                            value="#"
                             styleClass="button-heading"
                             onclick="jsfc('deleteDialog').show(); return false;"
                             style="margin-left: 5px;"
@@ -98,25 +102,27 @@
                 <h:panelGroup>
                   <h:outputText value="#{bundle['survey.settings.settings']}"/>
                   <h:commandLink value="#{bundle['survey.settings.modify']}"
-                                 onclick="jsfc('settingsDialog').show(); return false;"
-                                 styleClass="modify"
+                                 onclick="return page.onEditSettingsClick();"
+                                 styleClass="modify-left"
                                  rendered="#{userSession.surveyModificationAllowed}"/>
                 </h:panelGroup>
               </f:facet>
               <h:panelGroup>
 
-                <h:panelGrid columns="2">
+                <h:panelGrid id="settingsDisplay"
+                             columns="2"
+                             columnClasses="settings-left,settings-right">
                   <!-- Title -->
                   <h:outputLabel value="#{bundle['survey.properties.title']}"
                                  for="surveyTitle"/>
                   <h:outputText id="surveyTitle"
-                                value="#{surveySettingsController.survey.details.title}"/>
+                                value="#{surveySettingsController.persistedSurvey.details.title}"/>
 
                   <!-- Start date -->
                   <h:outputLabel value="#{bundle['survey.properties.period.start']}"
                                  for="surveyStartDate"/>
                   <h:outputText id="surveyStartDate"
-                                value="#{surveySettingsController.survey.startDate}">
+                                value="#{surveySettingsController.persistedSurvey.startDate}">
                     <f:convertDateTime type="both" dateStyle="short"/>
                   </h:outputText>
 
@@ -124,7 +130,7 @@
                   <h:outputLabel value="#{bundle['survey.properties.period.end']}"
                                  for="surveyEndDate"/>
                   <h:outputText id="surveyEndDate"
-                                value="#{surveySettingsController.survey.endDate}">
+                                value="#{surveySettingsController.persistedSurvey.endDate}">
                     <f:convertDateTime type="both" dateStyle="short"/>
                   </h:outputText>
 
@@ -132,13 +138,13 @@
                   <h:outputLabel value="#{bundle['survey.properties.client']}"
                                  for="client"/>
                   <h:outputText id="client"
-                                value="#{surveySettingsController.survey.client.fullName}"/>
+                                value="#{surveySettingsController.persistedSurvey.client.fullName}"/>
 
                   <!-- Access number -->
                   <h:outputLabel value="#{bundle['survey.list.table.access.number']}:"
                                  for="accessNumber"/>
                   <h:outputText id="accessNumber"
-                                value="#{surveySettingsController.survey.statistics.accessNumber}"/>
+                                value="#{surveySettingsController.persistedSurvey.statistics.accessNumber}"/>
 
                   <!-- Poll external URL -->
                   <h:outputLabel value="#{bundle['survey.external.url']}"
@@ -149,6 +155,49 @@
                                 rendered="#{userSession.managerRole}"/>
                 </h:panelGrid>
 
+                <h:panelGroup id="settingsDialog" style="display: none">
+                  <h:panelGrid columns="2" columnClasses="settings-left,none">
+                    <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
+                    <eye:inputText id="newSurveyTitle"
+                                   value="#{surveySettingsController.survey.details.title}"/>
+
+                    <h:outputLabel value="#{bundle['survey.properties.period.start']}" for="newSurveyStartDate"/>
+                    <eye:inputDate id="newSurveyStartDate"
+                                   inputTime="true"
+                                   value="#{surveySettingsController.survey.startDate}"/>
+
+                    <h:outputLabel value="#{bundle['survey.properties.period.end']}" for="newSurveyEndDate"/>
+                    <eye:inputDate id="newSurveyEndDate"
+                                   inputTime="true"
+                                   value="#{surveySettingsController.survey.endDate}"/>
+
+                    <h:outputLabel value="#{bundle['survey.properties.client']}" for="clients"/>
+                    <h:selectOneMenu id="clients"
+                                     value="#{surveySettingsController.newSurveyClientId}"
+                                     style="margin-left: 0; margin-right: 0">
+                      <f:selectItems value="#{clientController.clients}" />
+                    </h:selectOneMenu>
+
+                    <h:outputLabel value="#{bundle['survey.list.table.access.number']}:" for="newAccessNumber"/>
+                    <eye:inputText id="newAccessNumber"
+                                   value="#{surveySettingsController.survey.statistics.accessNumber}"/>
+                  </h:panelGrid>
+
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"
+                                     action="#{surveySettingsController.saveSettings}">
+                        <f:param name="errorId" value="settingsDialog"/>
+                      </h:commandLink>
+                    </eye:button>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
+                                     onclick="return page.onEditSettingsCancel();"/>
+                    </eye:button>
+                    <eye:space/>
+                  </eye:buttons>
+                </h:panelGroup>
+
               </h:panelGroup>
             </eye:collapsingGroup>
 
@@ -156,13 +205,6 @@
               <f:facet name="header">
                 <h:panelGroup>
                   <h:outputText value="#{bundle['survey.settings.questions']}"/>
-
-                  <h:commandLink value="#{bundle['survey.settings.question.add']}"
-                                 action="#{surveySettingsController.modifyQuestion}"
-                                 styleClass="modify"
-                                 rendered="#{userSession.surveyModificationAllowed}">
-                    <f:param name="questionId" value=""/>
-                  </h:commandLink>
                 </h:panelGroup>
               </f:facet>
 
@@ -238,6 +280,19 @@
                   </h:panelGrid>
                 </ui:repeat>
               </h:panelGroup>
+
+              <eye:buttons>
+                <eye:button>
+                  <h:commandLink value="#{bundle['survey.settings.question.add']}"
+                                 action="#{surveySettingsController.modifyQuestion}"
+                                 styleClass="button-green"
+                                 rendered="#{userSession.surveyModificationAllowed}">
+                    <f:param name="questionId" value=""/>
+                  </h:commandLink>
+                </eye:button>
+                <eye:space/>
+              </eye:buttons>
+
             </eye:collapsingGroup>
 
             <eye:collapsingGroup opened="true" id="groupEndMessage">
@@ -245,21 +300,42 @@
                 <h:panelGroup>
                   <h:outputText value="#{bundle['survey.settings.end.message']}"/>
                   <h:commandLink value="#{bundle['survey.settings.modify']}"
-                                 onclick="jsfc('endMessageDialog').show(); return false;"
-                                 styleClass="modify"
+                                 onclick="return page.onEditEndMessageClick();"
+                                 styleClass="modify-left"
                                  rendered="#{userSession.surveyModificationAllowed}"/>
                 </h:panelGroup>
               </f:facet>
               <h:panelGroup>
-                <h:outputText id="surveyTitle"
-                              value="#{surveySettingsController.survey.details.endText}"/>
-                <h:outputText rendered="#{surveySettingsController.survey.details.endText == null}"
+                <h:outputText id="surveyEndText"
+                              value="#{surveySettingsController.persistedSurvey.details.endText}"/>
+                <h:outputText id="surveyEndTextPlaceholder"
+                              rendered="#{surveySettingsController.persistedSurvey.details.endText == null}"
                               value="#{bundle['survey.settings.not.specified']}"
                               styleClass="placeholder"/>
+
+                <h:panelGroup id="endMessageDialog" style="display: none">
+                  <h:panelGrid columns="1">
+                    <!--<h:outputLabel value="#{bundle['survey.settings.end.message']}"-->
+                                   <!--for="endText"/>-->
+                    <eye:inputText id="endText"
+                                   value="#{surveySettingsController.survey.details.endText}"/>
+                  </h:panelGrid>
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"
+                                     action="#{surveySettingsController.saveMessage}">
+                        <f:param name="errorId" value="endMessageDialog"/>
+                      </h:commandLink>
+                    </eye:button>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
+                                     onclick="return page.onEditEndMessageCancel();"/>
+                    </eye:button>
+                    <eye:space/>
+                  </eye:buttons>
+                </h:panelGroup>
               </h:panelGroup>
             </eye:collapsingGroup>
-
-
 
           </h:panelGroup>
 
@@ -267,83 +343,6 @@
 
         </h:panelGroup>
 
-        <!--
-            End message dialog
-        -->
-        <eye:dialog id="endMessageDialog"
-                    title="#{bundle['survey.settings.end.message']}" width="600">
-
-          <h:panelGrid columns="2">
-            <h:outputLabel value="#{bundle['survey.settings.end.message']}"
-                           for="endText"/>
-            <eye:inputText id="endText"
-                           rows="3"
-                           value="#{surveySettingsController.survey.details.endText}"/>
-          </h:panelGrid>
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"
-                             action="#{surveySettingsController.saveMessage}">
-                <f:param name="errorId" value="endMessageDialog"/>
-              </h:commandLink>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
-                             onclick="return page.onDialogCancel('endMessageDialog');"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-
-        </eye:dialog>
-
-        <!--
-            Survey settings dialog
-        -->
-
-        <eye:dialog id="settingsDialog"
-                    title="#{bundle['survey.settings.dialog.title']}"
-                    width="400">
-
-          <h:panelGrid columns="2">
-            <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
-            <eye:inputText id="newSurveyTitle"
-                           value="#{surveySettingsController.survey.details.title}"/>
-
-            <h:outputLabel value="#{bundle['survey.properties.period.start']}" for="newSurveyStartDate"/>
-            <eye:inputDate id="newSurveyStartDate"
-                           inputTime="true"
-                           value="#{surveySettingsController.survey.startDate}"/>
-
-            <h:outputLabel value="#{bundle['survey.properties.period.end']}" for="newSurveyEndDate"/>
-            <eye:inputDate id="newSurveyEndDate"
-                           inputTime="true"
-                           value="#{surveySettingsController.survey.endDate}"/>
-
-            <h:outputLabel value="#{bundle['survey.list.table.access.number']}:" for="newAccessNumber"/>
-            <eye:inputText id="newAccessNumber"
-                           value="#{surveySettingsController.survey.statistics.accessNumber}"/>
-
-            <h:outputLabel value="#{bundle['survey.properties.client']}" for="clients"/>
-            <h:selectOneMenu id="clients" value="#{surveySettingsController.newSurveyClientId}">
-              <f:selectItems value="#{clientController.clients}" />
-            </h:selectOneMenu>
-          </h:panelGrid>
-
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"
-                             action="#{surveySettingsController.saveSettings}">
-                <f:param name="errorId" value="settingsDialog"/>
-              </h:commandLink>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
-                             onclick="return page.onDialogCancel('settingsDialog');"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-
-        </eye:dialog>
 
         <!--
             Survey delete confirmation dialog
@@ -413,9 +412,6 @@
                          value="#{surveySettingsController.question.title}"/>
 
           <br/>
-
-          <!--<h:outputLabel value="#{bundle['survey.settings.question.modify.options']}:"-->
-                         <!--for="questionOptions"/>-->
 
           <eye:dynamicTable id="questionOptions"
                             value="#{surveySettingsController.questionOptions}"
