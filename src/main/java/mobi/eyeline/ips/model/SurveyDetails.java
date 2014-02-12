@@ -15,7 +15,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 // TODO: Take localization into account.
-//       For not we consider only one localization option for each survey.
+//       For now we consider only one localization option for each survey.
 @Entity
 @Table(name = "surveys_text")
 public class SurveyDetails implements Serializable {
