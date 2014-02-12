@@ -96,6 +96,17 @@ public class TemplateService {
         return processTemplate(template, data);
     }
 
+    public String formatUserModified(final User user) {
+        final Template template = loadTemplate("templates/mail-user-modified.ftl");
+
+        final Map<String, Object> data = new HashMap<String, Object>() {{
+            put("user", user);
+            put("loginUrl", properties.getLoginUrl());
+        }};
+
+        return processTemplate(template, data);
+    }
+
     public String formatUserDeactivation(final User user) {
         final Template template = loadTemplate("templates/mail-user-deactivation.ftl");
 
@@ -117,6 +128,8 @@ public class TemplateService {
 
         return processTemplate(template, data);
     }
+
+
 
     public String formatPasswordRestore(final User user,
                                         final String rawNewPassword) {

@@ -35,6 +35,10 @@ class ClientListController extends BaseController {
 
     boolean newUserDataValidationError
     boolean modifiedUserDataValidationError
+    boolean emailExists
+    boolean loginExists
+    boolean editedEmailExists
+    boolean editedLoginExists
     Boolean passwordResetError
 
     ClientListController() {
@@ -86,13 +90,17 @@ class ClientListController extends BaseController {
 
     //TODO: validation
     void saveModifiedUser() {
-      //  userLoginForEdit = getParamValue("userLoginForEdit").asString()
         User user = userRepository.getByLogin(userLoginForEdit)
+        String oldEmail = user.email
+        String oldLogin = user.login
+
         user.fullName = userForEdit.fullName
         user.company = userForEdit.company
         user.login = userForEdit.login
         user.email = userForEdit.email
 
+        editedEmailExists = userService.isEmailExists(user.email, user.id)
+        editedLoginExists = userService.isLoginExists(user.login, user.id)
         modifiedUserDataValidationError =
                 renderViolationMessage(validator.validate(user),
                         [
@@ -101,14 +109,33 @@ class ClientListController extends BaseController {
                                 'login': 'clientSettingsLogin',
                                 'email': 'clientSettingsEmail',
                         ])
-        if(modifiedUserDataValidationError){
+
+
+        if(editedLoginExists){
+            addErrorMessage(getResourceBundle().getString("client.dialog.validation.login.exists"),
+                    "clientSettingsLogin")
+        }
+
+        if(editedEmailExists){
+            addErrorMessage(getResourceBundle().getString("client.dialog.validation.email.exists"),
+                    "clientSettingsEmail")
+        }
+
+        if (modifiedUserDataValidationError || editedEmailExists || editedLoginExists) {
             return
         }
+
         userRepository.update(user)
 
+        if (oldLogin != user.login && oldEmail == user.email) {
+            mailService.sendUserModified(user)
+        }
+
+        if (oldEmail != user.email) {
+            mailService.sendUserModified(user,oldEmail)
+        }
     }
 
-    //TODO: validation
     void createUser() {
         String password = userService.generatePassword()
         User user = new User(
@@ -119,6 +146,8 @@ class ClientListController extends BaseController {
                 password: HashUtils.hashPassword(password),
                 role: Role.CLIENT)
 
+        emailExists = userService.isEmailExists(user.email)
+        loginExists = userService.isLoginExists(user.login)
         newUserDataValidationError =
                 renderViolationMessage(validator.validate(user),
                 [
@@ -127,7 +156,19 @@ class ClientListController extends BaseController {
                         'login': 'newClientLogin',
                         'email': 'newClientEmail',
                 ])
-        if(newUserDataValidationError){
+
+
+        if(loginExists){
+            addErrorMessage(getResourceBundle().getString("client.dialog.validation.login.exists"),
+                            "newClientLogin")
+        }
+
+        if(emailExists){
+            addErrorMessage(getResourceBundle().getString("client.dialog.validation.email.exists"),
+                            "newClientEmail")
+        }
+
+        if(newUserDataValidationError || loginExists || emailExists){
             return
         }
 

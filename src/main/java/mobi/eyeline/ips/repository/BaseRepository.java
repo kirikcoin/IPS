@@ -122,6 +122,7 @@ public abstract class BaseRepository<E, K extends Serializable> {
             transaction.commit();
 
         } catch (HibernateException e) {
+
             if ((transaction != null) && transaction.isActive()) {
                 try {
                     transaction.rollback();

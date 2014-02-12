@@ -57,4 +57,53 @@ public class UserService {
         return password;
     }
 
+    public boolean isLoginExists(String login) {
+        User user = userRepository.getByLogin(login);
+
+        if(user == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isEmailExists(String email) {
+        User user = userRepository.getByEmail(email);
+
+        if(user == null) {
+            return false;
+        }
+
+
+        return true;
+    }
+
+    public boolean isLoginExists(String login, int id) {
+        User user = userRepository.getByLogin(login);
+
+        if(user == null) {
+            return false;
+        }
+
+        if (id == user.getId()){
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isEmailExists(String email, int id) {
+        User user = userRepository.getByEmail(email);
+
+        if(user == null) {
+            return false;
+        }
+
+        if (id == user.getId()){
+            return false;
+        }
+
+        return true;
+    }
+
 }

@@ -110,11 +110,6 @@
     <validator-class>mobi.eyeline.ips.web.validators.EmailValidator</validator-class>
   </validator>
 
-  <validator>
-    <validator-id>latin</validator-id>
-    <validator-class>mobi.eyeline.ips.web.validators.LatinValidator</validator-class>
-  </validator>
-
   <!-- NAVIGATION ================================================================================================== -->
 
   <navigation-rule>

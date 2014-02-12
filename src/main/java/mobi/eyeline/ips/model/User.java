@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "users")
@@ -36,6 +37,7 @@ public class User {
      */
     @Column(name = "users_name", nullable = false)
     @NotEmpty(message = "{profile.edit.message.validationErrorLoginEmpty}")
+    @Pattern(regexp = "^[A-Za-z0-9\\.\\-\\_]+$", message = "{client.dialog.validation.loginerror}")
     private String login;
 
     /**

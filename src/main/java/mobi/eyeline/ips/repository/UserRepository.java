@@ -62,11 +62,15 @@ public class UserRepository extends BaseRepository<User, Integer> {
     }
 
     public User getByLogin(String login) {
-        final Session session = getSessionFactory().getCurrentSession();
-        return (User) session
-                .createCriteria(User.class)
-                .add(eq("login", login))
-                .uniqueResult();
+        final Session session = getSessionFactory().openSession();
+        try {
+            return (User) session
+                    .createCriteria(User.class)
+                    .add(eq("login", login))
+                    .uniqueResult();
+        } finally {
+            session.close();
+        }
     }
 
     public List<User> listByRole(Role role) {

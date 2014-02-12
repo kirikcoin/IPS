@@ -38,6 +38,28 @@ public class MailService {
         ));
     }
 
+    public void sendUserModified(User user) {
+        send(new Message(
+                user.getEmail(),
+                getSubject("email.subject.user.registration"),
+                templateService.formatUserModified(user)
+        ));
+    }
+
+    public void sendUserModified(User user, String oldEmail) {
+        send(new Message(
+                user.getEmail(),
+                getSubject("email.subject.user.modified"),
+                templateService.formatUserModified(user)
+        ));
+
+        send(new Message(
+                oldEmail,
+                getSubject("email.subject.user.modified"),
+                templateService.formatUserModified(user)
+        ));
+    }
+
     public void sendUserDeactivation(User user) {
         send(new Message(
                 user.getEmail(),
@@ -45,6 +67,7 @@ public class MailService {
                 templateService.formatUserDeactivation(user)
         ));
     }
+
     public void sendUserActivation(User user) {
         send(new Message(
                 user.getEmail(),

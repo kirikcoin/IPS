@@ -9,20 +9,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class LatinValidator implements Validator {
+public class LatinValidator  {
     private Pattern loginPattern = Pattern.compile("^[A-Za-z0-9\\.]+$");
 //    public static void main(String[] args) {
 //        Pattern emailPattern = Pattern.compile("^\\w+@[a-zA-Z_]+?\\.[a-zA-Z]{2,4}$");
 //        Pattern emailPattern2 = Pattern.compile("\\p{L}*+\\.*+(\\p{L}+)*+\\d*");
-//        Pattern loginPattern = Pattern.compile("^[A-Za-z0-9\\.]+$");
+//        Pattern loginPattern = Pattern.compile("^[A-Za-z0-9\\.\\-\\_]+$");
 //        Matcher m = loginPattern.matcher(String.valueOf("sdfdsd.fg23423fasd."));
 //        if(!m.matches()) throw new ValidatorException(new FacesMessage());
 //    }
-
-    @Override
-    public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
+    public boolean validate(String value) throws ValidatorException {
         Matcher m = loginPattern.matcher(String.valueOf(value));
-        if(!m.matches()) throw new ValidatorException(new FacesMessage());
+        if(!m.matches()) return false;
+        return true;
     }
 }
 

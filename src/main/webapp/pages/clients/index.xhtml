@@ -27,6 +27,13 @@
           if ("#{clientListController.modifiedUserDataValidationError}" == "true") {
             jsfc('clientSettingsDialog').show();
           }
+          if ("#{clientListController.emailExists}" == "true" ||"#{clientListController.loginExists}" == "true" ) {
+            jsfc('newClientDialog').show();
+          }
+          if ("#{clientListController.editedEmailExists}" == "true" ||"#{clientListController.editedLoginExists}" == "true" ) {
+            jsfc('clientSettingsDialog').show();
+          }
+
 
           if ("#{clientListController.passwordResetError}" == "true") {
             ips.message.error("#{bundle['client.dialog.passwordreset.error']}");
@@ -160,9 +167,7 @@
             <h:outputLabel value="#{bundle['client.dialog.newclient.field.login']}"
                            for="newClientLogin"/>
             <eye:inputText id="newClientLogin"
-                           value="#{clientListController.newUser.login}"
-                           validator="latin"
-                           validatorMessage="notlatin"/>
+                           value="#{clientListController.newUser.login}" />
 
             <h:outputLabel value="#{bundle['client.dialog.newclient.field.email']}"
                            for="newClientEmail"/>
