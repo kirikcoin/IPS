@@ -157,41 +157,48 @@
 
                 <h:panelGroup id="settingsDialog" style="display: none">
                   <h:panelGrid columns="2" columnClasses="settings-left,none">
-                    <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
+                    <h:outputLabel value="#{bundle['survey.properties.title']}"
+                                   for="newSurveyTitle"/>
                     <eye:inputText id="newSurveyTitle"
                                    value="#{surveySettingsController.survey.details.title}"/>
 
-                    <h:outputLabel value="#{bundle['survey.properties.period.start']}" for="newSurveyStartDate"/>
+                    <h:outputLabel value="#{bundle['survey.properties.period.start']}"
+                                   for="newSurveyStartDate"/>
                     <eye:inputDate id="newSurveyStartDate"
                                    inputTime="true"
                                    value="#{surveySettingsController.survey.startDate}"/>
 
-                    <h:outputLabel value="#{bundle['survey.properties.period.end']}" for="newSurveyEndDate"/>
+                    <h:outputLabel value="#{bundle['survey.properties.period.end']}"
+                                   for="newSurveyEndDate"/>
                     <eye:inputDate id="newSurveyEndDate"
                                    inputTime="true"
                                    value="#{surveySettingsController.survey.endDate}"/>
 
-                    <h:outputLabel value="#{bundle['survey.properties.client']}" for="clients"/>
+                    <h:outputLabel value="#{bundle['survey.properties.client']}"
+                                   for="clients"/>
                     <h:selectOneMenu id="clients"
                                      value="#{surveySettingsController.newSurveyClientId}"
                                      style="margin-left: 0; margin-right: 0">
                       <f:selectItems value="#{clientController.clients}" />
                     </h:selectOneMenu>
 
-                    <h:outputLabel value="#{bundle['survey.list.table.access.number']}:" for="newAccessNumber"/>
+                    <h:outputLabel value="#{bundle['survey.list.table.access.number']}:"
+                                   for="newAccessNumber"/>
                     <eye:inputText id="newAccessNumber"
                                    value="#{surveySettingsController.survey.statistics.accessNumber}"/>
                   </h:panelGrid>
 
                   <eye:buttons>
                     <eye:button>
-                      <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['survey.settings.save']}"
                                      action="#{surveySettingsController.saveSettings}">
                         <f:param name="errorId" value="settingsDialog"/>
                       </h:commandLink>
                     </eye:button>
                     <eye:button>
-                      <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['survey.create.button.cancel']}"
                                      onclick="return page.onEditSettingsCancel();"/>
                     </eye:button>
                     <eye:space/>

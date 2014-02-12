@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "answers")
@@ -32,6 +33,9 @@ public class Answer {
     @JoinColumn(name = "option_id", nullable = false)
     @ManyToOne(optional = false)
     private QuestionOption option;
+
+    @Column(name = "timestamp")
+    private Date date;
 
     public Integer getId() {
         return id;

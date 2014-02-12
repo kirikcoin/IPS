@@ -4,11 +4,24 @@ import mobi.eyeline.ips.model.Answer;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Respondent;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.model.SurveySession;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.hibernate.criterion.Restrictions.ilike;
 
 public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
@@ -72,5 +85,103 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         } finally {
             session.close();
         }
+    }
+
+    private List<Answer> list(Respondent respondent) {
+        final Session session = getSessionFactory().getCurrentSession();
+        //noinspection unchecked
+        return (List<Answer>) session.createQuery(
+                "from Answer where respondent = :respondent")
+                .setEntity("respondent", respondent)
+                .list();
+    }
+
+    public List<SurveySession> list(Survey survey,
+                                    Date from,
+                                    Date to,
+                                    String filter,
+                                    String orderProperty,
+                                    boolean asc,
+                                    int limit,
+                                    int offset) {
+
+        final Session session = getSessionFactory().getCurrentSession();
+
+        final Criteria criteria = session.createCriteria(Respondent.class);
+
+        criteria.createAlias("survey", "survey");
+
+        criteria.add(Restrictions.eq("survey", survey));
+
+        criteria.add(Restrictions.ge("startDate", from));
+        criteria.add(Restrictions.le("startDate", to));
+
+        if (isNotBlank(filter)) {
+            filter = filter.trim();
+
+            criteria.add(ilike("msisdn", filter, MatchMode.ANYWHERE));
+        }
+
+        criteria.setFirstResult(offset).setMaxResults(limit);
+
+        {
+            final String property;
+            if (orderProperty != null) {
+                switch (orderProperty) {
+                    case "respondent":      property = "msisdn";         break;
+                    case "date":            property = "startDate";      break;
+                    default:
+                        throw new RuntimeException("Unexpected sort column: " + orderProperty);
+                }
+
+            } else {
+                property = "date";
+            }
+            criteria.addOrder(asc ? Order.asc(property) : Order.desc(property));
+        }
+
+        @SuppressWarnings("unchecked")
+        final List<Respondent> respondents = (List<Respondent>) criteria.list();
+
+        final List<SurveySession> results = new ArrayList<>(respondents.size());
+        for (Respondent respondent : respondents) {
+            final SurveySession result = new SurveySession(survey, respondent);
+
+            for (Answer answer : list(respondent)) {
+                result.add(answer);
+            }
+
+            results.add(result);
+        }
+
+        return results;
+    }
+
+    public int count(Survey survey,
+                     Date from,
+                     Date to,
+                     String filter) {
+
+        final Session session = getSessionFactory().getCurrentSession();
+
+        final Criteria criteria = session.createCriteria(Respondent.class);
+
+        criteria.createAlias("survey", "survey");
+
+        criteria.add(Restrictions.eq("survey", survey));
+
+        criteria.add(Restrictions.ge("startDate", from));
+        criteria.add(Restrictions.le("startDate", to));
+
+        if (isNotBlank(filter)) {
+            filter = filter.trim();
+
+            criteria.add(ilike("msisdn", filter, MatchMode.ANYWHERE));
+        }
+
+        criteria.setProjection(Projections.rowCount());
+
+        //noinspection unchecked
+        return ((Number) criteria.uniqueResult()).intValue();
     }
 }

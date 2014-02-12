@@ -3,9 +3,8 @@
 -- Cleanup
 --
 
-delete from respondents;
-
 delete from answers;
+delete from respondents;
 
 delete from surveys_users;
 delete from survey_stats;
@@ -17,9 +16,11 @@ delete from survey_stats;
 delete from surveys_text;
 delete from surveys;
 
+-- Admin preserved, see `initial_fill.sql'.
 delete from users where id >= 2;
 
 SELECT SHA2('bagel', 256) INTO @pw;
+SELECT 31483 INTO @sid;
 
 INSERT INTO users (`id`, `email`, `full_name`, `users_name`, `password`, `blocked`, `role`, `company`) VALUES
 
@@ -36,7 +37,7 @@ INSERT INTO users (`id`, `email`, `full_name`, `users_name`, `password`, `blocke
 
 
 INSERT INTO surveys (id, active, startdate, expires) VALUES
-  (31483, TRUE,   '2014-01-01 12:15:00', '2015-01-01 13:15:00'),
+  (@sid, TRUE,   '2014-01-01 12:15:00', '2015-01-01 13:15:00'),
 
   (2, TRUE,   '2014-02-10 14:00:00', '2014-03-10 14:00:00'),
   (3, TRUE,   '2012-02-10 14:00:00', '2015-03-10 14:00:00'),
@@ -55,7 +56,7 @@ INSERT INTO surveys (id, active, startdate, expires) VALUES
 
 
 INSERT INTO surveys_text (survey_id, title, end_text) VALUES
-  (31483,   'Опрос 1', 'Thanks for your time');
+  (@sid,   'Опрос 1', 'Thanks for your time');
 
 INSERT INTO surveys_text (survey_id, title) VALUES
   (2,   'Опрос 2'),
@@ -75,7 +76,7 @@ INSERT INTO surveys_text (survey_id, title) VALUES
 
 
 INSERT INTO surveys_users (survey_id, user_id) VALUES
-  (31483,   5),
+  (@sid,   5),
 
   (2,   5),
   (3,   5),
@@ -94,7 +95,7 @@ INSERT INTO surveys_users (survey_id, user_id) VALUES
 
 
 INSERT INTO survey_stats (survey_id, accessNumber) VALUES
-  (31483, NULL),
+  (@sid, NULL),
 
   (2, NULL),
   (3, NULL),
@@ -112,24 +113,99 @@ INSERT INTO survey_stats (survey_id, accessNumber) VALUES
   (15, NULL);
 
 
-insert into questions(id, survey_id, title, question_order) values
-  (1, 31483, 'Please select your age', 0),
-  (2, 31483, 'Please select your occupation', 1),
-  (3, 31483, 'What is your favorite color?', 2);
+INSERT INTO questions (id, survey_id, title, question_order) VALUES
+  (1, @sid, 'Please select your age',            0),
+  (2, @sid, 'Please select your occupation',     1),
+  (3, @sid, 'What is your favorite color?',      2);
 
 
-insert into question_options(question_id, option_order, answer) values
-  (1, 0, '<18'),
-  (1, 1, '18-30'),
-  (1, 2, '>30'),
+INSERT INTO question_options (id, question_id, option_order, answer) VALUES
+  (1,  1, 0, '<18'),
+  (2,  1, 1, '18-30'),
+  (3,  1, 2, '>30'),
 
-  (2, 0, 'Unemployed'),
-  (2, 1, 'Own business'),
-  (2, 2, 'Other'),
+  (4,  2, 0, 'Unemployed'),
+  (5,  2, 1, 'Own business'),
+  (6,  2, 2, 'Other'),
 
-  (3, 0, 'Red'),
-  (3, 1, 'Orange'),
-  (3, 2, 'Yellow'),
-  (3, 3, 'Green'),
-  (3, 4, 'Blue'),
-  (3, 5, 'Violet');
+  (7,  3, 0, 'Red'),
+  (8,  3, 1, 'Orange'),
+  (9,  3, 2, 'Yellow'),
+  (10, 3, 3, 'Green'),
+  (11, 3, 4, 'Blue'),
+  (12, 3, 5, 'Violet');
+
+INSERT INTO respondents (id, answered, MSISDN, survey_id) VALUES
+  (1,  TRUE,  '+79130000000', @sid),
+  (2,  TRUE,  '+79130000001', @sid),
+  (3,  TRUE,  '+79130000002', @sid),
+  (4,  TRUE,  '+79130000003', @sid),
+  (5,  TRUE,  '+79130000004', @sid),
+  (6,  TRUE,  '+79130000005', @sid),
+  (7,  TRUE,  '+79130000006', @sid),
+  (8,  TRUE,  '+79130000007', @sid),
+  (9,  TRUE,  '+79130000008', @sid),
+  (10, TRUE,  '+79130000009', @sid),
+  (11, TRUE,  '+79130000010', @sid),
+  (12, TRUE,  '+79130000011', @sid),
+  (13, FALSE, '+79130000012', @sid),
+  (14, FALSE, '+79130000013', @sid),
+  (15, FALSE, '+79130000014', @sid);
+
+INSERT INTO answers (respondent_id, question_id, option_id) VALUES
+  (1, 1, 1),
+  (1, 2, 4),
+  (1, 3, 7),
+
+  (2, 1, 1),
+  (2, 2, 4),
+  (2, 3, 7),
+
+  (3, 1, 1),
+  (3, 2, 4),
+  (3, 3, 7),
+
+  (4, 1, 1),
+  (4, 2, 4),
+  (4, 3, 7),
+
+  (5, 1, 1),
+  (5, 2, 4),
+  (5, 3, 7),
+
+  (6, 1, 2),
+  (6, 2, 5),
+  (6, 3, 8),
+
+  (7, 1, 2),
+  (7, 2, 6),
+  (7, 3, 8),
+
+  (8, 1, 2),
+  (8, 2, 6),
+  (8, 3, 12),
+
+  (9, 1, 2),
+  (9, 2, 6),
+  (9, 3, 8),
+
+  (10, 1, 3),
+  (10, 2, 6),
+  (10, 3, 10),
+
+  (11, 1, 2),
+  (11, 2, 6),
+  (11, 3, 10),
+
+  (12, 1, 2),
+  (12, 2, 6),
+  (12, 3, 10),
+
+  (13, 1, 2),
+  (13, 2, 9),
+
+  (14, 1, 2),
+  (14, 2, 6),
+
+  (15, 1, 2),
+  (15, 2, 4);

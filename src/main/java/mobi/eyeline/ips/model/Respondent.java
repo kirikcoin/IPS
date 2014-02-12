@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * Абонент любого оператора сотовой связи, который решил принять участие в опросе.
@@ -41,6 +42,10 @@ public class Respondent {
     @NotEmpty
     private String msisdn;
 
+    @Column(name = "registered", nullable = false)
+    @NotEmpty
+    private Date startDate;
+
     /**
      * Флаг, указывает, закончил ли респондент прохождение опроса.
      */
@@ -70,6 +75,14 @@ public class Respondent {
 
     public void setMsisdn(String msisdn) {
         this.msisdn = msisdn;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public boolean isFinished() {

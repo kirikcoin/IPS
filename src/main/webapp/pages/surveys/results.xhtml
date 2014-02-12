@@ -2,24 +2,31 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi" xmlns:c="http://java.sun.com/jsp/jstl/core"
     >
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css"
+            href="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/results.less"/>
+
+      <script type="text/javascript"
+              src="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/results.js">
+      </script>
 
     </ui:define>
 
     <ui:define name="scripts">
       <script type="text/javascript">
 //            <![CDATA[
+        page.init();
+
         $(function () {
 
-          if (window.history && window.history.replaceState) {
-            history.replaceState({}, null, '?id=#{surveyResultsController.surveyId}');
-          }
-
           $('#surveyId').val("#{param['id']}");
+
+          $('#content').attr('action',
+              '/pages/surveys/results.faces?id=#{surveyResultsController.surveyId}');
         });
 //            ]]>
       </script>
@@ -69,7 +76,61 @@
 
           <h:panelGroup layout="block" styleClass="page-body">
 
-            Not implemented yet, results page.
+            <h:panelGrid columns="2">
+
+              <h:outputLabel value="#{bundle['results.period.start']}:" for="periodStart"/>
+              <eye:inputDate id="periodStart"
+                             inputTime="true"
+                             value="#{surveyResultsController.periodStart}"/>
+
+              <h:outputLabel value="#{bundle['results.period.end']}:" for="periodEnd"/>
+              <eye:inputDate id="periodEnd"
+                             inputTime="true"
+                             value="#{surveyResultsController.periodEnd}"/>
+
+            </h:panelGrid>
+
+            <eye:buttons>
+              <eye:button>
+                <h:outputLink value="#"
+                              onclick="jsfc('table').update(true); return false;"
+                              styleClass="button-green">
+                  <h:outputText value="#{bundle['results.button.search']}"/>
+                </h:outputLink>
+              </eye:button>
+              <eye:space/>
+            </eye:buttons>
+
+            <eye:dataTable id="table"
+                           value="#{surveyResultsController.tableModel}"
+                           var="row"
+                           pageSize="50"
+                           tableClass="grid">
+              <f:facet name="ifEmpty">
+                <h:outputText value="#{bundle['results.empty']}"/>
+              </f:facet>
+              <eye:row>
+                <eye:column name="date"
+                            title="#{bundle['results.list.date']}"
+                            sortable="true"
+                            defaultSortOrder="desc">
+                  <h:outputText value="#{row.respondent.startDate}"/>
+                </eye:column>
+
+                <eye:column name="#{i.id}"
+                            title="#{i.id}"
+                            sortable="false">
+                  <h:outputText value="#{row.respondent.startDate}"/>
+                </eye:column>
+
+                <eye:column name="respondent"
+                            title="#{bundle['results.list.respondent']}"
+                            sortable="true">
+                  <h:outputText value="#{row.respondent.msisdn}"/>
+                </eye:column>
+
+              </eye:row>
+            </eye:dataTable>
 
           </h:panelGroup>
 
