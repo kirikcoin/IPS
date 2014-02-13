@@ -92,6 +92,10 @@ var page = {
     ips.message.hideAll();
 
     return false;
+  },
+
+  onQuestionModificationDialog: function() {
+    jsfc('questionModificationDialog').show();
   }
 
 };

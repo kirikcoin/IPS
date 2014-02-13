@@ -21,16 +21,13 @@
         page.init();
 
         $(function() {
-          $('#surveyId').val("#{param['id']}");
 
           if ("#{surveySettingsController.errorId}" == 'settingsDialog') {
             page.onEditSettingsClick();
           } else if ("#{surveySettingsController.errorId}" == 'endMessageDialog') {
             page.onEditEndMessageClick();
-          }
-
-          if ("#{surveySettingsController.questionEditMode}" == "true") {
-            jsfc('questionModificationDialog').show();
+          } else if ("#{surveySettingsController.errorId}" == 'questionModificationDialog') {
+            page.onQuestionModificationDialog();
           }
 
           $('#content').attr('action',
@@ -199,7 +196,7 @@
                     <eye:button>
                       <h:commandLink styleClass="button-green"
                                      value="#{bundle['survey.create.button.cancel']}"
-                                     onclick="return page.onEditSettingsCancel();"/>
+                                     action="#{surveySettingsController.onCancel}"/>
                     </eye:button>
                     <eye:space/>
                   </eye:buttons>
@@ -217,11 +214,11 @@
 
               <h:panelGroup>
 
-                <h:outputText rendered="#{empty surveySettingsController.survey.questions}"
+                <h:outputText rendered="#{empty surveySettingsController.persistedSurvey.questions}"
                               value="#{bundle['survey.settings.no.questions']}"
                               styleClass="placeholder"/>
 
-                <ui:repeat value="#{surveySettingsController.survey.questions}" var="question">
+                <ui:repeat value="#{surveySettingsController.persistedSurvey.questions}" var="question">
                   <h:panelGrid columns="1" styleClass="question">
 
                     <!-- Question header -->
@@ -322,10 +319,9 @@
 
                 <h:panelGroup id="endMessageDialog" style="display: none">
                   <h:panelGrid columns="1">
-                    <!--<h:outputLabel value="#{bundle['survey.settings.end.message']}"-->
-                                   <!--for="endText"/>-->
                     <eye:inputText id="endText"
-                                   value="#{surveySettingsController.survey.details.endText}"/>
+                                   value="#{surveySettingsController.survey.details.endText}"
+                                   styleClass="endTextInput"/>
                   </h:panelGrid>
                   <eye:buttons>
                     <eye:button>
@@ -336,7 +332,7 @@
                     </eye:button>
                     <eye:button>
                       <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
-                                     onclick="return page.onEditEndMessageCancel();"/>
+                                     action="#{surveySettingsController.onCancel}"/>
                     </eye:button>
                     <eye:space/>
                   </eye:buttons>
@@ -413,8 +409,8 @@
                     width="300">
 
           <h:outputLabel value="#{bundle['survey.settings.question.modify.text']}:"
-                         for="questionText"/>
-          <eye:inputText id="questionText"
+                         for="title"/>
+          <eye:inputText id="title"
                          rows="2"
                          value="#{surveySettingsController.question.title}"/>
 

@@ -29,7 +29,6 @@ class SurveySettingsController extends BaseSurveyController {
     Integer questionId
 
     // Question modification
-    boolean questionEditMode
     Question question = new Question()
     DynamicTableModel questionOptions = new DynamicTableModel()
 
@@ -40,7 +39,7 @@ class SurveySettingsController extends BaseSurveyController {
         newSurveyClientId = survey.client.id
     }
 
-    String getSurveyUrl() { ussdService.getSurveyUrl(survey) }
+    String getSurveyUrl() { ussdService.getSurveyUrl(persistedSurvey) }
 
     void saveMessage() {
         boolean validationError =
@@ -51,7 +50,8 @@ class SurveySettingsController extends BaseSurveyController {
             return
         }
 
-        surveyRepository.update(survey)
+        persistedSurvey.details.endText = survey.details.endText
+        surveyRepository.update(persistedSurvey)
         goToSurvey(surveyId)
     }
 
@@ -68,13 +68,17 @@ class SurveySettingsController extends BaseSurveyController {
                 ])
 
         if (validationError) {
-            surveyRepository.refresh(survey)
             this.errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
             return
         }
 
-        surveyRepository.update(survey)
+        persistedSurvey.details.title = survey.details.title
+        persistedSurvey.startDate = survey.startDate
+        persistedSurvey.endDate = survey.endDate
+        persistedSurvey.statistics.accessNumber = survey.statistics.accessNumber
+
+        surveyRepository.update(persistedSurvey)
         goToSurvey(surveyId)
     }
 
@@ -89,26 +93,26 @@ class SurveySettingsController extends BaseSurveyController {
 
     void moveUp() {
         int questionId = getParamValue("questionId").asInteger()
-        survey.moveUp(questionRepository.load(questionId))
-        surveyRepository.update(survey)
+        persistedSurvey.moveUp(questionRepository.load(questionId))
+        surveyRepository.update(persistedSurvey)
 
-        survey = surveyRepository.load(surveyId)
+        persistedSurvey = surveyRepository.load(surveyId)
     }
 
     void moveDown() {
         int questionId = getParamValue("questionId").asInteger()
-        survey.moveDown(questionRepository.load(questionId))
-        surveyRepository.update(survey)
+        persistedSurvey.moveDown(questionRepository.load(questionId))
+        surveyRepository.update(persistedSurvey)
 
-        survey = surveyRepository.load(surveyId)
+        persistedSurvey = surveyRepository.load(surveyId)
     }
 
     void deleteQuestion() {
         int questionId = getParamValue("questionId").asInteger()
         def question = questionRepository.load(questionId)
 
-        survey.questions.remove(question)
-        surveyRepository.update(survey)
+        persistedSurvey.questions.remove(question)
+        surveyRepository.update(persistedSurvey)
 
         survey = surveyRepository.load(surveyId)
     }
@@ -132,36 +136,38 @@ class SurveySettingsController extends BaseSurveyController {
             questionOptions = new DynamicTableModel()
         }
 
-        questionEditMode = true
+        errorId = 'questionModificationDialog'
 
         return null
     }
 
     void saveQuestion() {
-        questionEditMode = true
-
         def persistedQuestion = (questionId != null) ?
-                questionRepository.load(questionId) : new Question(survey: survey)
+                questionRepository.load(questionId) : new Question(survey: persistedSurvey)
 
         updateQuestionModel(persistedQuestion)
 
         boolean validationError = renderViolationMessage(
                 validator.validate(persistedQuestion))
         if (validationError) {
-            this.errorId =
+            errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
             return
         }
 
         if (questionId == null) {
-            survey.questions.add(persistedQuestion)
-            surveyRepository.update(survey)
+            persistedSurvey.questions.add(persistedQuestion)
+            surveyRepository.update(persistedSurvey)
 
         } else {
             questionRepository.saveOrUpdate(persistedQuestion)
         }
 
         goToSurvey(surveyId)
+    }
+
+    void onCancel() {
+        survey = surveyRepository.load(surveyId)
     }
 
     private void updateQuestionModel(Question persistedQuestion) {
@@ -225,19 +231,4 @@ class SurveySettingsController extends BaseSurveyController {
 
         static TerminalOption forValue(boolean value) { value ? TRUE : FALSE }
     }
-
-//    private void redirect() {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        ExternalContext ext = context.getExternalContext();
-//        UIViewRoot view = context.getViewRoot();
-//        String actionUrl = context.getApplication().getViewHandler().getActionURL(
-//                context, view.getViewId());
-//        try {
-//            // TODO encode id value
-//            actionUrl = ext.encodeActionURL(actionUrl + "?id=" + surveyId);
-//            ext.redirect(actionUrl);
-//        } catch (IOException e) {
-//            throw new FacesException(e);
-//        }
-//    }
 }
