@@ -14,6 +14,7 @@ class SurveyResultsController extends BaseSurveyController {
 
     Date periodStart = survey.startDate
     Date periodEnd = survey.endDate
+    String filter
 
     DataTableModel getTableModel() {
         return new DataTableModel() {
@@ -26,7 +27,7 @@ class SurveyResultsController extends BaseSurveyController {
                         SurveyResultsController.this.survey,
                         periodStart,
                         periodEnd,
-                        "",
+                        filter,
                         sortOrder.columnId,
                         sortOrder.asc,
                         count,
@@ -39,10 +40,12 @@ class SurveyResultsController extends BaseSurveyController {
                         SurveyResultsController.this.survey,
                         periodStart,
                         periodEnd,
-                        "")
+                        filter)
             }
         }
     }
 
-
+    public void apply() {
+        println "mobi.eyeline.ips.web.controllers.surveys.SurveyResultsController.apply"
+    }
 }

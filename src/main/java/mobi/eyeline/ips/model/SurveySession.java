@@ -1,23 +1,25 @@
 package mobi.eyeline.ips.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SurveySession {
+public class SurveySession implements Serializable {
+
     private final Survey survey;
     private final Respondent respondent;
-    private final Map<Question, Answer> answers = new LinkedHashMap<>();
+    private final List<Answer> answers;
 
-    public SurveySession(Survey survey, Respondent respondent) {
+    public SurveySession(Survey survey,
+                         Respondent respondent,
+                         List<Answer> answers) {
         this.respondent = respondent;
         this.survey = survey;
-    }
-
-    public void add(Answer answer) {
-        answers.put(answer.getQuestion(), answer);
+        this.answers = Collections.unmodifiableList(answers);
     }
 
     public Respondent getRespondent() {
@@ -28,11 +30,8 @@ public class SurveySession {
         return survey;
     }
 
-    public Map<Question, Answer> getAnswers() {
+    public List<Answer> getAnswers() {
         return answers;
     }
 
-    public List<Answer> getAnswersList() {
-        return new ArrayList<>(getAnswers().values());
-    }
 }

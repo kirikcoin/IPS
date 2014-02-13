@@ -135,22 +135,22 @@ INSERT INTO question_options (id, question_id, option_order, answer) VALUES
   (11, 3, 4, 'Blue'),
   (12, 3, 5, 'Violet');
 
-INSERT INTO respondents (id, answered, MSISDN, survey_id) VALUES
-  (1,  TRUE,  '+79130000000', @sid),
-  (2,  TRUE,  '+79130000001', @sid),
-  (3,  TRUE,  '+79130000002', @sid),
-  (4,  TRUE,  '+79130000003', @sid),
-  (5,  TRUE,  '+79130000004', @sid),
-  (6,  TRUE,  '+79130000005', @sid),
-  (7,  TRUE,  '+79130000006', @sid),
-  (8,  TRUE,  '+79130000007', @sid),
-  (9,  TRUE,  '+79130000008', @sid),
-  (10, TRUE,  '+79130000009', @sid),
-  (11, TRUE,  '+79130000010', @sid),
-  (12, TRUE,  '+79130000011', @sid),
-  (13, FALSE, '+79130000012', @sid),
-  (14, FALSE, '+79130000013', @sid),
-  (15, FALSE, '+79130000014', @sid);
+INSERT INTO respondents (id, finished, MSISDN, survey_id, answer_count) VALUES
+  (1,  TRUE,  '+79130000000', @sid, 3),
+  (2,  TRUE,  '+79130000001', @sid, 3),
+  (3,  TRUE,  '+79130000002', @sid, 3),
+  (4,  TRUE,  '+79130000003', @sid, 3),
+  (5,  TRUE,  '+79130000004', @sid, 3),
+  (6,  TRUE,  '+79130000005', @sid, 3),
+  (7,  TRUE,  '+79130000006', @sid, 3),
+  (8,  TRUE,  '+79130000007', @sid, 3),
+  (9,  TRUE,  '+79130000008', @sid, 3),
+  (10, TRUE,  '+79130000009', @sid, 3),
+  (11, TRUE,  '+79130000010', @sid, 3),
+  (12, TRUE,  '+79130000011', @sid, 3),
+  (13, FALSE, '+79130000012', @sid, 2),
+  (14, FALSE, '+79130000013', @sid, 2),
+  (15, FALSE, '+79130000014', @sid, 2);
 
 INSERT INTO answers (respondent_id, question_id, option_id) VALUES
   (1, 1, 1),

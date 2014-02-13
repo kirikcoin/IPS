@@ -126,25 +126,6 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
         }
     }
 
-    // TODO: why not employ this one as a counter?
-    // TODO: being a flag, this could be easily inferred from the lime_survey_SID table.
-    // TODO: if `answers' is indeed a flag, it should be made boolean and renamed.
-    // XXX: not called just yet
-    public void updateAnswerCount(String msisdn, int sid) {
-        final Session session = getSessionFactory().openSession();
-        try {
-            session.createQuery(
-                    "UPDATE Respondent" +
-                    " SET finished = TRUE" +
-                    " WHERE msisdn = :msisdn AND sid = :sid")
-                    .setString("msisdn", msisdn)
-                    .setInteger("sid", sid)
-                    .executeUpdate();
-        } finally {
-            session.close();
-        }
-    }
-
     // TODO: all of this stuff should be performed in a single transaction
     // TODO: this logic should probably be extracted to some upper layer
     // XXX: not called just yet
@@ -171,12 +152,6 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
 //            connection.close();
 //        }
 //    }
-
-    public void deleteBySurvey(Session session, Survey survey) {
-        session.createQuery(
-                "delete from Respondent where sid = :sid")
-                .setParameter("sid", survey.getId());
-    }
 
     public Respondent find(Survey survey,
                            String msisdn) {
@@ -210,7 +185,6 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
                 respondent = new Respondent();
                 respondent.setMsisdn(msisdn);
                 respondent.setSurvey(survey);
-                respondent.setFinished(false);
                 session.save(respondent);
 
                 respondent = find(session, survey, msisdn);

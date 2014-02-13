@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -127,9 +128,12 @@ public class UssdService implements MessageHandler {
 
         final Respondent respondent =
                 respondentRepository.findOrCreate(msisdn, survey);
+
+        respondent.setAnswersCount(respondent.getAnswersCount() + 1);
+        respondentRepository.update(respondent);
+
         final QuestionOption option =
                 questionOptionRepository.load(request.getAnswerId());
-
         answerRepository.save(respondent, option);
 
         if (option.isTerminal()) {
@@ -176,12 +180,17 @@ public class UssdService implements MessageHandler {
     }
 
     private UssdModel surveyStart(Survey survey, Respondent respondent) {
+        // Clear all in case this is a RE-start.
         respondent.setFinished(false);
+        respondent.setAnswersCount(0);
+        respondent.setStartDate(new Date());
         respondentRepository.update(respondent);
 
         answerRepository.clear(survey, respondent);
 
         final Iterator<Question> questions = survey.getQuestions().iterator();
+
+
         if (questions.hasNext()) {
             return question(questions.next());
 

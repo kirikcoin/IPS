@@ -89,6 +89,7 @@ var page = {
     $('#settingsDisplay').show();
 
     page.enableEditables();
+    ips.message.hideAll();
 
     return false;
   }

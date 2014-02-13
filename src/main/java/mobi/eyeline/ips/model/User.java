@@ -14,11 +14,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "users")
 @Proxy(lazy = false)
-public class User {
+public class User implements Serializable {
 
     @Id
     @Column(name = "id")

@@ -51,15 +51,6 @@ public class SurveyService {
         return survey;
     }
 
-    private void cleanSurveyData(Session session, Survey survey) {
-        respondentRepository.deleteBySurvey(session, survey);
-        questionStatsRepository.delete(session, survey);
-//        surveyRepository.deleteSelectedQuestions(session, survey);
-        surveyStatsRepository.delete(session, survey);
-
-        session.update(survey);
-    }
-
     /**
      * Loads survey by ID.
      * <br/>

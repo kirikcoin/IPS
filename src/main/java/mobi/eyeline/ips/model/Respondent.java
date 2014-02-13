@@ -48,10 +48,19 @@ public class Respondent {
 
     /**
      * Флаг, указывает, закончил ли респондент прохождение опроса.
+     * <br/>
+     * Может означать либо отсутствие неотвеченных вопросов,
+     * либо отказ от продолжения (aka "терминальный" ответ).
      */
-    @Column(name = "answered", columnDefinition = "BIT", nullable = false)
+    @Column(name = "finished", columnDefinition = "BIT", nullable = false)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean finished;
+
+    /**
+     * Число ответов. Сбрасывается, если опрос начат сначала.
+     */
+    @Column(name = "answer_count")
+    private int answersCount;
 
     public Integer getId() {
         return id;
@@ -91,5 +100,17 @@ public class Respondent {
 
     public void setFinished(boolean answered) {
         this.finished = answered;
+    }
+
+    public int getAnswersCount() {
+        return answersCount;
+    }
+
+    public void setAnswersCount(int answersCount) {
+        this.answersCount = answersCount;
+    }
+
+    public int getAnswersPercentage() {
+        return getAnswersCount() * 100 / getSurvey().getQuestionsCount();
     }
 }

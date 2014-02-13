@@ -130,6 +130,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                 switch (orderProperty) {
                     case "respondent":      property = "msisdn";         break;
                     case "date":            property = "startDate";      break;
+                    case "questions":       property = "answersCount";   break;
                     default:
                         throw new RuntimeException("Unexpected sort column: " + orderProperty);
                 }
@@ -145,13 +146,9 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         final List<SurveySession> results = new ArrayList<>(respondents.size());
         for (Respondent respondent : respondents) {
-            final SurveySession result = new SurveySession(survey, respondent);
-
-            for (Answer answer : list(respondent)) {
-                result.add(answer);
-            }
-
-            results.add(result);
+            results.add(
+                    new SurveySession(survey, respondent, list(respondent))
+            );
         }
 
         return results;
