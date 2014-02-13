@@ -35,6 +35,11 @@
   </context-param>
 
   <context-param>
+    <param-name>facelets.LIBRARIES</param-name>
+    <param-value>/WEB-INF/ips.taglib.xml</param-value>
+  </context-param>
+
+  <context-param>
     <description>Maximum memory per request (in bytes)</description>
     <param-name>org.apache.myfaces.trinidad.UPLOAD_MAX_MEMORY</param-name>
     <param-value>5120000</param-value>

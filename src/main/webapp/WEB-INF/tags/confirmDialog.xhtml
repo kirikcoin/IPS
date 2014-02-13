@@ -1,0 +1,23 @@
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        >
+
+  <eye:dialog id="${id}" title="Внимание" width="${width == null ? '450' : width}">
+    <ui:insert name="dialog_content"/>
+    <h:outputText value="${text}"/>
+    <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
+    <eye:buttons>
+      <eye:button>
+        <h:commandLink id="${id}_confirmButton" styleClass="button-green" value="Подтвердить" action="#{actionBean[actionName]}"/>
+      </eye:button>
+      <eye:button>
+        <h:commandLink  id="${id}_cancelButton" styleClass="button-green" value="Отмена" onclick="jsfc('${id}').hide(); return false;"/>
+      </eye:button>
+      <eye:space/>
+    </eye:buttons>
+  </eye:dialog>
+
+</ui:composition>

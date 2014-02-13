@@ -52,30 +52,15 @@ public class UserService {
     }
 
     public String generatePassword() {
-        String password = RandomStringUtils.randomAlphabetic(8);
-
-        return password;
+        return RandomStringUtils.randomAlphabetic(8);
     }
 
     public boolean isLoginExists(String login) {
-        User user = userRepository.getByLogin(login);
-
-        if(user == null) {
-            return false;
-        }
-
-        return true;
+       return userRepository.getByLogin(login) == null;
     }
 
     public boolean isEmailExists(String email) {
-        User user = userRepository.getByEmail(email);
-
-        if(user == null) {
-            return false;
-        }
-
-
-        return true;
+        return userRepository.getByEmail(email) == null;
     }
 
     public boolean isLoginExists(String login, int id) {

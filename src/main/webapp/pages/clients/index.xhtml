@@ -3,6 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
         >
 
   <ui:composition template="/templates/main.xhtml">
@@ -277,25 +278,30 @@
           </eye:buttons>
         </eye:dialog>
 
-        <eye:dialog id="clientPasswordResetDialog" title="#{bundle['client.dialog.passwordreset.title']}" width="450">
-          <h:panelGroup layout="block">
-            <h:outputText value="#{bundle['client.dialog.passwordreset.text']}"/>
-          </h:panelGroup>
-          <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.passwordreset.confirm']}"
-                             action="#{clientListController.resetPassword}"/>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.passwordreset.cancel']}"
-                             onclick="jsfc('clientPasswordResetDialog').hide(); return false;"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-        </eye:dialog>
+        <!--<eye:dialog id="clientPasswordResetDialog" title="#{bundle['client.dialog.passwordreset.title']}" width="450">-->
+          <!--<h:panelGroup layout="block">-->
+            <!--<h:outputText value="#{bundle['client.dialog.passwordreset.text']}"/>-->
+          <!--</h:panelGroup>-->
+          <!--<h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>-->
+          <!--<eye:buttons>-->
+            <!--<eye:button>-->
+              <!--<h:commandLink styleClass="button-green"-->
+                             <!--value="#{bundle['client.dialog.passwordreset.confirm']}"-->
+                             <!--action="#{clientListController.resetPassword}"/>-->
+            <!--</eye:button>-->
+            <!--<eye:button>-->
+              <!--<h:commandLink styleClass="button-green"-->
+                             <!--value="#{bundle['client.dialog.passwordreset.cancel']}"-->
+                             <!--onclick="jsfc('clientPasswordResetDialog').hide(); return false;"/>-->
+            <!--</eye:button>-->
+            <!--<eye:space/>-->
+          <!--</eye:buttons>-->
+        <!--</eye:dialog>-->
+
+      <ips:confirmDialog id="clientPasswordResetDialog"
+                         text="#{bundle['client.dialog.passwordreset.text']}"
+                         actionBean="#{clientListController}"
+                         actionName="resetPassword"/>
 
 
       </h:form>
