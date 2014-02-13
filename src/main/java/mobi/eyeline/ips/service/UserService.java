@@ -30,22 +30,18 @@ public class UserService {
         mailService.sendPasswordRestore(user, password);
     }
 
-    public void blockUser(String login) throws LoginException {
+    public void blockUser(String login) {
         User user = userRepository.getByLogin(login);
-        if(user == null || user.isBlocked()) {
-            throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
-        }
+
         user.setBlocked(true);
         userRepository.update(user);
         mailService.sendUserDeactivation(user);
 
     }
 
-    public void unblockUser(String login) throws LoginException {
+    public void unblockUser(String login) {
         User user = userRepository.getByLogin(login);
-        if(user == null || !user.isBlocked()) {
-            throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
-        }
+
         user.setBlocked(false);
         userRepository.update(user);
         mailService.sendUserActivation(user);
@@ -56,39 +52,23 @@ public class UserService {
     }
 
     public boolean isLoginExists(String login) {
-       return userRepository.getByLogin(login) == null;
+       return userRepository.getByLogin(login) != null;
     }
 
     public boolean isEmailExists(String email) {
-        return userRepository.getByEmail(email) == null;
+        return userRepository.getByEmail(email) != null;
     }
 
-    public boolean isLoginExists(String login, int id) {
-        User user = userRepository.getByLogin(login);
-
-        if(user == null) {
-            return false;
-        }
-
-        if (id == user.getId()){
-            return false;
-        }
-
-        return true;
+    public boolean isLoginAllowed(User user) {
+        final User existing = userRepository.getByLogin(user.getLogin());
+        // XXX: Explicitly compare IDs if don't want to rely on equals() using PK comparison.
+        return existing == null || user.equals(existing);
     }
 
-    public boolean isEmailExists(String email, int id) {
-        User user = userRepository.getByEmail(email);
-
-        if(user == null) {
-            return false;
-        }
-
-        if (id == user.getId()){
-            return false;
-        }
-
-        return true;
+    public boolean isEmailAllowed(User user) {
+        final User existing = userRepository.getByEmail(user.getLogin());
+        // XXX: Explicitly compare IDs if don't want to rely on equals() using PK comparison.
+        return existing == null || user.equals(existing);
     }
 
 }

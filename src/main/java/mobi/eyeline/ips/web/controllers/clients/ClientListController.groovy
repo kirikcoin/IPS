@@ -12,22 +12,19 @@ import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
-/**
- * Created by dizan on 05.02.14.
- */
 class ClientListController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
     private final UserService userService = Services.instance().userService
     private final MailService mailService = Services.instance().mailService
 
-    def String userLogin
-    def String userLoginForEdit
+    String userLogin
+    String userLoginForEdit
 
-    def String userEmail
+    String userEmail
 
-    def User userForEdit
-    def User newUser
+    User userForEdit
+    User newUser
 
     String search
     Boolean blockError
@@ -35,24 +32,13 @@ class ClientListController extends BaseController {
 
     boolean newUserDataValidationError
     boolean modifiedUserDataValidationError
-    boolean emailExists
-    boolean loginExists
-    boolean editedEmailExists
-    boolean editedLoginExists
+
     Boolean passwordResetError
 
     ClientListController() {
         userForEdit= new User()
-        userForEdit.fullName=""
-        userForEdit.company=""
-        userForEdit.login=""
-        userForEdit.email=""
 
         newUser= new User()
-        newUser.fullName=""
-        newUser.company=""
-        newUser.login=""
-        newUser.email=""
     }
 
     public DataTableModel getTableModel() {
@@ -76,7 +62,7 @@ class ClientListController extends BaseController {
                             company: it.company,
                             login: it.login,
                             email: it.email,
-                            isBlocked: it.blocked
+                            blocked: it.blocked
                     )
                 }
             }
@@ -88,8 +74,10 @@ class ClientListController extends BaseController {
         }
     }
 
-    //TODO: validation
     void saveModifiedUser() {
+        boolean editedEmailExists
+        boolean editedLoginExists
+
         User user = userRepository.getByLogin(userLoginForEdit)
         String oldEmail = user.email
         String oldLogin = user.login
@@ -99,8 +87,8 @@ class ClientListController extends BaseController {
         user.login = userForEdit.login
         user.email = userForEdit.email
 
-        editedEmailExists = userService.isEmailExists(user.email, user.id)
-        editedLoginExists = userService.isLoginExists(user.login, user.id)
+        editedEmailExists = !userService.isEmailAllowed(user)
+        editedLoginExists = !userService.isLoginAllowed(user)
         modifiedUserDataValidationError =
                 renderViolationMessage(validator.validate(user),
                         [
@@ -114,14 +102,16 @@ class ClientListController extends BaseController {
         if(editedLoginExists){
             addErrorMessage(getResourceBundle().getString("client.dialog.validation.login.exists"),
                     "clientSettingsLogin")
+            modifiedUserDataValidationError = true
         }
 
         if(editedEmailExists){
             addErrorMessage(getResourceBundle().getString("client.dialog.validation.email.exists"),
                     "clientSettingsEmail")
+            modifiedUserDataValidationError = true
         }
 
-        if (modifiedUserDataValidationError || editedEmailExists || editedLoginExists) {
+        if (modifiedUserDataValidationError) {
             return
         }
 
@@ -136,7 +126,9 @@ class ClientListController extends BaseController {
         }
     }
 
-    void createUser() {
+    String createUser() {
+        boolean emailExists
+        boolean loginExists
         String password = userService.generatePassword()
         User user = new User(
                 fullName: newUser.fullName,
@@ -146,8 +138,8 @@ class ClientListController extends BaseController {
                 password: HashUtils.hashPassword(password),
                 role: Role.CLIENT)
 
-        emailExists = userService.isEmailExists(user.email)
-        loginExists = userService.isLoginExists(user.login)
+        emailExists = !userService.isEmailAllowed(user)
+        loginExists = !userService.isLoginAllowed(user)
         newUserDataValidationError =
                 renderViolationMessage(validator.validate(user),
                 [
@@ -157,55 +149,47 @@ class ClientListController extends BaseController {
                         'email': 'newClientEmail',
                 ])
 
-
         if(loginExists){
             addErrorMessage(getResourceBundle().getString("client.dialog.validation.login.exists"),
                             "newClientLogin")
+            newUserDataValidationError = true
         }
 
         if(emailExists){
             addErrorMessage(getResourceBundle().getString("client.dialog.validation.email.exists"),
                             "newClientEmail")
+            newUserDataValidationError = true
         }
 
-        if(newUserDataValidationError || loginExists || emailExists){
-            return
+        if(newUserDataValidationError){
+            return null
         }
 
         userRepository.save(user)
         mailService.sendUserRegistration(user, password)
+        return null
     }
-
 
     void blockUser() {
         String userLogin = getParamValue("userLogin").asString()
-            try {
-                userService.blockUser(userLogin)
-                blockError = false
-            } catch (LoginException e) {
-                blockError = true
-            }
+        userService.blockUser(userLogin)
+        blockError = false
     }
 
     void unblockUser() {
         String userLogin = getParamValue("userLogin").asString()
-            try {
-                userService.unblockUser(userLogin)
-                unblockError = false
-            } catch (LoginException e) {
-                unblockError = true
-            }
+        userService.unblockUser(userLogin)
+        unblockError = false
     }
 
     void resetPassword() {
         try {
-            userService.restorePassword(userEmail);
+            userService.restorePassword(userEmail)
             passwordResetError = false
         } catch (LoginException e) {
             passwordResetError = true
         }
     }
-
 
     static class TableItem implements Serializable {
         int id
@@ -213,7 +197,7 @@ class ClientListController extends BaseController {
         String company
         String login
         String email
-        boolean isBlocked
+        boolean blocked
 
     }
 }

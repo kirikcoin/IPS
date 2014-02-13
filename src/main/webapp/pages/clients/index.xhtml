@@ -28,13 +28,6 @@
           if ("#{clientListController.modifiedUserDataValidationError}" == "true") {
             jsfc('clientSettingsDialog').show();
           }
-          if ("#{clientListController.emailExists}" == "true" ||"#{clientListController.loginExists}" == "true" ) {
-            jsfc('newClientDialog').show();
-          }
-          if ("#{clientListController.editedEmailExists}" == "true" ||"#{clientListController.editedLoginExists}" == "true" ) {
-            jsfc('clientSettingsDialog').show();
-          }
-
 
           if ("#{clientListController.passwordResetError}" == "true") {
             ips.message.error("#{bundle['client.dialog.passwordreset.error']}");
@@ -117,21 +110,21 @@
 
                 <h:outputText value="#{bundle['client.list.table.status.active']}"
                               styleClass="clientStatusActive"
-                              rendered="#{row.isBlocked == false}" />
+                              rendered="#{row.blocked == false}" />
 
                 <h:outputText value="#{bundle['client.list.table.status.blocked']}"
                               styleClass="clientStatusBlocked"
-                              rendered="#{row.isBlocked == true}" />
+                              rendered="#{row.blocked == true}" />
 
                 <h:outputText value=" ("/>
                 <h:commandLink value="#{bundle['client.list.table.status.active.block']}"
                                onclick="return page.showBlockDialog('#{row.login}');"
-                               rendered="#{row.isBlocked == false}">
+                               rendered="#{row.blocked == false}">
                 </h:commandLink>
 
                 <h:commandLink value="#{bundle['client.list.table.status.blocked.unblock']}"
                                onclick="return page.showUnblockDialog('#{row.login}');"
-                               rendered="#{row.isBlocked == true}">
+                               rendered="#{row.blocked == true}">
                 </h:commandLink>
                 <h:outputText value=" | "/>
                 <h:commandLink value="#{bundle['client.list.table.status.resetpassword']}"

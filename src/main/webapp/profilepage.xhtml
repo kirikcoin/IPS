@@ -63,18 +63,24 @@
                                for="currentPassword"/>
                 <eye:inputText id="currentPassword"
                                secret="true"
+                               validator="loginPasswordValidator"
+                               validatorMessage="#{bundle['profile.edit.message.password.validation']}"
                                value="#{profilePageController.currentPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
                                for="newPassword" />
                 <eye:inputText id="newPassword"
                                secret="true"
+                               validator="loginPasswordValidator"
+                               validatorMessage="#{bundle['profile.edit.message.password.validation']}"
                                value="#{profilePageController.newPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
                                for="confirmPassword" />
                 <eye:inputText id="confirmPassword"
                                secret="true"
+                               validator="loginPasswordValidator"
+                               validatorMessage="#{bundle['profile.edit.message.password.validation']}"
                                value="#{profilePageController.passwordForConfirm}"/>
               </h:panelGrid>
                <div style="margin:10px"></div>
