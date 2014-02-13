@@ -43,7 +43,6 @@ public class Respondent {
     private String msisdn;
 
     @Column(name = "registered", nullable = false)
-    @NotEmpty
     private Date startDate;
 
     /**
