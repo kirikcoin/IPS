@@ -126,9 +126,11 @@
                                onclick="return page.showUnblockDialog('#{row.login}');"
                                rendered="#{row.blocked == true}">
                 </h:commandLink>
-                <h:outputText value=" | "/>
+                <h:outputText value=" | "
+                              rendered="#{row.blocked == false}"/>
                 <h:commandLink value="#{bundle['client.list.table.status.resetpassword']}"
-                               onclick="return page.showPasswordResetDialog('#{row.email}');"/>
+                               onclick="return page.showPasswordResetDialog('#{row.email}');"
+                               rendered="#{row.blocked == false}"/>
                 <h:outputText value=")"/>
               </eye:column>
 
@@ -226,73 +228,24 @@
             <eye:space/>
           </eye:buttons>
 
-
-
-
         </eye:dialog>
 
-        <eye:dialog id="clientBlockDialog" title="#{bundle['client.dialog.block.title']}" width="450">
-          <h:panelGroup layout="block">
-            <h:outputText value="#{bundle['client.dialog.block.text']}"/>
-          </h:panelGroup>
-          <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.button.confirm']}"
-                             action="#{clientListController.blockUser}"/>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.button.cancel']}"
-                             onclick="jsfc('clientBlockDialog').hide(); return false;"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-        </eye:dialog>
 
-        <eye:dialog id="clientUnblockDialog" title="#{bundle['client.dialog.unblock.title']}" width="450">
-          <h:panelGroup layout="block">
-            <h:outputText value="#{bundle['client.dialog.unblock.text']}"/>
-          </h:panelGroup>
-          <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.button.confirm']}"
-                             action="#{clientListController.unblockUser}"/>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.button.cancel']}"
-                             onclick="jsfc('clientUnblockDialog').hide(); return false;"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-        </eye:dialog>
+       <ips:confirmDialog id="clientBlockDialog"
+                          text="#{bundle['client.dialog.block.text']}"
+                          title="#{bundle['client.dialog.block.title']}"
+                          actionBean="#{clientListController}"
+                          actionName="blockUser"/>
 
-        <!--<eye:dialog id="clientPasswordResetDialog" title="#{bundle['client.dialog.passwordreset.title']}" width="450">-->
-          <!--<h:panelGroup layout="block">-->
-            <!--<h:outputText value="#{bundle['client.dialog.passwordreset.text']}"/>-->
-          <!--</h:panelGroup>-->
-          <!--<h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>-->
-          <!--<eye:buttons>-->
-            <!--<eye:button>-->
-              <!--<h:commandLink styleClass="button-green"-->
-                             <!--value="#{bundle['client.dialog.passwordreset.confirm']}"-->
-                             <!--action="#{clientListController.resetPassword}"/>-->
-            <!--</eye:button>-->
-            <!--<eye:button>-->
-              <!--<h:commandLink styleClass="button-green"-->
-                             <!--value="#{bundle['client.dialog.passwordreset.cancel']}"-->
-                             <!--onclick="jsfc('clientPasswordResetDialog').hide(); return false;"/>-->
-            <!--</eye:button>-->
-            <!--<eye:space/>-->
-          <!--</eye:buttons>-->
-        <!--</eye:dialog>-->
+       <ips:confirmDialog id="clientUnblockDialog"
+                          text="#{bundle['client.dialog.unblock.text']}"
+                          title="#{bundle['client.dialog.unblock.title']}"
+                          actionBean="#{clientListController}"
+                          actionName="unblockUser"/>
 
       <ips:confirmDialog id="clientPasswordResetDialog"
                          text="#{bundle['client.dialog.passwordreset.text']}"
+                         title="#{bundle['client.dialog.passwordreset.title']}"
                          actionBean="#{clientListController}"
                          actionName="resetPassword"/>
 

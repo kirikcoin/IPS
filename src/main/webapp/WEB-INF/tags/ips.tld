@@ -18,7 +18,7 @@
     <attribute>
       <description>Идентификатор компонента</description>
       <name>id</name>
-      <required>false</required>
+      <required>true</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
@@ -50,6 +50,14 @@
     <attribute>
       <description>Название метода бина, который надо вызвать при нажатии кнопки "Подтвердить"</description>
       <name>actionName</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+
+    <attribute>
+      <description>Заголовок диалога</description>
+      <name>title</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>

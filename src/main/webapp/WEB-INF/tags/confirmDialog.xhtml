@@ -5,16 +5,22 @@
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
         >
 
-  <eye:dialog id="${id}" title="Внимание" width="${width == null ? '450' : width}">
+  <eye:dialog id="${id}" title="${title}" width="${width == null ? '450' : width}">
     <ui:insert name="dialog_content"/>
     <h:outputText value="${text}"/>
     <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
     <eye:buttons>
       <eye:button>
-        <h:commandLink id="${id}_confirmButton" styleClass="button-green" value="Подтвердить" action="#{actionBean[actionName]}"/>
+        <h:commandLink id="${id}_confirmButton"
+                       styleClass="button-green"
+                       value="#{bundle['dialog.confirm']}"
+                       action="#{actionBean[actionName]}"/>
       </eye:button>
       <eye:button>
-        <h:commandLink  id="${id}_cancelButton" styleClass="button-green" value="Отмена" onclick="jsfc('${id}').hide(); return false;"/>
+        <h:commandLink  id="${id}_cancelButton"
+                        styleClass="button-green"
+                        value="#{bundle['dialog.cancel']}"
+                        onclick="jsfc('${id}').hide(); return false;"/>
       </eye:button>
       <eye:space/>
     </eye:buttons>
