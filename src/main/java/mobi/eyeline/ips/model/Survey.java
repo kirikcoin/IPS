@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import com.google.common.base.Predicate;
 import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -30,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
+import static mobi.eyeline.ips.model.Question.SKIP_INACTIVE;
 
 /**
  * Опрос - это последовательность взаимосвязанных вопросов.
@@ -176,11 +178,11 @@ public class Survey implements Serializable {
     }
 
     public void moveUp(Question question) {
-        ListUtils.moveUp(getQuestions(), question);
+        ListUtils.moveUp(getQuestions(), question, SKIP_INACTIVE);
     }
 
     public void moveDown(Question question) {
-        ListUtils.moveDown(getQuestions(), question);
+        ListUtils.moveDown(getQuestions(), question, SKIP_INACTIVE);
     }
 
     @SuppressWarnings("UnusedDeclaration")

@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import com.google.common.base.Predicate;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -144,4 +145,17 @@ public class QuestionOption implements Serializable {
                 ", answer='" + answer + '\'' +
                 '}';
     }
+
+
+    //
+    //
+    //
+
+    public static final Predicate<QuestionOption> SKIP_INACTIVE = new Predicate<QuestionOption>() {
+        @Override
+        public boolean apply(QuestionOption option) {
+            return !option.isActive();
+        }
+    };
+
 }

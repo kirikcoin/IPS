@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import com.google.common.base.Predicate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Proxy;
@@ -184,4 +185,16 @@ public class Question implements Serializable {
         result = 31 * result + (title != null ? title.hashCode() : 0);
         return result;
     }
+
+
+    //
+    //
+    //
+
+    public static final Predicate<Question> SKIP_INACTIVE = new Predicate<Question>() {
+        @Override
+        public boolean apply(Question question) {
+            return !question.isActive();
+        }
+    };
 }
