@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.repository;
 
 import mobi.eyeline.ips.model.Answer;
+import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Respondent;
 import mobi.eyeline.ips.model.Survey;
@@ -43,6 +44,8 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                     .setEntity("respondent", respondent)
                     .executeUpdate();
 
+            clearSentCounts(session, respondent);
+
             transaction.commit();
 
         } catch (HibernateException e) {
@@ -57,6 +60,28 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         } finally {
             session.close();
+        }
+    }
+
+    private void clearSentCounts(Session session, Respondent respondent) {
+        @SuppressWarnings("unchecked")
+        final List<Answer> answers = (List<Answer>) session.createQuery(
+                "from Answer where respondent = :respondent")
+                .setEntity("respondent", respondent)
+                .list();
+
+        for (Answer answer : answers) {
+            final Question question = answer.getQuestion();
+
+            int decSentCount = question.getSentCount() - 1;
+            if (decSentCount < 0) {
+                logger.error("Attempt to decrement question sent count resulted to negative value. " +
+                        "Question = [" + question + "], respondent = [" + respondent + "]");
+                decSentCount = 0;
+            }
+            question.setSentCount(decSentCount);
+
+            session.update(question);
         }
     }
 

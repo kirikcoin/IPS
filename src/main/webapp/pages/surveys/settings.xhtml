@@ -218,14 +218,16 @@
                               value="#{bundle['survey.settings.no.questions']}"
                               styleClass="placeholder"/>
 
-                <ui:repeat value="#{surveySettingsController.persistedSurvey.questions}" var="question">
+                <ui:repeat value="#{surveySettingsController.persistedSurvey.activeQuestions}"
+                           var="question">
                   <h:panelGrid columns="1" styleClass="question">
 
                     <!-- Question header -->
                     <f:facet name="header">
                       <h:panelGrid columns="2" style="background-color: #F0F0F0;">
                         <h:panelGroup>
-                          <h:outputText value="#{question.order + 1}. " style="padding-right: 5px"/>
+                          <h:outputText value="#{question.activeIndex + 1}. "
+                                        style="padding-right: 5px"/>
                           <h:outputText value="#{question.title}"/>
                         </h:panelGroup>
                         <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
@@ -241,13 +243,13 @@
                           </h:commandLink>
                           <h:commandLink value="#{bundle['survey.settings.question.move.down']}"
                                          styleClass="modify"
-                                         rendered="#{question.order lt (surveySettingsController.survey.questionsCount - 1)}"
+                                         rendered="#{not question.last}"
                                          action="#{surveySettingsController.moveUp}">
                             <f:param name="questionId" value="#{question.id}"/>
                           </h:commandLink>
                           <h:commandLink value="#{bundle['survey.settings.question.move.up']}"
                                          styleClass="modify"
-                                         rendered="#{question.order > 0}"
+                                         rendered="#{not question.first}"
                                          action="#{surveySettingsController.moveDown}">
                             <f:param name="questionId" value="#{question.id}"/>
                           </h:commandLink>
@@ -264,10 +266,11 @@
                                     styleClass="placeholder"/>
 
                       <h:dataTable var="option"
-                                   value="#{question.options}"
+                                   value="#{question.activeOptions}"
                                    style="padding-left: 20px">
                         <h:column>
-                          <h:outputText value="#{option.order + 1}. " styleClass="option-number"/>
+                          <h:outputText value="#{option.activeIndex + 1}. "
+                                        styleClass="option-number"/>
                           <h:outputText value="#{option.answer}"/>
                           <h:outputText value="#{bundle['question.option.terminal.list.label']}"
                                         rendered="#{option.terminal}"

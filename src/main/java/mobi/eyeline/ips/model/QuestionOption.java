@@ -97,6 +97,10 @@ public class QuestionOption implements Serializable {
         return order;
     }
 
+    public int getActiveIndex() {
+        return getQuestion().getActiveOptions().indexOf(this);
+    }
+
     public boolean isTerminal() {
         return terminal;
     }

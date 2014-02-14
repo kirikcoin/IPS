@@ -74,67 +74,93 @@
 
           <h:panelGroup layout="block" styleClass="page-body">
 
-            <h:panelGrid columns="2" columnClasses="filter,results">
-
-              <eye:dataTableFilter applyAction="#{surveyResultsController.apply}">
+            <h:panelGrid columns="3">
+              <h:panelGroup>
                 <h:outputLabel value="#{bundle['results.period.start']}:" for="periodStart"/>
                 <eye:inputDate id="periodStart"
                                inputTime="true"
-                               value="#{surveyResultsController.periodStart}"/>
+                               value="#{surveyResultsController.periodStart}"
+                               minDate="#{surveyResultsController.survey.startDate}"
+                               maxDate="#{surveyResultsController.survey.endDate}"/>
+              </h:panelGroup>
 
+              <h:panelGroup>
                 <h:outputLabel value="#{bundle['results.period.end']}:" for="periodEnd"/>
                 <eye:inputDate id="periodEnd"
                                inputTime="true"
-                               value="#{surveyResultsController.periodEnd}"/>
+                               value="#{surveyResultsController.periodEnd}"
+                               minDate="#{surveyResultsController.survey.startDate}"
+                               maxDate="#{surveyResultsController.survey.endDate}"/>
+              </h:panelGroup>
 
+              <h:panelGroup>
                 <h:outputLabel value="#{bundle['results.filter']}:" for="filter"/>
                 <eye:inputText id="filter"
-                               value="#{surveyResultsController.filter}"/>
-              </eye:dataTableFilter>
-
-              <eye:dataTable id="table"
-                             value="#{surveyResultsController.tableModel}"
-                             var="row"
-                             pageSize="50"
-                             tableClass="grid">
-                <f:facet name="ifEmpty">
-                  <h:outputText value="#{bundle['results.empty']}"/>
-                </f:facet>
-
-                <eye:row innerRows="${row.answers}">
-                  <eye:column name="date"
-                              title="#{bundle['results.list.date']}"
-                              sortable="true"
-                              defaultSortOrder="desc">
-                    <h:outputText value="#{row.respondent.startDate}">
-                      <f:convertDateTime type="both" dateStyle="short"/>
-                    </h:outputText>
-                  </eye:column>
-
-                  <eye:column name="respondent"
-                              title="#{bundle['results.list.respondent']}"
-                              sortable="true">
-                    <h:outputText value="#{row.respondent.msisdn}"/>
-                  </eye:column>
-
-                  <eye:column name="questions"
-                              title="#{bundle['results.list.questions']}"
-                              sortable="true"
-                              columnClass="questionsColumn">
-                    <h:outputText value="#{row.respondent.answersCount} (#{row.respondent.answersPercentage}%)"/>
-
-                    <f:facet name="inner">
-                      <h:panelGrid columns="2" columnClasses="questionTitle,answerTitle">
-                        <h:outputText value="#{row.question.title}"/>
-                        <h:outputText value="#{row.option.answer}"/>
-                      </h:panelGrid>
-                    </f:facet>
-                  </eye:column>
-
-                </eye:row>
-              </eye:dataTable>
+                               value="#{surveyResultsController.filter}"
+                               onkeydown="return page.filterKeyDown(event)"/>
+              </h:panelGroup>
 
             </h:panelGrid>
+
+            <eye:buttons>
+              <eye:button>
+                <h:outputLink value="#"
+                              onclick="jsfc('table').update(true); return false;"
+                              styleClass="button-green">
+                  <h:outputText value="#{bundle['results.button.search']}"/>
+                </h:outputLink>
+              </eye:button>
+              <eye:space/>
+            </eye:buttons>
+
+            <eye:dataTable id="table"
+                           value="#{surveyResultsController.tableModel}"
+                           var="row"
+                           pageSize="50"
+                           tableClass="grid">
+              <f:facet name="ifEmpty">
+                <h:outputText value="#{bundle['results.empty']}"/>
+              </f:facet>
+
+              <eye:row innerRows="${row.answers}">
+
+                <eye:column name="respondent"
+                            title="#{bundle['results.list.respondent']}"
+                            sortable="true">
+                  <h:outputText value="#{row.respondent.msisdn}"/>
+                </eye:column>
+
+                <eye:column name="date"
+                            title="#{bundle['results.list.date']}"
+                            sortable="true"
+                            defaultSortOrder="desc">
+                  <h:outputText value="#{row.respondent.startDate}">
+                    <f:convertDateTime type="both" dateStyle="short"/>
+                  </h:outputText>
+
+                  <f:facet name="inner">
+                    <h:outputText value="#{row.date}">
+                      <f:convertDateTime type="both" dateStyle="short"/>
+                    </h:outputText>
+                  </f:facet>
+                </eye:column>
+
+                <eye:column name="questions"
+                            title="#{bundle['results.list.questions']}"
+                            sortable="true"
+                            columnClass="questionsColumn">
+                  <h:outputText value="#{row.respondent.answersCount} (#{row.respondent.answersPercentage}%)"/>
+
+                  <f:facet name="inner">
+                    <h:panelGrid columns="2" columnClasses="questionTitle,answerTitle">
+                      <h:outputText value="#{row.question.title}"/>
+                      <h:outputText value="#{row.option.answer}"/>
+                    </h:panelGrid>
+                  </f:facet>
+                </eye:column>
+
+              </eye:row>
+            </eye:dataTable>
 
           </h:panelGroup> <!-- page-body -->
 

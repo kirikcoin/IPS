@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.model;
 
-import com.google.common.base.Predicate;
 import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -30,6 +29,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Iterables.tryFind;
+import static com.google.common.collect.Lists.newArrayList;
 import static javax.persistence.CascadeType.ALL;
 import static mobi.eyeline.ips.model.Question.SKIP_INACTIVE;
 
@@ -165,6 +168,10 @@ public class Survey implements Serializable {
         return questions;
     }
 
+    public List<Question> getActiveQuestions() {
+        return newArrayList(filter(getQuestions(), not(SKIP_INACTIVE)));
+    }
+
     public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
@@ -183,6 +190,10 @@ public class Survey implements Serializable {
 
     public void moveDown(Question question) {
         ListUtils.moveDown(getQuestions(), question, SKIP_INACTIVE);
+    }
+
+    public Question getFirstQuestion() {
+        return tryFind(getQuestions(), not(SKIP_INACTIVE)).orNull();
     }
 
     @SuppressWarnings("UnusedDeclaration")

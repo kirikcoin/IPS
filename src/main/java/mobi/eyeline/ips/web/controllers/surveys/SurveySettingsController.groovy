@@ -109,12 +109,12 @@ class SurveySettingsController extends BaseSurveyController {
 
     void deleteQuestion() {
         int questionId = getParamValue("questionId").asInteger()
+
         def question = questionRepository.load(questionId)
+        question.active = false
+        questionRepository.update(question)
 
-        persistedSurvey.questions.remove(question)
-        surveyRepository.update(persistedSurvey)
-
-        survey = surveyRepository.load(surveyId)
+        persistedSurvey = surveyRepository.load(surveyId)
     }
 
     String modifyQuestion() {
@@ -124,7 +124,9 @@ class SurveySettingsController extends BaseSurveyController {
             question = questionRepository.load(questionId)
 
             questionOptions = new DynamicTableModel()
-            question.options.each {
+            question.options
+                    .findAll { it.active }
+                    .each {
                 def row = new DynamicTableRow()
                 row.setValue("answer", it.answer)
                 row.setValue("terminal", it.terminal)
@@ -183,7 +185,8 @@ class SurveySettingsController extends BaseSurveyController {
                     .findAll { !it.empty }
                     .collect { it.toInteger() }
 
-            persistedQuestion.options.retainAll { it.id in retainedOptionIds }
+            def deleted = persistedQuestion.options.findAll { !(it.id in retainedOptionIds) }
+            deleted.each { it.active = false }
         }
 
         def handleUpdated = {
@@ -191,8 +194,10 @@ class SurveySettingsController extends BaseSurveyController {
                 def row = questionOptions.rows
                         .findAll { !getId(it).empty }
                         .find { getId(it).toInteger() == option.id }
-                option.answer = getAnswer(row)
-                option.terminal = getTerminal(row)
+                if (row != null) {
+                    option.answer = getAnswer(row)
+                    option.terminal = getTerminal(row)
+                }
             }
         }
 

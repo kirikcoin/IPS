@@ -70,7 +70,7 @@ public class Services {
                 surveyService,
                 respondentRepository,
                 answerRepository,
-                questionOptionRepository);
+                questionRepository, questionOptionRepository);
     }
 
     public static synchronized void initialize(Config properties) {

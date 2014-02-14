@@ -33,6 +33,8 @@ public class AnswerOption extends UssdOption {
                 option.getQuestion().getId(),
                 option.getId()
         );
+
+        assert option.isActive() : "Sending inactive answer option";
     }
 
     public int getQuestionId() {

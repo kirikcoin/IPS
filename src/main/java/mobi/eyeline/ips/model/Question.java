@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.model;
 
 import com.google.common.base.Predicate;
+import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Proxy;
@@ -24,6 +25,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Predicates.not;
+import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Lists.newArrayList;
 import static javax.persistence.CascadeType.ALL;
 
 @Entity
@@ -121,12 +125,20 @@ public class Question implements Serializable {
         return options;
     }
 
+    public List<QuestionOption> getActiveOptions() {
+        return newArrayList(filter(getOptions(), not(QuestionOption.SKIP_INACTIVE)));
+    }
+
     public void setOptions(List<QuestionOption> options) {
         this.options = options;
     }
 
     public int getOrder() {
         return order;
+    }
+
+    public int getActiveIndex() {
+        return getSurvey().getActiveQuestions().indexOf(this);
     }
 
     public void setOrder(int order) {
@@ -150,11 +162,15 @@ public class Question implements Serializable {
     }
 
     public Question getNext() {
-        if ((getOrder() + 1) >= getSurvey().getQuestionsCount()) {
-            return null;
-        } else {
-            return getSurvey().getQuestions().get(getOrder() + 1);
-        }
+        return ListUtils.getNext(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+    }
+
+    public boolean isFirst() {
+        return ListUtils.isFirst(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+    }
+
+    public boolean isLast() {
+        return ListUtils.isLast(getSurvey().getQuestions(), this, SKIP_INACTIVE);
     }
 
     @Override

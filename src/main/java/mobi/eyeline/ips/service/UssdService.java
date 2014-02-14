@@ -13,6 +13,7 @@ import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
+import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
 import mobi.eyeline.ips.util.RequestParseUtils;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -35,10 +35,11 @@ public class UssdService implements MessageHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(UssdService.class);
 
+    private final SurveyService surveyService;
     private final RespondentRepository respondentRepository;
     private final AnswerRepository answerRepository;
+    private final QuestionRepository questionRepository;
     private final QuestionOptionRepository questionOptionRepository;
-    private final SurveyService surveyService;
 
     private final String baseUrl;
 
@@ -51,12 +52,14 @@ public class UssdService implements MessageHandler {
                        SurveyService surveyService,
                        RespondentRepository respondentRepository,
                        AnswerRepository answerRepository,
+                       QuestionRepository questionRepository,
                        QuestionOptionRepository questionOptionRepository) {
 
+        this.surveyService = surveyService;
         this.respondentRepository = respondentRepository;
         this.answerRepository = answerRepository;
+        this.questionRepository = questionRepository;
         this.questionOptionRepository = questionOptionRepository;
-        this.surveyService = surveyService;
 
         baseUrl = config.getLoginUrl();
     }
@@ -188,12 +191,9 @@ public class UssdService implements MessageHandler {
 
         answerRepository.clear(survey, respondent);
 
-        final Iterator<Question> questions = survey.getQuestions().iterator();
-
-
-        if (questions.hasNext()) {
-            return question(questions.next());
-
+        final Question first = survey.getFirstQuestion();
+        if (first != null) {
+            return question(first);
         } else {
             // This survey has no questions (if it's even allowed), so just end it.
             return surveyFinish(respondent, survey);
@@ -204,15 +204,23 @@ public class UssdService implements MessageHandler {
      * @return Form for the specified question.
      */
     private UssdModel question(Question question) {
+        assert question.isActive() : "Sending inactive question";
+
         final List<AnswerOption> renderedOptions = new ArrayList<>();
         {
             List<QuestionOption> questionOptions = question.getOptions();
             for (int i = 0; i < questionOptions.size(); i++) {
-                renderedOptions.add(
-                        new AnswerOption(i + 1, questionOptions.get(i))
-                );
+                final QuestionOption option = questionOptions.get(i);
+                if (option.isActive()) {
+                    renderedOptions.add(
+                            new AnswerOption(i + 1, option)
+                    );
+                }
             }
         }
+
+        question.setSentCount(question.getSentCount() + 1);
+        questionRepository.update(question);
 
         return new UssdModel(question.getTitle(), renderedOptions);
     }

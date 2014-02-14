@@ -19,11 +19,7 @@ public class ListUtils {
      *                                          the specified element.
      */
     public static <T> void moveUp(List<T> list, T elem, Predicate<T> skip) {
-        int idx = list.indexOf(elem);
-        if (idx < 0) {
-            throw new NoSuchElementException();
-        }
-
+        int idx = safeIndexOf(list, elem);
         list.remove(idx);
 
         idx++;
@@ -46,11 +42,7 @@ public class ListUtils {
      * @see #moveUp(java.util.List, Object, com.google.common.base.Predicate)
      */
     public static <T> void moveDown(List<T> list, T elem, Predicate<T> skip) {
-        int idx = list.indexOf(elem);
-        if (idx < 0) {
-            throw new NoSuchElementException();
-        }
-
+        int idx = safeIndexOf(list, elem);
         list.remove(idx);
 
         idx--;
@@ -67,5 +59,47 @@ public class ListUtils {
      */
     public static <T> void moveDown(List<T> list, T elem) {
         moveDown(list, elem, Predicates.<T>alwaysFalse());
+    }
+
+    public static <T> boolean isFirst(List<T> list, T elem, Predicate<T> skip) {
+        final int idx = safeIndexOf(list, elem);
+
+        for (int i = 0; i < idx; i++) {
+            if (!skip.apply(list.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static <T> boolean isLast(List<T> list, T elem, Predicate<T> skip) {
+        final int idx = safeIndexOf(list, elem);
+
+        for (int i = list.size() - 1; i > idx; i--) {
+            if (!skip.apply(list.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static <T> T getNext(List<T> list, T elem, Predicate<T> skip) {
+        int idx = safeIndexOf(list, elem);
+
+        do {
+            idx++;
+        } while ((idx < list.size()) && skip.apply(list.get(idx)));
+
+        return (idx >= list.size()) ? null : list.get(idx);
+    }
+
+    private static <T> int safeIndexOf(List<T> list, T elem) {
+        final int idx = list.indexOf(elem);
+        if (idx < 0) {
+            throw new NoSuchElementException();
+        }
+        return idx;
     }
 }
