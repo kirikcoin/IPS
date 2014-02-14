@@ -67,7 +67,7 @@ public class Survey implements Serializable {
      */
     @Column(name = "active", columnDefinition = "BIT")
     @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean active;
+    private boolean active = true;
 
     /**
      * Статистика результатов опроса,

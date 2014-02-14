@@ -59,6 +59,14 @@ public class QuestionOption implements Serializable {
     @JoinColumn(name = "question_id")
     private Question question;
 
+    /**
+     * При удалении вариант ответа помечается флагом {@code active = false} в БД и
+     * перестает отображаться в веб-интерфейсе.
+     */
+    @Column(name = "active", columnDefinition = "BIT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean active = true;
+
     public QuestionOption() {
     }
 
@@ -102,6 +110,14 @@ public class QuestionOption implements Serializable {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override

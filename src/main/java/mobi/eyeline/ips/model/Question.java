@@ -2,7 +2,6 @@ package mobi.eyeline.ips.model;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -22,7 +21,6 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
@@ -63,6 +61,20 @@ public class Question implements Serializable {
      */
     @Column(name = "question_order")
     private int order;
+
+    /**
+     * При удалении вопрос помечается флагом {@code active = false} в БД и
+     * перестает отображаться в веб-интерфейсе.
+     */
+    @Column(name = "active", columnDefinition = "BIT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean active = true;
+
+    /**
+     * Количество отправок данного вопроса респондентам.
+     */
+    @Column(name = "sent_count")
+    private int sentCount;
 
     // TODO: consider making private / package local.
     @PrePersist
@@ -118,6 +130,22 @@ public class Question implements Serializable {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public int getSentCount() {
+        return sentCount;
+    }
+
+    public void setSentCount(int sentCount) {
+        this.sentCount = sentCount;
     }
 
     public Question getNext() {
