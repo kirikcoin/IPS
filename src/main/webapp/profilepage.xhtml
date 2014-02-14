@@ -3,6 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
         >
 
   <ui:composition template="/templates/main.xhtml">
@@ -59,13 +60,13 @@
               <h:panelGrid columns="2">
                 <h:outputLabel value="#{bundle['profile.edit.currentpassword']}"
                                for="currentPassword"/>
-                <eye:inputText id="currentPassword"
+                <ips:inputText id="currentPassword"
                                secret="true"
                                value="#{profilePageController.currentPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
                                for="newPassword" />
-                <eye:inputText id="newPassword"
+                <ips:inputText id="newPassword"
                                secret="true"
                                validator="loginPasswordValidator"
                                validatorMessage="#{bundle['profile.edit.message.password.validation']}"
@@ -73,7 +74,7 @@
 
                 <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
                                for="newPasswordConfirmation" />
-                <eye:inputText id="newPasswordConfirmation"
+                <ips:inputText id="newPasswordConfirmation"
                                secret="true"
                                value="#{profilePageController.newPasswordConfirmation}"/>
               </h:panelGrid>

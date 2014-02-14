@@ -105,6 +105,8 @@
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
+  <!-- VALIDATION ================================================================================================== -->
+
   <validator>
     <validator-id>email</validator-id>
     <validator-class>mobi.eyeline.ips.web.validators.EmailValidator</validator-class>
@@ -114,6 +116,11 @@
     <validator-id>loginPasswordValidator</validator-id>
     <validator-class>mobi.eyeline.ips.web.validators.LoginPasswordValidator</validator-class>
   </validator>
+
+  <component>
+    <component-type>mobi.eyeline.ips.web.components.input_text</component-type>
+    <component-class>mobi.eyeline.ips.web.components.input_text.InputText</component-class>
+  </component>
 
   <!-- NAVIGATION ================================================================================================== -->
 

@@ -13,4 +13,12 @@
     <tag-name>confirmDialog</tag-name>
     <source>../WEB-INF/tags/confirmDialog.xhtml</source>
   </tag>
+
+  <tag>
+    <tag-name>inputText</tag-name>
+    <component>
+      <component-type>mobi.eyeline.ips.web.components.input_text</component-type>
+      <handler-class>mobi.eyeline.ips.web.components.input_text.InputTextHandler</handler-class>
+    </component>
+  </tag>
 </facelet-taglib>
