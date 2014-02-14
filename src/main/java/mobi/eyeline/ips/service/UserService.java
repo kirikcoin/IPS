@@ -6,6 +6,7 @@ import mobi.eyeline.ips.repository.UserRepository;
 import mobi.eyeline.ips.util.HashUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 
 public class UserService {
@@ -63,4 +64,11 @@ public class UserService {
         return existing == null || user.equals(existing);
     }
 
+    /**
+     * @return {@code true} iff {@code rawPassword} is a valid password for {@code user}.
+     */
+    public boolean checkPassword(User user, String rawPassword) {
+        final String hash = HashUtils.hashPassword(rawPassword);
+        return equalsIgnoreCase(hash, user.getPassword());
+    }
 }

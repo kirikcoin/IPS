@@ -39,7 +39,8 @@ public class User implements Serializable {
      */
     @Column(name = "users_name", nullable = false)
     @NotEmpty(message = "{profile.edit.message.validationErrorLoginEmpty}")
-    @Pattern(regexp = LoginPasswordValidator.LOGIN_PASSWORD_REGEXP, message = "{client.dialog.validation.loginerror}")
+    @Pattern(regexp = LoginPasswordValidator.LOGIN_PASSWORD_REGEXP,
+            message = "{client.dialog.validation.loginerror}")
     private String login;
 
     /**

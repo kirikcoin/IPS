@@ -7,77 +7,78 @@ import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
 
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase
-
 class ProfilePageController extends BaseController {
-    
+
     private final UserRepository userRepository = Services.instance().userRepository
     private final UserService userService = Services.instance().userService
 
     User user
 
     String currentPassword
-    String newPassword
-    String passwordForConfirm
 
-    Boolean error
+    String newPassword
+    String newPasswordConfirmation
+
+    boolean updateOk
 
     ProfilePageController() {
         user = userRepository.getByLogin(this.userName)
     }
 
-    String saveProfile() {
-        boolean userDataValidationError
-        boolean emailExists = !userService.isEmailAllowed(user)
-        if(currentPassword==null && newPassword==null && passwordForConfirm==null) {
-            return saveFullNameAndEmail(emailExists)
-        } else {
-            if(currentPassword!= null && newPassword!=null && passwordForConfirm!=null) {
-                String hashedCurrentPassword = HashUtils.hashPassword(currentPassword)
-                boolean errorHere;
+    void saveProfile() {
+        if (!isPasswordIntact()) {
+            // Update user password if corresponding fields are filled in.
 
-                if (equalsIgnoreCase(hashedCurrentPassword, user.password)) {
-                    if(newPassword == passwordForConfirm) {
-                        user.password=HashUtils.hashPassword(newPassword)
-                        userDataValidationError =
-                                renderViolationMessage(validator.validate(user))
-                        if(userDataValidationError) {
-                            return null
-                        }
-
-                        if(emailExists) {
-                            addErrorMessage(getResourceBundle().getString("client.dialog.validation.email.exists"),
-                                    "email")
-                            return null
-                        }
-                        userRepository.update(user)
-                        error=false
-                    } else {
-                        error=true
-                    }
-                } else {
-                    error=true
-                }
-            } else {
-                error=true
+            if (!userService.checkPassword(user, currentPassword)) {
+                addErrorMessage(
+                        resourceBundle.getString("profile.edit.password.invalid"),
+                        "currentPassword")
+                return
             }
+
+            if (newPassword == null) {
+                // XXX: This case somehow passes validation.
+                // Why is validator not triggered for empty fields?
+                addErrorMessage(
+                        resourceBundle.getString("profile.edit.message.password.required"),
+                        "newPassword")
+                return
+            }
+
+            if (newPassword != newPasswordConfirmation) {
+                addErrorMessage(
+                        resourceBundle.getString("profile.edit.password.confirmation.mismatch"),
+                        "newPasswordConfirmation")
+                return
+            }
+
+            user.password = HashUtils.hashPassword(newPassword)
         }
+
+        updateOk = updateModel()
     }
 
-    private boolean saveFullNameAndEmail(boolean emailExists) {
-        boolean userDataValidationError
-        userDataValidationError =
-                renderViolationMessage(validator.validate(user))
-        if (userDataValidationError) {
-            return null
+    private boolean isPasswordIntact() {
+        currentPassword == null && newPassword == null && newPasswordConfirmation == null
+    }
+
+    /**
+     * @return {@code true} iff update is successful.
+     */
+    private boolean updateModel() {
+        if (renderViolationMessage(validator.validate(user))) {
+            return false
         }
-        if (emailExists) {
-            addErrorMessage(getResourceBundle().getString("client.dialog.validation.email.exists"),
+
+        if (!userService.isEmailAllowed(user)) {
+            addErrorMessage(
+                    resourceBundle.getString("client.dialog.validation.email.exists"),
                     "email")
-            return null
+            return false
         }
+
         userRepository.update(user)
-        error = false
+        return true
     }
 
 }

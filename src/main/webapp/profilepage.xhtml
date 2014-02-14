@@ -15,16 +15,14 @@
 
     <ui:define name="scripts">
       <script type="text/javascript">
+        //    <![CDATA[
         $(function () {
-          var error = "#{profilePageController.error}";
-
-
-          if (error == "true")
-            ips.message.error("#{bundle['profile.edit.message.error']}");
-          else if (error == "false")
+          if (#{profilePageController.updateOk}) {
             ips.message.info("#{bundle['profile.edit.message.success']}");
+          }
 
         });
+        //    ]]>
       </script>
     </ui:define>
 
@@ -74,10 +72,10 @@
                                value="#{profilePageController.newPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
-                               for="confirmPassword" />
-                <eye:inputText id="confirmPassword"
+                               for="newPasswordConfirmation" />
+                <eye:inputText id="newPasswordConfirmation"
                                secret="true"
-                               value="#{profilePageController.passwordForConfirm}"/>
+                               value="#{profilePageController.newPasswordConfirmation}"/>
               </h:panelGrid>
                <div style="margin:10px"></div>
               <eye:buttons>
