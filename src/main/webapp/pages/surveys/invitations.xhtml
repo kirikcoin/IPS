@@ -77,25 +77,71 @@
 
 
 
-
-
-
-
           <h:panelGroup layout="block" styleClass="page-body">
             <eye:collapsingGroup opened="true" id="advertisingCompany">
               <f:facet name="header">
                 <h:panelGroup>
-                  <h:outputText value="#{bundle['survey.settings.settings']}"/>
+                  <h:outputText value="#{bundle['invitations.block.invitations.delivery.title']}"/>
                 </h:panelGroup>
               </f:facet>
-              Hi!
+
+              #{bundle['invitations.block.advertising.company.no.campaign']}
+
+            </eye:collapsingGroup>
+
+            <eye:collapsingGroup opened="true" id="advertisingCompany">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['invitations.block.invitations.delivery.title']}"/>
+                </h:panelGroup>
+              </f:facet>
+
+              <h:panelGroup>
+                <eye:dataTable id="table"
+                               value="#{surveyResultsController.tableModel}"
+                               var="row"
+                               pageSize="50"
+                               tableClass="grid">
+                  <f:facet name="ifEmpty">
+                    <h:outputText value="#{bundle['results.empty']}"/>
+                  </f:facet>
+
+                  <eye:row innerRows="${row.answers}">
+                    <eye:column name="date"
+                                title="#{bundle['invitations.block.invitations.delivery.table.date']}"
+                                sortable="true"
+                                defaultSortOrder="desc">
+                      <h:outputText value="#{row.respondent.startDate}">
+                        <f:convertDateTime type="both" dateStyle="short"/>
+                      </h:outputText>
+                    </eye:column>
+
+                    <eye:column name="respondent"
+                                title="#{bundle['invitations.block.invitations.delivery.table.number']}"
+                                sortable="true">
+                      <h:outputText value="#{row.respondent.msisdn}"/>
+                    </eye:column>
+
+                    <eye:column name="questions"
+                                title="#{bundle['invitations.block.invitations.delivery.table.action']}"
+                                sortable="true"
+                                columnClass="questionsColumn">
+                      <h:outputText value="#{row.respondent.answersCount} (#{row.respondent.answersPercentage}%)"/>
+
+                      <f:facet name="inner">
+                        <h:panelGrid columns="2" columnClasses="questionTitle,answerTitle">
+                          <h:outputText value="#{row.question.title}"/>
+                          <h:outputText value="#{row.option.answer}"/>
+                        </h:panelGrid>
+                      </f:facet>
+                    </eye:column>
+
+                  </eye:row>
+                </eye:dataTable>
+              </h:panelGroup>
 
             </eye:collapsingGroup>
           </h:panelGroup>
-
-
-
-
 
 
 
