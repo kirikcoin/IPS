@@ -7,7 +7,12 @@
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css"
+            href="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/invitations.less"/>
 
+      <script type="text/javascript"
+              src="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/invitations.js">
+      </script>
     </ui:define>
 
     <ui:define name="scripts">
@@ -67,11 +72,34 @@
             </h:panelGrid>
           </h:panelGroup>
 
+
+
+
+
+
+
+
+
+
           <h:panelGroup layout="block" styleClass="page-body">
+            <eye:collapsingGroup opened="true" id="advertisingCompany">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['survey.settings.settings']}"/>
+                </h:panelGroup>
+              </f:facet>
+              Hi!
 
-            Not implemented yet, invitations page.
-
+            </eye:collapsingGroup>
           </h:panelGroup>
+
+
+
+
+
+
+
+
 
           <h:panelGroup layout="block" styleClass="page-footer"/>
 

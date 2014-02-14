@@ -51,14 +51,6 @@ public class UserService {
         return RandomStringUtils.randomAlphabetic(8);
     }
 
-    public boolean isLoginExists(String login) {
-       return userRepository.getByLogin(login) != null;
-    }
-
-    public boolean isEmailExists(String email) {
-        return userRepository.getByEmail(email) != null;
-    }
-
     public boolean isLoginAllowed(User user) {
         final User existing = userRepository.getByLogin(user.getLogin());
         // XXX: Explicitly compare IDs if don't want to rely on equals() using PK comparison.
@@ -66,7 +58,7 @@ public class UserService {
     }
 
     public boolean isEmailAllowed(User user) {
-        final User existing = userRepository.getByEmail(user.getLogin());
+        final User existing = userRepository.getByEmail(user.getEmail());
         // XXX: Explicitly compare IDs if don't want to rely on equals() using PK comparison.
         return existing == null || user.equals(existing);
     }

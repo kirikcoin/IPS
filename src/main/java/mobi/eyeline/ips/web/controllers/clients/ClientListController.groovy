@@ -11,8 +11,12 @@ import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 class ClientListController extends BaseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ClientListController)
 
     private final UserRepository userRepository = Services.instance().userRepository
     private final UserService userService = Services.instance().userService
@@ -68,7 +72,7 @@ class ClientListController extends BaseController {
             }
 
             @Override
-            public int getRowsCount() {
+            int getRowsCount() {
                 userRepository.count(search)
             }
         }
@@ -188,6 +192,8 @@ class ClientListController extends BaseController {
             passwordResetError = false
         } catch (LoginException e) {
             passwordResetError = true
+            logger.error("Error in password reset.",e)
+
         }
     }
 

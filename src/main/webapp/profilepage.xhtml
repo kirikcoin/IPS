@@ -16,12 +16,12 @@
     <ui:define name="scripts">
       <script type="text/javascript">
         $(function () {
-          var error = #{profilePageController.error};
+          var error = "#{profilePageController.error}";
 
 
-          if (error)
+          if (error == "true")
             ips.message.error("#{bundle['profile.edit.message.error']}");
-          else
+          else if (error == "false")
             ips.message.info("#{bundle['profile.edit.message.success']}");
 
         });
@@ -63,8 +63,6 @@
                                for="currentPassword"/>
                 <eye:inputText id="currentPassword"
                                secret="true"
-                               validator="loginPasswordValidator"
-                               validatorMessage="#{bundle['profile.edit.message.password.validation']}"
                                value="#{profilePageController.currentPassword}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
@@ -79,8 +77,6 @@
                                for="confirmPassword" />
                 <eye:inputText id="confirmPassword"
                                secret="true"
-                               validator="loginPasswordValidator"
-                               validatorMessage="#{bundle['profile.edit.message.password.validation']}"
                                value="#{profilePageController.passwordForConfirm}"/>
               </h:panelGrid>
                <div style="margin:10px"></div>
