@@ -206,4 +206,36 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         //noinspection unchecked
         return ((Number) criteria.uniqueResult()).intValue();
     }
+
+    public int count(QuestionOption option) {
+        final Session session = getSessionFactory().openSession();
+        try {
+            final Number count = (Number) session.createQuery(
+                    "select count(answer)" +
+                    " from Answer answer" +
+                    " where answer.option = :option")
+                    .setEntity("option", option)
+                    .uniqueResult();
+            return count.intValue();
+
+        } finally {
+            session.close();
+        }
+    }
+
+    public int count(Question question) {
+        final Session session = getSessionFactory().openSession();
+        try {
+            final Number count = (Number) session.createQuery(
+                    "select count(answer)" +
+                    " from Answer answer" +
+                    " where answer.question = :question")
+                    .setEntity("question", question)
+                    .uniqueResult();
+            return count.intValue();
+
+        } finally {
+            session.close();
+        }
+    }
 }

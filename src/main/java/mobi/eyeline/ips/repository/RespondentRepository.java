@@ -98,7 +98,26 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
             //noinspection unchecked
             final Number count = (Number) session
                     .createCriteria(Respondent.class)
-                    .add(eq("sid", survey.getId()))
+                    .add(eq("survey", survey))
+                    .setProjection(Projections.rowCount())
+                    .uniqueResult();
+
+            return count.intValue();
+
+        } finally {
+            session.close();
+        }
+    }
+
+    public int countFinishedBySurvey(Survey survey) {
+
+        final Session session = getSessionFactory().openSession();
+        try {
+            //noinspection unchecked
+            final Number count = (Number) session
+                    .createCriteria(Respondent.class)
+                    .add(eq("survey", survey))
+                    .add(eq("finished", true))
                     .setProjection(Projections.rowCount())
                     .uniqueResult();
 

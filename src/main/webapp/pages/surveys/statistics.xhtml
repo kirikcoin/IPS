@@ -7,21 +7,24 @@
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css"
+            href="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/statistics.less"/>
 
+      <script type="text/javascript"
+              src="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/statistics.js">
+      </script>
     </ui:define>
 
     <ui:define name="scripts">
       <script type="text/javascript">
-//            <![CDATA[
+        // <![CDATA[
+        page.init();
+
         $(function () {
-
-          if (window.history && window.history.replaceState) {
-            history.replaceState({}, null, '?id=#{surveyStatsController.surveyId}');
-          }
-
-          $('#surveyId').val("#{param['id']}");
+          $('#content').attr('action',
+              '/pages/surveys/statistics.faces?id=#{surveyStatsController.surveyId}');
         });
-//            ]]>
+        // ]]>
       </script>
 
     </ui:define>
@@ -69,7 +72,44 @@
 
           <h:panelGroup layout="block" styleClass="page-body">
 
-            Not implemented yet, statistics page.
+            <eye:collapsingGroup opened="true" id="groupOverall">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['survey.stats.overall']}"/>
+                </h:panelGroup>
+              </f:facet>
+
+              <h:panelGrid columns="2">
+                <eye:barChart
+                    id="sentQuestionsRatio"
+                    intValues="true"
+                    height="320"
+                    width="500"
+                    bars="#{surveyStatsController.sentQuestionsRatioModel}"
+                    stackMode="false"
+                    horizontal="false"
+                    immediatlyRender="true">
+                  <eye:bar name="sent" color="blue"/>
+                  <eye:bar name="answered" color="green"/>
+                </eye:barChart>
+
+                <eye:barChart
+                    id="respondentsRatio"
+                    intValues="true"
+                    height="320"
+                    width="500"
+                    bars="#{surveyStatsController.invitationsRatioModel}"
+                    stackMode="false"
+                    horizontal="false"
+                    immediatlyRender="true">
+                  <eye:bar name="invitations" color="blue"/>
+                  <eye:bar name="respondents" color="yellow"/>
+                  <eye:bar name="finished" color="green"/>
+                </eye:barChart>
+              </h:panelGrid>
+            </eye:collapsingGroup>
+
+            <h:panelGroup binding="#{surveyStatsController.questionGroup}"/>
 
           </h:panelGroup>
 
