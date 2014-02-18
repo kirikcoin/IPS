@@ -3,9 +3,9 @@ package mobi.eyeline.ips.service;
 import mobi.eyeline.ips.exceptions.LoginException;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.repository.UserRepository;
-import mobi.eyeline.ips.util.HashUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import static mobi.eyeline.ips.util.HashUtils.hashPassword;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 
@@ -17,22 +17,22 @@ public class UserService {
         this.userRepository = userRepository;
         this.mailService = mailService;
     }
-    // TODO: in one transaction
-    public void restorePassword(String email) throws LoginException {
-        User user = userRepository.getByEmail(email);
-        if(user == null || user.isBlocked()) {
+
+    public void resetPassword(String email) throws LoginException {
+        final User user = userRepository.getByEmail(email);
+        if (user == null || user.isBlocked()) {
             throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
         }
 
-        String password = generatePassword();
-        String hashedPassword = HashUtils.hashPassword(password);
-        user.setPassword(hashedPassword);
+        final String newPassword = generatePassword();
+        user.setPassword(hashPassword(newPassword));
+
         userRepository.update(user);
-        mailService.sendPasswordRestore(user, password);
+        mailService.sendPasswordRestore(user, newPassword);
     }
 
     public void blockUser(String login) {
-        User user = userRepository.getByLogin(login);
+        final User user = userRepository.getByLogin(login);
 
         user.setBlocked(true);
         userRepository.update(user);
@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public void unblockUser(String login) {
-        User user = userRepository.getByLogin(login);
+        final User user = userRepository.getByLogin(login);
 
         user.setBlocked(false);
         userRepository.update(user);
@@ -68,7 +68,7 @@ public class UserService {
      * @return {@code true} iff {@code rawPassword} is a valid password for {@code user}.
      */
     public boolean checkPassword(User user, String rawPassword) {
-        final String hash = HashUtils.hashPassword(rawPassword);
+        final String hash = hashPassword(rawPassword);
         return equalsIgnoreCase(hash, user.getPassword());
     }
 }

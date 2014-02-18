@@ -188,11 +188,11 @@ class ClientListController extends BaseController {
 
     void resetPassword() {
         try {
-            userService.restorePassword(userEmail)
+            userService.resetPassword(userEmail)
             passwordResetError = false
         } catch (LoginException e) {
             passwordResetError = true
-            logger.error("Error in password reset.",e)
+            logger.error("Error in password reset.", e)
 
         }
     }

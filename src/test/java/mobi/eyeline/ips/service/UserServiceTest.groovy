@@ -66,7 +66,7 @@ class UserServiceTest extends DbTestCase {
 
         userRepository.save(user)
         userRepository.getByEmail("username@example.com")
-        userService.restorePassword("username@example.com")
+        userService.resetPassword("username@example.com")
         user = userRepository.getByEmail("username@example.com")
         assertFalse user.password.equals("password".pw())
 

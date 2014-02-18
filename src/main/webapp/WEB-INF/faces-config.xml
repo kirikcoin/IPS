@@ -46,8 +46,8 @@
   </managed-bean>
 
   <managed-bean>
-    <managed-bean-name>recovery</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.login.RecoveryPasswordController</managed-bean-class>
+    <managed-bean-name>passwordResetController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.login.PasswordResetController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
