@@ -25,6 +25,10 @@
           }
 
           $('#surveyId').val("#{param['id']}");
+
+          if (#{surveyInvitesController.chanelError}) {
+            jsfc("newChannelDialog").show();
+          }
         });
 //            ]]>
       </script>
@@ -73,11 +77,8 @@
           </h:panelGroup>
 
 
-
-
-
-
           <h:panelGroup layout="block" styleClass="page-body">
+
             <eye:collapsingGroup opened="true" id="advertisingCompany">
               <f:facet name="header">
                 <h:panelGroup>
@@ -89,7 +90,8 @@
 
             </eye:collapsingGroup>
 
-            <eye:collapsingGroup opened="true" id="advertisingCompany">
+
+            <eye:collapsingGroup opened="true" id="delivery">
               <f:facet name="header">
                 <h:panelGroup>
                   <h:outputText value="#{bundle['invitations.block.invitations.delivery.title']}"/>
@@ -97,8 +99,8 @@
               </f:facet>
 
               <h:panelGroup>
-                <eye:dataTable id="table"
-                               value="#{surveyResultsController.tableModel}"
+                <eye:dataTable id="channelsTable"
+                               value="#{surveyInvitesController.tableModel}"
                                var="row"
                                pageSize="50"
                                tableClass="grid">
@@ -106,39 +108,42 @@
                     <h:outputText value="#{bundle['results.empty']}"/>
                   </f:facet>
 
-                  <eye:row innerRows="${row.answers}">
+                  <eye:row>
                     <eye:column name="date"
                                 title="#{bundle['invitations.block.invitations.delivery.table.date']}"
                                 sortable="true"
                                 defaultSortOrder="desc">
-                      <h:outputText value="#{row.respondent.startDate}">
+                      <h:outputText value="#{row.date}">
                         <f:convertDateTime type="both" dateStyle="short"/>
                       </h:outputText>
                     </eye:column>
 
-                    <eye:column name="respondent"
+                    <eye:column name="number"
                                 title="#{bundle['invitations.block.invitations.delivery.table.number']}"
                                 sortable="true">
-                      <h:outputText value="#{row.respondent.msisdn}"/>
+                      <h:outputText value="#{row.number}"/>
                     </eye:column>
 
-                    <eye:column name="questions"
-                                title="#{bundle['invitations.block.invitations.delivery.table.action']}"
-                                sortable="true"
-                                columnClass="questionsColumn">
-                      <h:outputText value="#{row.respondent.answersCount} (#{row.respondent.answersPercentage}%)"/>
-
-                      <f:facet name="inner">
-                        <h:panelGrid columns="2" columnClasses="questionTitle,answerTitle">
-                          <h:outputText value="#{row.question.title}"/>
-                          <h:outputText value="#{row.option.answer}"/>
-                        </h:panelGrid>
-                      </f:facet>
+                    <eye:column name="action"
+                                title="#{bundle['invitations.block.invitations.delivery.table.action']}">
+                      <h:commandLink value="#{bundle['invitations.block.invitations.delivery.table.action.delete']}"
+                                     onclick="">
+                      </h:commandLink>
                     </eye:column>
 
                   </eye:row>
                 </eye:dataTable>
               </h:panelGroup>
+
+              <eye:buttons>
+                <eye:button>
+                  <h:commandLink value="#{bundle['invitations.block.invitations.delivery.button']}"
+                                 onclick="jsfc('newChannelDialog').show(); return false"
+                                 styleClass="button-green">
+                  </h:commandLink>
+                </eye:button>
+                <eye:space/>
+              </eye:buttons>
 
             </eye:collapsingGroup>
           </h:panelGroup>
@@ -150,6 +155,39 @@
           <h:panelGroup layout="block" styleClass="page-footer"/>
 
         </h:panelGroup>
+
+        <eye:dialog id="newChannelDialog"
+                    title="#{bundle['invitations.block.invitations.delivery.dialog.title']}"
+                    width="520">
+          <h:panelGrid columns="2">
+            <h:outputLabel for="newChannelDate"
+                           value="#{bundle['invitations.block.invitations.delivery.dialog.date.text']}"/>
+            <eye:inputDate id="newChannelDate"
+                           inputTime="true"
+                           value="#{surveyInvitesController.newChannelDate}"/>
+
+            <h:outputLabel for="newChannelNumber"
+                           value="#{bundle['invitations.block.invitations.delivery.dialog.number.text']}"/>
+            <eye:inputText id="newChannelNumber"
+                           value="#{surveyInvitesController.newChannelNumber}" />
+          </h:panelGrid>
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['dialog.save']}"
+                             action="#{surveyInvitesController.addChannel}">
+                <f:param name="errorId" value="deleteDialog"/>
+              </h:commandLink>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['dialog.cancel']}"
+                             onclick="jsfc('newChannelDialog').hide(); return false"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
 
       </h:form>
 

@@ -17,6 +17,8 @@ public interface Config {
 
     public Properties getDatabaseProperties();
 
+    public boolean isSmaqUpdateEnabled();
+    public int getSmaqUpdateDelayMinutes();
 
     public static class XmlConfigImpl implements Config {
 
@@ -30,6 +32,9 @@ public interface Config {
         private final String loginUrl;
 
         private final Properties databaseProperties;
+
+        private final boolean smaqUpdateEnabled;
+        private final int smaqUpdateDelayMinutes;
 
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
@@ -46,6 +51,11 @@ public interface Config {
 
             final XmlConfigSection database = xmlConfig.getSection("database");
             databaseProperties = database.toProperties(null);
+
+            final XmlConfigSection smaq = xmlConfig.getSection("smaq");
+            smaqUpdateEnabled = smaq.getBool("update.enabled", true);
+            smaqUpdateDelayMinutes = smaq.getInt("update.delay.minutes");
+            // TODO: add auth info.
         }
 
         public String getSmtpHost() {
@@ -75,6 +85,14 @@ public interface Config {
         @Override
         public Properties getDatabaseProperties() {
             return databaseProperties;
+        }
+
+        public boolean isSmaqUpdateEnabled() {
+            return smaqUpdateEnabled;
+        }
+
+        public int getSmaqUpdateDelayMinutes() {
+            return smaqUpdateDelayMinutes;
         }
     }
 }

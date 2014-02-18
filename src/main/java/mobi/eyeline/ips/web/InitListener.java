@@ -39,6 +39,8 @@ public class InitListener implements ServletContextListener {
         Services.initialize(config);
 
         initJaasAuthorization(servletContextEvent);
+
+        Services.instance().getSmaqUpdateService().start();
     }
 
     private Config initProperties(File configDir) {

@@ -8,6 +8,7 @@ import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.QuestionStatsRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
+import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import mobi.eyeline.ips.repository.SurveyStatsRepository;
 import mobi.eyeline.ips.repository.UserRepository;
@@ -29,12 +30,14 @@ public class Services {
     private final QuestionRepository questionRepository;
     private final QuestionOptionRepository questionOptionRepository;
     private final AnswerRepository answerRepository;
+    private final SurveyInvitationRepository surveyInvitationRepository;
 
     private final SurveyService surveyService;
     private final TemplateService templateService;
     private final MailService mailService;
     private final UserService userService;
     private final UssdService ussdService;
+    private final SmaqUpdateService smaqUpdateService;
 
     public Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -47,6 +50,7 @@ public class Services {
         surveyRepository = new SurveyRepository(db);
         questionOptionRepository = new QuestionOptionRepository(db);
         answerRepository = new AnswerRepository(db);
+        surveyInvitationRepository = new SurveyInvitationRepository(db);
 
         surveyService = new SurveyService(
                 db,
@@ -70,7 +74,10 @@ public class Services {
                 surveyService,
                 respondentRepository,
                 answerRepository,
-                questionRepository, questionOptionRepository);
+                questionRepository,
+                questionOptionRepository);
+
+        smaqUpdateService = new SmaqUpdateService(config);
     }
 
     public static synchronized void initialize(Config properties) {
@@ -125,6 +132,10 @@ public class Services {
         return answerRepository;
     }
 
+    public SurveyInvitationRepository getSurveyInvitationRepository() {
+        return surveyInvitationRepository;
+    }
+
     public SurveyService getSurveyService() {
         return surveyService;
     }
@@ -139,5 +150,9 @@ public class Services {
 
     public UssdService getUssdService() {
         return ussdService;
+    }
+
+    public SmaqUpdateService getSmaqUpdateService() {
+        return smaqUpdateService;
     }
 }

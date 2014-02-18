@@ -26,4 +26,12 @@
     <param name="hibernate.connection.pool_size" type="string">2</param>
   </section>
 
+  <!-- TODO: should we rename it to something more meaningful? Like `madv-integration'... -->
+  <section name="smaq">
+    <param name="update.enabled" type="boolean">true</param>
+    <param name="update.delay.minutes" type="int">15</param>
+
+    <!-- TODO: add auth params here. -->
+  </section>
+
 </config>
