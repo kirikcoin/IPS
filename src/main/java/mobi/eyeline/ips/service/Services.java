@@ -55,9 +55,7 @@ public class Services {
         surveyService = new SurveyService(
                 db,
                 surveyRepository,
-                respondentRepository,
-                surveyStatsRepository,
-                questionStatsRepository);
+                surveyInvitationRepository);
         templateService = new TemplateService(config);
 
         mailService = new MailService(templateService,

@@ -2,7 +2,7 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi" xmlns:c="http://java.sun.com/jsp/jstl/core"
     >
 
   <ui:composition template="/templates/main.xhtml">
@@ -89,8 +89,10 @@
                     stackMode="false"
                     horizontal="false"
                     immediatlyRender="true">
-                  <eye:bar name="sent" color="blue"/>
-                  <eye:bar name="answered" color="green"/>
+                  <eye:bar name="#{bundle['survey.stats.overall.sent.questions.sent']}"
+                           color="yellow"/>
+                  <eye:bar name="#{bundle['survey.stats.overall.sent.questions.answered']}"
+                           color="greenyellow"/>
                 </eye:barChart>
 
                 <eye:barChart
@@ -102,9 +104,12 @@
                     stackMode="false"
                     horizontal="false"
                     immediatlyRender="true">
-                  <eye:bar name="invitations" color="blue"/>
-                  <eye:bar name="respondents" color="yellow"/>
-                  <eye:bar name="finished" color="green"/>
+                  <eye:bar name="#{bundle['survey.stats.overall.respondents.invitations']}"
+                           color="yellow"/>
+                  <eye:bar name="#{bundle['survey.stats.overall.respondents.respondents']}"
+                           color="greenyellow"/>
+                  <eye:bar name="#{bundle['survey.stats.overall.respondents.finished']}"
+                           color="green"/>
                 </eye:barChart>
               </h:panelGrid>
             </eye:collapsingGroup>

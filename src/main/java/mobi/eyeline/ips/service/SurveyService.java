@@ -6,6 +6,7 @@ import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.repository.DB;
 import mobi.eyeline.ips.repository.QuestionStatsRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
+import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import mobi.eyeline.ips.repository.SurveyStatsRepository;
 import org.hibernate.Session;
@@ -18,37 +19,14 @@ public class SurveyService {
 
     private final DB db;
     private final SurveyRepository surveyRepository;
-    private final RespondentRepository respondentRepository;
-    private final SurveyStatsRepository surveyStatsRepository;
-    private final QuestionStatsRepository questionStatsRepository;
+    private final SurveyInvitationRepository surveyInvitationRepository;
 
     public SurveyService(DB db,
                          SurveyRepository surveyRepository,
-                         RespondentRepository respondentRepository,
-                         SurveyStatsRepository surveyStatsRepository,
-                         QuestionStatsRepository questionStatsRepository) {
+                         SurveyInvitationRepository surveyInvitationRepository) {
         this.db = db;
         this.surveyRepository = surveyRepository;
-        this.respondentRepository = respondentRepository;
-        this.surveyStatsRepository = surveyStatsRepository;
-        this.questionStatsRepository = questionStatsRepository;
-    }
-
-    public Survey getAvailableSurvey(Integer surveyId,
-                                     User user,
-                                     boolean active) throws SurveyNotFound {
-
-        final Survey survey = surveyRepository.get(surveyId);
-        if (survey == null) {
-            throw new SurveyNotFound(surveyId);
-        }
-
-        if ((active && !survey.isActive()) /*||
-            (permissionsRepository.get(survey, user) == null)*/) {
-            throw new SurveyNotFound(surveyId);
-        }
-
-        return survey;
+        this.surveyInvitationRepository = surveyInvitationRepository;
     }
 
     /**
@@ -79,5 +57,13 @@ public class SurveyService {
         }
 
         return survey;
+    }
+
+    /**
+     * @return Overall invitations count, including both manually specified and obtained from MADV,
+     */
+    public int countInvitations(Survey survey) {
+        return survey.getStatistics().getSentCount() +
+                surveyInvitationRepository.count(survey);
     }
 }

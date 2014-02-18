@@ -1,8 +1,8 @@
 package mobi.eyeline.ips.repository;
 
 
+import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.SurveyInvitation;
-import mobi.eyeline.ips.model.User;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -45,5 +45,17 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
 
         criteria.setProjection(Projections.rowCount());
         return ((Number) criteria.uniqueResult()).intValue();
+    }
+
+    public int count(Survey survey) {
+        final Session session = getSessionFactory().getCurrentSession();
+
+        final Number count = (Number) session.createQuery(
+                "select count(i.value)" +
+                " from SurveyInvitation i" +
+                " where i.survey = :survey")
+                .setEntity("survey", survey)
+                .uniqueResult();
+        return count.intValue();
     }
 }

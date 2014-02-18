@@ -6,13 +6,16 @@ var page = {
 
 };
 
-function PieChart(contentId, updatePeriod, options) {
+function BarChart(contentId, updatePeriod, options) {
 
   var bodyElement = $("#"+contentId);
   var divElement = $("#"+contentId+"_div");
   var closestForm = bodyElement.parents("form");
   var requestUrl = closestForm.attr("action");
-
+  var horizontal = options['horizontal'];
+  var stackMode = options['stackMode'];
+  var number_ticks = options['ticks'];
+  var intValues = options['intValues'];
   var immediatlyRender = options['immediatly_render'];
 
   var checkUpdate = function() {
@@ -20,7 +23,7 @@ function PieChart(contentId, updatePeriod, options) {
         callUpdate, updatePeriod * 1000)
   };
 
-  var g = new PieGraph();
+  var g = new BarGraph();
 
   this.setVisible = function(visible) {
     if(visible) {
@@ -51,7 +54,7 @@ function PieChart(contentId, updatePeriod, options) {
     _setVisible(false);
   };
 
-  function PieGraph() {
+  function BarGraph() {
 
     var element = $('#'+contentId);
 
@@ -64,7 +67,59 @@ function PieChart(contentId, updatePeriod, options) {
       }
     };
 
-    this.drawPie = function(response) {
+    function get_ticks_numb(userInt, userTicks, points_number) {
+      var ticks_numb = null;
+      if(userInt != null && userInt) {
+        ticks_numb = 10;
+      }
+      if(userTicks != null) {
+        ticks_numb = userTicks;
+      }
+
+      if(ticks_numb != null) {
+        ticks_numb = Math.min(ticks_numb, points_number);
+      }
+      return ticks_numb;
+    }
+
+
+    function get_ticks(ticks_numb, userInt, minP, maxP) {
+      var ticks = [];
+      if(minP>0) {
+        minP = 0;
+      }
+      if(ticks_numb != null) {
+        var interval;
+        if(userInt != null && userInt) {
+          var tmp = parseInt(minP);
+          if(tmp > minP) {
+            tmp--;
+          }
+          minP = tmp;
+          tmp = parseInt(maxP);
+          if(tmp < maxP) {
+            tmp++;
+          }
+          maxP = tmp;
+
+          interval = Math.max(parseInt((maxP - minP)/ticks_numb),1);
+        }else {
+          interval = (maxP - minP) / ticks_numb;
+        }
+        if(interval>0) {
+          var t = -1;
+          do {
+            t++;
+            ticks[t] = minP+(t*interval);
+          }while(ticks[t]<maxP);
+        }else {
+          ticks[0] = minP;
+        }
+      }
+      return ticks;
+    }
+
+    this.drawBars = function(response) {
       if(response == null) {
         return;
       }
@@ -74,35 +129,100 @@ function PieChart(contentId, updatePeriod, options) {
           eval('(' + response + ')');
 
       element.empty();
-      var pie = responseObject.pie;
+      var bars = responseObject.bars;
+      var ticks = responseObject.ticks;
 
       var points = [];
+      var legend = [];
       var color = [];
 
+      var minY, maxY;
 
-      for(var i=0; i<pie.length; i++) {
+      var y_points_number = 0;
+      var value_set = new Object();
+      for(var i=0; i<bars.length; i++) {
+        var bar = [];
+        var j = 0;
 
-        points[i] = [pie[i].legend, pie[i].value];
-        color[i] = pie[i].color;
+        for(var key in bars[i].values) {
+          var value = bars[i].values[key];
+          var valueD = parseFloat(value);
+          bar[j++] =  horizontal ? [valueD, key] : [key, valueD];
 
+          minY = minY == null ? valueD : Math.min(minY, valueD);
+          maxY = maxY == null ? valueD : Math.max(maxY, valueD);
+
+          var value_str = value+'';
+          if(!(value_str in value_set)) {
+            value_set[value_str] = 1;
+            y_points_number++;
+          }
+        }
+
+        points[i] = bar;
+        legend[i] = {label:bars[i].legend};
+        color[i] = bars[i].color;
       }
 
       if(points.length == 0) {
         return;
       }
 
-      plot1 = $.jqplot(contentId, [points], {
+      var y_ticks_numb = get_ticks_numb(intValues, number_ticks, y_points_number);
+
+      var y_ticks = get_ticks(y_ticks_numb, intValues, minY, maxY);
+
+      plot1 = $.jqplot(contentId, points, {
+        stackSeries : stackMode,
         seriesColors: color,
-        seriesDefaults: {
-          // Make this a pie chart.
-          renderer: jQuery.jqplot.PieRenderer,
+        series:legend,
+        legend: {
+          show: true,
+          location: horizontal ? 's' : 'w'
+        },
+        seriesDefaults:{
+          renderer:$.jqplot.BarRenderer,
           rendererOptions: {
-            // Put data labels on the pie slices.
-            // By default, labels show the percentage of the slice.
-            showDataLabels: true
+            fillToZero: true,
+            barDirection: horizontal ? 'horizontal' : 'vertical',
+            barWidth: 70
           }
         },
-        legend: { show:true, location: 'e' }
+        axes:{
+          xaxis:
+              !horizontal ? {
+                renderer:$.jqplot.CategoryAxisRenderer,
+                ticks: ticks
+              } :
+                  y_ticks_numb == null ? (
+                      intValues ? {tickOptions:{formatString: '%d'}}
+                          : {}
+                      ) : (
+                      intValues ?  {ticks : y_ticks, tickOptions:{formatString: '%d'}}
+                          : {ticks : y_ticks}
+                      ),
+          yaxis:
+              horizontal ? {
+                renderer:$.jqplot.CategoryAxisRenderer,
+                ticks: ticks,
+                tickOptions: {
+                  show: false
+                }
+              } :
+                  y_ticks_numb == null ? (
+                      intValues ? {tickOptions:{formatString: '%d'}}
+                          : {}
+                      ) : (
+                      intValues ?  {ticks : y_ticks, tickOptions:{formatString: '%d'}}
+                          : {ticks : y_ticks}
+                      )
+        },
+        highlighter: {
+          show: true,
+          tooltipAxes : horizontal ? "x" : "y",
+          tooltipFormatString: '%s',
+          useAxesFormatters: false
+        }
       });
 
     }
@@ -111,7 +231,7 @@ function PieChart(contentId, updatePeriod, options) {
   var callUpdate = function () {
 
     var onResponse = function(text, status, resp) {
-      g.drawPie(text);
+      g.drawBars(text);
       if(updatePeriod>0) {
         checkUpdate();
       }
@@ -127,7 +247,7 @@ function PieChart(contentId, updatePeriod, options) {
 
   $(function() {
     if(immediatlyRender != null) {
-      g.drawPie(immediatlyRender);
+      g.drawBars(immediatlyRender);
     }else {
       callUpdate();
     }
