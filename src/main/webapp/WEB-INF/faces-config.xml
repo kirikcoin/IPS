@@ -52,12 +52,6 @@
   </managed-bean>
 
   <managed-bean>
-    <managed-bean-name>adminDemoController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.admin.AdminDemoController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
     <managed-bean-name>surveyListController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyListController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
@@ -164,24 +158,6 @@
       <redirect/>
     </navigation-case>
   </navigation-rule>
-
-  <!--<navigation-rule>
-    <description>Раздел 1</description>
-    <navigation-case>
-      <from-outcome>SECTION_1</from-outcome>
-      <to-view-id>/pages/section1/index.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-  </navigation-rule>
-
-  <navigation-rule>
-    <description>Раздел 2</description>
-    <navigation-case>
-      <from-outcome>SECTION_2</from-outcome>
-      <to-view-id>/pages/section2/index.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-  </navigation-rule>-->
 
   <navigation-rule>
     <description>Survey list</description>
