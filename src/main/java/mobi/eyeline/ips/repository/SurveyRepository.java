@@ -5,7 +5,6 @@ import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.util.StringUtils;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -17,14 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.ilike;
 import static org.hibernate.criterion.Restrictions.or;
-import static org.hibernate.criterion.Restrictions.sqlRestriction;
 
 
 public class SurveyRepository extends BaseRepository<Survey, Integer> {

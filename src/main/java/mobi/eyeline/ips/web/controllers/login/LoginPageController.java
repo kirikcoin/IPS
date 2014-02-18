@@ -1,7 +1,5 @@
 package mobi.eyeline.ips.web.controllers.login;
 
-import mobi.eyeline.ips.exceptions.LoginException;
-import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.web.controllers.BaseController;
 
 import javax.faces.context.FacesContext;

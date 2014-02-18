@@ -6,8 +6,6 @@ import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.service.UserService;
 import mobi.eyeline.ips.web.controllers.BaseController;
 
-import java.io.Serializable;
-
 public class RecoveryPasswordController extends BaseController {
     private UserService userService;
     private String email;

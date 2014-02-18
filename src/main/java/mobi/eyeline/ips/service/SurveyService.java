@@ -1,15 +1,8 @@
 package mobi.eyeline.ips.service;
 
-import mobi.eyeline.ips.exceptions.SurveyNotFound;
 import mobi.eyeline.ips.model.Survey;
-import mobi.eyeline.ips.model.User;
-import mobi.eyeline.ips.repository.DB;
-import mobi.eyeline.ips.repository.QuestionStatsRepository;
-import mobi.eyeline.ips.repository.RespondentRepository;
 import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
-import mobi.eyeline.ips.repository.SurveyStatsRepository;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,14 +10,11 @@ public class SurveyService {
 
     private static final Logger logger = LoggerFactory.getLogger(SurveyService.class);
 
-    private final DB db;
     private final SurveyRepository surveyRepository;
     private final SurveyInvitationRepository surveyInvitationRepository;
 
-    public SurveyService(DB db,
-                         SurveyRepository surveyRepository,
+    public SurveyService(SurveyRepository surveyRepository,
                          SurveyInvitationRepository surveyInvitationRepository) {
-        this.db = db;
         this.surveyRepository = surveyRepository;
         this.surveyInvitationRepository = surveyInvitationRepository;
     }

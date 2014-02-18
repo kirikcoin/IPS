@@ -35,11 +35,6 @@ public abstract class BaseRepository<E, K extends Serializable> {
         return db.getSessionFactory();
     }
 
-    // TODO: temporary, should be removed once raw `Connection' usages are refactored.
-    protected Connection getConnection(Session session) {
-        return ((SessionImpl) session).connection();
-    }
-
     /**
      * @return {@code null} if nothing found.
      */
@@ -205,25 +200,4 @@ public abstract class BaseRepository<E, K extends Serializable> {
         }
     }
 
-    protected List<String> listTablesLike(Session session,
-                                          String pattern) {
-        //noinspection unchecked
-        return (List<String>) session
-                .createSQLQuery("SHOW TABLES LIKE :filter")
-                .setString("filter", pattern)
-                .list();
-    }
-
-    protected boolean tableExists(Session session,
-                                  String tableNamePattern) {
-        return !listTablesLike(session, tableNamePattern).isEmpty();
-    }
-
-    protected int count(Session session, String tableName) {
-        //noinspection unchecked
-        final Number count = (Number) session
-                .createSQLQuery("SELECT COUNT(*) FROM " + tableName)
-                .uniqueResult();
-        return count.intValue();
-    }
 }

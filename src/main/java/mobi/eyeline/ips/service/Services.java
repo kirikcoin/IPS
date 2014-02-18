@@ -53,7 +53,6 @@ public class Services {
         surveyInvitationRepository = new SurveyInvitationRepository(db);
 
         surveyService = new SurveyService(
-                db,
                 surveyRepository,
                 surveyInvitationRepository);
         templateService = new TemplateService(config);

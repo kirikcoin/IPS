@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.repository;
 
-import mobi.eyeline.ips.exceptions.LoginException;
 import mobi.eyeline.ips.model.Role;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.util.HashUtils;
@@ -16,8 +15,6 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,16 +151,6 @@ public class UserRepository extends BaseRepository<User, Integer> {
         criteria.setProjection(Projections.rowCount());
 
         return ((Number) criteria.uniqueResult()).intValue();
-    }
-
-
-    // TODO: do we need this?
-    public void insertOneTimePass(int userId, String onePass)
-            throws SQLException, IOException {
-
-        // Initial query:
-        // insertOnePass= UPDATE users SET one_time_pw = ? WHERE uid = ? LIMIT 1
-        throw new AssertionError("Not implemented");
     }
 
 }
