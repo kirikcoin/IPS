@@ -37,6 +37,7 @@ public class SurveyStats implements Serializable {
     /**
      * Канал распространения - способ информирования потенциальных респондентов о проведении опроса.
      */
+    // TODO: Looks like this belongs to `SurveyInvitation'. Also, we don't actually use it now.
     @Column(name = "channel")
     @Enumerated(EnumType.STRING)
     private DistributionChannel channel = DistributionChannel.CLIENT_BASE;

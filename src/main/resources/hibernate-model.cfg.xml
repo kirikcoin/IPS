@@ -7,7 +7,6 @@
     <session-factory>
         <mapping class="mobi.eyeline.ips.model.User"/>
         <mapping class="mobi.eyeline.ips.model.Respondent"/>
-        <mapping class="mobi.eyeline.ips.model.QuestionStats"/>
         <mapping class="mobi.eyeline.ips.model.SurveyStats"/>
         <mapping class="mobi.eyeline.ips.model.Survey"/>
         <mapping class="mobi.eyeline.ips.model.SurveyDetails"/>

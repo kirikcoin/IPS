@@ -81,10 +81,9 @@ public class Question implements Serializable {
     @Column(name = "sent_count")
     private int sentCount;
 
-    // TODO: consider making private / package local.
     @PrePersist
     @PreUpdate
-    public void prepareIndex() {
+    void prepareIndex() {
         if (getSurvey() != null) {
             order = getSurvey().getQuestions().indexOf(this);
         }

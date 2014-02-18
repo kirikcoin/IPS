@@ -6,7 +6,6 @@ import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.DB;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
-import mobi.eyeline.ips.repository.QuestionStatsRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
 import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
@@ -24,7 +23,6 @@ public class Services {
 
     private final UserRepository userRepository;
     private final RespondentRepository respondentRepository;
-    private final QuestionStatsRepository questionStatsRepository;
     private final SurveyStatsRepository surveyStatsRepository;
     private final SurveyRepository surveyRepository;
     private final QuestionRepository questionRepository;
@@ -44,7 +42,6 @@ public class Services {
 
         userRepository = new UserRepository(db);
         respondentRepository = new RespondentRepository(db);
-        questionStatsRepository = new QuestionStatsRepository(db);
         questionRepository = new QuestionRepository(db);
         surveyStatsRepository = new SurveyStatsRepository(db);
         surveyRepository = new SurveyRepository(db);
@@ -103,10 +100,6 @@ public class Services {
 
     public RespondentRepository getRespondentRepository() {
         return respondentRepository;
-    }
-
-    public QuestionStatsRepository getQuestionStatsRepository() {
-        return questionStatsRepository;
     }
 
     public SurveyStatsRepository getSurveyStatsRepository() {
