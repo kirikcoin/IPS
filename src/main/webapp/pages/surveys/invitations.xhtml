@@ -169,7 +169,8 @@
             <h:outputLabel for="newChannelNumber"
                            value="#{bundle['invitations.block.invitations.delivery.dialog.number.text']}"/>
             <eye:inputText id="newChannelNumber"
-                           value="#{surveyInvitesController.newChannelNumber}" />
+                           value="#{surveyInvitesController.newChannelNumber}"
+                           converterMessage="errror"/>
           </h:panelGrid>
           <eye:buttons>
             <eye:button>

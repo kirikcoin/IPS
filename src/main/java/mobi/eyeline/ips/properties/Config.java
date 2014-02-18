@@ -17,8 +17,8 @@ public interface Config {
 
     public Properties getDatabaseProperties();
 
-    public boolean isSmaqUpdateEnabled();
-    public int getSmaqUpdateDelayMinutes();
+    public boolean isMadvUpdateEnabled();
+    public int getMadvUpdateDelayMinutes();
 
     public static class XmlConfigImpl implements Config {
 
@@ -33,8 +33,11 @@ public interface Config {
 
         private final Properties databaseProperties;
 
-        private final boolean smaqUpdateEnabled;
-        private final int smaqUpdateDelayMinutes;
+        private final boolean madvUpdateEnabled;
+        private final int madvUpdateDelayMinutes;
+        private final String madvUrl;
+        private final String madvUserLogin;
+        private final String madvUserPassword;
 
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
@@ -52,9 +55,12 @@ public interface Config {
             final XmlConfigSection database = xmlConfig.getSection("database");
             databaseProperties = database.toProperties(null);
 
-            final XmlConfigSection smaq = xmlConfig.getSection("smaq");
-            smaqUpdateEnabled = smaq.getBool("update.enabled", true);
-            smaqUpdateDelayMinutes = smaq.getInt("update.delay.minutes");
+            final XmlConfigSection madv = xmlConfig.getSection("madv");
+            madvUpdateEnabled = madv.getBool("update.enabled", true);
+            madvUpdateDelayMinutes = madv.getInt("update.delay.minutes");
+            madvUrl = madv.getString("url");
+            madvUserLogin = madv.getString("login");
+            madvUserPassword = madv.getString("password");
             // TODO: add auth info.
         }
 
@@ -87,12 +93,24 @@ public interface Config {
             return databaseProperties;
         }
 
-        public boolean isSmaqUpdateEnabled() {
-            return smaqUpdateEnabled;
+        public boolean isMadvUpdateEnabled() {
+            return madvUpdateEnabled;
         }
 
-        public int getSmaqUpdateDelayMinutes() {
-            return smaqUpdateDelayMinutes;
+        public int getMadvUpdateDelayMinutes() {
+            return madvUpdateDelayMinutes;
+        }
+
+        public String getMadvUrl() {
+            return madvUrl;
+        }
+
+        public String getMadvUserLogin() {
+            return madvUserLogin;
+        }
+
+        public String getMadvUserPassword() {
+            return madvUserPassword;
         }
     }
 }

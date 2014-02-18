@@ -27,9 +27,12 @@
   </section>
 
   <!-- TODO: should we rename it to something more meaningful? Like `madv-integration'... -->
-  <section name="smaq">
+  <section name="madv">
     <param name="update.enabled" type="boolean">true</param>
     <param name="update.delay.minutes" type="int">15</param>
+    <param name="url" type="string">http://localhost:9080/services/campaigns</param>
+    <param name="login" type="string">user@ussd.mobi</param>
+    <param name="password" type="string">password</param>
 
     <!-- TODO: add auth params here. -->
   </section>

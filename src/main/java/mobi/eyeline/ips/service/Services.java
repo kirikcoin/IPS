@@ -37,7 +37,7 @@ public class Services {
     private final MailService mailService;
     private final UserService userService;
     private final UssdService ussdService;
-    private final SmaqUpdateService smaqUpdateService;
+    private final MadvUpdateService madvUpdateService;
 
     public Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -77,7 +77,7 @@ public class Services {
                 questionRepository,
                 questionOptionRepository);
 
-        smaqUpdateService = new SmaqUpdateService(config);
+        madvUpdateService = new MadvUpdateService(config);
     }
 
     public static synchronized void initialize(Config properties) {
@@ -152,7 +152,7 @@ public class Services {
         return ussdService;
     }
 
-    public SmaqUpdateService getSmaqUpdateService() {
-        return smaqUpdateService;
+    public MadvUpdateService getMadvUpdateService() {
+        return madvUpdateService;
     }
 }
