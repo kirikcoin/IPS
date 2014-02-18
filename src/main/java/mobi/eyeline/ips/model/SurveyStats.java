@@ -29,18 +29,6 @@ public class SurveyStats implements Serializable {
     private Survey survey;
 
     /**
-     * Число зарегистрированных респондентов.
-     */
-    @Column(name = "registeredCount")
-    private int registeredRespondentsCount;
-
-    /**
-     * Число респндентов, зарегистрированных и ответивших хотя бы на один вопрос.
-     */
-    @Column(name = "answeredCount")
-    private int answeredUser;
-
-    /**
      * Число отправленных приглашений.
      */
     @Column(name = "sent")
@@ -74,22 +62,6 @@ public class SurveyStats implements Serializable {
 
     public void setSurvey(Survey survey) {
         this.survey = survey;
-    }
-
-    public int getRegisteredRespondentsCount() {
-        return registeredRespondentsCount;
-    }
-
-    public void setRegisteredRespondentsCount(int registerUser) {
-        this.registeredRespondentsCount = registerUser;
-    }
-
-    public int getAnsweredUser() {
-        return answeredUser;
-    }
-
-    public void setAnsweredUser(int answeredUser) {
-        this.answeredUser = answeredUser;
     }
 
     public int getSentCount() {
