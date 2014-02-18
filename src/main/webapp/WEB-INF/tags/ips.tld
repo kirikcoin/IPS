@@ -64,6 +64,7 @@
     </attribute>
   </tag>
 
+  <!--TODO: Workaround for `jsfcomponents-38'. Remove once the issue is fixed.-->
   <tag>
     <description>Поле для ввода текста</description>
     <name>inputText</name>

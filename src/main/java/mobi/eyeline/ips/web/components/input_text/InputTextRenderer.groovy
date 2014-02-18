@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext
 /**
  * No value trimming implementation.
  */
+// TODO: Workaround for `jsfcomponents-38'. Remove once the issue is fixed.
 public class InputTextRenderer extends mobi.eyeline.util.jsf.components.input_text.InputTextRenderer {
 
     private static String decodeString(Object value) {
