@@ -17,10 +17,9 @@
 
     <ui:define name="scripts">
       <script type="text/javascript">
+        //    <![CDATA[
         $(function(){
           page.init();
-          var blockError = "#{clientListController.blockError}";
-          var unblockError = "#{clientListController.unblockError}";
 
           if ("#{clientListController.newUserDataValidationError}" == "true") {
             jsfc('newClientDialog').show();
@@ -31,21 +30,26 @@
 
           if ("#{clientListController.passwordResetError}" == "true") {
             ips.message.error("#{bundle['client.dialog.passwordreset.error']}");
-          }  else if ("#{clientListController.passwordResetError}" == "false")
+          }  else if ("#{clientListController.passwordResetError}" == "false") {
             ips.message.info("#{bundle['client.dialog.passwordreset.success']}");
+          }
 
-          if (blockError=="true")
+          var blockError = "#{clientListController.blockError}";
+          if (blockError == "true") {
             ips.message.error("#{bundle['client.dialog.block.error']}");
-          else if (blockError=="false")
+          } else if (blockError == "false") {
             ips.message.info("#{bundle['client.dialog.block.done']}");
+          }
 
-
-          if (unblockError=="true")
+          var unblockError = "#{clientListController.unblockError}";
+          if (unblockError == "true") {
             ips.message.error("#{bundle['client.dialog.unblock.error']}");
-          else if (unblockError=="false")
+          } else if (unblockError == "false") {
             ips.message.info("#{bundle['client.dialog.unblock.done']}");
+          }
 
-        })
+        });
+        //    ]]>
       </script>
     </ui:define>
 
@@ -118,18 +122,18 @@
 
                 <h:outputText value=" ("/>
                 <h:commandLink value="#{bundle['client.list.table.status.active.block']}"
-                               onclick="return page.showBlockDialog('#{row.login}');"
+                               onclick="return page.showBlockDialog('#{row.login}', '#{row.fullname}');"
                                rendered="#{row.blocked == false}">
                 </h:commandLink>
 
                 <h:commandLink value="#{bundle['client.list.table.status.blocked.unblock']}"
-                               onclick="return page.showUnblockDialog('#{row.login}');"
+                               onclick="return page.showUnblockDialog('#{row.login}', '#{row.fullname}');"
                                rendered="#{row.blocked == true}">
                 </h:commandLink>
                 <h:outputText value=" | "
                               rendered="#{row.blocked == false}"/>
                 <h:commandLink value="#{bundle['client.list.table.status.resetpassword']}"
-                               onclick="return page.showPasswordResetDialog('#{row.email}');"
+                               onclick="return page.showPasswordResetDialog('#{row.email}','#{row.login}', '#{row.fullname}');"
                                rendered="#{row.blocked == false}"/>
                 <h:outputText value=")"/>
               </eye:column>
@@ -231,27 +235,25 @@
         </eye:dialog>
 
 
-       <ips:confirmDialog id="clientBlockDialog"
-                          text="#{bundle['client.dialog.block.text']}"
-                          title="#{bundle['client.dialog.block.title']}"
-                          actionBean="#{clientListController}"
-                          actionName="blockUser"/>
+        <ips:confirmDialog id="clientBlockDialog"
+                           text="#{bundle['client.dialog.block.text']}"
+                           title="#{bundle['client.dialog.block.title']}"
+                           actionBean="#{clientListController}"
+                           actionName="blockUser"/>
 
-       <ips:confirmDialog id="clientUnblockDialog"
-                          text="#{bundle['client.dialog.unblock.text']}"
-                          title="#{bundle['client.dialog.unblock.title']}"
-                          actionBean="#{clientListController}"
-                          actionName="unblockUser"/>
+        <ips:confirmDialog id="clientUnblockDialog"
+                           text="#{bundle['client.dialog.unblock.text']}"
+                           title="#{bundle['client.dialog.unblock.title']}"
+                           actionBean="#{clientListController}"
+                           actionName="unblockUser"/>
 
-      <ips:confirmDialog id="clientPasswordResetDialog"
-                         text="#{bundle['client.dialog.passwordreset.text']}"
-                         title="#{bundle['client.dialog.passwordreset.title']}"
-                         actionBean="#{clientListController}"
-                         actionName="resetPassword"/>
-
+        <ips:confirmDialog id="clientPasswordResetDialog"
+                           text="#{bundle['client.dialog.passwordreset.text']}"
+                           title="#{bundle['client.dialog.passwordreset.title']}"
+                           actionBean="#{clientListController}"
+                           actionName="resetPassword"/>
 
       </h:form>
-
 
     </ui:define>
 
