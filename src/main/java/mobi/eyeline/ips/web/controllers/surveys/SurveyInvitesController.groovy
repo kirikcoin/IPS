@@ -23,6 +23,7 @@ class SurveyInvitesController extends BaseSurveyController {
 
 
     Date newChannelDate = new Date().clearTime()
+    Date lastUpdate
     boolean chanelError
     boolean identifierError
     int newChannelNumber
@@ -32,9 +33,7 @@ class SurveyInvitesController extends BaseSurveyController {
     Survey currentSurvey = survey
 
     SurveyInvitesController() {
-            campaignDefined = isNotEmpty(survey.getStatistics().campaign)
-            campaign = survey.getStatistics().campaign
-
+        campaignDefined = isNotEmpty(survey.getStatistics().campaign)
     }
 
     DataTableModel getTableModel() {
@@ -100,7 +99,7 @@ class SurveyInvitesController extends BaseSurveyController {
             survey.getStatistics().campaign = newCampaignIdentifier
             survey.getStatistics().sentCount = 0
             surveyRepository.update(survey)
-            return
+
         } else {
             addErrorMessage(getResourceBundle().getString("client.dialog.validation.login.exists"),
                     "newIdentifier")

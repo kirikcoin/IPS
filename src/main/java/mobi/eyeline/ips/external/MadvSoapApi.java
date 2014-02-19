@@ -41,6 +41,5 @@ public class MadvSoapApi {
             return null;
         }
         return result;
-
     }
 }

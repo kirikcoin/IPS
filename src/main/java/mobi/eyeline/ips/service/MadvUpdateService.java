@@ -11,6 +11,7 @@ import mobi.eyeline.ips.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -24,6 +25,8 @@ public class MadvUpdateService {
 
     private final Config config;
     private Timer timer;
+    private Date lastUpdate;
+
 
     public MadvUpdateService(Config config) {
         this.config = config;
@@ -87,7 +90,9 @@ public class MadvUpdateService {
                         count += banner.getImpressionsCount();
                     }
                 }
+                lastUpdate = new Date();
                 survey.getStatistics().setSentCount(count);
+                survey.getStatistics().setLastUpdate(lastUpdate);
                 surveyRepository.update(survey);
 
             } catch (Exception ex) {

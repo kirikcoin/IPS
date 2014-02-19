@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Статистика опроса.
@@ -53,6 +54,14 @@ public class SurveyStats implements Serializable {
      */
     @Column(name = "accessNumber")
     private String accessNumber;
+
+    /**
+     * Дата последнего обновления количества показов(поля sent)
+     */
+    @Column(name = "last_update")
+    private Date lastUpdate;
+
+
 
     public SurveyStats() {
     }
@@ -97,4 +106,11 @@ public class SurveyStats implements Serializable {
         this.accessNumber = accessNumber;
     }
 
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
 }

@@ -87,16 +87,16 @@
             <eye:collapsingGroup opened="true" id="advertisingCompany">
               <f:facet name="header">
                 <h:panelGroup>
-                  <h:outputText value="#{bundle['invitations.block.invitations.delivery.title']}"/>
+                  <h:outputText value="#{bundle['invitations.block.advertising.company.title']}"/>
                 </h:panelGroup>
               </f:facet>
 
 
                 <h:panelGrid columns="1" rendered="#{surveyInvitesController.campaignDefined}">
-                 <h:outputText value="#{bundle['invitations.block.advertising.company.identifier']} #{surveyInvitesController.campaign}"/>
-                  <h:outputText value="#{bundle['invitations.block.advertising.delivery.number']} #{surveyInvitesController.survey.statistics.sentCount}">
+                  <h:outputText value="#{bundle['invitations.block.advertising.company.identifier']} #{surveyInvitesController.survey.statistics.campaign}"/>
+                  <h:outputText value="#{bundle['invitations.block.advertising.delivery.number']} #{surveyInvitesController.survey.statistics.sentCount}"/>
+                  <h:outputText value="#{bundle['invitations.block.advertising.company.lastupdate']} #{surveyInvitesController.survey.statistics.lastUpdate}"/>
 
-                  </h:outputText>
 
                   <h:commandLink value="#{bundle['invitations.block.advertising.company.change.campaign']}"
                                  onclick="jsfc('newIdentifierDialog').show(); return false"/>
@@ -231,13 +231,12 @@
               <h:commandLink styleClass="button-green"
                              value="#{bundle['dialog.save']}"
                              action="#{surveyInvitesController.addCampaignIdentifier}">
-                <f:param name="errorId" value="deleteDialog"/>
               </h:commandLink>
             </eye:button>
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['dialog.cancel']}"
-                             onclick="jsfc('newChannelDialog').hide(); return false"/>
+                             onclick="jsfc('newIdentifierDialog').hide(); return false"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>
