@@ -127,7 +127,8 @@
                     <eye:column name="action"
                                 title="#{bundle['invitations.block.invitations.delivery.table.action']}">
                       <h:commandLink value="#{bundle['invitations.block.invitations.delivery.table.action.delete']}"
-                                     onclick="">
+                                     action="#{surveyInvitesController.deleteChannel}">
+                        <f:param name="channelId" value="#{row.id}"/>
                       </h:commandLink>
                     </eye:column>
 

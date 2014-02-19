@@ -19,6 +19,11 @@ public interface Config {
 
     public boolean isMadvUpdateEnabled();
     public int getMadvUpdateDelayMinutes();
+    public String getMadvUrl();
+
+    public String getMadvUserLogin();
+
+    public String getMadvUserPassword();
 
     public static class XmlConfigImpl implements Config {
 

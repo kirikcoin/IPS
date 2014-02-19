@@ -20,6 +20,7 @@ class SurveyInvitesController extends BaseSurveyController {
     int newChannelNumber
 
 
+
     public DataTableModel getTableModel() {
         return new DataTableModel() {
             @Override
@@ -34,6 +35,7 @@ class SurveyInvitesController extends BaseSurveyController {
 
                 return list.collect {
                     new TableItem(
+                            id: it.id,
                             date: it.date,
                             number: it.value
                     )
@@ -67,7 +69,13 @@ class SurveyInvitesController extends BaseSurveyController {
         surveyInvitationRepository.save(surveyInvitation)
     }
 
+    void deleteChannel() {
+        def channelId = getParamValue("channelId").asInteger()
+        surveyInvitationRepository.delete(surveyInvitationRepository.get(channelId))
+    }
+
     static class TableItem implements Serializable {
+        int id
         Date date
         int number
     }
