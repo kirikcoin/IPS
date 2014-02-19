@@ -55,18 +55,6 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
         criteria.setProjection(Projections.rowCount());
         return ((Number) criteria.uniqueResult()).intValue();
     }
-//
-//    public int count(Survey survey) {
-//        final Session session = getSessionFactory().getCurrentSession();
-//
-//        final Number count = (Number) session.createQuery(
-//                "select count(i.value)" +
-//                " from SurveyInvitation i" +
-//                " where i.survey = :survey")
-//                .setEntity("survey", survey)
-//                .uniqueResult();
-//        return count.intValue();
-//    }
 
     public void deleteInvitation(int id) {
         final Session session = getSessionFactory().openSession();

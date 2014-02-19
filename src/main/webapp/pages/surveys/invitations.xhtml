@@ -89,8 +89,9 @@
               </f:facet>
 
               #{bundle['invitations.block.advertising.company.no.campaign']}
-              <h:outputLink rendered="#{!surveyInvitesController.campaignDefined}"
-                            value="#{bundle['invitations.block.advertising.company.define.campaign']}"/>
+              <h:outputLink rendered="#{!surveyInvitesController.campaignDefined}">
+                <h:outputText value="#{bundle['invitations.block.advertising.company.define.campaign']}"/>
+              </h:outputLink>
             </eye:collapsingGroup>
 
 
