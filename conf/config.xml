@@ -10,31 +10,46 @@
     <param name="smtp.password" type="string">password</param>
 
     <param name="from" type="string">ips@ips.eyeline.mobi</param>
-    <param name="login.url" type="string">http://localhost:8080</param>
+    <!--<param name="login.url" type="string">http://localhost:8080</param>-->
+    <param name="login.url" type="string">http://localhost:39932</param>
 
   </section>
 
   <section name="database">
-    <!--<param name="hibernate.connection.datasource" type="string">java:comp/env/jdbc/Limesurvey</param>-->
-
     <param name="hibernate.connection.driver_class" type="string">com.mysql.jdbc.Driver</param>
-    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8</param>
 
+    <!-- Shared test DB. -->
+
+    <param name="hibernate.connection.url" type="string">
+      jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8
+    </param>
     <param name="hibernate.connection.username" type="string">user</param>
     <param name="hibernate.connection.password" type="string">password</param>
 
-    <param name="hibernate.connection.pool_size" type="string">2</param>
+    <!-- Local DB. -->
+
+    <!--<param name="hibernate.connection.url" type="string">
+      jdbc:mysql://127.0.0.1/ips?useUnicode=true&amp;characterEncoding=UTF-8
+    </param>
+    <param name="hibernate.connection.username" type="string">ips</param>
+    <param name="hibernate.connection.password" type="string">ips</param>-->
+
+    <!-- Pool settings. -->
+
+    <property name="hibernate.c3p0.timeout">300</property>
+    <property name="hibernate.c3p0.max_statements">50</property>
+    <property name="hibernate.c3p0.idle_test_period">3000</property>
+
+    <property name="hibernate.c3p0.preferredTestQuery">SELECT 1</property>
+    <property name="hibernate.c3p0.testConnectionOnCheckout">true</property>
   </section>
 
-  <!-- TODO: should we rename it to something more meaningful? Like `madv-integration'... -->
   <section name="madv">
     <param name="update.enabled" type="boolean">true</param>
     <param name="update.delay.minutes" type="int">15</param>
     <param name="url" type="string">http://localhost:9080/services/campaigns</param>
     <param name="login" type="string">user@ussd.mobi</param>
     <param name="password" type="string">password</param>
-
-    <!-- TODO: add auth params here. -->
   </section>
 
 </config>

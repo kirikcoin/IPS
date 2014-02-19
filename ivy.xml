@@ -61,6 +61,8 @@
     <dependency org="org.hibernate" name="hibernate-core" rev="4.2.8.Final" conf="site->default"/>
     <dependency org="org.hibernate" name="hibernate-validator" rev="5.0.2.Final" transitive="true"
                 conf="site->default"/>
+    <dependency org="org.hibernate" name="hibernate-c3p0" rev="4.2.8.Final"
+                conf="site->default" transitive="true"/>
 
     <dependency org="com.google.guava" name="guava" rev="16.0.1" conf="site->default"/>
 
