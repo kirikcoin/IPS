@@ -29,6 +29,9 @@
           if (#{surveyInvitesController.chanelError}) {
             jsfc("newChannelDialog").show();
           }
+          if (#{surveyInvitesController.identifierError}) {
+            jsfc("newIdentifierDialog").show();
+          }
         });
 //            ]]>
       </script>
@@ -88,8 +91,25 @@
                 </h:panelGroup>
               </f:facet>
 
-              #{bundle['invitations.block.advertising.company.no.campaign']}
-              <h:outputLink rendered="#{!surveyInvitesController.campaignDefined}">
+
+                <h:panelGrid columns="1" rendered="#{surveyInvitesController.campaignDefined}">
+                 <h:outputText value="#{bundle['invitations.block.advertising.company.identifier']} #{surveyInvitesController.campaign}"/>
+                  <h:outputText value="#{bundle['invitations.block.advertising.delivery.number']} #{surveyInvitesController.survey.statistics.sentCount}">
+
+                  </h:outputText>
+
+                  <h:commandLink value="#{bundle['invitations.block.advertising.company.change.campaign']}"
+                                 onclick="jsfc('newIdentifierDialog').show(); return false"/>
+
+                  <!--<h:commandLink value="refresh number"-->
+                                 <!--action="#{surveyInvitesController.updateSentCount}"/>-->
+
+                </h:panelGrid>
+
+              <h:outputText value="#{bundle['invitations.block.advertising.company.no.campaign']} "
+                            rendered="#{!surveyInvitesController.campaignDefined}" />
+              <h:outputLink rendered="#{!surveyInvitesController.campaignDefined}"
+                            onclick="jsfc('newIdentifierDialog').show(); return false">
                 <h:outputText value="#{bundle['invitations.block.advertising.company.define.campaign']}"/>
               </h:outputLink>
             </eye:collapsingGroup>
@@ -175,13 +195,42 @@
                            value="#{bundle['invitations.block.invitations.delivery.dialog.number.text']}"/>
             <eye:inputText id="newChannelNumber"
                            value="#{surveyInvitesController.newChannelNumber}"
-                           converterMessage="errror"/>
+                           converterMessage="Incorrect channel number."/>
           </h:panelGrid>
           <eye:buttons>
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['dialog.save']}"
                              action="#{surveyInvitesController.addChannel}">
+                <f:param name="errorId" value="deleteDialog"/>
+              </h:commandLink>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['dialog.cancel']}"
+                             onclick="jsfc('newChannelDialog').hide(); return false"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
+
+        <eye:dialog id="newIdentifierDialog"
+                    title="#{bundle['invitations.block.invitations.delivery.dialog.title']}"
+                    width="520">
+          <h:panelGrid columns="2">
+
+            <h:outputLabel for="newIdentifier"
+                           value="#{bundle['invitations.block.advertising.company.dialog.text']}"/>
+            <eye:inputText id="newIdentifier"
+                           value="#{surveyInvitesController.newCampaignIdentifier}"
+                           converterMessage="Incorrect identifier"/>
+          </h:panelGrid>
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['dialog.save']}"
+                             action="#{surveyInvitesController.addCampaignIdentifier}">
                 <f:param name="errorId" value="deleteDialog"/>
               </h:commandLink>
             </eye:button>

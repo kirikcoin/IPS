@@ -41,11 +41,20 @@ public class MadvUpdateService {
                     TimeUnit.MINUTES.toMillis(config.getMadvUpdateDelayMinutes());
             timer.schedule(new UpdateTask(), 0, delayMillis);
 
-            logger.info("SMAQ update service started");
+            logger.info("MADV update service started");
 
         } else {
-            logger.info("SMAQ update service disabled");
+            logger.info("MADV update service disabled");
         }
+    }
+
+    /**
+     * Puts another update in the queue.<br/>
+     * In case another update process is being executed now, a new one is scheduled next.
+     */
+    public void runNow() {
+        timer.schedule(new UpdateTask(), 0);
+        logger.info("MADV update task sheduled.");
     }
 
     private class UpdateTask extends TimerTask {
@@ -79,9 +88,12 @@ public class MadvUpdateService {
                     }
                 }
                 survey.getStatistics().setSentCount(count);
+                surveyRepository.update(survey);
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                survey.getStatistics().setSentCount(0);
+                surveyRepository.update(survey);
+                logger.error("Error in scheduled update", ex);
             }
         }
         @Override
