@@ -44,6 +44,7 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
             criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
         }
 
+        //noinspection unchecked
         return (List<SurveyInvitation>) criteria.list();
     }
 
@@ -54,33 +55,5 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
         criteria.add(Restrictions.eq("survey", survey));
         criteria.setProjection(Projections.rowCount());
         return ((Number) criteria.uniqueResult()).intValue();
-    }
-
-    public void deleteInvitation(int id) {
-        final Session session = getSessionFactory().openSession();
-        Transaction transaction = null;
-
-        try {
-
-            transaction = session.beginTransaction();
-            session.createSQLQuery("DELETE FROM survey_invitations WHERE id =:id")
-                    .setParameter("id",id)
-                    .executeUpdate();
-            transaction.commit();
-
-        } catch (HibernateException e) {
-            if ((transaction != null) && transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (HibernateException ee) {
-                    LOG.error(e.getMessage(), e);
-                }
-            }
-            throw e;
-
-        } finally {
-
-            session.close();
-        }
     }
 }

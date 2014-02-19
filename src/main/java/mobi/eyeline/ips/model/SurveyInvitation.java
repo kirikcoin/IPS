@@ -46,7 +46,7 @@ public class SurveyInvitation implements Serializable {
             name = "gen",
             strategy = "foreign",
             parameters = @Parameter(name = "property", value = "survey"))
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     private Survey survey;
 
     public SurveyInvitation() {}

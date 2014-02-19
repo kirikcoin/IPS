@@ -100,10 +100,6 @@ public class Question implements Serializable {
         return id;
     }
 
-    public String getStringId() {
-        return id.toString();
-    }
-
     public void setId(Integer id) {
         this.id = id;
     }

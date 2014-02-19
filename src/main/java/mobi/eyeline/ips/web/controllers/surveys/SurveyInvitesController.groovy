@@ -60,6 +60,8 @@ class SurveyInvitesController extends BaseSurveyController {
         }
     }
 
+    // TODO: rename `addChannel' to something more meaningful,
+    // keeping in mind that the entity is called `SurveyInvitation'.
     void addChannel() {
         SurveyInvitation surveyInvitation = new SurveyInvitation(
                 survey: surveyRepository.get(surveyId),
@@ -81,8 +83,10 @@ class SurveyInvitesController extends BaseSurveyController {
     }
 
     void deleteChannel() {
-        def channelId = getParamValue("channelId").asInteger()
-        surveyInvitationRepository.deleteInvitation(channelId)
+        // TODO: rename `channelId' to something more meaningful,
+        // keeping in mind that the entity is called `SurveyInvitation'.
+        int id = getParamValue("channelId").asInteger()
+        surveyInvitationRepository.delete(surveyInvitationRepository.load(id))
     }
 
     static class TableItem implements Serializable {
