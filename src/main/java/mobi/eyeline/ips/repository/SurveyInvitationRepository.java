@@ -4,25 +4,33 @@ package mobi.eyeline.ips.repository;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.SurveyInvitation;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation, Integer> {
+    private static final Logger LOG = LoggerFactory.getLogger(SurveyInvitationRepository.class);
 
     public SurveyInvitationRepository(DB db) {
         super(db);
     }
 
-    public List<SurveyInvitation> list(String orderColumn,
+    public List<SurveyInvitation> list(Survey survey,
+                                       String orderColumn,
                                        boolean orderAsc,
                                        int limit,
                                        int offset) {
         final Session session = getSessionFactory().openSession();
         final Criteria criteria = session.createCriteria(SurveyInvitation.class);
 
+        criteria.add(Restrictions.eq("survey", survey));
         criteria.setFirstResult(offset).setMaxResults(limit);
         if(orderColumn != null) {
             final String property;
@@ -39,23 +47,52 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
         return (List<SurveyInvitation>) criteria.list();
     }
 
-    public int count() {
+    public int count(Survey survey) {
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(SurveyInvitation.class);
 
+        criteria.add(Restrictions.eq("survey", survey));
         criteria.setProjection(Projections.rowCount());
         return ((Number) criteria.uniqueResult()).intValue();
     }
+//
+//    public int count(Survey survey) {
+//        final Session session = getSessionFactory().getCurrentSession();
+//
+//        final Number count = (Number) session.createQuery(
+//                "select count(i.value)" +
+//                " from SurveyInvitation i" +
+//                " where i.survey = :survey")
+//                .setEntity("survey", survey)
+//                .uniqueResult();
+//        return count.intValue();
+//    }
 
-    public int count(Survey survey) {
-        final Session session = getSessionFactory().getCurrentSession();
+    public void deleteInvitation(int id) {
+        final Session session = getSessionFactory().openSession();
+        Transaction transaction = null;
 
-        final Number count = (Number) session.createQuery(
-                "select count(i.value)" +
-                " from SurveyInvitation i" +
-                " where i.survey = :survey")
-                .setEntity("survey", survey)
-                .uniqueResult();
-        return count.intValue();
+        try {
+
+            transaction = session.beginTransaction();
+            session.createSQLQuery("DELETE FROM survey_invitations WHERE id =:id")
+                    .setParameter("id",id)
+                    .executeUpdate();
+            transaction.commit();
+
+        } catch (HibernateException e) {
+            if ((transaction != null) && transaction.isActive()) {
+                try {
+                    transaction.rollback();
+                } catch (HibernateException ee) {
+                    LOG.error(e.getMessage(), e);
+                }
+            }
+            throw e;
+
+        } finally {
+
+            session.close();
+        }
     }
 }

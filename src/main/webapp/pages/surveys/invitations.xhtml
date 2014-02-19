@@ -77,6 +77,8 @@
           </h:panelGroup>
 
 
+
+
           <h:panelGroup layout="block" styleClass="page-body">
 
             <eye:collapsingGroup opened="true" id="advertisingCompany">
@@ -87,7 +89,8 @@
               </f:facet>
 
               #{bundle['invitations.block.advertising.company.no.campaign']}
-
+              <h:outputLink rendered="#{!surveyInvitesController.campaignDefined}"
+                            value="#{bundle['invitations.block.advertising.company.define.campaign']}"/>
             </eye:collapsingGroup>
 
 

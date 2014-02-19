@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyInvitation
 import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
@@ -8,6 +9,8 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 class SurveyInvitesController extends BaseSurveyController {
     private static final Logger logger = LoggerFactory.getLogger(SurveyInvitesController)
@@ -18,16 +21,24 @@ class SurveyInvitesController extends BaseSurveyController {
     Date newChannelDate = new Date().clearTime()
     boolean chanelError
     int newChannelNumber
+    boolean campaignDefined
+    Survey currentSurvey = survey
 
+    SurveyInvitesController() {
+        if(isNotEmpty(survey.getStatistics().campaign)){
+            campaignDefined = true
+        }
 
+    }
 
-    public DataTableModel getTableModel() {
+    DataTableModel getTableModel() {
         return new DataTableModel() {
             @Override
             List getRows(int offset,
                          int limit,
                          DataTableSortOrder sortOrder) {
                 def list = surveyInvitationRepository.list(
+                            currentSurvey,
                             sortOrder.columnId,
                             sortOrder.asc,
                             limit,
@@ -44,7 +55,7 @@ class SurveyInvitesController extends BaseSurveyController {
 
             @Override
             int getRowsCount() {
-                surveyInvitationRepository.count()
+                surveyInvitationRepository.count(currentSurvey)
             }
         }
     }
@@ -71,7 +82,7 @@ class SurveyInvitesController extends BaseSurveyController {
 
     void deleteChannel() {
         def channelId = getParamValue("channelId").asInteger()
-        surveyInvitationRepository.delete(surveyInvitationRepository.get(channelId))
+        surveyInvitationRepository.deleteInvitation(channelId)
     }
 
     static class TableItem implements Serializable {
