@@ -101,11 +101,15 @@ public class MadvUpdateService {
                 surveyRepository.update(survey);
 
             } catch (ServiceException | SOAPException e) {
+                lastUpdate = new Date();
+                survey.getStatistics().setLastUpdate(lastUpdate);
                 survey.getStatistics().setUpdateStatus(InvitationUpdateStatus.SERVER_IS_NOT_AVAILABLE);
                 survey.getStatistics().setSentCount(0);
                 surveyRepository.update(survey);
                 logger.error("Error in scheduled update", e);
             } catch (RemoteException e) {
+                lastUpdate = new Date();
+                survey.getStatistics().setLastUpdate(lastUpdate);
                 survey.getStatistics().setUpdateStatus(InvitationUpdateStatus.CAMPAIGN_NOT_FOUND);
                 survey.getStatistics().setSentCount(0);
                 surveyRepository.update(survey);
