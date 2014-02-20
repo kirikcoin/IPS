@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
-import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyInvitation
 import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
@@ -12,29 +11,29 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
 class SurveyInvitesController extends BaseSurveyController {
+
     private static final Logger logger = LoggerFactory.getLogger(SurveyInvitesController)
+
     private final SurveyInvitationRepository surveyInvitationRepository =
             Services.instance().surveyInvitationRepository
     private final SurveyRepository surveyRepository = Services.instance().surveyRepository
     private final MadvUpdateService madvUpdateService = Services.instance().madvUpdateService
 
+    // MADV campaign
+    String madvId
+    boolean madvIdError
 
-    Date newChannelDate = new Date().clearTime()
-    Date lastUpdate
-    boolean chanelError
-    boolean identifierError
-    int newChannelNumber
-    boolean campaignDefined
-    String newCampaignIdentifier
-    String campaign
-    Survey currentSurvey = survey
+    // Invitations
+    Date inviteDate = new Date().clearTime()
+    String inviteValue
+    boolean inviteError
 
     SurveyInvitesController() {
-        campaignDefined = isNotEmpty(survey.getStatistics().campaign)
+        madvId = survey.statistics.campaign
     }
+
+    boolean isCampaignDefined() { survey.statistics.campaign != null }
 
     DataTableModel getTableModel() {
         return new DataTableModel() {
@@ -42,8 +41,9 @@ class SurveyInvitesController extends BaseSurveyController {
             List getRows(int offset,
                          int limit,
                          DataTableSortOrder sortOrder) {
+
                 def list = surveyInvitationRepository.list(
-                            currentSurvey,
+                            SurveyInvitesController.this.survey,
                             sortOrder.columnId,
                             sortOrder.asc,
                             limit,
@@ -60,56 +60,58 @@ class SurveyInvitesController extends BaseSurveyController {
 
             @Override
             int getRowsCount() {
-                surveyInvitationRepository.count(currentSurvey)
+                surveyInvitationRepository.count(SurveyInvitesController.this.survey)
             }
         }
     }
 
-    // TODO: rename `addChannel' to something more meaningful,
-    // keeping in mind that the entity is called `SurveyInvitation'.
-    void addChannel() {
-        SurveyInvitation surveyInvitation = new SurveyInvitation(
-                survey: surveyRepository.get(surveyId),
-                date: newChannelDate,
-                value: newChannelNumber,
-        )
-        chanelError =
-                renderViolationMessage(validator.validate(surveyInvitation),
-                        [
-                                'date': 'newChannelDate',
-                                'value': 'newChannelNumber',
+    void addInvite() {
+        int inviteValueInt = 0
+        try {
+            inviteValueInt = Integer.parseInt(inviteValue)
+        } catch (Exception ignored) {}
 
-                        ])
-        if(chanelError) {
-            return
+        def invite = new SurveyInvitation(
+                survey: surveyRepository.load(surveyId),
+                date: inviteDate,
+                value: inviteValueInt)
+
+        inviteError = renderViolationMessage(validator.validate(invite))
+        if (!inviteError) {
+            surveyInvitationRepository.save(invite)
         }
-
-        surveyInvitationRepository.save(surveyInvitation)
     }
 
-    void deleteChannel() {
-        // TODO: rename `channelId' to something more meaningful,
-        // keeping in mind that the entity is called `SurveyInvitation'.
-        int id = getParamValue("channelId").asInteger()
+    void deleteInvite() {
+        int id = getParamValue("inviteId").asInteger()
         surveyInvitationRepository.delete(surveyInvitationRepository.load(id))
     }
 
-    void addCampaignIdentifier() {
-        if(StringUtils.isInteger(newCampaignIdentifier)){
-            survey.getStatistics().campaign = newCampaignIdentifier
-            survey.getStatistics().sentCount = 0
+    void onMadvEditSave() {
+        if (StringUtils.isInteger(madvId)) {
+            survey.statistics.campaign = madvId
+            survey.statistics.sentCount = 0
+            survey.statistics.lastUpdate = null
             surveyRepository.update(survey)
+
+            madvIdError = false
 
         } else {
             addErrorMessage(getResourceBundle().getString("client.dialog.validation.login.exists"),
                     "newIdentifier")
-            identifierError = true
+            madvIdError = true
         }
+    }
 
-        if(identifierError) {
-            return
-        }
+    void onMadvEditCancel() {
+        madvId = survey.statistics.campaign
+    }
 
+    void clearMadvId() {
+        survey.statistics.campaign = null
+        survey.statistics.sentCount = 0
+        survey.statistics.lastUpdate = null
+        surveyRepository.update(survey)
     }
 
     void updateSentCount() {

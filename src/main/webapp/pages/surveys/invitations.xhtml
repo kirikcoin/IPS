@@ -2,7 +2,8 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi" xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
     >
 
   <ui:composition template="/templates/main.xhtml">
@@ -20,17 +21,14 @@
 //            <![CDATA[
         $(function () {
 
-          if (window.history && window.history.replaceState) {
-            history.replaceState({}, null, '?id=#{surveyInvitesController.surveyId}');
-          }
+          $('#content').attr('action',
+              '/pages/surveys/invitations.faces?id=#{surveyInvitesController.surveyId}');
 
-          $('#surveyId').val("#{param['id']}");
-
-          if (#{surveyInvitesController.chanelError}) {
-            jsfc("newChannelDialog").show();
+          if (#{surveyInvitesController.inviteError}) {
+            jsfc("newInviteDialog").show();
           }
-          if (#{surveyInvitesController.identifierError}) {
-            jsfc("newIdentifierDialog").show();
+          if (#{surveyInvitesController.madvIdError}) {
+            page.onMadvEditClick();
           }
         });
 //            ]]>
@@ -80,40 +78,99 @@
           </h:panelGroup>
 
 
-
-
           <h:panelGroup layout="block" styleClass="page-body">
 
-            <eye:collapsingGroup opened="true" id="advertisingCompany">
+            <eye:collapsingGroup opened="true" id="groupMadv">
               <f:facet name="header">
                 <h:panelGroup>
                   <h:outputText value="#{bundle['invitations.block.advertising.company.title']}"/>
+
+                  <h:panelGroup rendered="#{surveyInvitesController.campaignDefined and userSession.surveyModificationAllowed}">
+                    <h:commandLink
+                        value="#{bundle['invitations.block.advertising.company.change.campaign']}"
+                        onclick="return page.onMadvEditClick();"
+                        styleClass="modify-left"/>
+
+                    <h:commandLink
+                        value="#{bundle['invitations.block.advertising.company.delete.campaign']}"
+                        onclick="return page.onRemoveBindingClick();"
+                        styleClass="modify-left"/>
+                  </h:panelGroup>
+
+                  <h:panelGroup rendered="#{(not surveyInvitesController.campaignDefined) and userSession.surveyModificationAllowed}">
+                    <h:commandLink
+                        value="#{bundle['invitations.block.advertising.company.define.campaign']}"
+                        onclick="return page.onMadvEditClick();"
+                        styleClass="modify-left"/>
+                  </h:panelGroup>
+
                 </h:panelGroup>
               </f:facet>
+              <h:panelGroup>
+                <h:panelGrid id="madvDisplay"
+                             columns="2"
+                             rendered="#{surveyInvitesController.campaignDefined}"
+                             columnClasses="settings-left,settings-right">
+                  <!-- Campaign ID -->
+                  <h:outputLabel value="#{bundle['invitations.block.advertising.company.identifier']}"
+                                 for="campaignId"/>
+                  <h:outputText id="campaignId"
+                                value="#{surveyInvitesController.survey.statistics.campaign}"/>
 
+                  <!-- Number of delivered invitations -->
+                  <h:outputLabel value="#{bundle['invitations.block.advertising.delivery.number']}"
+                                 for="number"/>
+                  <h:outputText id="number" value="#{surveyInvitesController.survey.statistics.sentCount}"/>
 
-                <h:panelGrid columns="1" rendered="#{surveyInvitesController.campaignDefined}">
-                  <h:outputText value="#{bundle['invitations.block.advertising.company.identifier']} #{surveyInvitesController.survey.statistics.campaign}"/>
-                  <h:outputText value="#{bundle['invitations.block.advertising.delivery.number']} #{surveyInvitesController.survey.statistics.sentCount}"/>
-                  <h:outputText value="#{bundle['invitations.block.advertising.company.lastupdate']} #{surveyInvitesController.survey.statistics.lastUpdate}"/>
+                  <!-- Last update time -->
+                  <h:outputLabel value="#{bundle['invitations.block.advertising.company.lastupdate']}"
+                                 for="lastUpdate"/>
+                  <h:outputText
+                      id="lastUpdate"
+                      value="#{surveyInvitesController.survey.statistics.lastUpdate}"
+                      rendered="#{surveyInvitesController.survey.statistics.lastUpdate != null}">
+                    <f:convertDateTime type="both" dateStyle="short"/>
+                  </h:outputText>
 
-
-                  <h:commandLink value="#{bundle['invitations.block.advertising.company.change.campaign']}"
-                                 onclick="jsfc('newIdentifierDialog').show(); return false"/>
+                  <h:outputText
+                      id="lastUpdate"
+                      value="#{bundle['invitations.block.advertising.company.lastupdate.never']}"
+                      rendered="#{surveyInvitesController.survey.statistics.lastUpdate == null}"/>
 
                   <!--<h:commandLink value="refresh number"-->
-                                 <!--action="#{surveyInvitesController.updateSentCount}"/>-->
-
+                  <!--action="#{surveyInvitesController.updateSentCount}"/>-->
                 </h:panelGrid>
 
-              <h:outputText value="#{bundle['invitations.block.advertising.company.no.campaign']} "
-                            rendered="#{!surveyInvitesController.campaignDefined}" />
-              <h:outputLink rendered="#{!surveyInvitesController.campaignDefined}"
-                            onclick="jsfc('newIdentifierDialog').show(); return false">
-                <h:outputText value="#{bundle['invitations.block.advertising.company.define.campaign']}"/>
-              </h:outputLink>
-            </eye:collapsingGroup>
+                <h:panelGroup id="madvNotBound"
+                              rendered="#{!surveyInvitesController.campaignDefined}">
+                  <h:outputText
+                      value="#{bundle['invitations.block.advertising.company.no.campaign']}"/>
+                </h:panelGroup>
 
+                <h:panelGroup id="madvEdit" style="display: none">
+                  <h:panelGrid columns="2" columnClasses="settings-left,none">
+                    <h:outputLabel for="newIdentifier"
+                                   value="#{bundle['invitations.block.advertising.company.dialog.text']}"/>
+                    <eye:inputText id="newIdentifier"
+                                   value="#{surveyInvitesController.madvId}"/>
+                  </h:panelGrid>
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['dialog.save']}"
+                                     action="#{surveyInvitesController.onMadvEditSave}"/>
+                    </eye:button>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['dialog.cancel']}"
+                                     action="#{surveyInvitesController.onMadvEditCancel}"/>
+                    </eye:button>
+                    <eye:space/>
+                  </eye:buttons>
+                </h:panelGroup>
+
+              </h:panelGroup>
+            </eye:collapsingGroup>
 
             <eye:collapsingGroup opened="true" id="delivery">
               <f:facet name="header">
@@ -151,8 +208,8 @@
                     <eye:column name="action"
                                 title="#{bundle['invitations.block.invitations.delivery.table.action']}">
                       <h:commandLink value="#{bundle['invitations.block.invitations.delivery.table.action.delete']}"
-                                     action="#{surveyInvitesController.deleteChannel}">
-                        <f:param name="channelId" value="#{row.id}"/>
+                                     action="#{surveyInvitesController.deleteInvite}">
+                        <f:param name="inviteId" value="#{row.id}"/>
                       </h:commandLink>
                     </eye:column>
 
@@ -163,7 +220,7 @@
               <eye:buttons>
                 <eye:button>
                   <h:commandLink value="#{bundle['invitations.block.invitations.delivery.button']}"
-                                 onclick="jsfc('newChannelDialog').show(); return false"
+                                 onclick="jsfc('newInviteDialog').show(); return false"
                                  styleClass="button-green">
                   </h:commandLink>
                 </eye:button>
@@ -173,75 +230,46 @@
             </eye:collapsingGroup>
           </h:panelGroup>
 
-
-
-
-
           <h:panelGroup layout="block" styleClass="page-footer"/>
 
         </h:panelGroup>
 
-        <eye:dialog id="newChannelDialog"
+        <eye:dialog id="newInviteDialog"
                     title="#{bundle['invitations.block.invitations.delivery.dialog.title']}"
                     width="520">
           <h:panelGrid columns="2">
-            <h:outputLabel for="newChannelDate"
+            <h:outputLabel for="inviteDate"
                            value="#{bundle['invitations.block.invitations.delivery.dialog.date.text']}"/>
-            <eye:inputDate id="newChannelDate"
+            <eye:inputDate id="inviteDate"
                            inputTime="true"
-                           value="#{surveyInvitesController.newChannelDate}"/>
+                           value="#{surveyInvitesController.inviteDate}"/>
 
-            <h:outputLabel for="newChannelNumber"
+            <h:outputLabel for="inviteValue"
                            value="#{bundle['invitations.block.invitations.delivery.dialog.number.text']}"/>
-            <eye:inputText id="newChannelNumber"
-                           value="#{surveyInvitesController.newChannelNumber}"
-                           converterMessage="Incorrect channel number."/>
+            <eye:inputText id="inviteValue"
+                           value="#{surveyInvitesController.inviteValue}"/>
           </h:panelGrid>
           <eye:buttons>
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['dialog.save']}"
-                             action="#{surveyInvitesController.addChannel}">
-                <f:param name="errorId" value="deleteDialog"/>
-              </h:commandLink>
+                             action="#{surveyInvitesController.addInvite}"/>
             </eye:button>
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['dialog.cancel']}"
-                             onclick="jsfc('newChannelDialog').hide(); return false"/>
+                             onclick="jsfc('newInviteDialog').hide(); return false"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>
 
         </eye:dialog>
 
-        <eye:dialog id="newIdentifierDialog"
-                    title="#{bundle['invitations.block.invitations.delivery.dialog.title']}"
-                    width="520">
-          <h:panelGrid columns="2">
-
-            <h:outputLabel for="newIdentifier"
-                           value="#{bundle['invitations.block.advertising.company.dialog.text']}"/>
-            <eye:inputText id="newIdentifier"
-                           value="#{surveyInvitesController.newCampaignIdentifier}"
-                           converterMessage="Incorrect identifier"/>
-          </h:panelGrid>
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['dialog.save']}"
-                             action="#{surveyInvitesController.addCampaignIdentifier}">
-              </h:commandLink>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['dialog.cancel']}"
-                             onclick="jsfc('newIdentifierDialog').hide(); return false"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-
-        </eye:dialog>
+        <ips:confirmDialog id="removeBindingDialog"
+                           title="#{bundle['invitations.block.advertising.company.remove.title']}"
+                           text="#{bundle['invitations.block.advertising.company.remove.text']}"
+                           actionBean="#{surveyInvitesController}"
+                           actionName="clearMadvId"/>
 
       </h:form>
 
