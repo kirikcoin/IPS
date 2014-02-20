@@ -137,11 +137,9 @@
                       value="#{bundle['invitations.block.advertising.company.lastupdate.never']}"
                       rendered="#{surveyInvitesController.survey.statistics.lastUpdate == null}"/>
 
-                  <h:outputLabel value="#{bundle['invitations.block.advertising.delivery.number']}"
-                                 for="number"/>
-                  <h:outputText id="number" value="#{bundle[surveyInvitesController.survey.statistics.updateStatus.message]}"/>
-                  <h:outputText
-                          value="#{bundle['invitations.block.advertising.company.status']} #{bundle[surveyInvitesController.survey.statistics.updateStatus.message]}"/>
+                  <h:outputLabel value="#{bundle['invitations.block.advertising.company.status']}"
+                                 for="status"/>
+                  <h:outputText id="status" value="#{bundle[surveyInvitesController.survey.statistics.updateStatus.message]}"/>
 
                   <!--<h:commandLink value="refresh number"-->
                   <!--action="#{surveyInvitesController.updateSentCount}"/>-->
