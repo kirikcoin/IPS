@@ -35,8 +35,8 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
         if(orderColumn != null) {
             final String property;
             switch (orderColumn) {
-                case "date":         property = "date";        break;
-                case "number":       property = "value";         break;
+                case "date":        property = "date";      break;
+                case "value":       property = "value";     break;
                 default:
                     throw new RuntimeException("Unexpected sort column: " + orderColumn);
             }

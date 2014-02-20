@@ -14,27 +14,22 @@ import java.net.URL;
 
 
 public class MadvSoapApi {
-    public static CampaignsSoapImpl get(String url, String login, String password) throws ServiceException, SOAPException {
-        CampaignsSoapImpl result;
-        try {
-            result = (new CampaignsSoapImplServiceLocator()).getCampaignsSoapImplPort(new URL(url));
+    public static CampaignsSoapImpl get(String url, String login, String password)
+            throws ServiceException, SOAPException, MalformedURLException {
+        final CampaignsSoapImpl result =
+                (new CampaignsSoapImplServiceLocator()).getCampaignsSoapImplPort(new URL(url));
 
-            QName qNameUserCredentials = new QName("https://mts-madv.eyeline.mobi", "Authentication");
-            SOAPHeaderElement userCredentials = new org.apache.axis.message.SOAPHeaderElement(qNameUserCredentials);
-            userCredentials.setActor(null);
+        QName qNameUserCredentials = new QName("https://mts-madv.eyeline.mobi", "Authentication");
+        SOAPHeaderElement userCredentials = new org.apache.axis.message.SOAPHeaderElement(qNameUserCredentials);
+        userCredentials.setActor(null);
 
-            SOAPElement userLogin = userCredentials.addChildElement("User");
-            userLogin.setValue(login);
-            SOAPElement userPassword = userCredentials.addChildElement("Password");
-            userPassword.setValue(password);
+        SOAPElement userLogin = userCredentials.addChildElement("User");
+        userLogin.setValue(login);
+        SOAPElement userPassword = userCredentials.addChildElement("Password");
+        userPassword.setValue(password);
 
-            ((org.apache.axis.client.Stub) result).setHeader(userCredentials);
+        ((org.apache.axis.client.Stub) result).setHeader(userCredentials);
 
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
         return result;
     }
 }

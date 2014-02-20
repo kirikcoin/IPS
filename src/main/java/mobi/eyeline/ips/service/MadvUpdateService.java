@@ -14,13 +14,16 @@ import org.slf4j.LoggerFactory;
 
 import javax.xml.rpc.ServiceException;
 import javax.xml.soap.SOAPException;
+import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.CAMPAIGN_NOT_FOUND;
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.SERVER_IS_NOT_AVAILABLE;
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.SUCCESSFUL;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class MadvUpdateService {
@@ -29,8 +32,6 @@ public class MadvUpdateService {
 
     private final Config config;
     private Timer timer;
-    private Date lastUpdate;
-
 
     public MadvUpdateService(Config config) {
         this.config = config;
@@ -46,7 +47,7 @@ public class MadvUpdateService {
             // Schedule the task for immediate execution.
             final long delayMillis =
                     TimeUnit.MINUTES.toMillis(config.getMadvUpdateDelayMinutes());
-            timer.schedule(new UpdateTask(), 0, delayMillis);
+            timer.schedule(new UpdateAllTask(config), 0, delayMillis);
 
             logger.info("MADV update service started");
 
@@ -60,92 +61,150 @@ public class MadvUpdateService {
      * In case another update process is being executed now, a new one is scheduled next.
      */
     public void runNow() {
-        timer.schedule(new UpdateTask(), 0);
-        logger.info("MADV update task sheduled.");
+        timer.schedule(new UpdateAllTask(config), 0);
+        logger.info("MADV update task sheduled");
     }
 
-    private class UpdateTask extends TimerTask {
+    public void runNow(int surveyId) {
+        timer.schedule(new UpdateSingleTask(config, surveyId), 0);
+        logger.info("MADV update task sheduled");
+    }
 
-        // TODO: Ensure that sessions get actually created here,
-        // cannot rely on OpenSessionInView pattern.
+
+    //
+    //
+    //
+
+    private static abstract class BaseUpdateTask extends TimerTask {
+        protected final SurveyRepository surveyRepository =
+                Services.instance().getSurveyRepository();
+
+        private final Config config;
+
+        protected BaseUpdateTask(Config config) {
+            this.config = config;
+        }
+
+        private void updateStats(Survey survey,
+                                 InvitationUpdateStatus state,
+                                 int count) {
+
+            survey.getStatistics().setUpdateStatus(state);
+            survey.getStatistics().setSentCount(count);
+            survey.getStatistics().setLastUpdate(new Date());
+            surveyRepository.update(survey);
+        }
+
+        protected void tryUpdate(Survey survey) {
+            final String campaign = survey.getStatistics().getCampaign();
+
+            logger.debug("Updating: survey = [" + survey + "], campaign = [" + campaign + "]");
+            if (isNotEmpty(campaign) && StringUtils.isInteger(campaign)) {
+                try {
+                    update(survey, Integer.parseInt(campaign));
+                } catch (Exception e) {
+                    logger.error("MADV update failed: survey = [" + survey + "]", e);
+                }
+            }
+        }
+
+        private void update(Survey survey, int campaignId) {
+            try {
+                final CampaignsSoapImpl api = MadvSoapApi.get(
+                        config.getMadvUrl(),
+                        config.getMadvUserLogin(),
+                        config.getMadvUserPassword());
+
+                final int count = countImpressions(campaignId, api);
+                updateStats(survey, SUCCESSFUL, count);
+
+            } catch (ServiceException | SOAPException | MalformedURLException e) {
+                logger.error("MADV update failed, " +
+                        "survey = [" + survey + "], " +
+                        "campaign ID = [" + survey.getStatistics().getCampaign() + "]", e);
+                updateStats(survey, SERVER_IS_NOT_AVAILABLE, 0);
+
+            } catch (RemoteException e) {
+                logger.error("MADV update failed, " +
+                        "survey = [" + survey + "], " +
+                        "campaign ID = [" + survey.getStatistics().getCampaign() + "]", e);
+                updateStats(survey, CAMPAIGN_NOT_FOUND, 0);
+            }
+        }
+
+        private int countImpressions(int campaignId, CampaignsSoapImpl api)
+                throws RemoteException {
+            int count = 0;
+
+            final DeliveryInfo[] listDeliveries = api.listDeliveries(campaignId);
+            if (listDeliveries != null) {
+                for (DeliveryInfo delivery : listDeliveries) {
+                    count += delivery.getImpressionsCount();
+                }
+            }
+
+            final BannerInfo[] listBanners = api.listBanners(campaignId);
+            if (listBanners != null) {
+                for (BannerInfo banner : listBanners) {
+                    count += banner.getImpressionsCount();
+                }
+            }
+            return count;
+        }
+    }
+
+
+    //
+    //
+    //
+
+    private static class UpdateAllTask extends BaseUpdateTask {
+
         private final SurveyRepository surveyRepository =
                 Services.instance().getSurveyRepository();
 
-        private void processSurvey(Survey survey, int campaignId) {
-            try {
-                final CampaignsSoapImpl campaignSoap = MadvSoapApi.get(config.getMadvUrl(),
-                                                                     config.getMadvUserLogin(),
-                                                                     config.getMadvUserPassword());
-                int count = 0;
-
-                final DeliveryInfo[] listDeliveries =
-                        campaignSoap.listDeliveries(campaignId);
-
-                if (listDeliveries != null) {
-                    for (DeliveryInfo delivery : listDeliveries) {
-                        count += delivery.getImpressionsCount();
-                    }
-                }
-
-                final BannerInfo[] listBanners =
-                        campaignSoap.listBanners(campaignId);
-                if (listBanners != null) {
-                    for (BannerInfo banner : listBanners) {
-                        count += banner.getImpressionsCount();
-                    }
-                }
-                lastUpdate = new Date();
-                survey.getStatistics().setUpdateStatus(InvitationUpdateStatus.SUCCESSFUL);
-                survey.getStatistics().setSentCount(count);
-                survey.getStatistics().setLastUpdate(lastUpdate);
-                surveyRepository.update(survey);
-
-            } catch (ServiceException | SOAPException e) {
-                lastUpdate = new Date();
-                survey.getStatistics().setLastUpdate(lastUpdate);
-                survey.getStatistics().setUpdateStatus(InvitationUpdateStatus.SERVER_IS_NOT_AVAILABLE);
-                survey.getStatistics().setSentCount(0);
-                surveyRepository.update(survey);
-                logger.error("Error in scheduled update", e);
-            } catch (RemoteException e) {
-                lastUpdate = new Date();
-                survey.getStatistics().setLastUpdate(lastUpdate);
-                survey.getStatistics().setUpdateStatus(InvitationUpdateStatus.CAMPAIGN_NOT_FOUND);
-                survey.getStatistics().setSentCount(0);
-                surveyRepository.update(survey);
-                logger.error("Error in scheduled update", e);
-            }
-
+        public UpdateAllTask(Config config) {
+            super(config);
         }
+
         @Override
         public void run() {
             try {
-                update();
+                for (Survey survey : surveyRepository.list()) {
+                    tryUpdate(survey);
+                }
 
             } catch (Exception e) {
-                logger.error("Error in scheduled update", e);
+                logger.error("Error in MADV update", e);
             }
         }
+    }
 
-        private void update() throws Exception {
-            for (Survey survey : surveyRepository.list()) {
-                final String campaign = survey.getStatistics().getCampaign();
-                if (campaign != null) {
-                    update(survey, campaign);
-                }
-            }
+
+    //
+    //
+    //
+
+    private static class UpdateSingleTask extends BaseUpdateTask {
+
+        private final SurveyRepository surveyRepository =
+                Services.instance().getSurveyRepository();
+
+        private final int surveyId;
+
+        public UpdateSingleTask(Config config, int surveyId) {
+            super(config);
+            this.surveyId = surveyId;
         }
 
-        private void update(Survey survey, String campaign) {
-            logger.debug("Updating: survey = [" + survey + "], campaign = [" + campaign + "]");
+        @Override
+        public void run() {
             try {
-                if (isNotEmpty(campaign) && StringUtils.isInteger(campaign)) {
-                    processSurvey(survey, Integer.parseInt(campaign));
-                }
+                tryUpdate(surveyRepository.load(surveyId));
+
             } catch (Exception e) {
-             logger.error("Error in update process");
+                logger.error("Error in MADV update, survey id = [" + surveyId + "]", e);
             }
-            // TODO: do the actual update here.
         }
     }
 }

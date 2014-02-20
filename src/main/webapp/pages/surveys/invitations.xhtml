@@ -25,7 +25,7 @@
               '/pages/surveys/invitations.faces?id=#{surveyInvitesController.surveyId}');
 
           if (#{surveyInvitesController.inviteError}) {
-            jsfc("newInviteDialog").show();
+            page.onNewInviteShow();
           }
           if (#{surveyInvitesController.madvIdError}) {
             page.onMadvEditClick();
@@ -39,7 +39,9 @@
     <ui:define name="content">
       <h:form enctype="multipart/form-data" id="content" prependId="false">
 
-        <h:inputHidden id="id" value="#{surveyInvitesController.surveyId}"/>
+        <h:inputHidden id="id"
+                       value="#{surveyInvitesController.surveyId}"/>
+        <h:inputHidden id="inviteId"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -76,7 +78,6 @@
               </h:outputLink>
             </h:panelGrid>
           </h:panelGroup>
-
 
           <h:panelGroup layout="block" styleClass="page-body">
 
@@ -137,9 +138,15 @@
                       value="#{bundle['invitations.block.advertising.company.lastupdate.never']}"
                       rendered="#{surveyInvitesController.survey.statistics.lastUpdate == null}"/>
 
-                  <h:outputLabel value="#{bundle['invitations.block.advertising.company.status']}"
-                                 for="status"/>
-                  <h:outputText id="status" value="#{bundle[surveyInvitesController.survey.statistics.updateStatus.message]}"/>
+                  <!-- Update status -->
+                  <h:outputLabel
+                      value="#{bundle['invitations.block.advertising.company.status']}"
+                      for="status"
+                      rendered="#{surveyInvitesController.survey.statistics.lastUpdate != null}"/>
+                  <h:outputText
+                      id="status"
+                      value="#{bundle[surveyInvitesController.survey.statistics.updateStatus.message]}"
+                      rendered="#{surveyInvitesController.survey.statistics.lastUpdate != null}"/>
 
                   <!--<h:commandLink value="refresh number"-->
                   <!--action="#{surveyInvitesController.updateSentCount}"/>-->
@@ -176,7 +183,8 @@
               </h:panelGroup>
             </eye:collapsingGroup>
 
-            <eye:collapsingGroup opened="true" id="delivery">
+            <eye:collapsingGroup id="groupInvites"
+                                 opened="true">
               <f:facet name="header">
                 <h:panelGroup>
                   <h:outputText value="#{bundle['invitations.block.invitations.delivery.title']}"/>
@@ -203,28 +211,26 @@
                       </h:outputText>
                     </eye:column>
 
-                    <eye:column name="number"
+                    <eye:column name="value"
                                 title="#{bundle['invitations.block.invitations.delivery.table.number']}"
                                 sortable="true">
-                      <h:outputText value="#{row.number}"/>
+                      <h:outputText value="#{row.value}"/>
                     </eye:column>
 
                     <eye:column name="action"
                                 title="#{bundle['invitations.block.invitations.delivery.table.action']}">
                       <h:commandLink value="#{bundle['invitations.block.invitations.delivery.table.action.delete']}"
-                                     action="#{surveyInvitesController.deleteInvite}">
-                        <f:param name="inviteId" value="#{row.id}"/>
-                      </h:commandLink>
+                                     onclick="return page.onDeleteInvite(#{row.id})"/>
                     </eye:column>
 
                   </eye:row>
                 </eye:dataTable>
               </h:panelGroup>
 
-              <eye:buttons>
+              <eye:buttons id="addInvitations">
                 <eye:button>
                   <h:commandLink value="#{bundle['invitations.block.invitations.delivery.button']}"
-                                 onclick="jsfc('newInviteDialog').show(); return false"
+                                 onclick="return page.onNewInviteShow();"
                                  styleClass="button-green">
                   </h:commandLink>
                 </eye:button>
@@ -262,7 +268,7 @@
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['dialog.cancel']}"
-                             onclick="jsfc('newInviteDialog').hide(); return false"/>
+                             onclick="return page.onNewInviteCancel();"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>
@@ -274,6 +280,12 @@
                            text="#{bundle['invitations.block.advertising.company.remove.text']}"
                            actionBean="#{surveyInvitesController}"
                            actionName="clearMadvId"/>
+
+        <ips:confirmDialog id="removeInviteDialog"
+                           title="#{bundle['invitations.block.invitations.delivery.remove.title']}"
+                           text="#{bundle['invitations.block.invitations.delivery.remove.text']}"
+                           actionBean="#{surveyInvitesController}"
+                           actionName="deleteInvite"/>
 
       </h:form>
 

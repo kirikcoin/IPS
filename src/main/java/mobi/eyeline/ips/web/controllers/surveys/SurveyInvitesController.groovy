@@ -11,6 +11,8 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
+
 class SurveyInvitesController extends BaseSurveyController {
 
     private static final Logger logger = LoggerFactory.getLogger(SurveyInvitesController)
@@ -25,7 +27,7 @@ class SurveyInvitesController extends BaseSurveyController {
     boolean madvIdError
 
     // Invitations
-    Date inviteDate = new Date().clearTime()
+    Date inviteDate = new Date()
     String inviteValue
     boolean inviteError
 
@@ -53,7 +55,7 @@ class SurveyInvitesController extends BaseSurveyController {
                     new TableItem(
                             id: it.id,
                             date: it.date,
-                            number: it.value
+                            value: it.value
                     )
                 }
             }
@@ -76,7 +78,10 @@ class SurveyInvitesController extends BaseSurveyController {
                 date: inviteDate,
                 value: inviteValueInt)
 
-        inviteError = renderViolationMessage(validator.validate(invite))
+        inviteError = renderViolationMessage(validator.validate(invite), [
+                'date': 'inviteDate',
+                'value': 'inviteValue'
+        ])
         if (!inviteError) {
             surveyInvitationRepository.save(invite)
         }
@@ -89,16 +94,20 @@ class SurveyInvitesController extends BaseSurveyController {
 
     void onMadvEditSave() {
         if (StringUtils.isInteger(madvId)) {
-            survey.statistics.campaign = madvId
-            survey.statistics.sentCount = 0
-            survey.statistics.lastUpdate = null
+            survey.statistics.with {
+                campaign = madvId
+                sentCount = 0
+                lastUpdate = null
+                updateStatus = UNDEFINED
+            }
             surveyRepository.update(survey)
 
             madvIdError = false
 
         } else {
-            addErrorMessage(getResourceBundle().getString("client.dialog.validation.login.exists"),
-                    "newIdentifier")
+            addErrorMessage(
+                    resourceBundle.getString('invitations.block.advertising.company.dialog.id.error'),
+                    'newIdentifier')
             madvIdError = true
         }
     }
@@ -108,23 +117,23 @@ class SurveyInvitesController extends BaseSurveyController {
     }
 
     void clearMadvId() {
-        survey.statistics.campaign = null
-        survey.statistics.sentCount = 0
-        survey.statistics.lastUpdate = null
+        survey.statistics.with {
+            campaign = null
+            sentCount = 0
+            lastUpdate = null
+            updateStatus = UNDEFINED
+        }
         surveyRepository.update(survey)
+
+        madvId = null
     }
 
-
-
-    void updateSentCount() {
-        madvUpdateService.runNow()
-    }
+    void updateSentCount() { madvUpdateService.runNow() }
 
     static class TableItem implements Serializable {
         int id
         Date date
-        int number
+        int value
     }
-
 
 }
