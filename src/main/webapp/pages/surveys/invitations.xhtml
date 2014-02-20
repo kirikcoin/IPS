@@ -21,6 +21,8 @@
 //            <![CDATA[
         $(function () {
 
+          page.init();
+
           $('#content').attr('action',
               '/pages/surveys/invitations.faces?id=#{surveyInvitesController.surveyId}');
 
@@ -199,6 +201,11 @@
                                tableClass="grid">
                   <f:facet name="ifEmpty">
                     <h:outputText value="#{bundle['results.empty']}"/>
+                  </f:facet>
+
+                  <f:facet name="footer">
+                    <h:outputText
+                        value="#{bundle['invitations.total']}: #{surveyInvitesController.totalInvitations}"/>
                   </f:facet>
 
                   <eye:row>

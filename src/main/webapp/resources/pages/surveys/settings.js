@@ -4,14 +4,16 @@ var page = {
 
     function wireModificationLink(groupId) {
       var $header = ips.$byId(groupId + '_header');
-      $header.click(function () {
-        var $link = $header.find('a');
-        var $body = ips.$byId(groupId + '_body');
+      $header.click(function (e) {
+        if (e.target.id == $header.attr('id')) {
+          var $link = $header.find('a');
+          var $body = ips.$byId(groupId + '_body');
 
-        if ($body.is(':visible')) {
-          $link.show();
-        } else {
-          $link.hide();
+          if ($body.is(':visible')) {
+            $link.show();
+          } else {
+            $link.hide();
+          }
         }
       });
     }

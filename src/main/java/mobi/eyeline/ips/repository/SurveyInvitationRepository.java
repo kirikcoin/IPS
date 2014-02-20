@@ -48,6 +48,16 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
         return (List<SurveyInvitation>) criteria.list();
     }
 
+    public List<SurveyInvitation> list(Survey survey) {
+        final Session session = getSessionFactory().getCurrentSession();
+        final Criteria criteria = session.createCriteria(SurveyInvitation.class);
+
+        criteria.add(Restrictions.eq("survey", survey));
+
+        //noinspection unchecked
+        return (List<SurveyInvitation>) criteria.list();
+    }
+
     public int count(Survey survey) {
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(SurveyInvitation.class);

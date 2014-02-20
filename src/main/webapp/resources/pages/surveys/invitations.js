@@ -1,11 +1,23 @@
 var page = {
-  onEditSettingsClick: function() {
-    $('#settingsDisplay').hide();
-    $('#settingsDialog').show();
 
-    page.disableEditables();
+  init: function () {
+    function wireModificationLink(groupId) {
+      var $header = ips.$byId(groupId + '_header');
+      $header.click(function (e) {
+        if (e.target.id == $header.attr('id')) {
+          var $link = $header.find('a');
+          var $body = ips.$byId(groupId + '_body');
 
-    return false;
+          if ($body.is(':visible')) {
+            $link.show();
+          } else {
+            $link.hide();
+          }
+        }
+      });
+    }
+
+    wireModificationLink('groupMadv');
   },
 
   onMadvEditClick: function() {

@@ -130,6 +130,8 @@ class SurveyInvitesController extends BaseSurveyController {
 
     void updateSentCount() { madvUpdateService.runNow() }
 
+    int getTotalInvitations() { surveyInvitationRepository.list(survey).sum { it.value } as int }
+
     static class TableItem implements Serializable {
         int id
         Date date
