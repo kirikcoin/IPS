@@ -21,9 +21,6 @@
         $(function(){
           page.init();
 
-          if ("#{clientListController.newUserDataValidationError}" == "true") {
-            jsfc('newClientDialog').show();
-          }
           if ("#{clientListController.modifiedUserDataValidationError}" == "true") {
             jsfc('clientSettingsDialog').show();
           }
@@ -86,7 +83,7 @@
                           sortable="true" defaultSortOrder="desc">
                 <h:commandLink value="#{row.fullname}"
                                action="null"
-                               onclick="return page.showSettingsDialog('#{row.fullname}',
+                               onclick="return page.showSettingsDialogForEdit('#{row.fullname}',
                                                                       '#{row.company}',
                                                                       '#{row.login}',
                                                                       '#{row.email}');"/>
@@ -148,48 +145,8 @@
         <h:panelGroup layout="block" style="margin-top: 15px;">
           <h:commandLink value="#{bundle['client.list.button.createclient']}"
                          styleClass="button-black"
-                         onclick="jsfc('newClientDialog').show(); return false"/>
+                         onclick="return page.showSettingsDialogForCreate();"/>
         </h:panelGroup>
-
-
-        <eye:dialog id="newClientDialog" title="#{bundle['client.dialog.newclient.title']}" width="420">
-          <h:panelGrid columns="2">
-            <h:outputLabel value="#{bundle['client.dialog.newclient.field.fullname']}"
-                           for="newClientFullName"/>
-            <eye:inputText id="newClientFullName"
-                           value="#{clientListController.newUser.fullName}"/>
-
-            <h:outputLabel value="#{bundle['client.dialog.newclient.field.company']}"
-                           for="newClientCompany"/>
-            <eye:inputText id="newClientCompany"
-                           value="#{clientListController.newUser.company}"/>
-
-            <h:outputLabel value="#{bundle['client.dialog.newclient.field.login']}"
-                           for="newClientLogin"/>
-            <eye:inputText id="newClientLogin"
-                           value="#{clientListController.newUser.login}" />
-
-            <h:outputLabel value="#{bundle['client.dialog.newclient.field.email']}"
-                           for="newClientEmail"/>
-            <eye:inputText id="newClientEmail"
-                           value="#{clientListController.newUser.email}"/>
-
-          </h:panelGrid>
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.newclient.button.create']}"
-                             action="#{clientListController.createUser}" />
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['client.dialog.newclient.button.cancel']}"
-                             onclick="jsfc('newClientDialog').hide(); ips.message.hideAll(); return false;"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-        </eye:dialog>
-
 
 
 
@@ -215,9 +172,8 @@
                            for="clientSettingsEmail"/>
             <eye:inputText id="clientSettingsEmail"
                            value="#{clientListController.userForEdit.email}"/>
-
-
           </h:panelGrid>
+
           <eye:buttons>
             <eye:button>
               <h:commandLink styleClass="button-green"
@@ -233,6 +189,7 @@
           </eye:buttons>
 
         </eye:dialog>
+
 
 
         <ips:confirmDialog id="clientBlockDialog"

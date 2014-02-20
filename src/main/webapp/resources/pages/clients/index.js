@@ -36,7 +36,7 @@ var page = {
     return false;
   },
 
-  showSettingsDialog: function (fullname,company,login,email) {
+  showSettingsDialogForEdit: function (fullname,company,login,email) {
     ips.$byId('userLoginForEdit').val(login);
     ips.$byId('clientSettingsFullName').val(fullname);
     ips.$byId('clientSettingsCompany').val(company);
@@ -45,6 +45,10 @@ var page = {
     jsfc('clientSettingsDialog').show();
     return false;
   },
+  showSettingsDialogForCreate: function () {
+    jsfc('clientSettingsDialog').show();
+    return false;
+    },
 
   showPasswordResetDialog: function (email, login, fullName) {
     page.replaceName($('#clientPasswordResetDialog_div'), login, fullName);
