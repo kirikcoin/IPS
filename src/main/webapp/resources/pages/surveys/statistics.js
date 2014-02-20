@@ -185,7 +185,7 @@ function BarChart(contentId, updatePeriod, options) {
           rendererOptions: {
             fillToZero: true,
             barDirection: horizontal ? 'horizontal' : 'vertical',
-            barWidth: 70
+            barWidth: horizontal ? 25 : 70
           }
         },
         axes:{

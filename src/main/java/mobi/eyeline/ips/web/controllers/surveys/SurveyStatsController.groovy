@@ -84,7 +84,7 @@ class SurveyStatsController extends BaseSurveyController {
             new BarChart(
                     id:         "responseRatio_${q.id}",
                     width:      500,
-                    height:     300,
+                    height:     200,
                     bars:       getResponseRatioModel(q),
                     intValues:  true,
                     stackMode:  false,
@@ -112,7 +112,7 @@ class SurveyStatsController extends BaseSurveyController {
 
         //  Group contents: grid with the charts/tables for the question.
         def createGroupContent = { Question q ->
-            new HtmlPanelGrid(columns: 2).with {
+            new HtmlPanelGrid(columns: 2, styleClass: 'question_details').with {
                 children << createOptionsRatio(q)
                 children << new HtmlPanelGrid().with {
                     children << createResponseChart(q)
@@ -143,11 +143,11 @@ class SurveyStatsController extends BaseSurveyController {
 
     BarModel getSentQuestionsRatioModel() {
         def countSentQuestions = {Survey s ->
-            s.activeQuestions.collect { it.sentCount }.sum() as int
+            s.activeQuestions.collect { it.sentCount }.sum(0) as int
         }
 
         def countAnswers = {Survey s ->
-            s.activeQuestions.collect { answerRepository.count(it) }.sum() as int
+            s.activeQuestions.collect { answerRepository.count(it) }.sum(0) as int
         }
 
         def model = new BarModel()
