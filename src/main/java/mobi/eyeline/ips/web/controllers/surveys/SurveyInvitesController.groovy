@@ -114,6 +114,8 @@ class SurveyInvitesController extends BaseSurveyController {
         surveyRepository.update(survey)
     }
 
+
+
     void updateSentCount() {
         madvUpdateService.runNow()
     }

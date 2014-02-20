@@ -1,6 +1,8 @@
 package mobi.eyeline.ips.model;
 
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Proxy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -61,6 +63,14 @@ public class SurveyStats implements Serializable {
     @Column(name = "last_update")
     private Date lastUpdate;
 
+    @Column(name = "update_status")
+    @Type(type = "mobi.eyeline.ips.model.GenericEnumUserType", parameters = {
+            @Parameter(name = "enumClass", value= "mobi.eyeline.ips.model.InvitationUpdateStatus"),
+            @Parameter(name = "identifierMethod", value= "getName"),
+            @Parameter(name = "valueOfMethod", value= "fromName")
+
+    })
+    private InvitationUpdateStatus updateStatus;
 
 
     public SurveyStats() {
@@ -112,5 +122,13 @@ public class SurveyStats implements Serializable {
 
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public InvitationUpdateStatus getUpdateStatus() {
+        return updateStatus;
+    }
+
+    public void setUpdateStatus(InvitationUpdateStatus updateStatus) {
+        this.updateStatus = updateStatus;
     }
 }

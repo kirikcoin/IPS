@@ -14,7 +14,7 @@ import java.net.URL;
 
 
 public class MadvSoapApi {
-    public static CampaignsSoapImpl get(String url, String login, String password){
+    public static CampaignsSoapImpl get(String url, String login, String password) throws ServiceException, SOAPException {
         CampaignsSoapImpl result;
         try {
             result = (new CampaignsSoapImplServiceLocator()).getCampaignsSoapImplPort(new URL(url));
@@ -30,12 +30,7 @@ public class MadvSoapApi {
 
             ((org.apache.axis.client.Stub) result).setHeader(userCredentials);
 
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            return null;
-        } catch (SOAPException e) {
-            e.printStackTrace();
-            return null;
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;

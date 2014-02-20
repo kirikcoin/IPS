@@ -4,6 +4,7 @@ import mobi.eyeline.ips.external.MadvSoapApi;
 import mobi.eyeline.ips.external.madv.BannerInfo;
 import mobi.eyeline.ips.external.madv.CampaignsSoapImpl;
 import mobi.eyeline.ips.external.madv.DeliveryInfo;
+import mobi.eyeline.ips.model.InvitationUpdateStatus;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.SurveyRepository;
@@ -11,6 +12,9 @@ import mobi.eyeline.ips.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.rpc.ServiceException;
+import javax.xml.soap.SOAPException;
+import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -91,15 +95,23 @@ public class MadvUpdateService {
                     }
                 }
                 lastUpdate = new Date();
+                survey.getStatistics().setUpdateStatus(InvitationUpdateStatus.SUCCESSFUL);
                 survey.getStatistics().setSentCount(count);
                 survey.getStatistics().setLastUpdate(lastUpdate);
                 surveyRepository.update(survey);
 
-            } catch (Exception ex) {
+            } catch (ServiceException | SOAPException e) {
+                survey.getStatistics().setUpdateStatus(InvitationUpdateStatus.SERVER_IS_NOT_AVAILABLE);
                 survey.getStatistics().setSentCount(0);
                 surveyRepository.update(survey);
-                logger.error("Error in scheduled update", ex);
+                logger.error("Error in scheduled update", e);
+            } catch (RemoteException e) {
+                survey.getStatistics().setUpdateStatus(InvitationUpdateStatus.CAMPAIGN_NOT_FOUND);
+                survey.getStatistics().setSentCount(0);
+                surveyRepository.update(survey);
+                logger.error("Error in scheduled update", e);
             }
+
         }
         @Override
         public void run() {
