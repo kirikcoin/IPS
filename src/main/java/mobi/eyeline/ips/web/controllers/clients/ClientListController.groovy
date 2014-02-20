@@ -13,7 +13,6 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 class ClientListController extends BaseController {
 
@@ -23,19 +22,15 @@ class ClientListController extends BaseController {
     private final UserService userService = Services.instance().userService
     private final MailService mailService = Services.instance().mailService
 
-    String userLogin
-    String userLoginForEdit
-
-    String userEmail
-
-    User userForEdit
-
     String search
-    Boolean blockError
-    Boolean unblockError
 
+    // User ID for creation/modification dialog, null if creating new account.
+    Integer modifiedUserId
+    User userForEdit
     boolean modifiedUserDataValidationError
 
+    Boolean blockError
+    Boolean unblockError
     Boolean passwordResetError
 
     ClientListController() {
@@ -59,7 +54,8 @@ class ClientListController extends BaseController {
 
                 return list.collect {
                     new TableItem(
-                            fullname: it.fullName,
+                            id: it.id,
+                            fullName: it.fullName,
                             company: it.company,
                             login: it.login,
                             email: it.email,
@@ -75,12 +71,11 @@ class ClientListController extends BaseController {
         }
     }
 
-    String saveModifiedUser() {
-        User user;
-
-        if(isEmpty(userLoginForEdit)){
+    void saveModifiedUser() {
+        if (modifiedUserId == null) {
+            // Create a new user account.
             String password = userService.generatePassword()
-            user = new User(
+            User user = new User(
                     fullName: userForEdit.fullName,
                     company: userForEdit.company,
                     login: userForEdit.login,
@@ -88,97 +83,101 @@ class ClientListController extends BaseController {
                     password: HashUtils.hashPassword(password),
                     role: Role.CLIENT)
 
-            if (!validateUser(user)) return null
+            if (validate(user)) {
+                userRepository.save(user)
+                mailService.sendUserRegistration(user, password)
+            }
 
-            userRepository.save(user)
-            mailService.sendUserRegistration(user, password)
-            return null
         } else {
-            user = userRepository.getByLogin(userLoginForEdit)
+            // Modify existing account.
+            User user = userRepository.load(modifiedUserId)
             String oldEmail = user.email
             String oldLogin = user.login
 
-            user.fullName = userForEdit.fullName
-            user.company = userForEdit.company
-            user.login = userForEdit.login
-            user.email = userForEdit.email
-
-            if (!validateUser(user)) return null
-
-            userRepository.update(user)
-
-            if (oldLogin != user.login && oldEmail == user.email) {
-                mailService.sendUserModified(user)
+            user.with {
+                fullName = userForEdit.fullName
+                company = userForEdit.company
+                login = userForEdit.login
+                email = userForEdit.email
             }
 
-            if (oldEmail != user.email) {
-                mailService.sendUserModified(user,oldEmail)
+            if (validate(user)) {
+                userRepository.update(user)
+
+                if (oldLogin != user.login && oldEmail == user.email) {
+                    mailService.sendUserModified(user)
+                }
+
+                if (oldEmail != user.email) {
+                    mailService.sendUserModified(user,oldEmail)
+                }
             }
         }
     }
 
-    private boolean validateUser(User user) {
-        boolean loginExists, emailExists
-        emailExists = !userService.isEmailAllowed(user)
-        loginExists = !userService.isLoginAllowed(user)
+    private boolean validate(User user) {
         modifiedUserDataValidationError =
-                renderViolationMessage(validator.validate(user),
-                        [
-                                'fullName': 'clientSettingsFullName',
-                                'company': 'clientSettingsCompany',
-                                'login': 'clientSettingsLogin',
-                                'email': 'clientSettingsEmail',
-                        ])
+                renderViolationMessage(validator.validate(user), [
+                        'fullName':     'clientSettingsFullName',
+                        'company':      'clientSettingsCompany',
+                        'login':        'clientSettingsLogin',
+                        'email':        'clientSettingsEmail',
+                ])
 
-        if (loginExists) {
-            addErrorMessage(getResourceBundle().getString("client.dialog.validation.login.exists"),
+        if (!userService.isLoginAllowed(user)) {
+            addErrorMessage(
+                    resourceBundle.getString("client.dialog.validation.login.exists"),
                     "clientSettingsLogin")
             modifiedUserDataValidationError = true
         }
 
-        if (emailExists) {
-            addErrorMessage(getResourceBundle().getString("client.dialog.validation.email.exists"),
+        if (!userService.isEmailAllowed(user)) {
+            addErrorMessage(
+                    resourceBundle.getString("client.dialog.validation.email.exists"),
                     "clientSettingsEmail")
             modifiedUserDataValidationError = true
         }
 
-        if (modifiedUserDataValidationError) {
-            return false
+        return !modifiedUserDataValidationError
+    }
+
+    void deActivateUser() {
+        try {
+            userService.deActivate(userRepository.load(modifiedUserId))
+            blockError = false
+        } catch (Exception e) {
+            logger.error("Error activating account", e)
+            blockError = true
         }
-        return true
     }
 
-
-    void blockUser() {
-        String userLogin = getParamValue("userLogin").asString()
-        userService.blockUser(userLogin)
-        blockError = false
-    }
-
-    void unblockUser() {
-        String userLogin = getParamValue("userLogin").asString()
-        userService.unblockUser(userLogin)
-        unblockError = false
+    void activateUser() {
+        try {
+            userService.activate(userRepository.load(modifiedUserId))
+            unblockError = false
+        } catch (Exception e) {
+            logger.error("Error deactivating account", e)
+            unblockError = true
+        }
     }
 
     void resetPassword() {
         try {
-            userService.resetPassword(userEmail)
+            userService.resetPassword(userRepository.load(modifiedUserId))
             passwordResetError = false
-        } catch (LoginException e) {
-            passwordResetError = true
-            logger.error("Error in password reset.", e)
 
+        } catch (LoginException e) {
+            logger.error("Error in password reset", e)
+            passwordResetError = true
         }
     }
 
     static class TableItem implements Serializable {
         int id
-        String fullname
+        String fullName
         String company
         String login
         String email
         boolean blocked
-
     }
 }

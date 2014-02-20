@@ -53,10 +53,8 @@
     <ui:define name="content">
 
       <h:form enctype="multipart/form-data" id="content">
-       <h:inputHidden id="userLogin" value="#{clientListController.userLogin}"/>
-       <h:inputHidden id="userLoginForEdit" value="#{clientListController.userLoginForEdit}"/>
-       <h:inputHidden id="userEmail" value="#{clientListController.userEmail}"/>
 
+        <h:inputHidden id="userId" value="#{clientListController.modifiedUserId}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -70,7 +68,7 @@
             </h:panelGroup>
           </h:panelGrid>
 
-          <eye:dataTable id="clientsTable"
+          <eye:dataTable id="table"
                          value="#{clientListController.tableModel}"
                          var="row"
                          pageSize="50"
@@ -79,14 +77,16 @@
               <h:outputText value="Нет элементов"/>
             </f:facet>
             <eye:row>
-              <eye:column name="fullname" title="#{bundle['client.list.table.fullname']}"
+              <eye:column name="fullName" title="#{bundle['client.list.table.fullname']}"
                           sortable="true" defaultSortOrder="desc">
-                <h:commandLink value="#{row.fullname}"
+                <h:commandLink value="#{row.fullName}"
                                action="null"
-                               onclick="return page.showSettingsDialogForEdit('#{row.fullname}',
-                                                                      '#{row.company}',
-                                                                      '#{row.login}',
-                                                                      '#{row.email}');"/>
+                               onclick="return page.showSettingsDialogForEdit(
+                               '#{row.id}',
+                               '#{row.fullName}',
+                               '#{row.company}',
+                               '#{row.login}',
+                               '#{row.email}');"/>
 
               </eye:column>
 
@@ -119,18 +119,18 @@
 
                 <h:outputText value=" ("/>
                 <h:commandLink value="#{bundle['client.list.table.status.active.block']}"
-                               onclick="return page.showBlockDialog('#{row.login}', '#{row.fullname}');"
+                               onclick="return page.showBlockDialog('#{row.id}', '#{row.login}', '#{row.fullName}');"
                                rendered="#{row.blocked == false}">
                 </h:commandLink>
 
                 <h:commandLink value="#{bundle['client.list.table.status.blocked.unblock']}"
-                               onclick="return page.showUnblockDialog('#{row.login}', '#{row.fullname}');"
+                               onclick="return page.showUnblockDialog('#{row.id}', '#{row.login}', '#{row.fullName}');"
                                rendered="#{row.blocked == true}">
                 </h:commandLink>
                 <h:outputText value=" | "
                               rendered="#{row.blocked == false}"/>
                 <h:commandLink value="#{bundle['client.list.table.status.resetpassword']}"
-                               onclick="return page.showPasswordResetDialog('#{row.email}','#{row.login}', '#{row.fullname}');"
+                               onclick="return page.showPasswordResetDialog('#{row.id}', '#{row.email}','#{row.login}', '#{row.fullName}');"
                                rendered="#{row.blocked == false}"/>
                 <h:outputText value=")"/>
               </eye:column>
@@ -150,7 +150,9 @@
 
 
 
-        <eye:dialog id="clientSettingsDialog" title="#{bundle['client.dialog.settings.title']}" width="400">
+        <eye:dialog id="clientSettingsDialog"
+                    title="#{bundle['client.dialog.settings.title']}"
+                    width="400">
 
           <h:panelGrid columns="2">
             <h:outputLabel value="#{bundle['client.dialog.settings.field.fullname']}"
@@ -183,26 +185,24 @@
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['client.dialog.settings.button.cancel']}"
-                             onclick="jsfc('clientSettingsDialog').hide(); ips.message.hideAll(); return false;"/>
+                             onclick="return page.hideSettingsDialog();"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>
 
         </eye:dialog>
 
-
-
         <ips:confirmDialog id="clientBlockDialog"
                            text="#{bundle['client.dialog.block.text']}"
                            title="#{bundle['client.dialog.block.title']}"
                            actionBean="#{clientListController}"
-                           actionName="blockUser"/>
+                           actionName="deActivateUser"/>
 
         <ips:confirmDialog id="clientUnblockDialog"
                            text="#{bundle['client.dialog.unblock.text']}"
                            title="#{bundle['client.dialog.unblock.title']}"
                            actionBean="#{clientListController}"
-                           actionName="unblockUser"/>
+                           actionName="activateUser"/>
 
         <ips:confirmDialog id="clientPasswordResetDialog"
                            text="#{bundle['client.dialog.passwordreset.text']}"

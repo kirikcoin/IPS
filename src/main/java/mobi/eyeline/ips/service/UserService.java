@@ -24,6 +24,10 @@ public class UserService {
             throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
         }
 
+        resetPassword(user);
+    }
+
+    public void resetPassword(User user) {
         final String newPassword = generatePassword();
         user.setPassword(hashPassword(newPassword));
 
@@ -31,18 +35,13 @@ public class UserService {
         mailService.sendPasswordRestore(user, newPassword);
     }
 
-    public void blockUser(String login) {
-        final User user = userRepository.getByLogin(login);
-
+    public void deActivate(User user) {
         user.setBlocked(true);
         userRepository.update(user);
         mailService.sendUserDeactivation(user);
-
     }
 
-    public void unblockUser(String login) {
-        final User user = userRepository.getByLogin(login);
-
+    public void activate(User user) {
         user.setBlocked(false);
         userRepository.update(user);
         mailService.sendUserActivation(user);
