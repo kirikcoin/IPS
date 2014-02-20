@@ -5,8 +5,9 @@ import mobi.eyeline.ips.model.QuestionOption;
 import java.util.HashMap;
 import java.util.Map;
 
-import static mobi.eyeline.ips.util.RequestParseUtils.getInt;
 import static mobi.eyeline.ips.messages.UssdOption.UssdOptionType.ANSWER;
+import static mobi.eyeline.ips.util.RequestParseUtils.getBoolean;
+import static mobi.eyeline.ips.util.RequestParseUtils.getInt;
 
 public class AnswerOption extends UssdOption {
 
@@ -15,30 +16,29 @@ public class AnswerOption extends UssdOption {
 
     private AnswerOption(int key,
                          String text,
+                         boolean skipValidation,
                          int surveyId,
                          int questionId,
                          int answerId) {
 
-        super(key, text, surveyId, ANSWER);
+        super(key, text, skipValidation, surveyId, ANSWER);
         this.questionId = questionId;
         this.answerId = answerId;
     }
 
     public AnswerOption(int key,
-                        QuestionOption option) {
+                        QuestionOption option,
+                        boolean skipValidation) {
         this(
                 key,
                 option.getAnswer(),
+                skipValidation,
                 option.getQuestion().getSurvey().getId(),
                 option.getQuestion().getId(),
                 option.getId()
         );
 
         assert option.isActive() : "Sending inactive answer option";
-    }
-
-    public int getQuestionId() {
-        return questionId;
     }
 
     public int getAnswerId() {
@@ -67,7 +67,8 @@ public class AnswerOption extends UssdOption {
         return new AnswerOption(
                 -1,
                 null,
-                getInt(options, "survey_id"),
+                getBoolean(options, PARAM_SKIP_VALIDATION),
+                getInt(options, PARAM_SURVEY_ID),
                 getInt(options, "questionId"),
                 getInt(options, "answerId")
         );

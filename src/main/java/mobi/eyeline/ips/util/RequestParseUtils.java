@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.util;
 
 import mobi.eyeline.ips.messages.MissingParameterException;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -15,6 +16,19 @@ public class RequestParseUtils {
 
         try {
             return Integer.parseInt(map.get(key)[0]);
+        } catch (Exception e) {
+            throw new MissingParameterException(key);
+        }
+    }
+
+    /**
+     * @return {@code false} by default.
+     */
+    public static boolean getBoolean(Map<String, String[]> map, String key)
+            throws MissingParameterException {
+
+        try {
+            return BooleanUtils.toBoolean(map.get(key)[0]);
         } catch (Exception e) {
             throw new MissingParameterException(key);
         }

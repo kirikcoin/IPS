@@ -20,10 +20,11 @@ public interface Config {
     public boolean isMadvUpdateEnabled();
     public int getMadvUpdateDelayMinutes();
     public String getMadvUrl();
-
     public String getMadvUserLogin();
-
     public String getMadvUserPassword();
+
+    public String getSadsPushUrl();
+    public int getSadsMaxSessions();
 
     public static class XmlConfigImpl implements Config {
 
@@ -44,6 +45,9 @@ public interface Config {
         private final String madvUserLogin;
         private final String madvUserPassword;
 
+        private final String sadsPushUrl;
+        private final int sadsMaxSessions;
+
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
             final XmlConfigSection mail = xmlConfig.getSection("mail");
@@ -61,12 +65,19 @@ public interface Config {
             databaseProperties = database.toProperties(null);
 
             final XmlConfigSection madv = xmlConfig.getSection("madv");
-            madvUpdateEnabled = madv.getBool("update.enabled", true);
-            madvUpdateDelayMinutes = madv.getInt("update.delay.minutes");
-            madvUrl = madv.getString("url");
-            madvUserLogin = madv.getString("login");
-            madvUserPassword = madv.getString("password");
-            // TODO: add auth info.
+            {
+                madvUpdateEnabled = madv.getBool("update.enabled", true);
+                madvUpdateDelayMinutes = madv.getInt("update.delay.minutes");
+                madvUrl = madv.getString("url");
+                madvUserLogin = madv.getString("login");
+                madvUserPassword = madv.getString("password");
+            }
+
+            final XmlConfigSection sads = xmlConfig.getSection("sads");
+            {
+                sadsPushUrl = sads.getString("push.url");
+                sadsMaxSessions = sads.getInt("max.sessions", 4);
+            }
         }
 
         public String getSmtpHost() {
@@ -116,6 +127,14 @@ public interface Config {
 
         public String getMadvUserPassword() {
             return madvUserPassword;
+        }
+
+        public String getSadsPushUrl() {
+            return sadsPushUrl;
+        }
+
+        public int getSadsMaxSessions() {
+            return sadsMaxSessions;
         }
     }
 }

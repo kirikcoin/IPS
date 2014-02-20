@@ -6,8 +6,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class UssdOption {
+
+    public static final String PARAM_SURVEY_ID          = "survey_id";
+
+    /**
+     * If set to {@code true}, we won't check if survey is active (in terms of begin/end dates).
+     * Deleted surveys will be handled as is.
+     */
+    public static final String PARAM_SKIP_VALIDATION    = "skip_validation";
+
     private final int key;
     private final String text;
+    private final boolean skipValidation;
 
     private final UssdOptionType type;
 
@@ -15,10 +25,12 @@ public abstract class UssdOption {
 
     protected UssdOption(int key,
                          String text,
+                         boolean skipValidation,
                          int surveyId,
                          UssdOptionType type) {
         this.key = key;
         this.text = text;
+        this.skipValidation = skipValidation;
         this.type = type;
         this.surveyId = surveyId;
     }
@@ -38,7 +50,8 @@ public abstract class UssdOption {
     public Map<String, Object> getProperties() {
         return new HashMap<String, Object>() {{
             put("type", type.name());
-            put("survey_id", surveyId);
+            put(PARAM_SURVEY_ID, surveyId);
+            put(PARAM_SKIP_VALIDATION, skipValidation);
         }};
     }
 
@@ -53,6 +66,10 @@ public abstract class UssdOption {
         }
 
         return uri.toString();
+    }
+
+    public boolean isSkipValidation() {
+        return skipValidation;
     }
 
     public abstract UssdModel handle(String msisdn, MessageHandler handler);

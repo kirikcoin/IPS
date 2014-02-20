@@ -36,6 +36,7 @@ public class Services {
     private final UserService userService;
     private final UssdService ussdService;
     private final MadvUpdateService madvUpdateService;
+    private final PushService pushService;
 
     public Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -72,6 +73,7 @@ public class Services {
                 questionOptionRepository);
 
         madvUpdateService = new MadvUpdateService(config);
+        pushService = new PushService(config);
     }
 
     public static synchronized void initialize(Config properties) {
@@ -144,5 +146,9 @@ public class Services {
 
     public MadvUpdateService getMadvUpdateService() {
         return madvUpdateService;
+    }
+
+    public PushService getPushService() {
+        return pushService;
     }
 }

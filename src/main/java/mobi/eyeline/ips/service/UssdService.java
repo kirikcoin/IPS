@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID;
+import static mobi.eyeline.ips.util.RequestParseUtils.getBoolean;
 import static mobi.eyeline.ips.util.RequestParseUtils.getInt;
 import static mobi.eyeline.ips.util.RequestParseUtils.getString;
 
@@ -90,16 +92,19 @@ public class UssdService implements MessageHandler {
             // Respondent just loaded the start page.
             // It might be either an unregistered msisdn (new respondent),
             // survey surveyStart or resumption.
-            final int surveyId = getInt(parameters, "survey_id");
-            return handleStartPage(msisdn, surveyId);
+            final int surveyId = getInt(parameters, PARAM_SURVEY_ID);
+            final boolean skipValidation = getBoolean(parameters, PARAM_SURVEY_ID);
+            return handleStartPage(msisdn, surveyId, skipValidation);
 
         } else {
             return request.handle(msisdn, this);
         }
     }
 
-    private UssdModel handleStartPage(String msisdn, int surveyId) {
-        final Survey survey = surveyService.findSurvey(surveyId);
+    private UssdModel handleStartPage(String msisdn,
+                                      int surveyId,
+                                      boolean skipValidation) {
+        final Survey survey = surveyService.findSurvey(surveyId, skipValidation);
         if (survey == null) {
             return surveyNotFound();
         }
@@ -115,16 +120,17 @@ public class UssdService implements MessageHandler {
             final Question next = lastAnswer.getQuestion().getNext();
             if (next != null) {
                 // There are unanswered questions, so render the next one.
-                return question(next);
+                return question(next, skipValidation);
             }
         }
 
-        return surveyStart(survey, respondent);
+        return surveyStart(survey, respondent, skipValidation);
     }
 
     @Override
     public UssdModel handle(String msisdn, AnswerOption request) {
-        final Survey survey = surveyService.findSurvey(request.getSurveyId());
+        final Survey survey =
+                surveyService.findSurvey(request.getSurveyId(), request.isSkipValidation());
         if (survey == null) {
             return surveyNotFound();
         }
@@ -145,7 +151,7 @@ public class UssdService implements MessageHandler {
 
         final Question next = option.getQuestion().getNext();
         if (next != null) {
-            return question(next);
+            return question(next, request.isSkipValidation());
 
         } else {
             // All the questions are answered.
@@ -182,7 +188,10 @@ public class UssdService implements MessageHandler {
         return new UssdModel(survey.getDetails().getEndText());
     }
 
-    private UssdModel surveyStart(Survey survey, Respondent respondent) {
+    private UssdModel surveyStart(Survey survey,
+                                  Respondent respondent,
+                                  boolean skipValidation) {
+
         // Clear all in case this is a RE-start.
         respondent.setFinished(false);
         respondent.setAnswersCount(0);
@@ -193,7 +202,7 @@ public class UssdService implements MessageHandler {
 
         final Question first = survey.getFirstQuestion();
         if (first != null) {
-            return question(first);
+            return question(first, skipValidation);
         } else {
             // This survey has no questions (if it's even allowed), so just end it.
             return surveyFinish(respondent, survey);
@@ -201,9 +210,11 @@ public class UssdService implements MessageHandler {
     }
 
     /**
+     * @param skipValidation If set, all the links will contain
+     *                       {@link mobi.eyeline.ips.messages.UssdOption#PARAM_SKIP_VALIDATION a flag} skipping survey validity check.
      * @return Form for the specified question.
      */
-    private UssdModel question(Question question) {
+    private UssdModel question(Question question, boolean skipValidation) {
         assert question.isActive() : "Sending inactive question";
 
         final List<AnswerOption> renderedOptions = new ArrayList<>();
@@ -213,7 +224,7 @@ public class UssdService implements MessageHandler {
                 final QuestionOption option = questionOptions.get(i);
                 if (option.isActive()) {
                     renderedOptions.add(
-                            new AnswerOption(i + 1, option)
+                            new AnswerOption(i + 1, option, skipValidation)
                     );
                 }
             }

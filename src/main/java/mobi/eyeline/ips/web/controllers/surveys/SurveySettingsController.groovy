@@ -4,6 +4,7 @@ import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
+import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UssdService
 import mobi.eyeline.ips.web.controllers.BaseController
@@ -21,6 +22,7 @@ class SurveySettingsController extends BaseSurveyController {
     private final QuestionRepository questionRepository = Services.instance().questionRepository
     private final UserRepository userRepository = Services.instance().userRepository
     private final UssdService ussdService = Services.instance().ussdService
+    private final PushService pushService = Services.instance().pushService
 
     String errorId
 
@@ -33,6 +35,10 @@ class SurveySettingsController extends BaseSurveyController {
     DynamicTableModel questionOptions = new DynamicTableModel()
 
     List<TerminalOption> terminalValues = [TerminalOption.FALSE, TerminalOption.TRUE]
+
+    // Phone number for survey preview.
+    String previewPhone
+    boolean previewSentOk
 
     SurveySettingsController() {
         super()
@@ -170,6 +176,24 @@ class SurveySettingsController extends BaseSurveyController {
 
     void onCancel() {
         survey = surveyRepository.load(surveyId)
+    }
+
+    void sendPreview() {
+        if (!isPhoneValid()) {
+            addErrorMessage(
+                    resourceBundle.getString('invalid.phone.number'),
+                    'previewPhone')
+            errorId =
+                    FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
+        } else {
+            pushService.scheduleSend(survey, previewPhone)
+            previewSentOk = true
+        }
+    }
+
+    private boolean isPhoneValid() {
+        // TODO: should we actually validate it?
+        previewPhone != null
     }
 
     private void updateQuestionModel(Question persistedQuestion) {

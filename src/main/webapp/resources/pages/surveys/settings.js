@@ -98,6 +98,12 @@ var page = {
 
   onQuestionModificationDialog: function() {
     jsfc('questionModificationDialog').show();
+  },
+
+  onPreviewClick: function() {
+    jsfc('surveyPreviewDialog').show();
+
+    return false;
   }
 
 };

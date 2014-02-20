@@ -30,6 +30,10 @@
             page.onQuestionModificationDialog();
           }
 
+          if (#{surveySettingsController.previewSentOk}) {
+            ips.message.info("#{bundle['survey.settings.preview.success']}");
+          }
+
           $('#content').attr('action',
               '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
         });
@@ -288,17 +292,28 @@
                 </ui:repeat>
               </h:panelGroup>
 
-              <eye:buttons>
-                <eye:button>
-                  <h:commandLink value="#{bundle['survey.settings.question.add']}"
-                                 action="#{surveySettingsController.modifyQuestion}"
-                                 styleClass="button-green"
-                                 rendered="#{userSession.surveyModificationAllowed}">
-                    <f:param name="questionId" value=""/>
-                  </h:commandLink>
-                </eye:button>
-                <eye:space/>
-              </eye:buttons>
+              <h:panelGrid columns="2">
+                <eye:buttons>
+                  <eye:button>
+                    <h:commandLink value="#{bundle['survey.settings.question.add']}"
+                                   action="#{surveySettingsController.modifyQuestion}"
+                                   styleClass="button-green"
+                                   rendered="#{userSession.surveyModificationAllowed}">
+                      <f:param name="questionId" value=""/>
+                    </h:commandLink>
+                  </eye:button>
+                  <eye:space/>
+                </eye:buttons>
+
+                <eye:buttons>
+                  <eye:button>
+                    <h:outputLink styleClass="button-green"
+                                  onclick="return page.onPreviewClick();">
+                      <h:outputText value="#{bundle['survey.settings.preview']}"/>
+                    </h:outputLink>
+                  </eye:button>
+                </eye:buttons>
+              </h:panelGrid>
 
             </eye:collapsingGroup>
 
@@ -447,6 +462,38 @@
               <h:commandLink styleClass="button-green"
                              value="#{bundle['survey.settings.question.modify.cancel']}"
                              onclick="return page.onDialogCancel('questionModificationDialog');"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
+
+        <!-- Survey preview dialog -->
+        <eye:dialog id="surveyPreviewDialog"
+                    title="#{bundle['survey.settings.preview.title']}"
+                    width="400">
+
+          <h:outputText value="#{bundle['survey.settings.preview.text']}"/>
+
+          <h:panelGrid columns="2" style="padding-top: 10px">
+            <h:outputLabel for="previewPhone"
+                           value="#{bundle['survey.settings.preview.phone']}:"/>
+            <eye:inputText id="previewPhone"
+                           value="#{surveySettingsController.previewPhone}"/>
+          </h:panelGrid>
+
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['survey.settings.preview.ok']}"
+                             action="#{surveySettingsController.sendPreview}">
+                <f:param name="errorId" value="surveyPreviewDialog"/>
+              </h:commandLink>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['survey.settings.preview.cancel']}"
+                             onclick="return page.onDialogCancel('surveyPreviewDialog');"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>

@@ -29,15 +29,17 @@ public class SurveyService {
      *     i.e. current date is between {@link Survey#startDate} and {@link Survey#endDate}</li>
      *     <li>Survey is not marked as deleted</li>
      * </ol>
+     *
+     * @param skipValidation if set, the second check is omitted.
      */
-    public Survey findSurvey(int surveyId) {
+    public Survey findSurvey(int surveyId, boolean skipValidation) {
         final Survey survey = surveyRepository.get(surveyId);
 
         if (survey == null) {
             logger.info("Survey not found for ID = [" + surveyId + "]");
             return null;
 
-        } else if (!survey.isRunningNow()) {
+        } else if (!skipValidation && !survey.isRunningNow()) {
             logger.info("Survey is not active now, ID = [" + surveyId + "]");
             return null;
 

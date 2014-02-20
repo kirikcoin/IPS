@@ -55,24 +55,30 @@
                 transitive="false"/>
 
     <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.2" conf="site->default"/>
-    <dependency org="mysql" name="mysql-connector-java" rev="5.1.13" conf="site->default"/>
 
-    <dependency org="org.apache.commons" name="commons-lang3" rev="3.1" conf="site->default"/>
+    <!-- Hibernate -->
     <dependency org="org.hibernate" name="hibernate-core" rev="4.2.8.Final" conf="site->default"/>
     <dependency org="org.hibernate" name="hibernate-validator" rev="5.0.2.Final" transitive="true"
                 conf="site->default"/>
     <dependency org="org.hibernate" name="hibernate-c3p0" rev="4.2.8.Final"
                 conf="site->default" transitive="true"/>
+    <dependency org="mysql" name="mysql-connector-java" rev="5.1.13" conf="site->default"/>
 
+    <!-- Utils -->
     <dependency org="com.google.guava" name="guava" rev="16.0.1" conf="site->default"/>
+    <dependency org="org.apache.commons" name="commons-lang3" rev="3.1" conf="site->default"/>
 
+    <!-- SOAP -->
     <dependency org="org.apache.axis"           name="axis"                 rev="1.4"/>
     <dependency org="org.apache.axis"           name="axis-jaxrpc"          rev="1.4"/>
     <dependency org="axis"                      name="axis-wsdl4j"          rev="1.2-RC1"/>
 
     <!-- Email -->
-    <dependency org="org.apache.commons" name="commons-email" rev="1.3.2" conf="site->default"/>
-    <dependency org="org.freemarker" name="freemarker" rev="2.3.20" conf="site->default"/>
+    <dependency org="org.apache.commons"  name="commons-email"  rev="1.3.2"   conf="site->default"/>
+    <dependency org="org.freemarker"      name="freemarker"     rev="2.3.20"  conf="site->default"/>
+
+    <!-- HTTP -->
+    <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.2.4" conf="site->default"/>
 
 
     <!--
