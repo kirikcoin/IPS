@@ -31,6 +31,7 @@ class UserServiceTest extends DbTestCase {
 
         String formatUserRegistration(User u, String s) { fail() }
         String formatUserDeactivation(User u) { fail() }
+        String formatUserActivation(User u) { fail() }
         String formatPasswordRestore(User u, String s) { fail() }
     }
 
@@ -49,13 +50,14 @@ class UserServiceTest extends DbTestCase {
 
         def templateService = new StubTemplateService(config) {
             String formatPasswordRestore(User u, String s) { "" }
+            String formatUserDeactivation(User u) { "" }
+            String formatUserActivation(User u) { "" }
         }
         mailService = new MailService(templateService, senderProxy)
         userService = new UserService(userRepository, mailService)
     }
 
     void testRestorePassword() {
-        def tx = db.currentSession.beginTransaction()
 
         user =  new User(
                 login: "user",
@@ -65,12 +67,95 @@ class UserServiceTest extends DbTestCase {
                 role: Role.CLIENT)
 
         userRepository.save(user)
-        userRepository.getByEmail("username@example.com")
         userService.resetPassword("username@example.com")
         user = userRepository.getByEmail("username@example.com")
         assertFalse user.password.equals("password".pw())
 
-        tx.commit()
+
     }
+
+    void testDeActivate() {
+        user =  new User(
+                login: "user",
+                password: "password".pw(),
+                email: "username@example.com",
+                fullName: "John Doe",
+                blocked: false,
+                role: Role.CLIENT)
+
+        userRepository.save(user)
+        userService.deActivate(user)
+        assertTrue(user.blocked)
+    }
+
+    void testActivate() {
+        user =  new User(
+                login: "user",
+                password: "password".pw(),
+                email: "username@example.com",
+                fullName: "John Doe",
+                blocked: true,
+                role: Role.CLIENT)
+
+        userRepository.save(user)
+        userService.activate(user)
+        assertFalse(user.blocked)
+    }
+
+    void testLoginEmailAllowed() {
+        User user1 =  new User(
+                login: "user1",
+                password: "password".pw(),
+                email: "username1@example.com",
+                fullName: "John Doe1",
+                blocked: false,
+                role: Role.CLIENT)
+
+        User user2 =  new User(
+                login: "user2",
+                password: "password".pw(),
+                email: "username2@example.com",
+                fullName: "John Doe2",
+                blocked: false,
+                role: Role.CLIENT)
+
+        User user3 =  new User(
+                login: "user1",
+                password: "password".pw(),
+                email: "username1@example.com",
+                fullName: "John Doe2",
+                blocked: false,
+                role: Role.CLIENT)
+
+        userRepository.save(user1)
+
+        assertTrue(userService.isLoginAllowed(user1))
+        assertTrue(userService.isEmailAllowed(user1))
+
+        assertTrue(userService.isLoginAllowed(user2))
+        assertTrue(userService.isEmailAllowed(user2))
+
+        assertFalse(userService.isLoginAllowed(user3))
+        assertFalse(userService.isEmailAllowed(user3))
+
+    }
+
+    void testCheckPassword() {
+        User user =  new User(
+                login: "user1",
+                password: "password".pw(),
+                email: "username1@example.com",
+                fullName: "John Doe1",
+                blocked: false,
+                role: Role.CLIENT)
+
+        userRepository.save(user)
+
+        assertTrue(userService.checkPassword(user,"password"))
+        assertFalse(userService.checkPassword(user,"wrongPassword"))
+
+    }
+
+
 
 }

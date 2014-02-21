@@ -60,6 +60,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
 
     public User getByLogin(String login) {
         final Session session = getSessionFactory().openSession();
+
         try {
             return (User) session
                     .createCriteria(User.class)
@@ -68,6 +69,19 @@ public class UserRepository extends BaseRepository<User, Integer> {
         } finally {
             session.close();
         }
+    }
+
+    public User getByEmail(String email) {
+        final Session session = getSessionFactory().openSession();
+        try{
+            return (User) session
+                    .createCriteria(User.class)
+                    .add(eq("email", email))
+                    .uniqueResult();
+        } finally {
+            session.close();
+        }
+
     }
 
     public List<User> listByRole(Role role) {
@@ -80,13 +94,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
     }
 
 
-    public User getByEmail(String email) {
-        final Session session = getSessionFactory().getCurrentSession();
-        return (User) session
-                .createCriteria(User.class)
-                .add(eq("email", email))
-                .uniqueResult();
-    }
+
 
     public List<User> list(String filter,
                            String orderColumn,
