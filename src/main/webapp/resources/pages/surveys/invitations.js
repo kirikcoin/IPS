@@ -60,6 +60,7 @@ var page = {
 
   onNewInviteCancel: function() {
     jsfc('newInviteDialog').hide();
+    ips.message.hideAll();
     return false;
   },
 

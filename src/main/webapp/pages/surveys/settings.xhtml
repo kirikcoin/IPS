@@ -264,7 +264,7 @@
                     </f:facet>
 
                     <!-- Question body -->
-                    <h:panelGrid columns="2">
+                    <h:panelGrid columns="2" columnClasses="columnOptionsList,columnSegmentation">
 
                       <!-- Options list -->
                       <h:outputText rendered="#{empty question.options}"
@@ -284,9 +284,24 @@
                         </h:column>
                       </h:dataTable>
 
-                      <!-- Stats -->
-                      <h:panelGroup rendered="false">
-                        <h:outputText value="stuff"/>
+                      <!-- Segmentation -->
+                      <h:panelGroup layout="block" id="segmentation">
+                        <h:panelGrid columns="2">
+                          <h:outputLabel for="symbols"
+                                         value="#{bundle['survey.settings.question.symbols']}:"/>
+                          <h:outputText id="symbols"
+                                        value="#{question.segmentationInfo.symbolsCount}"/>
+
+                          <h:outputLabel for="segments"
+                                         value="#{bundle['survey.settings.question.segments']}:"/>
+                          <h:outputText id="segments"
+                                        value="#{question.segmentationInfo.segmentsCount}"/>
+
+                          <h:outputLabel for="perSegment"
+                                         value="#{bundle['survey.settings.question.symbols.per.segment']}:"/>
+                          <h:outputText id="perSegment"
+                                        value="#{question.segmentationInfo.maxSymbolsPerSegment}"/>
+                        </h:panelGrid>
                       </h:panelGroup>
                     </h:panelGrid>
 

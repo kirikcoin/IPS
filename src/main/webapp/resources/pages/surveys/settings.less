@@ -1,3 +1,5 @@
+@light: #626262;;
+
 .placeholder {
   font-style: italic;
 }
@@ -61,7 +63,7 @@ table.question {
 
 span.option-number {
   padding-right: 5px;
-  color: #626262;
+  color: @light;
 }
 
 table#questionOptions th {
@@ -94,4 +96,14 @@ div[class^="eyeline_collapsingGroupHeader"] {
 
 #title.validationError {
   width: 90%
+}
+
+div[id$="segmentation"] {
+  width: 200px;
+  float: right;
+  color: @light;
+}
+
+.columnOptionsList, .columnSegmentation {
+  vertical-align: top;
 }

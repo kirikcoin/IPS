@@ -1,6 +1,8 @@
 package mobi.eyeline.ips.model;
 
 import com.google.common.base.Predicate;
+import mobi.eyeline.ips.service.SegmentationService;
+import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -170,6 +172,12 @@ public class Question implements Serializable {
 
     public boolean isLast() {
         return ListUtils.isLast(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+    }
+
+    // TODO: seems to be the only way to access this data from page markup.
+    // Is there another option?
+    public SegmentationService.SegmentationInfo getSegmentationInfo() {
+        return Services.instance().getSegmentationService().getSegmentationInfo(this);
     }
 
     @Override

@@ -37,6 +37,7 @@ public class Services {
     private final UssdService ussdService;
     private final MadvUpdateService madvUpdateService;
     private final PushService pushService;
+    private final SegmentationService segmentationService;
 
     public Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -74,6 +75,7 @@ public class Services {
 
         madvUpdateService = new MadvUpdateService(config);
         pushService = new PushService(config);
+        segmentationService = new SegmentationService();
     }
 
     public static synchronized void initialize(Config properties) {
@@ -150,5 +152,9 @@ public class Services {
 
     public PushService getPushService() {
         return pushService;
+    }
+
+    public SegmentationService getSegmentationService() {
+        return segmentationService;
     }
 }
