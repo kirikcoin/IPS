@@ -53,10 +53,7 @@
 
                 <h:outputLabel value="#{bundle['profile.edit.phone']}"
                                for="phoneNumber" />
-
                 <eye:inputText id="phoneNumber"
-                               validator="phoneValidator"
-                               validatorMessage="#{bundle['invalid.phone.number']}"
                                value="#{profilePageController.user.phoneNumber}"/>
               </h:panelGrid>
 

@@ -1,6 +1,9 @@
 package mobi.eyeline.ips.web.controllers
 
 import mobi.eyeline.ips.model.Role
+import mobi.eyeline.ips.model.User
+import mobi.eyeline.ips.repository.UserRepository
+import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.util.RequestParam
 import mobi.eyeline.ips.web.validators.LocalizedMessageInterpolator
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator
@@ -25,6 +28,8 @@ public abstract class BaseController implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseController)
 
+    private final UserRepository userRepository = Services.instance().userRepository
+
     BaseController() {
         logger.trace("Controller instantiated: [" + this.class.name + "]")
     }
@@ -48,6 +53,8 @@ public abstract class BaseController implements Serializable {
     }
 
     public String getUserName() { FacesContext.currentInstance.externalContext.remoteUser }
+
+    public User getCurrentUser() {userRepository.getByLogin(userName)}
 
     public boolean isClientRole() {
         return inRole(Role.CLIENT)

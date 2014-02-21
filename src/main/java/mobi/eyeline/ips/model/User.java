@@ -80,6 +80,8 @@ public class User implements Serializable {
     private boolean blocked;
 
     @Column(name = "phone_number")
+    @Pattern(regexp = PhoneValidator.PHONE_REGEXP,
+            message = "{invalid.phone.number}")
     private String phoneNumber;
 
     public User() {

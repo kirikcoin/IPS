@@ -32,9 +32,6 @@ class SurveySettingsController extends BaseSurveyController {
 
     Integer questionId
 
-    final User currentUser
-
-
     // Question modification
     Question question = new Question()
     DynamicTableModel questionOptions = new DynamicTableModel()
@@ -42,12 +39,12 @@ class SurveySettingsController extends BaseSurveyController {
     List<TerminalOption> terminalValues = [TerminalOption.FALSE, TerminalOption.TRUE]
 
     // Phone number for survey preview.
+    String phoneNumber = currentUser.phoneNumber
 
     boolean previewSentOk
 
     SurveySettingsController() {
         super()
-        currentUser = userRepository.getByLogin(this.userName)
         newSurveyClientId = survey.client.id
     }
 
@@ -192,13 +189,13 @@ class SurveySettingsController extends BaseSurveyController {
             errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
         } else {
-            pushService.scheduleSend(survey, currentUser.phoneNumber)
+            pushService.scheduleSend(survey, phoneNumber)
             previewSentOk = true
         }
     }
 
     private boolean isPhoneValid() {
-        new PhoneValidator().validate(currentUser.phoneNumber)
+        new PhoneValidator().validate(phoneNumber)
     }
 
     private void updateQuestionModel(Question persistedQuestion) {

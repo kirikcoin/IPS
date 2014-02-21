@@ -111,11 +111,6 @@
     <validator-class>mobi.eyeline.ips.web.validators.LoginPasswordValidator</validator-class>
   </validator>
 
-  <validator>
-    <validator-id>phoneValidator</validator-id>
-    <validator-class>mobi.eyeline.ips.web.validators.PhoneValidator</validator-class>
-  </validator>
-
   <!-- COMPONENTS ================================================================================================== -->
 
   <component>
