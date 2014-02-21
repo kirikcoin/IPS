@@ -48,4 +48,9 @@
     <param name="password" type="string">password</param>
   </section>
 
+  <section name="sads">
+    <param name="push.url" type="string">http://localhost/demo/push?service=eyeline.rcsilv</param>
+    <param name="max.sessions" type="int">4</param>
+  </section>
+
 </config>
