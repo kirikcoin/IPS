@@ -28,6 +28,8 @@
             page.onEditEndMessageClick();
           } else if ("#{surveySettingsController.errorId}" == 'questionModificationDialog') {
             page.onQuestionModificationDialog();
+          } else if ("#{surveySettingsController.errorId}" == 'surveyPreviewDialog') {
+            page.onPreviewClick();
           }
 
           if (#{surveySettingsController.previewSentOk}) {

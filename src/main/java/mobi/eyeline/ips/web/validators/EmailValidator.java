@@ -8,13 +8,6 @@ import javax.faces.validator.ValidatorException;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * Created with IntelliJ IDEA.
- * User: dizan
- * Date: 30.01.14
- * Time: 12:58
- * To change this template use File | Settings | File Templates.
- */
 public class EmailValidator implements Validator {
 
     @Override

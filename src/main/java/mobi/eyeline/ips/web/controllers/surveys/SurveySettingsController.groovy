@@ -8,6 +8,7 @@ import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UssdService
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 import org.slf4j.Logger
@@ -192,8 +193,7 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     private boolean isPhoneValid() {
-        // TODO: should we actually validate it?
-        previewPhone != null
+        new PhoneValidator().validate(previewPhone)
     }
 
     private void updateQuestionModel(Question persistedQuestion) {
