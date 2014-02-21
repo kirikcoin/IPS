@@ -2,6 +2,7 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
+import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.PushService
@@ -31,6 +32,9 @@ class SurveySettingsController extends BaseSurveyController {
 
     Integer questionId
 
+    final User currentUser
+
+
     // Question modification
     Question question = new Question()
     DynamicTableModel questionOptions = new DynamicTableModel()
@@ -38,11 +42,12 @@ class SurveySettingsController extends BaseSurveyController {
     List<TerminalOption> terminalValues = [TerminalOption.FALSE, TerminalOption.TRUE]
 
     // Phone number for survey preview.
-    String previewPhone
+
     boolean previewSentOk
 
     SurveySettingsController() {
         super()
+        currentUser = userRepository.getByLogin(this.userName)
         newSurveyClientId = survey.client.id
     }
 
@@ -187,13 +192,13 @@ class SurveySettingsController extends BaseSurveyController {
             errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
         } else {
-            pushService.scheduleSend(survey, previewPhone)
+            pushService.scheduleSend(survey, currentUser.phoneNumber)
             previewSentOk = true
         }
     }
 
     private boolean isPhoneValid() {
-        new PhoneValidator().validate(previewPhone)
+        new PhoneValidator().validate(currentUser.phoneNumber)
     }
 
     private void updateQuestionModel(Question persistedQuestion) {
