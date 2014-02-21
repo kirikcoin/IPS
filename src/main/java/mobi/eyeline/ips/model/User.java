@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.model;
 
-import mobi.eyeline.ips.web.validators.UserDataValidator;
+import mobi.eyeline.ips.web.validators.LoginPasswordValidator;
+import mobi.eyeline.ips.web.validators.PhoneValidator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
@@ -39,7 +40,7 @@ public class User implements Serializable {
      */
     @Column(name = "users_name", nullable = false)
     @NotEmpty(message = "{profile.edit.message.validationErrorLoginEmpty}")
-    @Pattern(regexp = UserDataValidator.LOGIN_PASSWORD_REGEXP,
+    @Pattern(regexp = LoginPasswordValidator.LOGIN_PASSWORD_REGEXP,
             message = "{client.dialog.validation.loginerror}")
     private String login;
 

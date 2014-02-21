@@ -481,7 +481,7 @@
             <h:outputLabel for="previewPhone"
                            value="#{bundle['survey.settings.preview.phone']}:"/>
             <eye:inputText id="previewPhone"
-                           value="#{surveySettingsController.previewPhone}"/>
+                           value="#{surveySettingsController.currentUser.phoneNumber}"/>
           </h:panelGrid>
 
           <eye:buttons>

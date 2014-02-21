@@ -50,6 +50,14 @@
                                for="email" />
                 <eye:inputText id="email"
                                value="#{profilePageController.user.email}"/>
+
+                <h:outputLabel value="#{bundle['profile.edit.phone']}"
+                               for="phoneNumber" />
+
+                <eye:inputText id="phoneNumber"
+                               validator="phoneValidator"
+                               validatorMessage="#{bundle['invalid.phone.number']}"
+                               value="#{profilePageController.user.phoneNumber}"/>
               </h:panelGrid>
 
               <h:panelGroup layout="block" styleClass="headerWithBottomSeparator">
