@@ -56,7 +56,7 @@ public class PushService {
             @Override
             public void run() {
                 try {
-                    send0(survey, msisdn);
+                    send(survey, msisdn);
                 } catch (URISyntaxException | IOException e) {
                     logger.error("Error sending PUSH-request, " +
                             "survey = [" + survey + "], msisdn = [" + msisdn + "]", e);
@@ -68,26 +68,14 @@ public class PushService {
                 " survey = [" + survey + "], msisdn = [" + msisdn + "]");
     }
 
-    private void send0(Survey survey,
-                      String msisdn) throws URISyntaxException, IOException {
+    protected void send(Survey survey,
+                        String msisdn) throws URISyntaxException, IOException {
 
         logger.debug("Sending PUSH request:" +
                 " survey = [" + survey + "], msisdn = [" + msisdn + "]");
 
         final URI uri = buildUri(msisdn, survey.getId());
-
-        final HttpGet get = new HttpGet(uri);
-        final HttpResponse response = clientHolder.get().execute(get);
-
-        try {
-            final StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() != SC_OK) {
-                logger.error("Server responded with [" + statusLine.getStatusCode() + "]: " +
-                        statusLine.getReasonPhrase() + ": " + EntityUtils.toString(response.getEntity()));
-            }
-        } finally {
-            HttpClientUtils.closeQuietly(response);
-        }
+        doRequest(uri);
     }
 
     private URI buildUri(String msisdn, int surveyId)
@@ -101,6 +89,21 @@ public class PushService {
         builder.addParameter(PARAM_SKIP_VALIDATION, "true");
 
         return builder.build();
+    }
+
+    protected void doRequest(URI uri) throws IOException {
+        final HttpGet get = new HttpGet(uri);
+        final HttpResponse response = clientHolder.get().execute(get);
+
+        try {
+            final StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() != SC_OK) {
+                logger.error("Server responded with [" + statusLine.getStatusCode() + "]: " +
+                        statusLine.getReasonPhrase() + ": " + EntityUtils.toString(response.getEntity()));
+            }
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     private ThreadLocal<HttpClient> initClient() {
