@@ -322,7 +322,8 @@
                   <eye:space/>
                 </eye:buttons>
 
-                <eye:buttons>
+                <eye:buttons
+                    rendered="#{not empty surveySettingsController.survey.activeQuestions}">
                   <eye:button>
                     <h:outputLink styleClass="button-green"
                                   onclick="return page.onPreviewClick();">
@@ -441,7 +442,7 @@
         -->
         <eye:dialog id="questionModificationDialog"
                     title="#{bundle['survey.settings.question.modify.title']}"
-                    width="300">
+                    width="500">
 
           <h:outputLabel value="#{bundle['survey.settings.question.modify.text']}:"
                          for="title"/>
@@ -464,7 +465,8 @@
                               values="#{surveySettingsController.terminalValues}"
                               var="t" itemLabel="#{t.label}" itemValue="#{t.value}"
                               allowEditAfterAdd="true"
-                              title="#{bundle['question.option.terminal.label']}"/>
+                              title="#{bundle['question.option.terminal.label']}"
+                              columnClass="colTerminal"/>
           </eye:dynamicTable>
 
           <eye:buttons>

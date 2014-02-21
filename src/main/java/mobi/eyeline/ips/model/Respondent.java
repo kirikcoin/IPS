@@ -110,6 +110,7 @@ public class Respondent {
     }
 
     public int getAnswersPercentage() {
-        return getAnswersCount() * 100 / getSurvey().getQuestionsCount();
+        final int questionsCount = getSurvey().getQuestionsCount();
+        return (questionsCount == 0) ? 0 : ((getAnswersCount() * 100) / questionsCount);
     }
 }

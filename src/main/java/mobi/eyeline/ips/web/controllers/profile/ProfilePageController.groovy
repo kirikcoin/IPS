@@ -28,44 +28,48 @@ class ProfilePageController extends BaseController {
     void saveProfile() {
         if (!isPasswordIntact()) {
             // Update user password if corresponding fields are filled in.
-
-            if (!userService.checkPassword(user, currentPassword)) {
-                addErrorMessage(
-                        resourceBundle.getString("profile.edit.password.invalid"),
-                        "currentPassword")
-                return
-            }
-
-            if (newPassword == null) {
-                // XXX: This case somehow passes validation.
-                // Why is validator not triggered for empty fields?
-                addErrorMessage(
-                        resourceBundle.getString("profile.edit.message.password.required"),
-                        "newPassword")
-                return
-            }
-
-            if (newPassword != newPasswordConfirmation) {
-                addErrorMessage(
-                        resourceBundle.getString("profile.edit.password.confirmation.mismatch"),
-                        "newPasswordConfirmation")
-                return
-            }
-
-            user.password = HashUtils.hashPassword(newPassword)
+            updateOk = updatePassword()
         }
 
-        updateOk = updateModel()
+        updateOk &= validateModel()
+        if (updateOk) {
+            userRepository.update(user)
+        }
     }
 
     private boolean isPasswordIntact() {
         currentPassword == null && newPassword == null && newPasswordConfirmation == null
     }
 
-    /**
-     * @return {@code true} iff update is successful.
-     */
-    private boolean updateModel() {
+    private boolean updatePassword() {
+        if (!userService.checkPassword(user, currentPassword)) {
+            addErrorMessage(
+                    resourceBundle.getString("profile.edit.password.invalid"),
+                    "currentPassword")
+            return false
+        }
+
+        if (newPassword == null) {
+            // XXX: This case somehow passes validation.
+            // Why is validator not triggered for empty fields?
+            addErrorMessage(
+                    resourceBundle.getString("profile.edit.message.password.required"),
+                    "newPassword")
+            return false
+        }
+
+        if (newPassword != newPasswordConfirmation) {
+            addErrorMessage(
+                    resourceBundle.getString("profile.edit.password.confirmation.mismatch"),
+                    "newPasswordConfirmation")
+            return false
+        }
+
+        user.password = HashUtils.hashPassword(newPassword)
+        return true
+    }
+
+    private boolean validateModel() {
         if (renderViolationMessage(validator.validate(user))) {
             return false
         }
@@ -77,7 +81,6 @@ class ProfilePageController extends BaseController {
             return false
         }
 
-        userRepository.update(user)
         return true
     }
 

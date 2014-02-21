@@ -101,6 +101,7 @@ class SurveyInvitesController extends BaseSurveyController {
                 updateStatus = UNDEFINED
             }
             surveyRepository.update(survey)
+            madvUpdateService.runNow(survey.id)
 
             madvIdError = false
 

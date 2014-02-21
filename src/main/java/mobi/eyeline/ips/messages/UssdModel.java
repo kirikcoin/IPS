@@ -9,6 +9,8 @@ public class UssdModel {
     private final List<UssdOption> options;
 
     public UssdModel(String text, List<? extends UssdOption> options) {
+        assert text != null;
+
         this.text = text;
         this.options = Collections.unmodifiableList(options);
     }

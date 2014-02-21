@@ -40,7 +40,7 @@
             <h:panelGroup id="profilePageBody" layout="block" styleClass="page-body">
               <div style="margin:10px"></div>
 
-              <h:panelGrid columns="2">
+              <h:panelGrid columns="2" columnClasses="col1,col2">
                 <h:outputLabel value="#{bundle['profile.edit.fio']}"
                                for="fullName"/>
                 <eye:inputText id="fullName"
@@ -61,7 +61,7 @@
                 <h:outputText  value="#{bundle['profile.edit.changepassword']}"/>
               </h:panelGroup>
 
-              <h:panelGrid columns="2">
+              <h:panelGrid columns="2" columnClasses="col1,col2">
                 <h:outputLabel value="#{bundle['profile.edit.currentpassword']}"
                                for="currentPassword"/>
                 <ips:inputText id="currentPassword"

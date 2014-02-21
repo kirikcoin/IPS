@@ -67,6 +67,9 @@ public class UserService {
      * @return {@code true} iff {@code rawPassword} is a valid password for {@code user}.
      */
     public boolean checkPassword(User user, String rawPassword) {
+        if (rawPassword == null) {
+            return false;
+        }
         final String hash = hashPassword(rawPassword);
         return equalsIgnoreCase(hash, user.getPassword());
     }
