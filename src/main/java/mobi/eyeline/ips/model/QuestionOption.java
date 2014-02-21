@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.model;
 
 import com.google.common.base.Predicate;
+import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -14,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
+
+import static mobi.eyeline.ips.model.Question.SKIP_INACTIVE;
 
 /**
  * Вариант ответа на вопрос; для вопросов, предполагающих варианты ответов.
@@ -120,6 +123,10 @@ public class QuestionOption implements Serializable {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public void moveTo(int idx) {
+        ListUtils.moveTo(getQuestion().getOptions(), this, idx, SKIP_INACTIVE);
     }
 
     @Override

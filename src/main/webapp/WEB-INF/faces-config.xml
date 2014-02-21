@@ -111,13 +111,6 @@
     <validator-class>mobi.eyeline.ips.web.validators.LoginPasswordValidator</validator-class>
   </validator>
 
-  <!-- COMPONENTS ================================================================================================== -->
-
-  <component>
-    <component-type>mobi.eyeline.ips.web.components.input_text</component-type>
-    <component-class>mobi.eyeline.ips.web.components.input_text.InputText</component-class>
-  </component>
-
   <!-- NAVIGATION ================================================================================================== -->
 
   <navigation-rule>

@@ -382,3 +382,27 @@ div.menu-bar.button-green>a:first-child:hover {
   font-size:15px;
   font-weight:bold;
 }
+
+table.dtable th.dragColumn {
+  min-width: 20px!important;
+}
+
+/* Стиль ячейки, с помощью которой можно переместить строку */
+table.dtable td.dragHandle {
+  cursor: move;
+  text-align: center;
+  width: 10px;
+}
+
+/* Маркер перемещаемой строки */
+table.dtable td.dragHandle:before {
+  font-family: Lucida Sans Unicode, Arial Unicode MS, Arial;
+  content: '\2261';
+  font-size: 14px;
+  color: #808080;
+}
+
+/* Стиль применяемый к строке после начала перемещения */
+table.dtable tr.dragRow {
+  background-color: #efefef !important;
+}

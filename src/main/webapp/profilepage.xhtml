@@ -2,9 +2,7 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-        >
+        xmlns:eye="http://jsfcomponents.eyeline.mobi">
 
   <ui:composition template="/templates/main.xhtml">
 
@@ -64,23 +62,26 @@
               <h:panelGrid columns="2" columnClasses="col1,col2">
                 <h:outputLabel value="#{bundle['profile.edit.currentpassword']}"
                                for="currentPassword"/>
-                <ips:inputText id="currentPassword"
+                <eye:inputText id="currentPassword"
                                secret="true"
-                               value="#{profilePageController.currentPassword}"/>
+                               value="#{profilePageController.currentPassword}"
+                               trim="false"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
                                for="newPassword" />
-                <ips:inputText id="newPassword"
+                <eye:inputText id="newPassword"
                                secret="true"
                                validator="loginPasswordValidator"
                                validatorMessage="#{bundle['profile.edit.message.password.validation']}"
-                               value="#{profilePageController.newPassword}"/>
+                               value="#{profilePageController.newPassword}"
+                               trim="false"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
                                for="newPasswordConfirmation" />
-                <ips:inputText id="newPasswordConfirmation"
+                <eye:inputText id="newPasswordConfirmation"
                                secret="true"
-                               value="#{profilePageController.newPasswordConfirmation}"/>
+                               value="#{profilePageController.newPasswordConfirmation}"
+                               trim="false"/>
               </h:panelGrid>
                <div style="margin:10px"></div>
               <eye:buttons>

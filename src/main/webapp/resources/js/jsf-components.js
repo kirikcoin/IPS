@@ -1,6 +1,6 @@
 
 /**
-  Jsf components 1.93
+  Jsf components 1.95
 
   Copyright (c) Eyeline Communications Inc.
 **/
@@ -2721,8 +2721,8 @@ function EyelineDataTableFilterComponent(filterId) {
     _setVisible(false);
     return this;
   };
-}function createDynamicTableComponent(tableId, columns) {
-  var dtable = new EyelineDynamicTableComponent(tableId, columns);
+}function createDynamicTableComponent(tableId, columns, dragRows) {
+  var dtable = new EyelineDynamicTableComponent(tableId, columns, dragRows);
   registerJsfComponent(tableId, dtable);
   return dtable;
 }
@@ -2775,10 +2775,9 @@ function TextColumn(columnId, columnClass, allowEditAfterAdd, allowEmpty, maxLen
       input.value = value;
       input.type = "hidden";
       newCell.appendChild(input);
-      var label = document.createElement("label");
-      label.innerHTML = value;
-      label.setAttribute("for", id);
-      newCell.appendChild(label);
+      var span = document.createElement("span");
+      span.innerHTML = value;
+      newCell.appendChild(span);
     } else {
       newCell.appendChild(createInput(id, value));
     }
@@ -2799,7 +2798,7 @@ function TextColumn(columnId, columnClass, allowEditAfterAdd, allowEmpty, maxLen
   this.getLastRowValue = function (tableId) {
     var id = tableId + "_newcell_" + columnId;
     return document.getElementById(id).value;
-  }
+  };
 
   this.clearLastRowValue = function (tableId) {
     var id = tableId + "_newcell_" + columnId;
@@ -2866,10 +2865,9 @@ function SelectColumn(columnId, values, columnClass, allowEditAfterAdd, uniqueVa
       input.value = value;
       input.type = "hidden";
       newCell.appendChild(input);
-      var label = document.createElement("label");
-      label.innerHTML = getLabelByValue(value, values);
-      label.setAttribute("for", id);
-      newCell.appendChild(label);
+      var span = document.createElement("span");
+      span.innerHTML = getLabelByValue(value, values);
+      newCell.appendChild(span);
     } else {
       newCell.appendChild(createSelect(id, value, values));
     }
@@ -2894,10 +2892,12 @@ function SelectColumn(columnId, values, columnClass, allowEditAfterAdd, uniqueVa
 
   this.removeColumnElement = function (tableId, rowNum) {
     if (uniqueValues) {
-      var value = document.getElementById(getValueElementId(tableId, rowNum)).value;
+      var selectId = getValueElementId(tableId, rowNum);
+      var select = document.getElementById(selectId);
+      var label = $('#' + selectId + ' option:selected').text();
       var lastColumnElement = document.getElementById(tableId + "_newcell_" + columnId);
       var options = lastColumnElement.options;
-      options[options.length] = new Option(value, value, false, false);
+      options[options.length] = new Option(label, select.value, false, false);
     }
   };
 
@@ -2922,9 +2922,15 @@ function SelectColumn(columnId, values, columnClass, allowEditAfterAdd, uniqueVa
  * @param tableId
  * @param columns
  */
-function EyelineDynamicTableComponent(tableId, columns) {
+function EyelineDynamicTableComponent(tableId, columns, dragRows) {
 
   var tableElem = document.getElementById(tableId);
+  var tbody = tableElem.getElementsByTagName('tbody')[0];
+  var tfoot = tableElem.getElementsByTagName('tfoot')[0];
+  if (tfoot === undefined) {
+    $('<tfoot>').appendTo(tableElem);
+    tfoot = tableElem.getElementsByTagName('tfoot')[0];
+  }
   var visibleEl = $(tableId + "_visible");
   var tableInstance = this;
 
@@ -2935,9 +2941,13 @@ function EyelineDynamicTableComponent(tableId, columns) {
   var init = function () {
     var newCount = tableElem.rows.length;
     // Create new row
-    var newRow = tableElem.insertRow(newCount);
+    var newRow = tfoot.insertRow(0);
     newRow.className = "eyeline_row" + (newCount & 1);
     newRow.id = tableId + "_newrow";
+
+    if(dragRows) {
+      newRow.insertCell(0);
+    }
 
     // Fill row
     for (var i = 0; i < columns.length; i++)
@@ -2995,11 +3005,16 @@ function EyelineDynamicTableComponent(tableId, columns) {
         return;
     }
 
-    var newCount = tableElem.rows.length;
+    var newCount = tbody.rows.length;
     // Create new row
-    var newRow = tableElem.insertRow(newCount - 1);
+    var newRow = tbody.insertRow(newCount);
     newRow.className = "eyeline_row" + (newCount & 1);
     newRow.id = tableId + "_row_" + newCount;
+
+    if(dragRows) {
+      var newCell = newRow.insertCell(0);
+      newCell.className = 'dragHandle';
+    }
 
     // Fill row
     for (var i = 0; i < columns.length; i++) {
@@ -3014,10 +3029,13 @@ function EyelineDynamicTableComponent(tableId, columns) {
 
     newRow.insertCell(newRow.cells.length).appendChild(image);
 
-    var lastRow = tableElem.rows[tableId + "_newrow"];
+    var lastRow = tfoot.rows[tableId + "_newrow"];
     lastRow.className = "eyeline_row" + ((newCount + 1) & 1);
     if(handler) {
       handler();
+    }
+    if(dragRows) {
+      initDragRows();
     }
   };
 
@@ -3041,6 +3059,30 @@ function EyelineDynamicTableComponent(tableId, columns) {
   };
 
   this.change = _change;
+
+  var initDragRows = function() {
+    $('#' + tableId + ' tbody').tableDnD({
+      dragHandle: ".dragHandle",
+      onDragClass: "dragRow",
+
+      onDrop: function(tbody, row) {
+        var count = 0;
+        $(tbody).find('tr').each(function() {
+          this.className = 'eyeline_row' + (count & 1);
+          $(this).find('td').children().each(function() {
+            var i = $(this);
+            var name = i.attr('name');
+            if(name != undefined) {
+              var _ind = name.indexOf('_', tableId.length + 1);
+              var newName = tableId + '_' + count + '_' + name.substring(_ind + 1);
+              i.attr('name', newName);
+            }
+          });
+          count++;
+        });
+      }
+    });
+  };
 
   init();
 

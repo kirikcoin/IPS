@@ -179,7 +179,7 @@ public abstract class BaseController implements Serializable {
                 .validator
     }
 
-    public static ResourceBundle getResourceBundle() {
+    static ResourceBundle getResourceBundle() {
         def context = FacesContext.currentInstance
         return context.application.getResourceBundle(context, "bundle")
     }

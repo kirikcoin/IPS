@@ -108,10 +108,19 @@ div[id$="segmentation"] {
   vertical-align: top;
 }
 
-table.table-narrow > thead > tr > td + td + td + td {
+table.table-narrow > tbody > tr > td + td + td + td + td {
   width: 5%;
 }
 
 td.colTerminal {
   width: 17%;
+}
+
+td.colTerminal > select {
+  width: 100%;
+  margin-left: 5px;
+}
+
+.eyeline_delbutton, .eyeline_addbutton {
+  margin-left: 10px;
 }

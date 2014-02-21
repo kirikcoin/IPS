@@ -5,9 +5,11 @@ import com.google.common.base.Predicates;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.util.Objects.equals;
 
 public class ListUtils {
 
@@ -35,7 +37,7 @@ public class ListUtils {
      * without element skipping.
      */
     public static <T> void moveUp(List<T> list, T elem) {
-        moveUp(list, elem, Predicates.<T>alwaysFalse());
+        moveUp(list, elem, ListUtils.<T>skipNothing());
     }
 
     /**
@@ -58,7 +60,7 @@ public class ListUtils {
      * without element skipping.
      */
     public static <T> void moveDown(List<T> list, T elem) {
-        moveDown(list, elem, Predicates.<T>alwaysFalse());
+        moveDown(list, elem, ListUtils.<T>skipNothing());
     }
 
     public static <T> boolean isFirst(List<T> list, T elem, Predicate<T> skip) {
@@ -71,6 +73,19 @@ public class ListUtils {
         }
 
         return true;
+    }
+
+    public static <T> void moveTo(List<T> list,
+                                  T elem,
+                                  int index,
+                                  Predicate<T> skip) {
+        final int actualIndex = safeIndexOf(list, elem, skip);
+
+        if (actualIndex > index) {
+            do moveDown(list, elem, skip);  while (safeIndexOf(list, elem, skip) > index);
+        } else if (actualIndex < index) {
+            do moveUp(list, elem, skip);    while (safeIndexOf(list, elem, skip) < index);
+        }
     }
 
     public static <T> boolean isLast(List<T> list, T elem, Predicate<T> skip) {
@@ -96,10 +111,22 @@ public class ListUtils {
     }
 
     private static <T> int safeIndexOf(List<T> list, T elem) {
-        final int idx = list.indexOf(elem);
-        if (idx < 0) {
-            throw new NoSuchElementException();
-        }
-        return idx;
+        return safeIndexOf(list, elem, ListUtils.<T>skipNothing());
     }
+
+    private static <T> int safeIndexOf(List<T> list, T elem, Predicate<T> skip) {
+        int idx = -1;
+        for (T t : list) {
+            if (skip.apply(t)) continue;
+
+            idx++;
+            if (elem == t) {
+                return idx;
+            }
+        }
+
+        throw new NoSuchElementException();
+    }
+
+    private static <T> Predicate<T> skipNothing() { return Predicates.alwaysFalse(); }
 }

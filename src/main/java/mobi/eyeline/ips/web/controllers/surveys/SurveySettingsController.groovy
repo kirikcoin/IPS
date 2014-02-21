@@ -199,9 +199,10 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     private void updateQuestionModel(Question persistedQuestion) {
-        def getId = { row -> row.getValue('id') as String }
-        def getAnswer = { row -> row.getValue('answer') as String }
+        def getId       = { row -> row.getValue('id') as String }
+        def getAnswer   = { row -> row.getValue('answer') as String }
         def getTerminal = { row -> (row.getValue('terminal') as String).toBoolean() }
+        def index       = { row -> questionOptions.rows.indexOf(row) }
 
         persistedQuestion.title = question.title
 
@@ -211,18 +212,20 @@ class SurveySettingsController extends BaseSurveyController {
                     .findAll { !it.empty }
                     .collect { it.toInteger() }
 
-            def deleted = persistedQuestion.options.findAll { !(it.id in retainedOptionIds) }
-            deleted.each { it.active = false }
+            persistedQuestion.options
+                    .findAll { !(it.id in retainedOptionIds) }
+                    .each { it.active = false }
         }
 
         def handleUpdated = {
-            persistedQuestion.options.each { option ->
-                def row = questionOptions.rows
+            persistedQuestion.activeOptions.each { option ->
+                questionOptions.rows
                         .findAll { !getId(it).empty }
                         .find { getId(it).toInteger() == option.id }
-                if (row != null) {
+                        .each { row ->
                     option.answer = getAnswer(row)
                     option.terminal = getTerminal(row)
+                    option.moveTo index(row)
                 }
             }
         }
@@ -230,15 +233,18 @@ class SurveySettingsController extends BaseSurveyController {
         def handleAdded = {
             questionOptions.rows
                     .findAll { getId(it).empty }
-                    .each {
-                persistedQuestion.options.add new QuestionOption(
-                        question: persistedQuestion, answer: getAnswer(it))
+                    .each { row ->
+                def option =
+                        new QuestionOption(question: persistedQuestion, answer: getAnswer(row))
+                persistedQuestion.options.add option
+                option.moveTo index(row)
             }
         }
 
         handleRemoved()
-        handleUpdated()
         handleAdded()
+        handleUpdated()
+        print persistedQuestion
     }
 
     static void goToSurvey(int surveyId) {
@@ -252,12 +258,12 @@ class SurveySettingsController extends BaseSurveyController {
 
         static final TerminalOption TRUE = new TerminalOption() {
             boolean getValue() { true }
-            String getLabel() { BaseController.getResourceBundle().getString("question.option.terminal.yes") }
+            String getLabel() { BaseController.resourceBundle.getString("question.option.terminal.yes") }
         }
 
         static final TerminalOption FALSE = new TerminalOption() {
             boolean getValue() { false }
-            String getLabel() { BaseController.getResourceBundle().getString("question.option.terminal.no") }
+            String getLabel() { BaseController.resourceBundle.getString("question.option.terminal.no") }
         }
 
         static TerminalOption forValue(boolean value) { value ? TRUE : FALSE }

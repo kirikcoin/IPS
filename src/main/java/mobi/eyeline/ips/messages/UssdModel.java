@@ -2,6 +2,9 @@ package mobi.eyeline.ips.messages;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 public class UssdModel {
 
@@ -9,9 +12,7 @@ public class UssdModel {
     private final List<UssdOption> options;
 
     public UssdModel(String text, List<? extends UssdOption> options) {
-        assert text != null;
-
-        this.text = text;
+        this.text = requireNonNull(text);
         this.options = Collections.unmodifiableList(options);
     }
 
