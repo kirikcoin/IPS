@@ -71,7 +71,6 @@ class UserServiceTest extends DbTestCase {
         user = userRepository.getByEmail("username@example.com")
         assertFalse user.password.equals("password".pw())
 
-
     }
 
     void testDeActivate() {

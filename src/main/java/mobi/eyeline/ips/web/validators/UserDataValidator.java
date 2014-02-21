@@ -9,9 +9,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class LoginPasswordValidator implements Validator {
+public class UserDataValidator implements Validator {
 
     public static final String LOGIN_PASSWORD_REGEXP = "^[A-Za-z0-9\\.\\-_]+$";
+    public static final String PHONE_NUMBER_REGEXP = "^[A-Za-z0-9\\.\\-_]+$";
 
     @Override
     public void validate(FacesContext context, UIComponent component, Object value)

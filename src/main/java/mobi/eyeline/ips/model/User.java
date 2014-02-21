@@ -1,6 +1,6 @@
 package mobi.eyeline.ips.model;
 
-import mobi.eyeline.ips.web.validators.LoginPasswordValidator;
+import mobi.eyeline.ips.web.validators.UserDataValidator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
@@ -39,7 +39,7 @@ public class User implements Serializable {
      */
     @Column(name = "users_name", nullable = false)
     @NotEmpty(message = "{profile.edit.message.validationErrorLoginEmpty}")
-    @Pattern(regexp = LoginPasswordValidator.LOGIN_PASSWORD_REGEXP,
+    @Pattern(regexp = UserDataValidator.LOGIN_PASSWORD_REGEXP,
             message = "{client.dialog.validation.loginerror}")
     private String login;
 
@@ -77,6 +77,9 @@ public class User implements Serializable {
     @Column(name = "blocked", columnDefinition = "BIT", nullable = false)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean blocked;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     public User() {
     }
@@ -143,6 +146,14 @@ public class User implements Serializable {
 
     public void setBlocked(boolean blocked) {
         this.blocked = blocked;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override
