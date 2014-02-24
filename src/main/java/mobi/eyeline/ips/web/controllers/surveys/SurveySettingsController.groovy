@@ -159,7 +159,7 @@ class SurveySettingsController extends BaseSurveyController {
         updateQuestionModel(persistedQuestion)
 
         boolean validationError = renderViolationMessage(
-                validator.validate(persistedQuestion))
+                validator.validate(persistedQuestion), getPropertyMap(persistedQuestion))
         if (validationError) {
             errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
@@ -175,6 +175,15 @@ class SurveySettingsController extends BaseSurveyController {
         }
 
         goToSurvey(surveyId)
+    }
+
+    private Map<String, String> getPropertyMap(Question q) {
+        new HashMap().with {
+            (0..q.options.size()).each {
+                put("options[${it}].answer".toString(), "questionOptions_${it}_answer".toString())
+            }
+            it
+        }
     }
 
     void onCancel() {

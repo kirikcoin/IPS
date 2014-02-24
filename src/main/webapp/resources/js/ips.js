@@ -30,7 +30,7 @@ var ips = new (function() {
      * @param {String} errorText текст сообщения об ошибке
      * @param {String} [elementId] опциональный идентификатор DOM-элемента, из-за которого произошла ошибка. К данному элементу будет применен стиль validationError
      */
-    this.error = function (errorText, elementId) {
+    this.error = function (errorText, elementId, skipMarker) {
       $(JSF_MESSAGES_ELEMENT_ID).hide();
 
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
@@ -39,11 +39,14 @@ var ips = new (function() {
       $ips_page_errors.show();
 
       if(elementId) {
-        var el = $byId(elementId);
+        var el = ips.$byId(elementId);
         el.addClass(VALIDATION_ERROR_CLASS);
-        var nextEl = el.next();
-        if(!nextEl.is('span.error'))
-          el.after('<span class="error" title="'+errorText+'"> (!)</span>');
+
+        if (!skipMarker) {
+          var nextEl = el.next();
+          if(!nextEl.is('span.error'))
+            el.after('<span class="error" title="'+errorText+'"> (!)</span>');
+        }
       }
     };
 

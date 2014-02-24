@@ -454,13 +454,14 @@
 
           <eye:dynamicTable id="questionOptions"
                             value="#{surveySettingsController.questionOptions}"
-                            tableClass="table-narrow  dtable"
+                            tableClass="table-narrow dtable"
                             dragRows="true">
             <eye:textColumn name="id"
                             allowEmpty="true"
                             columnClass="hidden"/>
             <eye:textColumn name="answer"
                             allowEditAfterAdd="true"
+                            allowEmpty="false"
                             title="#{bundle['question.option.label']}"/>
             <eye:selectColumn name="terminal"
                               values="#{surveySettingsController.terminalValues}"
@@ -474,6 +475,7 @@
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['survey.settings.question.modify.save']}"
+                             onclick="return page.onQuestionSave('#{bundle['question.option.answer.empty']}');"
                              action="#{surveySettingsController.saveQuestion}">
                 <f:param name="errorId" value="questionModificationDialog"/>
               </h:commandLink>

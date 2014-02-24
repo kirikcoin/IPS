@@ -38,7 +38,7 @@ public class QuestionOption implements Serializable {
      * Текст ответа.
      */
     @Column(name = "answer", columnDefinition = "TEXT", nullable = false)
-    @NotEmpty
+    @NotEmpty(message = "{question.option.answer.empty}")
     private String answer;
 
     /**

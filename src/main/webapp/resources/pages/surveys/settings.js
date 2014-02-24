@@ -104,6 +104,29 @@ var page = {
     jsfc('surveyPreviewDialog').show();
 
     return false;
+  },
+
+  onQuestionSave: function (errorMessage) {
+
+    var $inputs = $('[id^=questionModificationDialog]')
+        .find('input[id^=questionOptions][id$=answer][id!=questionOptions_newcell_answer]');
+
+    var isInputValid = function($e) { return $e.value.length };
+    var isFormValid = true;
+
+    $inputs
+        .filter(function (i) { return isInputValid(this) })
+        .each(function (i, e) { ips.message.hide(e.id); });
+
+
+    $inputs
+        .filter(function (i) { return !isInputValid(this) })
+        .each(function (i, e) {
+          ips.message.error(errorMessage, e.id, true);
+          isFormValid = false;
+        });
+
+    return isFormValid;
   }
 
 };
