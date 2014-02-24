@@ -116,11 +116,12 @@
           <h:panelGrid columns="2">
             <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
             <eye:inputText id="newSurveyTitle"
-                           value="#{surveyListController.newSurveyTitle}"/>
+                           value="#{surveyListController.newSurveyTitle}" maxlength="30"/>
 
             <h:outputLabel value="#{bundle['survey.properties.period.start']}" for="newSurveyStartDate"/>
             <eye:inputDate id="newSurveyStartDate"
                            inputTime="true"
+
                            value="#{surveyListController.newSurveyStartDate}"/>
 
             <h:outputLabel value="#{bundle['survey.properties.period.end']}" for="newSurveyEndDate"/>
