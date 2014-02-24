@@ -70,7 +70,7 @@ public class SurveyStats implements Serializable {
             @Parameter(name = "valueOfMethod", value= "fromName")
 
     })
-    private InvitationUpdateStatus updateStatus;
+    private InvitationUpdateStatus updateStatus = InvitationUpdateStatus.UNDEFINED;
 
 
     public SurveyStats() {
