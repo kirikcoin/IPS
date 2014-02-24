@@ -52,7 +52,7 @@ public class User implements Serializable {
     private String fullName;
 
     @Column(name = "email", nullable = false)
-    @Email(message = "{profile.edit.message.validationErrorEmail}" )
+    @Email(message = "{profile.edit.message.validationErrorEmail}")
     @NotEmpty(message = "{profile.edit.message.validationErrorEmailEmpty}" )
     private String email;
 

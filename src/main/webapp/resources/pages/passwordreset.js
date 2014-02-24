@@ -11,6 +11,17 @@ var page = {
         });
 
         $emailInput.focus();
-    }
 
+        var $cancelButton=$('cancelButton');
+        $cancelButton.click( function (){
+                ips.$byId('recoveryEmail').val("");
+            }
+        );
+    },
+
+    clearFormFields: function() {
+        ips.$byId('recoveryEmail').val();
+
+        return false
+    }
 };

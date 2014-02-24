@@ -22,4 +22,14 @@ public class EmailValidator implements Validator {
             throw new ValidatorException(new FacesMessage());
         }
     }
+
+    public static boolean validate(String email)
+            throws ValidatorException {
+
+        final org.hibernate.validator.internal.constraintvalidators.EmailValidator delegate =
+                new org.hibernate.validator.internal.constraintvalidators.EmailValidator();
+
+
+        return !(isEmpty(email) || !delegate.isValid(email, null));
+    }
 }

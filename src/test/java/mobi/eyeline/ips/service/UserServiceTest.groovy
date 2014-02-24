@@ -84,6 +84,7 @@ class UserServiceTest extends DbTestCase {
 
         userRepository.save(user)
         userService.deActivate(user)
+        user = userRepository.getByLogin("user")
         assertTrue(user.blocked)
     }
 
@@ -98,6 +99,7 @@ class UserServiceTest extends DbTestCase {
 
         userRepository.save(user)
         userService.activate(user)
+        user = userRepository.getByLogin("user")
         assertFalse(user.blocked)
     }
 
@@ -141,7 +143,7 @@ class UserServiceTest extends DbTestCase {
 
     void testCheckPassword() {
         User user =  new User(
-                login: "user1",
+                login: "user",
                 password: "password".pw(),
                 email: "username1@example.com",
                 fullName: "John Doe1",
@@ -149,7 +151,7 @@ class UserServiceTest extends DbTestCase {
                 role: Role.CLIENT)
 
         userRepository.save(user)
-
+        user = userRepository.getByLogin("user")
         assertTrue(userService.checkPassword(user,"password"))
         assertFalse(userService.checkPassword(user,"wrongPassword"))
 

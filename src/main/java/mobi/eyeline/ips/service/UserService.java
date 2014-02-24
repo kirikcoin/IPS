@@ -7,6 +7,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import static mobi.eyeline.ips.util.HashUtils.hashPassword;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 
 public class UserService {
@@ -19,6 +20,7 @@ public class UserService {
     }
 
     public void resetPassword(String email) throws LoginException {
+      //  if (isEmpty(email)) throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
         final User user = userRepository.getByEmail(email);
         if (user == null || user.isBlocked()) {
             throw new LoginException(LoginException.LoginErrorKind.NotFoundUser);
