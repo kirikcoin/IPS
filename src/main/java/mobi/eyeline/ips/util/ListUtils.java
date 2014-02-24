@@ -120,7 +120,7 @@ public class ListUtils {
             if (skip.apply(t)) continue;
 
             idx++;
-            if (elem == t) {
+            if (elem.equals(t)) {
                 return idx;
             }
         }

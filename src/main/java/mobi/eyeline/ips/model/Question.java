@@ -191,26 +191,20 @@ public class Question implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Question)) return false;
 
         Question question = (Question) o;
 
-        if (survey != null ? !survey.equals(question.survey) : question.survey != null)
-            return false;
-        if (title != null ? !title.equals(question.title) : question.title != null) return false;
+        return !(id != null ? !id.equals(question.id) : question.id != null);
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        int result = survey != null ? survey.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        return result;
+        return id != null ? id.hashCode() : 0;
     }
 
-
-    //
+//
     //
     //
 
