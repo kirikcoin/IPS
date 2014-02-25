@@ -46,7 +46,7 @@ class SurveyStatsController extends BaseSurveyController {
         def createOptionsRatio = { Question q ->
             new PieChart(
                     id: "optionsRatio_${q.id}",
-                    width: 500,
+                    width: 490,
                     height: 500,
                     pie: getOptionsRatioModel(q)
             ).with {
@@ -83,7 +83,7 @@ class SurveyStatsController extends BaseSurveyController {
         def createResponseChart = { Question q ->
             new BarChart(
                     id:         "responseRatio_${q.id}",
-                    width:      500,
+                    width:      490,
                     height:     200,
                     bars:       getResponseRatioModel(q),
                     intValues:  true,
