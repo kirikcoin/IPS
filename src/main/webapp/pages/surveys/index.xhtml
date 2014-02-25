@@ -111,7 +111,7 @@
                          rendered="#{userSession.surveyModificationAllowed}"/>
         </h:panelGroup>
 
-        <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="620">
+        <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="630">
 
           <h:panelGrid columns="2">
             <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
@@ -124,7 +124,7 @@
               <eye:inputDate id="newSurveyStartDate"
                              inputTime="true"
                              value="#{surveyListController.newSurveyStartDate}"/>
-              <h:outputText style="text-align: center;" value="---"/>
+              <h:outputText style="margin-right: 10px;" value="---"/>
               <eye:inputDate id="newSurveyEndDate"
                              inputTime="true"
                              value="#{surveyListController.newSurveyEndDate}"/>
