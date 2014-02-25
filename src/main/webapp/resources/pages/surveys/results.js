@@ -335,12 +335,16 @@ function EyelineDataTableComponent(tableId, tableOptions) {
       var openedAll = true;
       var expanded = $("[id*='" + tableId + "_rowExpand_']");
 
-      $.each(expanded, function(idx, expand) {
-        var rowId = expand.getAttribute("id").substring((tableId + "_rowExpand_").length);
-        if(!_isRowOpened(rowId)) {
-          openedAll = false;
-        }
-      });
+      if (expanded.length) {
+        $.each(expanded, function(idx, expand) {
+          var rowId = expand.getAttribute("id").substring((tableId + "_rowExpand_").length);
+          if(!_isRowOpened(rowId)) {
+            openedAll = false;
+          }
+        });
+      } else {
+        openedAll = false;
+      }
 
       if(openedAll) {
         toggleButton.open();
