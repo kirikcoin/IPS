@@ -1,5 +1,8 @@
 @import "functions.less";
 
+@buttonHeight: 41px;
+
+
 // ОБЩИЕ СТИЛИ ---------------------------------------------------------------------------------------------------------
 
 html {
@@ -281,7 +284,7 @@ table.table-narrow {
 
   .button-green {
     background: url(../images/green-active.png) repeat-x center;
-    height: 41px;
+    height: @buttonHeight;
     .button;
   }
 
@@ -428,3 +431,8 @@ input.eyeline_inputText_component, select {
   -moz-box-sizing: content-box;
   -webkit-box-sizing: content-box;
 }*/
+
+
+td.eyeline_button {
+  height: @buttonHeight;  // FF compatibility.
+}
