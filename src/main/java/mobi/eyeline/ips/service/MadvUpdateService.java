@@ -6,8 +6,10 @@ import mobi.eyeline.ips.external.madv.CampaignsSoapImpl;
 import mobi.eyeline.ips.external.madv.DeliveryInfo;
 import mobi.eyeline.ips.model.InvitationUpdateStatus;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.model.SurveyStats;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.SurveyRepository;
+import mobi.eyeline.ips.repository.SurveyStatsRepository;
 import mobi.eyeline.ips.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,23 +78,13 @@ public class MadvUpdateService {
     //
 
     private static abstract class BaseUpdateTask extends TimerTask {
-        protected final SurveyRepository surveyRepository =
-                Services.instance().getSurveyRepository();
+        protected final SurveyStatsRepository surveyStatsRepository =
+                Services.instance().getSurveyStatsRepository();
 
         private final Config config;
 
         protected BaseUpdateTask(Config config) {
             this.config = config;
-        }
-
-        private void updateStats(Survey survey,
-                                 InvitationUpdateStatus state,
-                                 int count) {
-
-            survey.getStatistics().setUpdateStatus(state);
-            survey.getStatistics().setSentCount(count);
-            survey.getStatistics().setLastUpdate(new Date());
-            surveyRepository.update(survey);
         }
 
         protected void tryUpdate(Survey survey) {
@@ -115,7 +107,7 @@ public class MadvUpdateService {
                         config.getMadvUserLogin(),
                         config.getMadvUserPassword());
 
-                final int count = countImpressions(campaignId, api);
+                final int count = countViews(campaignId, api);
                 updateStats(survey, SUCCESSFUL, count);
 
             } catch (ServiceException | SOAPException | MalformedURLException e) {
@@ -132,7 +124,19 @@ public class MadvUpdateService {
             }
         }
 
-        private int countImpressions(int campaignId, CampaignsSoapImpl api)
+        private void updateStats(Survey survey,
+                                 InvitationUpdateStatus state,
+                                 int count) {
+
+            final SurveyStats stats = survey.getStatistics();
+
+            stats.setUpdateStatus(state);
+            stats.setSentCount(count);
+            stats.setLastUpdate(new Date());
+            surveyStatsRepository.update(stats);
+        }
+
+        private int countViews(int campaignId, CampaignsSoapImpl api)
                 throws RemoteException {
             int count = 0;
 
