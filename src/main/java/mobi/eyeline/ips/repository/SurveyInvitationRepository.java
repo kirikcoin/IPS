@@ -27,7 +27,7 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
                                        boolean orderAsc,
                                        int limit,
                                        int offset) {
-        final Session session = getSessionFactory().openSession();
+        final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(SurveyInvitation.class);
 
         criteria.add(Restrictions.eq("survey", survey));

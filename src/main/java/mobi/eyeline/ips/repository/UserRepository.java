@@ -101,7 +101,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
                            boolean orderAsc,
                            int limit,
                            int offset) {
-        final Session session = getSessionFactory().openSession();
+        final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(User.class);
 
         if (isNotBlank(filter)) {
