@@ -111,23 +111,27 @@
                          rendered="#{userSession.surveyModificationAllowed}"/>
         </h:panelGroup>
 
-        <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="400">
+        <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="620">
 
           <h:panelGrid columns="2">
             <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
             <eye:inputText id="newSurveyTitle"
                            value="#{surveyListController.newSurveyTitle}" maxlength="30"/>
 
-            <h:outputLabel value="#{bundle['survey.properties.period.start']}" for="newSurveyStartDate"/>
-            <eye:inputDate id="newSurveyStartDate"
-                           inputTime="true"
+            <h:outputLabel value="#{bundle['survey.properties.period']}" for="newSurveyStartDate"/>
 
-                           value="#{surveyListController.newSurveyStartDate}"/>
+            <h:panelGrid columns="3">
+              <eye:inputDate id="newSurveyStartDate"
+                             inputTime="true"
+                             value="#{surveyListController.newSurveyStartDate}"/>
+              <h:outputText style="text-align: center;" value="---"/>
+              <eye:inputDate id="newSurveyEndDate"
+                             inputTime="true"
+                             value="#{surveyListController.newSurveyEndDate}"/>
+            </h:panelGrid>
 
-            <h:outputLabel value="#{bundle['survey.properties.period.end']}" for="newSurveyEndDate"/>
-            <eye:inputDate id="newSurveyEndDate"
-                           inputTime="true"
-                           value="#{surveyListController.newSurveyEndDate}"/>
+
+
 
             <h:outputLabel value="#{bundle['survey.properties.client']}" for="clients"/>
             <h:selectOneMenu id="clients" value="#{surveyListController.newSurveyClientId}">
