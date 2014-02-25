@@ -163,6 +163,7 @@
                     <h:outputLabel value="#{bundle['survey.properties.title']}"
                                    for="newSurveyTitle"/>
                     <eye:inputText id="newSurveyTitle"
+                                   maxlength="70"
                                    value="#{surveySettingsController.survey.details.title}"/>
 
                     <h:outputLabel value="#{bundle['survey.properties.period.start']}"
@@ -188,6 +189,7 @@
                     <h:outputLabel value="#{bundle['survey.list.table.access.number']}:"
                                    for="newAccessNumber"/>
                     <eye:inputText id="newAccessNumber"
+                                   maxlength="70"
                                    value="#{surveySettingsController.survey.statistics.accessNumber}"/>
                   </h:panelGrid>
 
@@ -356,6 +358,7 @@
                 <h:panelGroup id="endMessageDialog" style="display: none">
                   <h:panelGrid columns="1">
                     <eye:inputText id="endText"
+                                   maxlength="70"
                                    value="#{surveySettingsController.survey.details.endText}"
                                    styleClass="endTextInput"/>
                   </h:panelGrid>
@@ -448,6 +451,7 @@
                          for="title"/>
           <eye:inputText id="title"
                          rows="2"
+                         maxlength="70"
                          value="#{surveySettingsController.question.title}"/>
 
           <br/>
@@ -462,6 +466,7 @@
             <eye:textColumn name="answer"
                             allowEditAfterAdd="true"
                             allowEmpty="false"
+                            maxLength="70"
                             title="#{bundle['question.option.label']}"/>
             <eye:selectColumn name="terminal"
                               values="#{surveySettingsController.terminalValues}"

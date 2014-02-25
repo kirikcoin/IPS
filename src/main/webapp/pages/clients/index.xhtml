@@ -25,9 +25,10 @@
             jsfc('clientSettingsDialog').show();
           }
 
-          if ("#{clientListController.passwordResetError}" == "true") {
+          var passwordResetError = "#{clientListController.passwordResetError}";
+          if (passwordResetError == "true") {
             ips.message.error("#{bundle['client.dialog.passwordreset.error']}");
-          }  else if ("#{clientListController.passwordResetError}" == "false") {
+          } else if (passwordResetError == "false") {
             ips.message.info("#{bundle['client.dialog.passwordreset.success']}");
           }
 
@@ -74,7 +75,7 @@
                          pageSize="50"
                          tableClass="grid">
             <f:facet name="ifEmpty">
-              <h:outputText value="Нет элементов"/>
+              <h:outputText value="#{bundle['client.list.table.empty']}"/>
             </f:facet>
             <eye:row>
               <eye:column name="fullName" title="#{bundle['client.list.table.fullname']}"
@@ -119,18 +120,28 @@
 
                 <h:outputText value=" ("/>
                 <h:commandLink value="#{bundle['client.list.table.status.active.block']}"
-                               onclick="return page.showBlockDialog('#{row.id}', '#{row.login}', '#{row.fullName}');"
+                               onclick="return page.showBlockDialog(
+                               '#{row.id}',
+                               '#{row.login}',
+                               '#{row.fullName}');"
                                rendered="#{row.blocked == false}">
                 </h:commandLink>
 
                 <h:commandLink value="#{bundle['client.list.table.status.blocked.unblock']}"
-                               onclick="return page.showUnblockDialog('#{row.id}', '#{row.login}', '#{row.fullName}');"
+                               onclick="return page.showUnblockDialog(
+                               '#{row.id}',
+                               '#{row.login}',
+                               '#{row.fullName}');"
                                rendered="#{row.blocked == true}">
                 </h:commandLink>
                 <h:outputText value=" | "
                               rendered="#{row.blocked == false}"/>
                 <h:commandLink value="#{bundle['client.list.table.status.resetpassword']}"
-                               onclick="return page.showPasswordResetDialog('#{row.id}', '#{row.email}','#{row.login}', '#{row.fullName}');"
+                               onclick="return page.showPasswordResetDialog(
+                               '#{row.id}',
+                               '#{row.email}',
+                               '#{row.login}',
+                               '#{row.fullName}');"
                                rendered="#{row.blocked == false}"/>
                 <h:outputText value=")"/>
               </eye:column>
@@ -148,8 +159,6 @@
                          onclick="return page.showSettingsDialogForCreate();"/>
         </h:panelGroup>
 
-
-
         <eye:dialog id="clientSettingsDialog"
                     title="#{bundle['client.dialog.settings.title']}"
                     width="400">
@@ -158,21 +167,25 @@
             <h:outputLabel value="#{bundle['client.dialog.settings.field.fullname']}"
                            for="clientSettingsFullName"/>
             <eye:inputText id="clientSettingsFullName"
+                           maxlength="70"
                            value="#{clientListController.userForEdit.fullName}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.settings.field.company']}"
                            for="clientSettingsCompany"/>
             <eye:inputText id="clientSettingsCompany"
+                           maxlength="70"
                            value="#{clientListController.userForEdit.company}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.settings.field.login']}"
                            for="clientSettingsLogin"/>
             <eye:inputText id="clientSettingsLogin"
+                           maxlength="70"
                            value="#{clientListController.userForEdit.login}"/>
 
             <h:outputLabel value="#{bundle['client.dialog.settings.field.email']}"
                            for="clientSettingsEmail"/>
             <eye:inputText id="clientSettingsEmail"
+                           maxlength="70"
                            value="#{clientListController.userForEdit.email}"/>
           </h:panelGrid>
 

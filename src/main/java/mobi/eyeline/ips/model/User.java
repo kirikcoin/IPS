@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import mobi.eyeline.ips.validation.MaxSize;
 import mobi.eyeline.ips.web.validators.LoginPasswordValidator;
 import mobi.eyeline.ips.web.validators.PhoneValidator;
 import org.hibernate.annotations.Parameter;
@@ -42,6 +43,7 @@ public class User implements Serializable {
     @NotEmpty(message = "{profile.edit.message.validationErrorLoginEmpty}")
     @Pattern(regexp = LoginPasswordValidator.LOGIN_PASSWORD_REGEXP,
             message = "{client.dialog.validation.loginerror}")
+    @MaxSize(70)
     private String login;
 
     /**
@@ -49,17 +51,20 @@ public class User implements Serializable {
      */
     @Column(name = "full_name", nullable = false)
     @NotEmpty(message = "{profile.edit.message.validationErrorFullNameEmpty}")
+    @MaxSize(70)
     private String fullName;
 
     @Column(name = "email", nullable = false)
     @Email(message = "{profile.edit.message.validationErrorEmail}")
     @NotEmpty(message = "{profile.edit.message.validationErrorEmailEmpty}" )
+    @MaxSize(70)
     private String email;
 
     /**
      * Компания (юридическое лицо и т.п.). Опционально.
      */
     @Column(name = "company")
+    @MaxSize(70)
     private String company;
 
     @Column(name = "role", nullable = false, columnDefinition = "VARCHAR(255)")

@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import mobi.eyeline.ips.validation.MaxSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -25,6 +26,7 @@ public class SurveyDetails implements Serializable {
      */
     @Column(name = "title", columnDefinition = "varchar(200)", nullable = false)
     @NotEmpty(message = "{survey.validation.title.empty}")
+    @MaxSize(70)
     private String title;
 
     /**
@@ -37,6 +39,7 @@ public class SurveyDetails implements Serializable {
      * Сообщение, отображаемое про завершении опроса - после ответа на последний вопрос.
      */
     @Column(name = "end_text", columnDefinition = "TEXT")
+    @MaxSize(70)
     private String endText;
 
     @Id

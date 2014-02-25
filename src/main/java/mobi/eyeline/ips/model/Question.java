@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import mobi.eyeline.ips.service.SegmentationService;
 import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.util.ListUtils;
+import mobi.eyeline.ips.validation.MaxSize;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Proxy;
@@ -51,6 +52,7 @@ public class Question implements Serializable {
      */
     @Column(name = "title", nullable = false)
     @NotEmpty(message = "{question.validation.title.empty}")
+    @MaxSize(70)
     private String title;
 
     /**

@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import mobi.eyeline.ips.validation.MaxSize;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
@@ -14,6 +15,7 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -55,10 +57,13 @@ public class SurveyStats implements Serializable {
      * C2S/USSD-номер опроса.
      */
     @Column(name = "accessNumber")
+    @MaxSize(70)
+    @Pattern(regexp = "[0-9 \\-\\.\\+\\*#]*",
+            message = "{survey.validation.access.number.invalid}")
     private String accessNumber;
 
     /**
-     * Дата последнего обновления количества показов(поля sent)
+     * Дата последнего обновления количества показов (поля sent).
      */
     @Column(name = "last_update")
     private Date lastUpdate;
