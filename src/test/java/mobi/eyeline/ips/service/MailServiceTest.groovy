@@ -24,9 +24,11 @@ class MailServiceTest extends GroovyTestCase {
             super(properties)
         }
 
-        String formatUserRegistration(User u, String s) { fail() }
-        String formatUserDeactivation(User u) { fail() }
-        String formatPasswordRestore(User u, String s) { fail() }
+        String formatUserRegistration(User user, String rawPassword) { fail() }
+        String formatUserModified(User user) { fail() }
+        String formatUserDeactivation(User user) { fail() }
+        String formatUserActivation(User user) { fail() }
+        String formatPasswordRestore(User user, String rawNewPassword) { fail() }
     }
 
     void setUp() {
@@ -60,6 +62,24 @@ class MailServiceTest extends GroovyTestCase {
                 .sendUserRegistration(user, "pw\$!jFo22/=")
     }
 
+    void testSendUserModified1() {
+        def templateService = new StubTemplateService(config) {
+            String formatUserModified(User user) { "" }
+        }
+
+        new MailService(templateService, senderProxy)
+                .sendUserModified(user)
+    }
+
+    void testSendUserModified2() {
+        def templateService = new StubTemplateService(config) {
+            String formatUserModified(User user) { "" }
+        }
+
+        new MailService(templateService, senderProxy)
+                .sendUserModified(user, 'old@example.com')
+    }
+
     void testSendUserDeactivation() {
         def templateService = new StubTemplateService(config) {
             String formatUserDeactivation(User u) { "" }
@@ -67,6 +87,15 @@ class MailServiceTest extends GroovyTestCase {
 
         new MailService(templateService, senderProxy)
                 .sendUserDeactivation(user)
+    }
+
+    void testSendUserActivation() {
+        def templateService = new StubTemplateService(config) {
+            String formatUserActivation(User user) { "" }
+        }
+
+        new MailService(templateService, senderProxy)
+                .sendUserActivation(user)
     }
 
     void testSendPasswordRestore() {

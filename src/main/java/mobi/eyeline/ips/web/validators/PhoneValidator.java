@@ -7,7 +7,7 @@ public class PhoneValidator{
 
     public static final String PHONE_REGEXP = "^[1-9]\\d{10,}+$";
 
-    private static final Pattern PHONE_PATTERN = Pattern.compile(PHONE_REGEXP);
+    private final Pattern pattern = Pattern.compile(PHONE_REGEXP);
 
     /**
      * @return {@code true} iff considered valid.
@@ -17,7 +17,7 @@ public class PhoneValidator{
             return false;
         }
 
-        final Matcher matcher = PHONE_PATTERN.matcher(phoneNumber);
+        final Matcher matcher = pattern.matcher(phoneNumber);
         return matcher.matches();
     }
 }

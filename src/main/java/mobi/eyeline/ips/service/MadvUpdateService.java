@@ -10,7 +10,7 @@ import mobi.eyeline.ips.model.SurveyStats;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import mobi.eyeline.ips.repository.SurveyStatsRepository;
-import mobi.eyeline.ips.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +91,7 @@ public class MadvUpdateService {
             final String campaign = survey.getStatistics().getCampaign();
 
             logger.debug("Updating: survey = [" + survey + "], campaign = [" + campaign + "]");
-            if (isNotEmpty(campaign) && StringUtils.isInteger(campaign)) {
+            if (isNotEmpty(campaign) && StringUtils.isNumeric(campaign)) {
                 try {
                     update(survey, Integer.parseInt(campaign));
                 } catch (Exception e) {

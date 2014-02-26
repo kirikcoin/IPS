@@ -3,7 +3,7 @@ package mobi.eyeline.ips.repository;
 import mobi.eyeline.ips.model.Role;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
-import mobi.eyeline.ips.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -77,7 +77,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
             final List<Criterion> filters = new ArrayList<>();
 
-            if (StringUtils.isInteger(filter)) {
+            if (StringUtils.isNumeric(filter)) {
                 filters.add(eq("id", Integer.parseInt(filter)));
             }
             filters.add(ilike("details.title", filter, MatchMode.ANYWHERE));
@@ -141,7 +141,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
             final List<Criterion> filters = new ArrayList<>();
 
-            if (StringUtils.isInteger(filter)) {
+            if (StringUtils.isNumeric(filter)) {
                 filters.add(eq("id", Integer.parseInt(filter)));
             }
 

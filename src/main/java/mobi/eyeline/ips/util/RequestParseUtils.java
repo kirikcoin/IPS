@@ -4,6 +4,7 @@ import mobi.eyeline.ips.messages.MissingParameterException;
 import org.apache.commons.lang3.BooleanUtils;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -37,25 +38,28 @@ public class RequestParseUtils {
     public static String getString(Map<String, String[]> map, String key)
             throws MissingParameterException {
 
-        final String value = map.get(key)[0];
-        if (value == null) {
-            throw new MissingParameterException(key);
+        final String[] values = map.get(key);
+        if ((values != null) && (values.length > 0) && (values[0] != null)) {
+            return values[0];
         }
 
-        return value;
+        throw new MissingParameterException(key);
     }
 
     public static String toString(Map<String, String[]> map) {
         final StringBuilder result = new StringBuilder();
 
         result.append("{");
-        for (Map.Entry<String, String[]> entry : map.entrySet()) {
+        for (Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator(); iterator.hasNext(); ) {
+            final Map.Entry<String, String[]> entry = iterator.next();
             result
                     .append("\"")
                     .append(entry.getKey())
                     .append("\"=")
-                    .append(Arrays.toString(entry.getValue()))
-                    .append(", ");
+                    .append(Arrays.toString(entry.getValue()));
+            if (iterator.hasNext()) {
+                result.append(", ");
+            }
         }
         result.append("}");
 

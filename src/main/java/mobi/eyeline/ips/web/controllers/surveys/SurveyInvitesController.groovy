@@ -5,9 +5,9 @@ import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.service.MadvUpdateService
 import mobi.eyeline.ips.service.Services
-import mobi.eyeline.ips.util.StringUtils
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -93,7 +93,7 @@ class SurveyInvitesController extends BaseSurveyController {
     }
 
     void onMadvEditSave() {
-        if (StringUtils.isInteger(madvId)) {
+        if (StringUtils.isNumeric(madvId)) {
             survey.statistics.with {
                 campaign = madvId
                 sentCount = 0
