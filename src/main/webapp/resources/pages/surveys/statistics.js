@@ -111,7 +111,7 @@ function BarChart(contentId, updatePeriod, options) {
           do {
             t++;
             ticks[t] = minP+(t*interval);
-          }while(ticks[t]<maxP);
+          }while(ticks[t]<=maxP);
         }else {
           ticks[0] = minP;
         }
@@ -186,6 +186,11 @@ function BarChart(contentId, updatePeriod, options) {
             fillToZero: true,
             barDirection: horizontal ? 'horizontal' : 'vertical',
             barWidth: horizontal ? 25 : 70
+          },
+          pointLabels: {
+            show: true,
+            location: horizontal ? 'e' : 'n',
+            edgeTolerance: -15
           }
         },
         axes:{
@@ -218,7 +223,7 @@ function BarChart(contentId, updatePeriod, options) {
                       )
         },
         highlighter: {
-          show: true,
+          show: false,
           tooltipAxes : horizontal ? "x" : "y",
           tooltipFormatString: '%s',
           useAxesFormatters: false
