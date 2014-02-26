@@ -414,25 +414,29 @@ table.dtable tr.dragRow {
   border: none;
 }
 
-/*
-.eyeline_inputDate > input.hasDatepicker {
-  height: 20px
-}
-
-.eyeline_inputDate > .ui-datepicker-trigger {
-  height: 22px;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-input.eyeline_inputText_component, select {
-  box-sizing: content-box !important;
-  -ms-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  -webkit-box-sizing: content-box;
-}*/
-
-
 td.eyeline_button {
   height: @buttonHeight;  // FF compatibility.
 }
+
+
+div.eyeline_inputDate {
+  font-size: 1em;
+  border-radius: 1em;
+  font-family: sans-serif;
+
+  input.hasDatepicker, button.ui-datepicker-trigger {
+    font-size: inherit;
+    height: 16px;
+    padding: 1px;
+    margin: 0.1em 0.2em;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+  }
+
+  button.ui-datepicker-trigger {
+    vertical-align: top;
+    width: 20px;
+  }
+}
+
