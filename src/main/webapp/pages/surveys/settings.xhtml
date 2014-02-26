@@ -163,7 +163,7 @@
                     <h:outputLabel value="#{bundle['survey.properties.title']}"
                                    for="newSurveyTitle"/>
                     <eye:inputText id="newSurveyTitle"
-                                   maxlength="30"
+                                   maxlength="70"
                                    value="#{surveySettingsController.survey.details.title}"/>
 
                     <h:outputLabel value="#{bundle['survey.properties.period']}" for="newSurveyStartDate"/>
@@ -176,8 +176,6 @@
                                      inputTime="true"
                                      value="#{surveySettingsController.survey.endDate}"/>
                     </h:panelGrid>
-
-
 
                     <h:outputLabel value="#{bundle['survey.properties.client']}"
                                    for="clients"/>

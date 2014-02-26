@@ -24,7 +24,7 @@ public class SurveyDetails implements Serializable {
     /**
      * Название опроса.
      */
-    @Column(name = "title", columnDefinition = "varchar(200)",length = 30, nullable = false)
+    @Column(name = "title", columnDefinition = "varchar(200)", nullable = false)
     @NotEmpty(message = "{survey.validation.title.empty}")
     @MaxSize(70)
     private String title;

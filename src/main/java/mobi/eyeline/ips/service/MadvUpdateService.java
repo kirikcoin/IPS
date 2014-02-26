@@ -45,7 +45,7 @@ public class MadvUpdateService {
                 throw new AssertionError("Update service already started");
             }
 
-            timer = new Timer("smaq-update");
+            timer = new Timer("madv-update");
             // Schedule the task for immediate execution.
             final long delayMillis =
                     TimeUnit.MINUTES.toMillis(config.getMadvUpdateDelayMinutes());

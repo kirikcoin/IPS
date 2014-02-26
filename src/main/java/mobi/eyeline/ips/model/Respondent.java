@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -18,7 +19,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "respondents")
-public class Respondent {
+public class Respondent implements Serializable {
 
     @Id
     @Column(name = "id")
