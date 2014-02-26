@@ -20,9 +20,9 @@
 
     <!-- Shared test DB. -->
 
-    <!--<param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8</param>-->
-    <!--<param name="hibernate.connection.username" type="string">user</param>-->
-    <!--<param name="hibernate.connection.password" type="string">password</param>-->
+    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8</param>
+    <param name="hibernate.connection.username" type="string">user</param>
+    <param name="hibernate.connection.password" type="string">password</param>
 
     <!-- Local DB. -->
 
@@ -31,11 +31,11 @@
     <!--<param name="hibernate.connection.password" type="string">ips</param>-->
 
     <!-- Nedenzel local DB. -->
-    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/my_ips?useUnicode=true&amp;characterEncoding=UTF-8</param>
-    <param name="hibernate.connection.username" type="string">root</param>
-    <param name="hibernate.connection.password" type="string">root</param>
+    <!--<param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/my_ips?useUnicode=true&amp;characterEncoding=UTF-8</param>-->
+    <!--<param name="hibernate.connection.username" type="string">root</param>-->
+    <!--<param name="hibernate.connection.password" type="string">root</param>-->
 
-    <!-- Pool settings. -->
+    <!--&lt;!&ndash; Pool settings. &ndash;&gt;-->
 
     <property name="hibernate.c3p0.timeout">300</property>
     <property name="hibernate.c3p0.max_statements">50</property>
