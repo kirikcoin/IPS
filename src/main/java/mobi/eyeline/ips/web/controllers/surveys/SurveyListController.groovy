@@ -80,13 +80,33 @@ class SurveyListController extends BaseController {
     }
 
     void createSurvey() {
-        if (newSurveyClientId == null) {
-            addErrorMessage(
-                    resourceBundle.getString('survey.validation.client.empty'),
-                    'clients')
-            newSurveyValidationError = true
-            return
+
+        def checkClientIdUnset = {
+            if (newSurveyClientId == null) {
+                addErrorMessage(
+                        resourceBundle.getString('survey.validation.client.empty'),
+                        'clients')
+                return true
+            }
+            return false
         }
+
+        def checkStartInTheFuture = {
+            if (newSurveyStartDate != null && newSurveyStartDate.before(new Date())) {
+                addErrorMessage(
+                        resourceBundle.getString('survey.validation.start.date.future'),
+                        'newSurveyStartDate')
+                return true
+            }
+            return false
+        }
+
+        newSurveyValidationError = checkClientIdUnset()
+        if (newSurveyValidationError) {
+            return  // Can't check further
+        }
+
+        newSurveyValidationError |= checkStartInTheFuture()
 
         def survey = new Survey(
                 startDate: newSurveyStartDate,
@@ -96,7 +116,7 @@ class SurveyListController extends BaseController {
         survey.details = new SurveyDetails(survey: survey, title: newSurveyTitle)
         survey.statistics = new SurveyStats(survey: survey)
 
-        newSurveyValidationError = renderViolationMessage(
+        newSurveyValidationError |= renderViolationMessage(
                 validator.validate(survey),
                 [
                         'details.title': 'newSurveyTitle',

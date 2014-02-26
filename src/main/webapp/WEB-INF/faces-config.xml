@@ -40,6 +40,12 @@
   </managed-bean>
 
   <managed-bean>
+    <managed-bean-name>dateController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.DateController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
     <managed-bean-name>login</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.login.LoginPageController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>

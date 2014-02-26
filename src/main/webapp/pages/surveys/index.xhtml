@@ -123,6 +123,7 @@
             <h:panelGrid id="dates" columns="3" cellpadding="0" >
               <eye:inputDate id="newSurveyStartDate"
                              inputTime="true"
+                             minDate="#{dateController.now}"
                              value="#{surveyListController.newSurveyStartDate}"/>
               <h:outputText style="margin:0 10px 0 0;" value=" — "/>
               <eye:inputDate id="newSurveyEndDate"
