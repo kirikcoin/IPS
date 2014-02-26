@@ -37,7 +37,7 @@ class SurveyListController extends BaseController {
     Date newSurveyStartDate = new Date().plus(1).clearTime()
     Date newSurveyEndDate = newSurveyStartDate.plus(7)
 
-    int newSurveyClientId
+    Integer newSurveyClientId
 
     boolean newSurveyValidationError = false
 
@@ -80,6 +80,13 @@ class SurveyListController extends BaseController {
     }
 
     void createSurvey() {
+        if (newSurveyClientId == null) {
+            addErrorMessage(
+                    resourceBundle.getString('survey.validation.client.empty'),
+                    'clients')
+            newSurveyValidationError = true
+            return
+        }
 
         def survey = new Survey(
                 startDate: newSurveyStartDate,
