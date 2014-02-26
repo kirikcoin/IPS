@@ -26,9 +26,14 @@
 
     <!-- Local DB. -->
 
-    <param name="hibernate.connection.url" type="string">jdbc:mysql://192.168.3.209/ips?useUnicode=true&amp;characterEncoding=UTF-8</param>
-    <param name="hibernate.connection.username" type="string">ips</param>
-    <param name="hibernate.connection.password" type="string">ips</param>
+    <!--<param name="hibernate.connection.url" type="string">jdbc:mysql://192.168.3.209/ips?useUnicode=true&amp;characterEncoding=UTF-8</param>-->
+    <!--<param name="hibernate.connection.username" type="string">ips</param>-->
+    <!--<param name="hibernate.connection.password" type="string">ips</param>-->
+
+    <!-- Nedenzel local DB. -->
+    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/my_ips?useUnicode=true&amp;characterEncoding=UTF-8</param>
+    <param name="hibernate.connection.username" type="string">root</param>
+    <param name="hibernate.connection.password" type="string">root</param>
 
     <!-- Pool settings. -->
 

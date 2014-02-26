@@ -113,24 +113,22 @@
 
         <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="630">
 
-          <h:panelGrid columns="2">
+          <h:panelGrid columns="2" id="newSurveyTable">
             <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
             <eye:inputText id="newSurveyTitle"
                            value="#{surveyListController.newSurveyTitle}" maxlength="30"/>
 
             <h:outputLabel value="#{bundle['survey.properties.period']}" for="newSurveyStartDate"/>
 
-            <h:panelGrid columns="3">
+            <h:panelGrid id="dates" columns="3" cellpadding="0" >
               <eye:inputDate id="newSurveyStartDate"
                              inputTime="true"
                              value="#{surveyListController.newSurveyStartDate}"/>
-              <h:outputText style="margin-right: 10px;" value="---"/>
+              <h:outputText style="margin:0 5px 0 5px;" value=" — "/>
               <eye:inputDate id="newSurveyEndDate"
                              inputTime="true"
                              value="#{surveyListController.newSurveyEndDate}"/>
             </h:panelGrid>
-
-
 
 
             <h:outputLabel value="#{bundle['survey.properties.client']}" for="clients"/>
@@ -139,6 +137,7 @@
             </h:selectOneMenu>
 
           </h:panelGrid>
+
 
           <eye:buttons>
             <eye:button>

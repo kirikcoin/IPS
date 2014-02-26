@@ -159,24 +159,25 @@
                 </h:panelGrid>
 
                 <h:panelGroup id="settingsDialog" style="display: none">
-                  <h:panelGrid columns="2" columnClasses="settings-left,none">
+                  <h:panelGrid columns="2" columnClasses="settings-left,none" >
                     <h:outputLabel value="#{bundle['survey.properties.title']}"
                                    for="newSurveyTitle"/>
                     <eye:inputText id="newSurveyTitle"
-                                   maxlength="70"
+                                   maxlength="30"
                                    value="#{surveySettingsController.survey.details.title}"/>
 
-                    <h:outputLabel value="#{bundle['survey.properties.period.start']}"
-                                   for="newSurveyStartDate"/>
-                    <eye:inputDate id="newSurveyStartDate"
-                                   inputTime="true"
-                                   value="#{surveySettingsController.survey.startDate}"/>
+                    <h:outputLabel value="#{bundle['survey.properties.period']}" for="newSurveyStartDate"/>
+                    <h:panelGrid id="dates" columns="3" cellpadding="0"  >
+                      <eye:inputDate id="newSurveyStartDate"
+                                     inputTime="true"
+                                     value="#{surveySettingsController.survey.startDate}"/>
+                      <h:outputText style="margin:0 5px 0 5px;" value=" — "/>
+                      <eye:inputDate id="newSurveyEndDate"
+                                     inputTime="true"
+                                     value="#{surveySettingsController.survey.endDate}"/>
+                    </h:panelGrid>
 
-                    <h:outputLabel value="#{bundle['survey.properties.period.end']}"
-                                   for="newSurveyEndDate"/>
-                    <eye:inputDate id="newSurveyEndDate"
-                                   inputTime="true"
-                                   value="#{surveySettingsController.survey.endDate}"/>
+
 
                     <h:outputLabel value="#{bundle['survey.properties.client']}"
                                    for="clients"/>
