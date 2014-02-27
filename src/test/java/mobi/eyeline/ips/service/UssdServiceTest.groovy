@@ -15,9 +15,7 @@ import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.RespondentRepository
 import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository;
-/**
- * Created by dizan on 21.02.14.
- */
+
 class UssdServiceTest extends DbTestCase {
     private UssdService ussdService
     private SurveyRepository surveyRepository = new SurveyRepository(db)
@@ -66,7 +64,11 @@ class UssdServiceTest extends DbTestCase {
 
     void testSurveyUrl() {
         def survey = new Survey(id: 1, startDate: new Date(), endDate: new Date())
-        assertTrue(ussdService.getSurveyUrl(survey) == (loginUrl+"/ussd/index.jsp?survey_id="+survey.id))
+        assertEquals(ussdService.getSurveyUrl(survey), ("$loginUrl/ussd/index.jsp?survey_id=${survey.id}"))
+    }
+
+    void testSurvetUrl_NullSurvey() {
+
     }
 
     void testHandle1(){
@@ -77,8 +79,7 @@ class UssdServiceTest extends DbTestCase {
     }
 
     void testHandle2(){
-
+      //parse,findSurvey,
     }
-
 
 }
