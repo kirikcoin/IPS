@@ -393,8 +393,16 @@ table.dtable th.dragColumn {
 /* Стиль ячейки, с помощью которой можно переместить строку */
 table.dtable td.dragHandle {
   cursor: move;
-  text-align: center;
+  text-align: left;
   width: 10px;
+  padding-left: 0 !important;
+}
+
+// Same for new added row (unmovable).
+table.dtable tfoot td:first-child {
+  text-align: left;
+  width: 10px;
+  padding-left: 0 !important;
 }
 
 /* Маркер перемещаемой строки */
@@ -403,6 +411,13 @@ table.dtable td.dragHandle:before {
   content: '\2261';
   font-size: 14px;
   color: #808080;
+}
+
+table.dtable tfoot td:first-child:before {
+  font-family: Lucida Sans Unicode, Arial Unicode MS, Arial;
+  content: '\2261';
+  font-size: 14px;
+  color: #D5D5D5;
 }
 
 /* Стиль применяемый к строке после начала перемещения */
