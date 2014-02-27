@@ -42,16 +42,19 @@
                 <h:outputLabel value="#{bundle['profile.edit.fio']}"
                                for="fullName"/>
                 <eye:inputText id="fullName"
+                               maxlength="70"
                                value="#{profilePageController.user.fullName}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.email']}"
                                for="email" />
                 <eye:inputText id="email"
+                               maxlength="70"
                                value="#{profilePageController.user.email}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.phone']}"
                                for="phoneNumber" />
                 <eye:inputText id="phoneNumber"
+                               maxlength="30"
                                value="#{profilePageController.user.phoneNumber}"/>
               </h:panelGrid>
 
