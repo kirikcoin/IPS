@@ -65,6 +65,7 @@
               <h:outputLabel value="#{bundle['search.label']}"/>
               <eye:inputText id="search"
                              value="#{clientListController.search}"
+                             maxlength="70"
                              onkeydown="return page.nameFilterKeyDown(event)"/>
             </h:panelGroup>
           </h:panelGrid>
@@ -79,7 +80,7 @@
             </f:facet>
             <eye:row>
               <eye:column name="fullName" title="#{bundle['client.list.table.fullname']}"
-                          sortable="true" defaultSortOrder="desc">
+                          sortable="true" defaultSortOrder="asc">
                 <h:commandLink value="#{row.fullName}"
                                action="null"
                                onclick="return page.showSettingsDialogForEdit(

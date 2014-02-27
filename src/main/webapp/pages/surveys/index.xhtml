@@ -38,7 +38,9 @@
             <h:outputText value="#{bundle['survey.list.title']}"/>
             <h:panelGroup styleClass="page-header-input">
               <h:outputLabel value="#{bundle['search.label']}"/>
-              <eye:inputText id="search" value="#{surveyListController.search}"
+              <eye:inputText id="search"
+                             value="#{surveyListController.search}"
+                             maxlength="70"
                              onkeydown="return page.filterKeyDown(event)"/>
             </h:panelGroup>
           </h:panelGrid>
