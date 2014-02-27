@@ -64,6 +64,7 @@
                                for="currentPassword"/>
                 <eye:inputText id="currentPassword"
                                secret="true"
+                               autocomplete="off"
                                value="#{profilePageController.currentPassword}"
                                trim="false"/>
 
@@ -71,6 +72,7 @@
                                for="newPassword" />
                 <eye:inputText id="newPassword"
                                secret="true"
+                               autocomplete="off"
                                validator="loginPasswordValidator"
                                validatorMessage="#{bundle['profile.edit.message.password.validation']}"
                                value="#{profilePageController.newPassword}"
@@ -80,6 +82,7 @@
                                for="newPasswordConfirmation" />
                 <eye:inputText id="newPasswordConfirmation"
                                secret="true"
+                               autocomplete="off"
                                value="#{profilePageController.newPasswordConfirmation}"
                                trim="false"/>
               </h:panelGrid>
