@@ -87,6 +87,7 @@ public class User implements Serializable {
     @Column(name = "phone_number")
     @Pattern(regexp = PhoneValidator.PHONE_REGEXP,
             message = "{invalid.phone.number}")
+    @MaxSize(30)
     private String phoneNumber;
 
     public User() {

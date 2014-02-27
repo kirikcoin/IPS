@@ -32,7 +32,6 @@ class ProfilePageController extends BaseController {
             updateOk = updatePassword()
         }
 
-      //  updateOk &= validateModel()
         updateOk = updateOk && validateModel()
         if (updateOk) {
             userRepository.update(user)
