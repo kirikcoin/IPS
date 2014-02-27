@@ -8,8 +8,6 @@ import org.hibernate.annotations.Type;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -38,14 +36,6 @@ public class SurveyStats implements Serializable {
      */
     @Column(name = "sent")
     private int sentCount;
-
-    /**
-     * Канал распространения - способ информирования потенциальных респондентов о проведении опроса.
-     */
-    // TODO: Looks like this belongs to `SurveyInvitation'. Also, we don't actually use it now.
-    @Column(name = "channel")
-    @Enumerated(EnumType.STRING)
-    private DistributionChannel channel = DistributionChannel.CLIENT_BASE;
 
     /**
      * Произвольный идентификатор кампании.
@@ -95,14 +85,6 @@ public class SurveyStats implements Serializable {
 
     public void setSentCount(int sent) {
         this.sentCount = sent;
-    }
-
-    public DistributionChannel getChannel() {
-        return channel;
-    }
-
-    public void setChannel(DistributionChannel channel) {
-        this.channel = channel;
     }
 
     public String getCampaign() {

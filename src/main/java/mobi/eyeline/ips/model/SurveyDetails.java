@@ -30,12 +30,6 @@ public class SurveyDetails implements Serializable {
     private String title;
 
     /**
-     * Произвольное описание опроса, недоступно респондентам.
-     */
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-
-    /**
      * Сообщение, отображаемое про завершении опроса - после ответа на последний вопрос.
      */
     @Column(name = "end_text", columnDefinition = "TEXT")
@@ -61,14 +55,6 @@ public class SurveyDetails implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getEndText() {
