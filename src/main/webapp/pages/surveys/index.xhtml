@@ -130,6 +130,7 @@
               <h:outputText style="margin:0 10px 0 0;" value=" — "/>
               <eye:inputDate id="newSurveyEndDate"
                              inputTime="true"
+                             minDate="#{dateController.now}"
                              value="#{surveyListController.newSurveyEndDate}"/>
             </h:panelGrid>
 
