@@ -26,12 +26,14 @@ class ProfilePageController extends BaseController {
     }
 
     void saveProfile() {
+        updateOk = true
         if (!isPasswordIntact()) {
             // Update user password if corresponding fields are filled in.
             updateOk = updatePassword()
         }
 
-        updateOk &= validateModel()
+      //  updateOk &= validateModel()
+        updateOk = updateOk && validateModel()
         if (updateOk) {
             userRepository.update(user)
         }
