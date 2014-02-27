@@ -10,6 +10,7 @@
   <property name="distr.dir"  location="${build.dir}/distr"/>
   <property name="lib.dir"    location="${basedir}/lib"/>
 
+  <property name="gen.dir"    location="${build.dir}/generated"/>
   <property name="test.dir"   location="${build.dir}/test"
             description="Path to the generated test reports"/>
 
@@ -68,6 +69,8 @@
              encoding="UTF-8"
              includeantruntime="false"/>
     </groovyc>
+
+    <antcall target="gen-version"/>
   </target>
 
   <target name="build-exploded" depends="compile">
@@ -77,6 +80,11 @@
       <fileset dir="${web.dir}">
         <include name="**/*.*"/>
       </fileset>
+      <firstmatchmapper>
+        <mapper type="glob" from="*.css" to="*.css.${release.version}"/>
+        <mapper type="glob" from="*.js" to="*.js.${release.version}"/>
+        <mapper type="identity"/>
+      </firstmatchmapper>
     </copy>
 
     <!-- Classes -->
@@ -95,13 +103,6 @@
         <include name="**/*.*"/>
       </fileset>
     </copy>
-
-    <!-- Binary resources -->
-    <!--<copy todir="${build.dir}/web/WEB-INF/classes/">
-      <fileset dir="${resources.dir}/binary">
-        <include name="*.*"/>
-      </fileset>
-    </copy>-->
 
     <!-- External dependencies -->
     <mkdir dir="${build.dir}/web/WEB-INF/lib"/>
@@ -140,6 +141,21 @@
     </jar>
   </target>
 
+  <target name="gen-version">
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="classpath"/>
+
+    <groovy src="${basedir}/src/utils/java/mobi/eyeline/ips/web/BuildVersionGenerator.groovy">
+      <arg value="${gen.dir}"/>
+      <arg value=".${release.version}"/>
+    </groovy>
+
+    <javac destdir="${build.dir}/classes">
+      <src path="${gen.dir}"/>
+      <classpath refid="classpath"/>
+    </javac>
+  </target>
 
   <!-- Tests -->
 

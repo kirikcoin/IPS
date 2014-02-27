@@ -8,10 +8,10 @@
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
       <link rel="STYLESHEET" type="text/css"
-            href="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/results.less"/>
+            href="#{resources.path}/resources/pages/surveys/results.less"/>
 
       <script type="text/javascript"
-              src="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/results.js">
+              src="#{resources.path}/resources/pages/surveys/results.js#{resources.version}">
       </script>
 
     </ui:define>
@@ -148,7 +148,8 @@
                   <eye:column name="date"
                               title="#{bundle['results.list.date']}"
                               sortable="true"
-                              defaultSortOrder="desc">
+                              defaultSortOrder="desc"
+                              columnClass="colDate">
                     <h:outputText value="#{row.respondent.startDate}">
                       <f:convertDateTime type="both" dateStyle="short"/>
                     </h:outputText>

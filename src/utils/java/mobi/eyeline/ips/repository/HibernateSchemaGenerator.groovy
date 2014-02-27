@@ -1,4 +1,4 @@
-package ussd.poll.backend.db.model.schemaexport
+package mobi.eyeline.ips.repository
 
 import org.hibernate.cfg.Configuration
 import org.hibernate.tool.hbm2ddl.SchemaExport

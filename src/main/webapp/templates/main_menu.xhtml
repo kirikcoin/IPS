@@ -3,9 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:c="http://java.sun.com/jstl/core"
         xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-        xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi"
-    >
+        xmlns:ui="http://java.sun.com/jsf/facelets">
 
   <ui:composition>
 
@@ -38,7 +36,7 @@
                                  action="#{localeController.changeLocale}"
                                  style="margin-left:15px">
                     <h:graphicImage
-                        value="#{facesContext.externalContext.requestContextPath}/resources/images/ru.png"/>
+                        value="#{resources.path}/resources/images/ru.png"/>
                     <f:param name="lang" value="ru"/>
                     <f:param name="param" value="#{param}"/>
                   </h:commandLink>
@@ -47,7 +45,7 @@
                                  action="#{localeController.changeLocale}"
                                  style="margin-left:3px">
                     <h:graphicImage
-                        value="#{facesContext.externalContext.requestContextPath}/resources/images/us.png"/>
+                        value="#{resources.path}/resources/images/us.png"/>
                     <f:param name="lang" value="en"/>
                     <f:param name="param" value="#{param}"/>
                   </h:commandLink>

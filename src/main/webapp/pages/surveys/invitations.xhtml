@@ -9,10 +9,10 @@
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
       <link rel="STYLESHEET" type="text/css"
-            href="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/invitations.less"/>
+            href="#{resources.path}/resources/pages/surveys/invitations.less"/>
 
       <script type="text/javascript"
-              src="#{facesContext.externalContext.requestContextPath}/resources/pages/surveys/invitations.js">
+              src="#{resources.path}/resources/pages/surveys/invitations.js#{resources.version}">
       </script>
     </ui:define>
 

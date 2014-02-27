@@ -21,7 +21,7 @@
 
   <context-param>
     <param-name>facelets.DEVELOPMENT</param-name>
-    <param-value>true</param-value>
+    <param-value>${ips.force.resource.reload}</param-value>
   </context-param>
 
   <context-param>

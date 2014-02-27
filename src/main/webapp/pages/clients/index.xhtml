@@ -10,9 +10,9 @@
 
     <ui:define name="head">
       <link rel="STYLESHEET" type="text/css"
-            href="#{facesContext.externalContext.requestContextPath}/resources/pages/clients/index.less"/>
+            href="#{resources.path}/resources/pages/clients/index.less"/>
 
-      <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/resources/pages/clients/index.js"></script>
+      <script type="text/javascript" src="#{resources.path}/resources/pages/clients/index.js#{resources.version}"></script>
     </ui:define>
 
     <ui:define name="scripts">
