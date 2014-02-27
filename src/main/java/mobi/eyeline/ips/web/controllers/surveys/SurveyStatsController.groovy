@@ -205,7 +205,7 @@ class SurveyStatsController extends BaseSurveyController {
 
     @SuppressWarnings("GrMethodMayBeStatic")
     private String colorLoop(QuestionOption opt) {
-        def colors = ['green', 'greenyellow', 'blue', 'yellow', 'black', 'magenta']
+        def colors = ['green', '#adff2f', 'blue', 'yellow', 'black', 'magenta']
         return colors[opt.activeIndex % colors.size()]
     }
 }
