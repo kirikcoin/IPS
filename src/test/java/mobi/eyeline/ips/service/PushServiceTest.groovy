@@ -48,3 +48,5 @@ class PushServiceTest extends GroovyTestCase {
         pushService.scheduleSend new Survey(id: 1), '123'
     }
 }
+
+

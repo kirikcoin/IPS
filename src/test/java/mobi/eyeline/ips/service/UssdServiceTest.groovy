@@ -2,6 +2,7 @@ package mobi.eyeline.ips.service
 
 import groovy.mock.interceptor.MockFor
 import mobi.eyeline.ips.messages.MessageHandler
+import mobi.eyeline.ips.messages.MissingParameterException
 import mobi.eyeline.ips.messages.UssdModel
 import mobi.eyeline.ips.messages.UssdOption
 import mobi.eyeline.ips.model.Survey
@@ -61,25 +62,43 @@ class UssdServiceTest extends DbTestCase {
         configClass.verify config
     }
 
-
     void testSurveyUrl() {
         def survey = new Survey(id: 1, startDate: new Date(), endDate: new Date())
         assertEquals(ussdService.getSurveyUrl(survey), ("$loginUrl/ussd/index.jsp?survey_id=${survey.id}"))
     }
 
     void testSurvetUrl_NullSurvey() {
-
+        shouldFail(NullPointerException) {
+            ussdService.getSurveyUrl(null)
+        }
     }
 
-    void testHandle1(){
+    void testHandle1() {
         UssdOption ussdOption = new UssdOptionImpl(1,"",true,1,UssdOptionType.ANSWER)
         shouldFail(AssertionError){
             ussdService.handle("89131234567", ussdOption)
         }
     }
 
-    void testHandle2(){
+
+
+    void testHandle_NullAbonent() {
+        Map<String, String[]> parameters = new HashMap<String,String[]>()
+        parameters.put("abonent",null)
+        shouldFail(MissingParameterException){
+            ussdService.handle(parameters)
+        }
+    }
+
+    void testHandle_IncorrectType() {
+        Map<String, String[]> parameters = new HashMap<String,String[]>()
+        parameters.put("abonent","89131234567")
+        parameters.put("type","")
+        shouldFail(MissingParameterException){
+            ussdService.handle(parameters)
+        }
       //parse,findSurvey,
     }
+
 
 }
