@@ -37,12 +37,12 @@
 
     <!-- Pool settings.-->
 
-    <property name="hibernate.c3p0.timeout">300</property>
-    <property name="hibernate.c3p0.max_statements">50</property>
-    <property name="hibernate.c3p0.idle_test_period">3000</property>
+    <param name="hibernate.c3p0.timeout">300</param>
+    <param name="hibernate.c3p0.max_statements">50</param>
+    <param name="hibernate.c3p0.idle_test_period">3000</param>
 
-    <property name="hibernate.c3p0.preferredTestQuery">SELECT 1</property>
-    <property name="hibernate.c3p0.testConnectionOnCheckout">true</property>
+    <param name="hibernate.c3p0.preferredTestQuery">SELECT 1</param>
+    <param name="hibernate.c3p0.testConnectionOnCheckout">true</param>
   </section>
 
   <section name="madv">
