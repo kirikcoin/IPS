@@ -16,15 +16,16 @@ import static mobi.eyeline.ips.messages.AnswerOption.PARAM_QUESTION_ID
 import static mobi.eyeline.ips.messages.UssdOption.*
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
+import static org.hamcrest.Matchers.instanceOf
 
+@SuppressWarnings("UnnecessaryQualifiedReference")
 class UssdServiceTest extends DbTestCase {
 
-    UssdService ussdService
-
-    String baseUrl = 'http://localhost:39932'
+    // Configuration
     def configClass
     Config config
 
+    // Dependencies
     SurveyRepository surveyRepository
     SurveyInvitationRepository surveyInvitationRepository
     SurveyService surveyService
@@ -33,12 +34,17 @@ class UssdServiceTest extends DbTestCase {
     QuestionRepository questionRepository
     QuestionOptionRepository questionOptionRepository
 
+    UssdService ussdService
+
+    final String msisdn    = '123'
+    final String sid       = '1'
+
     void setUp(){
         super.setUp()
 
         // Configuration
         configClass = new MockFor(Config)
-        configClass.demand.getLoginUrl() { baseUrl }
+        configClass.demand.getLoginUrl() { 'http://localhost:39932' }
         config = configClass.proxyDelegateInstance() as Config
 
         // Dependencies
@@ -64,80 +70,94 @@ class UssdServiceTest extends DbTestCase {
         super.tearDown()
     }
 
+    def survey = { surveyRepository.load(sid.toInteger()) }
+    def request = { params -> ussdService.handle asMultimap(params) }
+
+    def answer(option) {
+        def props = [:]
+        props.putAll option.properties
+        props[UssdOption.PARAM_MSISDN] = msisdn
+        request(props)
+    }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    Map<String, String[]> asMultimap(Map map) {
+        map.collectEntries {k, v -> [(k.toString()): [v.toString()] as String[]]} as Map<String, String[]>
+    }
+
     void testNullSurveyUrl() {
         shouldFail(NullPointerException) { ussdService.getSurveyUrl(null) }
     }
 
-    Map<String, String[]> asMultimap(Map map) {
-        [:].with { map.entrySet().each { put(it.key.toString(), [it.value.toString()] as String[]) }; it }
-    }
-
     void testStartPageMissingSurvey() {
-        def model = ussdService.handle asMultimap(
-                ["$PARAM_SURVEY_ID": '100500', "$PARAM_MSISDN": '123'])
-
-        assertTrue model.options.empty
-        assertTrue(model instanceof UssdResponseModel.NoSurveyResponseModel)
+        request([
+                (PARAM_SURVEY_ID): '100500', (PARAM_MSISDN): '123'
+        ]).with {
+            assertTrue it.options.empty
+            assertThat it, instanceOf(UssdResponseModel.NoSurveyResponseModel)
+        }
     }
 
     void testStartPageRequiredParam() {
         shouldFail(MissingParameterException) {
-            ussdService.handle asMultimap(["$PARAM_SURVEY_ID": '100500'])
+            request([(PARAM_SURVEY_ID): '100500'])
         }
 
         shouldFail(MissingParameterException) {
-            ussdService.handle asMultimap(["$PARAM_MSISDN": '123'])
+            request([(PARAM_MSISDN): '123'])
         }
     }
 
     void testStartPageUnknownRequest() {
-        def model = ussdService.handle asMultimap(
-                ["$PARAM_MSISDN": '123', "$PARAM_MESSAGE_TYPE": 'foo'])
-
-        assertTrue(model instanceof UssdResponseModel.ErrorResponseModel)
+        request([
+                (PARAM_MSISDN):        '123',
+                (PARAM_MESSAGE_TYPE):  'foo'
+        ]).with {
+            assertThat it, instanceOf(UssdResponseModel.ErrorResponseModel)
+        }
     }
 
     void testQuestionPageUnknownRequest1() {
-        def model = ussdService.handle asMultimap([
-                "$PARAM_MSISDN": '123',
-                "$PARAM_MESSAGE_TYPE": "$UssdOption.UssdOptionType.ANSWER",
-                "$PARAM_QUESTION_ID": "1",
-                "$PARAM_ANSWER_ID": "1",
-                "$PARAM_SURVEY_ID": "1"   // Missing
-        ])
-
-        assertTrue(model instanceof UssdResponseModel.NoSurveyResponseModel)
+        request([
+                (PARAM_MSISDN):        '123',
+                (PARAM_MESSAGE_TYPE):  UssdOptionType.ANSWER,
+                (PARAM_QUESTION_ID):   1,
+                (PARAM_ANSWER_ID):     1,
+                (PARAM_SURVEY_ID):     1   // Missing
+        ]).with {
+            assertThat it, instanceOf(UssdResponseModel.NoSurveyResponseModel)
+        }
     }
 
     void testQuestionPageUnknownRequest2() {
         shouldFail(MissingParameterException) {
-            ussdService.handle asMultimap([
-                    "$PARAM_MSISDN": '123',
-                    "$PARAM_MESSAGE_TYPE": "$UssdOption.UssdOptionType.ANSWER",
-                    "$PARAM_QUESTION_ID": "1",
-                    "$PARAM_ANSWER_ID": "1",
+            request([
+                    (PARAM_MSISDN):        '123',
+                    (PARAM_MESSAGE_TYPE):  UssdOptionType.ANSWER,
+                    (PARAM_QUESTION_ID):   1,
+                    (PARAM_ANSWER_ID):     1,
             ])
         }
     }
 
     void testQuestionPageUnknownRequest3() {
         shouldFail(MissingParameterException) {
-            ussdService.handle asMultimap([
-                    "$PARAM_MSISDN": '123',
-                    "$PARAM_MESSAGE_TYPE": "$UssdOption.UssdOptionType.ANSWER",
-                    "$PARAM_ANSWER_ID": "1",
-                    "$PARAM_SURVEY_ID": "1"
+            request([
+                    (PARAM_MSISDN):        '123',
+                    (PARAM_MESSAGE_TYPE):  "$UssdOptionType.ANSWER",
+                    (PARAM_ANSWER_ID):     1,
+                    (PARAM_SURVEY_ID):     1
             ])
         }
     }
 
     void testQuestionPageUnknownRequest4() {
         shouldFail(MissingParameterException) {
-            ussdService.handle asMultimap([
-                    "$PARAM_MSISDN": '123',
-                    "$PARAM_MESSAGE_TYPE": "$UssdOption.UssdOptionType.ANSWER",
-                    "$PARAM_QUESTION_ID": "1",
-                    "$PARAM_SURVEY_ID": "1"
+            request([
+                    (PARAM_MSISDN):        '123',
+                    (PARAM_MESSAGE_TYPE):  "$UssdOptionType.ANSWER",
+                    (PARAM_QUESTION_ID):   1,
+                    (PARAM_SURVEY_ID):     1
             ])
         }
     }
@@ -145,19 +165,17 @@ class UssdServiceTest extends DbTestCase {
     void createTestSurvey() {
         def survey =
                 new Survey(startDate: new Date().minus(2), endDate: new Date().plus(2))
-
-        def details = new SurveyDetails(survey: survey, title: 'Foo')
-        survey.details = details
+        survey.details = new SurveyDetails(survey: survey, title: 'Foo', endText: 'End text')
         surveyRepository.save survey
 
-        def q1 = new Question(survey: survey, title: "First one")
-        q1.options.add(new QuestionOption(answer: 'O1', question: q1))
+        def q1 = new Question(survey: survey, title: 'First one')
+        q1.options << new QuestionOption(answer: 'O1', question: q1)
 
-        def q2 = new Question(survey: survey, title: "Second one")
-        q2.options.add(new QuestionOption(answer: 'O2', question: q2))
+        def q2 = new Question(survey: survey, title: 'Second one')
+        q2.options << new QuestionOption(answer: 'O2', question: q2)
 
-        def q3 = new Question(survey: survey, title: "With options")
-        q3.options.add(new QuestionOption(answer: 'O3', question: q3))
+        def q3 = new Question(survey: survey, title: 'With options')
+        q3.options << new QuestionOption(answer: 'O3', question: q3)
 
         survey.questions.addAll([q1, q2, q3])
 
@@ -166,65 +184,174 @@ class UssdServiceTest extends DbTestCase {
         q3 = questionRepository.load(3)
 
         [
-                new QuestionOption(answer: "Option 1", question: q3),
-                new QuestionOption(answer: "Option 2", question: q3),
-                new QuestionOption(answer: "Option 3", question: q3)
+                new QuestionOption(answer: 'Option 1', question: q3),
+                new QuestionOption(answer: 'Option 2', question: q3),
+                new QuestionOption(answer: 'Option 3', question: q3)
         ].each {q3.options.add it}
 
         questionRepository.update(q3)
     }
 
-    void test1() {
+    void testFullCycle() {
         createTestSurvey()
 
-        def model1 = ussdService.handle asMultimap([
-                "$PARAM_MSISDN": '123',
-                "$PARAM_SURVEY_ID": "1"
-        ])
+        def respondent = { respondentRepository.load(1) }
 
-        // Ensure `Respondent' gets created.
-        assertNotNull respondentRepository.load(1)
-        assertEquals 1, respondentRepository.load(1).survey.id
+        //
+        // Start page.
+        //
 
-        // Ensure that the link is correct
-        model1.with {
+        def page1 = request([
+                (PARAM_MSISDN):    msisdn,
+                (PARAM_SURVEY_ID): sid
+        ]).with {
             assertEquals 'First one', text
             assertThat options, hasSize(1)
 
-            assertEquals 'O1', options.first().text
-            assertEquals 1, options.first().answerId
-            assertEquals 1, options.first().questionId
-            assertEquals 1, options.first().surveyId
+            options.first().with {
+                assertEquals(['O1', 1, 1, 1], [text, answerId, questionId, surveyId])
+            }
+
+            it
         }
 
+        assertEquals 1, respondent().survey.id
         assertEquals 1, questionRepository.load(1).sentCount
+        survey().with {
+            assertEquals 0, respondentRepository.countFinishedBySurvey(it)
+            assertEquals 1, respondentRepository.countBySurvey(it)
+        }
 
-        // Follow the link.
-        def model2 = ussdService.handle asMultimap(
-                model1.options.first().getProperties().with { put("$PARAM_MSISDN", '123'); it })
-        model2.with {
+        //
+        // Answer #1.
+        //
+
+        def page2 = answer page1.options.first()
+        page2.with {
             assertEquals 'Second one', text
             assertThat options, hasSize(1)
 
-            assertEquals 'O2', options.first().text
-            assertEquals 2, options.first().answerId
-            assertEquals 2, options.first().questionId
-            assertEquals 1, options.first().surveyId
+            options.first().with {
+                assertEquals(['O2', 2, 2, 1], [text, answerId, questionId, surveyId])
+            }
         }
 
-        assertEquals 1, respondentRepository.load(1).answersCount
+        assertEquals 1, respondent().answersCount
         assertEquals 1, questionRepository.load(2).sentCount
 
-        // Follow the link again.
-        def model3 = ussdService.handle asMultimap(
-                model2.options.first().getProperties().with { put("$PARAM_MSISDN", '123'); it })
-        model3.with {
+        //
+        // Answer #2.
+        //
+
+        def page3 = answer page2.options.first()
+        page3.with {
             assertEquals 'With options', text
             assertThat options, hasSize(4)
         }
 
-        assertEquals 2, respondentRepository.load(1).answersCount
-        assertEquals 2, respondentRepository.load(1).answersCount
+        assertEquals 2, respondent().answersCount
+        survey().with {
+            assertEquals 0, respondentRepository.countFinishedBySurvey(it)
+            assertEquals 1, respondentRepository.countBySurvey(it)
+        }
 
+        //
+        // Answer #3.
+        //
+
+        def page4 = answer page3.options[2]
+        page4.with {
+            assertEquals survey().details.endText, text
+            assertThat it, instanceOf(UssdResponseModel.TextUssdResponseModel)
+        }
+
+        // Check final stats.
+
+        respondent().with {
+            assertEquals 3, answersCount
+            assertTrue finished
+        }
+
+        survey().with {
+            assertEquals 1, respondentRepository.countFinishedBySurvey(it)
+            assertEquals 1, respondentRepository.countBySurvey(it)
+        }
+    }
+
+    void testSkipValidation1() {
+        createTestSurvey()
+
+        survey().with {
+            startDate = new Date().plus(100)
+            endDate = startDate.plus(5)
+            surveyRepository.update it
+        }
+
+        request([
+                (PARAM_MSISDN):    msisdn,
+                (PARAM_SURVEY_ID): sid
+        ]).with {
+            assertThat it, instanceOf(UssdResponseModel.NoSurveyResponseModel)
+        }
+
+        request([
+                (PARAM_MSISDN):             msisdn,
+                (PARAM_SURVEY_ID):          sid,
+                (PARAM_SKIP_VALIDATION):    true
+        ]).with {
+            assertThat it.options, hasSize(1)
+        }
+    }
+
+    void testNoQuestions() {
+        def survey =
+                new Survey(startDate: new Date().minus(2), endDate: new Date().plus(2))
+        survey.details = new SurveyDetails(survey: survey, title: 'Foo', endText: 'End text')
+        surveyRepository.save survey
+
+        request([
+                (PARAM_MSISDN):    msisdn,
+                (PARAM_SURVEY_ID): sid
+        ]).with {
+            assertEquals survey.details.endText, it.text
+        }
+    }
+
+    void testTerminal() {
+        createTestSurvey()
+        survey().questions[0].options[0].with {
+            terminal = true
+            questionOptionRepository.update it
+        }
+
+        def page1 = request([
+                (PARAM_MSISDN):    msisdn,
+                (PARAM_SURVEY_ID): sid
+        ])
+
+        def page2 = answer page1.options.first()
+        page2.with {
+            assertThat it, instanceOf(UssdResponseModel.TextUssdResponseModel)
+            assertEquals survey().details.endText, text
+        }
+
+        assertTrue respondentRepository.load(1).finished
+    }
+
+    void testRestore() {
+        createTestSurvey()
+
+        def page1 = request([
+                (PARAM_MSISDN):    msisdn,
+                (PARAM_SURVEY_ID): sid
+        ])
+        answer page1.options.first()
+
+        def page1Again = request([
+                (PARAM_MSISDN):    msisdn,
+                (PARAM_SURVEY_ID): sid
+        ])
+
+        assertEquals 'Second one', page1Again.text
     }
 }

@@ -33,29 +33,52 @@ public class MadvUpdateService {
     private static final Logger logger = LoggerFactory.getLogger(MadvUpdateService.class);
 
     private final Config config;
-    private Timer timer;
+    private final MadvSoapApi madvSoapApi;
+    private final SurveyStatsRepository surveyStatsRepository;
+    private final SurveyRepository surveyRepository;
 
-    public MadvUpdateService(Config config) {
+    private final Timer timer;
+
+    private volatile boolean regularUpdateStarted;
+    private final Object startLock = new Object();
+
+    public MadvUpdateService(Config config,
+                             MadvSoapApi madvSoapApi,
+                             SurveyStatsRepository surveyStatsRepository,
+                             SurveyRepository surveyRepository) {
         this.config = config;
+        this.madvSoapApi = madvSoapApi;
+        this.surveyStatsRepository = surveyStatsRepository;
+        this.surveyRepository = surveyRepository;
+
+        timer = createTimer();
     }
 
     public void start() {
-        if (config.isMadvUpdateEnabled()) {
-            if (timer != null) {
-                throw new AssertionError("Update service already started");
-            }
-
-            timer = new Timer("madv-update");
-            // Schedule the task for immediate execution.
-            final long delayMillis =
-                    TimeUnit.MINUTES.toMillis(config.getMadvUpdateDelayMinutes());
-            timer.schedule(new UpdateAllTask(config), 0, delayMillis);
-
-            logger.info("MADV update service started");
-
-        } else {
+        if (!config.isMadvUpdateEnabled()) {
             logger.info("MADV update service disabled");
+            return;
         }
+
+        synchronized (startLock) {
+            if (regularUpdateStarted) {
+                throw new AssertionError("MADV update service already started");
+            }
+            regularUpdateStarted = true;
+        }
+
+        // Schedule the task for immediate execution.
+        final UpdateAllTask task =
+                new UpdateAllTask(config, madvSoapApi, surveyStatsRepository, surveyRepository);
+        final long delayMillis =
+                TimeUnit.MINUTES.toMillis(config.getMadvUpdateDelayMinutes());
+        timer.schedule(task, 0, delayMillis);
+
+        logger.info("MADV update service started");
+    }
+
+    protected Timer createTimer() {
+        return new Timer("madv-update");
     }
 
     /**
@@ -63,13 +86,17 @@ public class MadvUpdateService {
      * In case another update process is being executed now, a new one is scheduled next.
      */
     public void runNow() {
-        timer.schedule(new UpdateAllTask(config), 0);
-        logger.info("MADV update task sheduled");
+        final UpdateAllTask task =
+                new UpdateAllTask(config, madvSoapApi, surveyStatsRepository, surveyRepository);
+        timer.schedule(task, 0);
+        logger.info("MADV update task scheduled");
     }
 
     public void runNow(int surveyId) {
-        timer.schedule(new UpdateSingleTask(config, surveyId), 0);
-        logger.info("MADV update task sheduled");
+        final UpdateSingleTask task = new UpdateSingleTask(config,
+                madvSoapApi, surveyStatsRepository, surveyRepository, surveyId);
+        timer.schedule(task, 0);
+        logger.info("MADV update task scheduled");
     }
 
 
@@ -78,13 +105,16 @@ public class MadvUpdateService {
     //
 
     private static abstract class BaseUpdateTask extends TimerTask {
-        protected final SurveyStatsRepository surveyStatsRepository =
-                Services.instance().getSurveyStatsRepository();
-
         private final Config config;
+        private final MadvSoapApi madvSoapApi;
+        private SurveyStatsRepository surveyStatsRepository;
 
-        protected BaseUpdateTask(Config config) {
+        protected BaseUpdateTask(Config config,
+                                 MadvSoapApi madvSoapApi,
+                                 SurveyStatsRepository surveyStatsRepository) {
             this.config = config;
+            this.madvSoapApi = madvSoapApi;
+            this.surveyStatsRepository = surveyStatsRepository;
         }
 
         protected void tryUpdate(Survey survey) {
@@ -102,7 +132,7 @@ public class MadvUpdateService {
 
         private void update(Survey survey, int campaignId) {
             try {
-                final CampaignsSoapImpl api = MadvSoapApi.get(
+                final CampaignsSoapImpl api = madvSoapApi.get(
                         config.getMadvUrl(),
                         config.getMadvUserLogin(),
                         config.getMadvUserPassword());
@@ -164,11 +194,14 @@ public class MadvUpdateService {
 
     private static class UpdateAllTask extends BaseUpdateTask {
 
-        private final SurveyRepository surveyRepository =
-                Services.instance().getSurveyRepository();
+        private final SurveyRepository surveyRepository;
 
-        public UpdateAllTask(Config config) {
-            super(config);
+        public UpdateAllTask(Config config,
+                             MadvSoapApi madvSoapApi,
+                             SurveyStatsRepository surveyStatsRepository,
+                             SurveyRepository surveyRepository) {
+            super(config, madvSoapApi, surveyStatsRepository);
+            this.surveyRepository = surveyRepository;
         }
 
         @Override
@@ -191,13 +224,16 @@ public class MadvUpdateService {
 
     private static class UpdateSingleTask extends BaseUpdateTask {
 
-        private final SurveyRepository surveyRepository =
-                Services.instance().getSurveyRepository();
-
+        private final SurveyRepository surveyRepository;
         private final int surveyId;
 
-        public UpdateSingleTask(Config config, int surveyId) {
-            super(config);
+        public UpdateSingleTask(Config config,
+                                MadvSoapApi madvSoapApi,
+                                SurveyStatsRepository surveyStatsRepository,
+                                SurveyRepository surveyRepository,
+                                int surveyId) {
+            super(config, madvSoapApi, surveyStatsRepository);
+            this.surveyRepository = surveyRepository;
             this.surveyId = surveyId;
         }
 

@@ -33,6 +33,10 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
     }
 
     public void clear(Survey survey, Respondent respondent) {
+        if (survey.getQuestions().isEmpty()) {
+            return;
+        }
+
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {

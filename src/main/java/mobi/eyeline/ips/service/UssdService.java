@@ -184,7 +184,7 @@ public class UssdService implements MessageHandler {
         respondentRepository.update(respondent);
 
         final String endText = survey.getDetails().getEndText();
-        return new UssdResponseModel((endText == null) ?
+        return new UssdResponseModel.TextUssdResponseModel((endText == null) ?
                 USSD_BUNDLE.getString("ussd.end.text.default") :
                 endText);
     }

@@ -14,7 +14,7 @@ import java.net.URL;
 
 
 public class MadvSoapApi {
-    public static CampaignsSoapImpl get(String url, String login, String password)
+    public CampaignsSoapImpl get(String url, String login, String password)
             throws ServiceException, SOAPException, MalformedURLException {
         final CampaignsSoapImpl result =
                 (new CampaignsSoapImplServiceLocator()).getCampaignsSoapImplPort(new URL(url));

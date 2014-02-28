@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.service;
 
 
+import mobi.eyeline.ips.external.MadvSoapApi;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.DB;
@@ -35,6 +36,7 @@ public class Services {
     private final MailService mailService;
     private final UserService userService;
     private final UssdService ussdService;
+    private final MadvSoapApi madvSoapApi;
     private final MadvUpdateService madvUpdateService;
     private final PushService pushService;
     private final SegmentationService segmentationService;
@@ -72,8 +74,13 @@ public class Services {
                 answerRepository,
                 questionRepository,
                 questionOptionRepository);
+        madvSoapApi = new MadvSoapApi();
 
-        madvUpdateService = new MadvUpdateService(config);
+        madvUpdateService = new MadvUpdateService(
+                config,
+                madvSoapApi,
+                surveyStatsRepository,
+                surveyRepository);
         pushService = new PushService(config);
         segmentationService = new SegmentationService();
     }

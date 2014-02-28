@@ -56,33 +56,6 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
         }
     }
 
-    // XXX: not called just yet
-    public Respondent findBySurveyAndPhone(String msisdn,
-                                           int sid) {
-
-        final Session session = getSessionFactory().openSession();
-        try {
-            return (Respondent) session
-                    .createCriteria(Respondent.class)
-                    .add(eq("msisdn", msisdn))
-                    .add(eq("sid", sid))
-                    .uniqueResult();
-
-        } finally {
-            session.close();
-        }
-    }
-
-    public Respondent find(Survey survey,
-                           String msisdn) {
-        final Session session = getSessionFactory().openSession();
-        try {
-            return find(session, survey, msisdn);
-        } finally {
-            session.close();
-        }
-    }
-
     private Respondent find(Session session,
                             Survey survey,
                             String msisdn) {

@@ -190,8 +190,11 @@
         <filter includes="mobi.eyeline.ips.*"/>
 
         <!-- Borrowed and untouched. -->
-        <filter excludes="mobi.eyeline.ips.util.RequestParam"/>
-        <filter excludes="mobi.eyeline.ips.util.LessFilter"/>
+        <filter excludes="mobi.eyeline.ips.util.RequestParam*"/>
+        <filter excludes="mobi.eyeline.ips.util.LessFilter*"/>
+
+        <!-- Generated. -->
+        <filter excludes="mobi.eyeline.ips.external.madv.*"/>
 
         <filter excludes="mobi.eyeline.ips.web.controllers.*Controller*"/>
       </instr>
