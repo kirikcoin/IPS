@@ -100,8 +100,8 @@ public class UssdService implements MessageHandler {
     }
 
     private UssdResponseModel handleStartPage(String msisdn,
-                                      int surveyId,
-                                      boolean skipValidation) {
+                                              int surveyId,
+                                              boolean skipValidation) {
         final Survey survey = surveyService.findSurvey(surveyId, skipValidation);
         if (survey == null) {
             return surveyNotFound();
@@ -190,8 +190,8 @@ public class UssdService implements MessageHandler {
     }
 
     private UssdResponseModel surveyStart(Survey survey,
-                                  Respondent respondent,
-                                  boolean skipValidation) {
+                                          Respondent respondent,
+                                          boolean skipValidation) {
 
         // Clear all in case this is a RE-start.
         respondent.setFinished(false);

@@ -14,6 +14,9 @@ public class AnswerOption extends UssdOption {
     private final int questionId;
     private final int answerId;
 
+    public static final String PARAM_QUESTION_ID    = "questionId";
+    public static final String PARAM_ANSWER_ID      = "answerId";
+
     private AnswerOption(int key,
                          String text,
                          boolean skipValidation,
@@ -51,8 +54,8 @@ public class AnswerOption extends UssdOption {
 
         properties.putAll(super.getProperties());
 
-        properties.put("questionId", questionId);
-        properties.put("answerId", answerId);
+        properties.put(PARAM_QUESTION_ID, questionId);
+        properties.put(PARAM_ANSWER_ID, answerId);
 
         return properties;
     }
@@ -67,10 +70,10 @@ public class AnswerOption extends UssdOption {
         return new AnswerOption(
                 -1,
                 null,
-                getBoolean(options, PARAM_SKIP_VALIDATION),
+                getBoolean(options, PARAM_SKIP_VALIDATION, false),
                 getInt(options, PARAM_SURVEY_ID),
-                getInt(options, "questionId"),
-                getInt(options, "answerId")
+                getInt(options, PARAM_QUESTION_ID),
+                getInt(options, PARAM_ANSWER_ID)
         );
     }
 }

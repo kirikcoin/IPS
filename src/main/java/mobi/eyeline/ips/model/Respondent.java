@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -19,6 +20,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "respondents")
+@Proxy(lazy = false)
 public class Respondent implements Serializable {
 
     @Id
@@ -44,7 +46,7 @@ public class Respondent implements Serializable {
     private String msisdn;
 
     @Column(name = "registered", nullable = false)
-    private Date startDate;
+    private Date startDate = new Date();
 
     /**
      * Флаг, указывает, закончил ли респондент прохождение опроса.
