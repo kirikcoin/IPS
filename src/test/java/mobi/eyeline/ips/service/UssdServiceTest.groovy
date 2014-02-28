@@ -1,86 +1,101 @@
 package mobi.eyeline.ips.service
 
 import groovy.mock.interceptor.MockFor
-import mobi.eyeline.ips.messages.MessageHandler
 import mobi.eyeline.ips.messages.MissingParameterException
-import mobi.eyeline.ips.messages.UssdModel
 import mobi.eyeline.ips.messages.UssdOption
-import mobi.eyeline.ips.model.Survey
+import mobi.eyeline.ips.messages.UssdResponseModel
 import mobi.eyeline.ips.properties.Config
-import mobi.eyeline.ips.repository.AnswerRepository
-import mobi.eyeline.ips.repository.DbTestCase
-import mobi.eyeline.ips.messages.UssdOption.UssdOptionType;
-import mobi.eyeline.ips.messages.UssdOption
-import mobi.eyeline.ips.repository.QuestionOptionRepository
-import mobi.eyeline.ips.repository.QuestionRepository
-import mobi.eyeline.ips.repository.RespondentRepository
-import mobi.eyeline.ips.repository.SurveyInvitationRepository
-import mobi.eyeline.ips.repository.SurveyRepository;
+import mobi.eyeline.ips.repository.*
 
 class UssdServiceTest extends DbTestCase {
-    private UssdService ussdService
-    private SurveyRepository surveyRepository = new SurveyRepository(db)
-    private SurveyInvitationRepository surveyInvitationRepository = new SurveyInvitationRepository(db)
 
-    private SurveyService surveyService = new SurveyService(surveyRepository,surveyInvitationRepository)
-    private RespondentRepository respondentRepository = new RespondentRepository(db)
-    private AnswerRepository answerRepository = new AnswerRepository(db)
-    private QuestionRepository questionRepository = new QuestionRepository(db)
-    QuestionOptionRepository questionOptionRepository = new QuestionOptionRepository(db)
+    UssdService ussdService
+
+    String baseUrl = 'http://localhost:39932'
     def configClass
     Config config
-    String loginUrl = 'http://localhost:39932'
 
-    class UssdOptionImpl extends UssdOption{
-        protected UssdOptionImpl(int key, String text, boolean skipValidation, int surveyId, UssdOptionType type) {
-            super(key, text, skipValidation, surveyId, type)
-        }
-
-        @Override
-        UssdModel handle(String msisdn, MessageHandler handler) {
-            return null
-        }
-    }
+    SurveyRepository surveyRepository
+    SurveyInvitationRepository surveyInvitationRepository
+    SurveyService surveyService
+    RespondentRepository respondentRepository
+    AnswerRepository answerRepository
+    QuestionRepository questionRepository
+    QuestionOptionRepository questionOptionRepository
 
     void setUp(){
         super.setUp()
-        configClass = new MockFor(Config).with {
-            demand.getLoginUrl() {loginUrl}
-            it
-        }
+
+        // Configuration
+        configClass = new MockFor(Config)
+        configClass.demand.getLoginUrl() { baseUrl }
         config = configClass.proxyDelegateInstance() as Config
 
-        ussdService = new UssdService(config,
-                                    surveyService,
-                                    respondentRepository,
-                                    answerRepository,
-                                    questionRepository,
-                                    questionOptionRepository)
+        // Dependencies
+        surveyRepository = new SurveyRepository(db)
+        surveyInvitationRepository = new SurveyInvitationRepository(db)
+        surveyService = new SurveyService(surveyRepository, surveyInvitationRepository)
+        respondentRepository = new RespondentRepository(db)
+        answerRepository = new AnswerRepository(db)
+        questionRepository = new QuestionRepository(db)
+        questionOptionRepository = new QuestionOptionRepository(db)
+
+        ussdService = new UssdService(
+                config,
+                surveyService,
+                respondentRepository,
+                answerRepository,
+                questionRepository,
+                questionOptionRepository)
     }
 
     void tearDown() {
         configClass.verify config
+        super.tearDown()
     }
 
-    void testSurveyUrl() {
-        def survey = new Survey(id: 1, startDate: new Date(), endDate: new Date())
-        assertEquals(ussdService.getSurveyUrl(survey), ("$loginUrl/ussd/index.jsp?survey_id=${survey.id}"))
+    void testNullSurveyUrl() {
+        shouldFail(NullPointerException) { ussdService.getSurveyUrl(null) }
     }
 
-    void testSurvetUrl_NullSurvey() {
-        shouldFail(NullPointerException) {
-            ussdService.getSurveyUrl(null)
+    Map<String, String[]> asMultimap(Map map) {
+        [:].with { map.entrySet().each { put(it.key.toString(), [it.value.toString()] as String[]) }; it }
+    }
+
+    void testStartPageMissingSurvey() {
+        def model = ussdService.handle asMultimap(
+                ["$UssdOption.PARAM_SURVEY_ID": '100500', "$UssdOption.PARAM_MSISDN": '123'])
+
+        assertTrue model.options.empty
+        assertTrue(model instanceof UssdResponseModel.NoSurveyResponseModel)
+    }
+
+    void testStartPageRequiredParam() {
+        shouldFail(MissingParameterException) {
+            ussdService.handle asMultimap(["$UssdOption.PARAM_SURVEY_ID": '100500'])
+        }
+
+        shouldFail(MissingParameterException) {
+            ussdService.handle asMultimap(["$UssdOption.PARAM_MSISDN": '123'])
         }
     }
 
+    void testStartPageUnknownRequest() {
+        def model = ussdService.handle asMultimap(
+                ["$UssdOption.PARAM_MSISDN": '123', "$UssdOption.PARAM_MESSAGE_TYPE": 'foo'])
+
+        assertTrue model.options.empty
+    }
+
+
+
+/*
     void testHandle1() {
         UssdOption ussdOption = new UssdOptionImpl(1,"",true,1,UssdOptionType.ANSWER)
         shouldFail(AssertionError){
             ussdService.handle("89131234567", ussdOption)
         }
     }
-
-
 
     void testHandle_NullAbonent() {
         Map<String, String[]> parameters = new HashMap<String,String[]>()
@@ -99,6 +114,9 @@ class UssdServiceTest extends DbTestCase {
         }
       //parse,findSurvey,
     }
+*/
 
+    void createTestSurvey() {
 
+    }
 }

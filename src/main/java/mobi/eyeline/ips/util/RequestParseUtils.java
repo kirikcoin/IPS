@@ -23,7 +23,9 @@ public class RequestParseUtils {
     }
 
     /**
-     * @return {@code false} by default.
+     * Treats {@code key} as a required parameter.
+     *
+     * @see #getBoolean(java.util.Map, String, boolean)
      */
     public static boolean getBoolean(Map<String, String[]> map, String key)
             throws MissingParameterException {
@@ -34,6 +36,20 @@ public class RequestParseUtils {
             throw new MissingParameterException(key);
         }
     }
+
+    /**
+     * @return {@code defaultValue} if {@code key} is missing.
+     */
+    public static boolean getBoolean(Map<String, String[]> map, String key, boolean defaultValue)
+            throws MissingParameterException {
+
+        try {
+            return getBoolean(map, key);
+        } catch (MissingParameterException e) {
+            return defaultValue;
+        }
+    }
+
 
     public static String getString(Map<String, String[]> map, String key)
             throws MissingParameterException {

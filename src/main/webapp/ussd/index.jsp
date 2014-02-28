@@ -2,13 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="mobi.eyeline.ips.messages.MissingParameterException" %>
-<%@ page import="mobi.eyeline.ips.messages.UssdModel" %>
+<%@ page import="mobi.eyeline.ips.messages.UssdResponseModel" %>
 <%@ page import="mobi.eyeline.ips.service.Services" %>
 <%@ page import="java.util.Map" %>
 <%@page language="java" contentType="text/xml; charset=utf-8" %>
 
 <%
-  UssdModel model = null;
+  UssdResponseModel model = null;
   try {
     @SuppressWarnings("unchecked")
     final Map<String, String[]> parameters =

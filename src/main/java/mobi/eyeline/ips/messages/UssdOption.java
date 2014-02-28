@@ -15,6 +15,10 @@ public abstract class UssdOption {
      */
     public static final String PARAM_SKIP_VALIDATION    = "skip_validation";
 
+    public static final String PARAM_MSISDN             = "abonent";
+
+    public static final String PARAM_MESSAGE_TYPE       = "type";
+
     private final int key;
     private final String text;
     private final boolean skipValidation;
@@ -72,7 +76,7 @@ public abstract class UssdOption {
         return skipValidation;
     }
 
-    public abstract UssdModel handle(String msisdn, MessageHandler handler);
+    public abstract UssdResponseModel handle(String msisdn, MessageHandler handler);
 
     /**
      * @return {@code null} if the provided options do not match any valid message.
@@ -80,7 +84,7 @@ public abstract class UssdOption {
     public static UssdOption parse(Map<String, String[]> options)
             throws MissingParameterException {
 
-        if (options.get("type") == null) {
+        if (options.get(PARAM_MESSAGE_TYPE) == null) {
             return null;
         }
 

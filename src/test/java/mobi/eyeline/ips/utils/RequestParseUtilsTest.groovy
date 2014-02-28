@@ -26,6 +26,11 @@ class RequestParseUtilsTest extends GroovyTestCase {
         shouldFail(MissingParameterException) { getBoolean(asMap([:]), 'key') }
     }
 
+    void testBooleanDefault() {
+        assertTrue getBoolean(asMap([:]), 'key', true)
+        assertFalse getBoolean(asMap([:]), 'key', false)
+    }
+
     void testString() {
         assertEquals "foo", getString(asMap(['key': ['foo', 'bar']]), 'key')
         assertEquals "", getString(asMap(['key': ['', 'true']]), 'key')

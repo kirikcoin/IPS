@@ -3,7 +3,7 @@ package mobi.eyeline.ips.service;
 import mobi.eyeline.ips.messages.AnswerOption;
 import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
-import mobi.eyeline.ips.messages.UssdModel;
+import mobi.eyeline.ips.messages.UssdResponseModel;
 import mobi.eyeline.ips.messages.UssdOption;
 import mobi.eyeline.ips.model.Answer;
 import mobi.eyeline.ips.model.Question;
@@ -23,9 +23,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.ResourceBundle;
 
+import static mobi.eyeline.ips.messages.UssdResponseModel.USSD_BUNDLE;
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN;
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID;
 import static mobi.eyeline.ips.util.RequestParseUtils.getBoolean;
 import static mobi.eyeline.ips.util.RequestParseUtils.getInt;
@@ -46,10 +47,6 @@ public class UssdService implements MessageHandler {
 
     private final String baseUrl;
 
-    /**
-     * Generic non-localized messages.
-     */
-    private final ResourceBundle bundle = ResourceBundle.getBundle("messages");
 
     public UssdService(Config config,
                        SurveyService surveyService,
@@ -67,7 +64,7 @@ public class UssdService implements MessageHandler {
         baseUrl = config.getLoginUrl();
     }
 
-    public UssdModel handle(Map<String, String[]> parameters)
+    public UssdResponseModel handle(Map<String, String[]> parameters)
             throws MissingParameterException {
 
         try {
@@ -80,12 +77,12 @@ public class UssdService implements MessageHandler {
         }
     }
 
-    private UssdModel handle0(Map<String, String[]> parameters)
+    private UssdResponseModel handle0(Map<String, String[]> parameters)
             throws MissingParameterException {
 
         logger.debug("Handling request: " + RequestParseUtils.toString(parameters));
 
-        final String msisdn = getString(parameters, "abonent");
+        final String msisdn = getString(parameters, PARAM_MSISDN);
 
         final UssdOption request = UssdOption.parse(parameters);
 
@@ -94,7 +91,7 @@ public class UssdService implements MessageHandler {
             // It might be either an unregistered msisdn (new respondent),
             // survey surveyStart or resumption.
             final int surveyId = getInt(parameters, PARAM_SURVEY_ID);
-            final boolean skipValidation = getBoolean(parameters, PARAM_SURVEY_ID);
+            final boolean skipValidation = getBoolean(parameters, PARAM_SKIP_VALIDATION, false);
             return handleStartPage(msisdn, surveyId, skipValidation);
 
         } else {
@@ -102,7 +99,7 @@ public class UssdService implements MessageHandler {
         }
     }
 
-    private UssdModel handleStartPage(String msisdn,
+    private UssdResponseModel handleStartPage(String msisdn,
                                       int surveyId,
                                       boolean skipValidation) {
         final Survey survey = surveyService.findSurvey(surveyId, skipValidation);
@@ -129,7 +126,7 @@ public class UssdService implements MessageHandler {
     }
 
     @Override
-    public UssdModel handle(String msisdn, AnswerOption request) {
+    public UssdResponseModel handle(String msisdn, AnswerOption request) {
         final Survey survey =
                 surveyService.findSurvey(request.getSurveyId(), request.isSkipValidation());
         if (survey == null) {
@@ -161,7 +158,7 @@ public class UssdService implements MessageHandler {
     }
 
     @Override
-    public UssdModel handle(String msisdn, UssdOption request) {
+    public UssdResponseModel handle(String msisdn, UssdOption request) {
         throw new AssertionError("Unsupported request type: " + request.getClass());
     }
 
@@ -174,25 +171,25 @@ public class UssdService implements MessageHandler {
     //  Message generators.
     //
 
-    private UssdModel surveyNotFound() {
-        return new UssdModel(bundle.getString("ussd.survey.not.available"));
+    private UssdResponseModel surveyNotFound() {
+        return new UssdResponseModel.NoSurveyResponseModel();
     }
 
-    private UssdModel fatalError() {
-        return new UssdModel(bundle.getString("ussd.error"));
+    private UssdResponseModel fatalError() {
+        return new UssdResponseModel.ErrorResponseModel();
     }
 
-    private UssdModel surveyFinish(Respondent respondent, Survey survey) {
+    private UssdResponseModel surveyFinish(Respondent respondent, Survey survey) {
         respondent.setFinished(true);
         respondentRepository.update(respondent);
 
         final String endText = survey.getDetails().getEndText();
-        return new UssdModel((endText == null) ?
-                bundle.getString("ussd.end.text.default") :
+        return new UssdResponseModel((endText == null) ?
+                USSD_BUNDLE.getString("ussd.end.text.default") :
                 endText);
     }
 
-    private UssdModel surveyStart(Survey survey,
+    private UssdResponseModel surveyStart(Survey survey,
                                   Respondent respondent,
                                   boolean skipValidation) {
 
@@ -218,7 +215,7 @@ public class UssdService implements MessageHandler {
      *                       {@link mobi.eyeline.ips.messages.UssdOption#PARAM_SKIP_VALIDATION a flag} skipping survey validity check.
      * @return Form for the specified question.
      */
-    private UssdModel question(Question question, boolean skipValidation) {
+    private UssdResponseModel question(Question question, boolean skipValidation) {
         assert question.isActive() : "Sending inactive question";
 
         final List<AnswerOption> renderedOptions = new ArrayList<>();
@@ -237,6 +234,6 @@ public class UssdService implements MessageHandler {
         question.setSentCount(question.getSentCount() + 1);
         questionRepository.update(question);
 
-        return new UssdModel(question.getTitle(), renderedOptions);
+        return new UssdResponseModel(question.getTitle(), renderedOptions);
     }
 }

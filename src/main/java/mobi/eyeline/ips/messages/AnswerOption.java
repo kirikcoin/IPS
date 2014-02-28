@@ -58,7 +58,7 @@ public class AnswerOption extends UssdOption {
     }
 
     @Override
-    public UssdModel handle(String msisdn, MessageHandler handler) {
+    public UssdResponseModel handle(String msisdn, MessageHandler handler) {
         return handler.handle(msisdn, this);
     }
 
