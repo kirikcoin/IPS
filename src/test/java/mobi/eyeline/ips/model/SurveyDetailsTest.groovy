@@ -24,22 +24,20 @@ class SurveyDetailsTest extends ValidationTestCase {
     }
 
     void test4() {
-        def randomString = RandomStringUtils.randomAlphabetic(71)
         def violations =
-                validate new SurveyDetails(title: randomString,endText: randomString)
+                validate new SurveyDetails(title: 't'*71,endText: 'e'*71)
         assertThat violations, hasSize(2)
     }
+
     void test5() {
-        def randomString1 = RandomStringUtils.randomAlphabetic(71)
-        def randomString2 = RandomStringUtils.randomAlphabetic(69)
         def violations =
-                validate new SurveyDetails(title: randomString1,endText: randomString2)
+                validate new SurveyDetails(title: 't'*71,endText: 'e'*69)
         assertThat violations, hasSize(1)
     }
+
     void test6() {
-        def randomString1 = RandomStringUtils.randomAlphabetic(69)
         def violations =
-                validate new SurveyDetails(title: randomString1,endText: randomString1)
+                validate new SurveyDetails(title: 't'*69, endText: 'e'*69)
         assertThat violations, hasSize(0)
     }
 }

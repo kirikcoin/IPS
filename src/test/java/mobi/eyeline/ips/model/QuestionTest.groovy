@@ -22,6 +22,8 @@ class QuestionTest extends ValidationTestCase {
         assertThat validate(question), hasSize(0)
     }
 
+
+
     void test4(){
         def title = RandomStringUtils.randomAlphabetic(71)
         def question =
@@ -29,6 +31,14 @@ class QuestionTest extends ValidationTestCase {
         def violations = validate question
         assertThat validate(question), hasSize(1)
         assertEquals "title", violations[0].propertyPath.first().name
+    }
+
+    void test5() {
+        assertThat validate(new QuestionOption()), hasSize(1)
+    }
+
+    void test6() {
+        assertThat validate(new QuestionOption(answer: 'a'*71)), hasSize(1)
     }
 
     void testMoveUpSkipped() {
