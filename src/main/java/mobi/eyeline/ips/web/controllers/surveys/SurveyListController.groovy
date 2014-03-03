@@ -50,7 +50,8 @@ class SurveyListController extends BaseController {
                                 DataTableSortOrder sortOrder) {
 
                 def list = surveyRepository.list(
-                        isManagerRole() ? null : userRepository.getByLogin(SurveyListController.this.userName),
+                        isManagerRole() ?
+                                null : userRepository.getByLogin(SurveyListController.this.userName),
                         search,
                         true,
                         sortOrder.columnId,
@@ -72,7 +73,8 @@ class SurveyListController extends BaseController {
             @Override
             public int getRowsCount() {
                 surveyRepository.count(
-                        isManagerRole() ? null : userRepository.getByLogin(SurveyListController.this.userName),
+                        isManagerRole() ?
+                                null : userRepository.getByLogin(SurveyListController.this.userName),
                         search,
                         true)
             }
@@ -83,9 +85,7 @@ class SurveyListController extends BaseController {
 
         def checkClientIdUnset = {
             if (newSurveyClientId == null) {
-                addErrorMessage(
-                        resourceBundle.getString('survey.validation.client.empty'),
-                        'clients')
+                addErrorMessage(strings['survey.validation.client.empty'], 'clients')
                 return true
             }
             return false
@@ -94,7 +94,7 @@ class SurveyListController extends BaseController {
         def checkStartInTheFuture = {
             if (newSurveyStartDate != null && newSurveyStartDate.before(new Date())) {
                 addErrorMessage(
-                        resourceBundle.getString('survey.validation.start.date.future'),
+                        strings['survey.validation.start.date.future'],
                         'newSurveyStartDate')
                 return true
             }

@@ -2,7 +2,6 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
-import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.PushService
@@ -192,9 +191,7 @@ class SurveySettingsController extends BaseSurveyController {
 
     void sendPreview() {
         if (!isPhoneValid()) {
-            addErrorMessage(
-                    resourceBundle.getString('invalid.phone.number'),
-                    'previewPhone')
+            addErrorMessage(strings['invalid.phone.number'], 'previewPhone')
             errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
         } else {
@@ -267,12 +264,12 @@ class SurveySettingsController extends BaseSurveyController {
 
         static final TerminalOption TRUE = new TerminalOption() {
             boolean getValue() { true }
-            String getLabel() { BaseController.resourceBundle.getString("question.option.terminal.yes") }
+            String getLabel() { BaseController.strings['question.option.terminal.yes'] }
         }
 
         static final TerminalOption FALSE = new TerminalOption() {
             boolean getValue() { false }
-            String getLabel() { BaseController.resourceBundle.getString("question.option.terminal.no") }
+            String getLabel() { BaseController.strings['question.option.terminal.no'] }
         }
 
         static TerminalOption forValue(boolean value) { value ? TRUE : FALSE }

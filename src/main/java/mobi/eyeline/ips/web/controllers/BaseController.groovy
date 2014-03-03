@@ -6,8 +6,6 @@ import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.util.RequestParam
 import mobi.eyeline.ips.web.validators.LocalizedMessageInterpolator
-import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator
-import org.hibernate.validator.resourceloading.PlatformResourceBundleLocator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -22,7 +20,6 @@ import javax.validation.Validator
 import java.security.Principal
 
 import static java.util.Collections.emptyMap
-import static mobi.eyeline.ips.util.RequestParam.*
 
 public abstract class BaseController implements Serializable {
 
@@ -41,17 +38,20 @@ public abstract class BaseController implements Serializable {
     /**
      * Returns principal of the current logged in user, possibly {@code null}.
      */
+    @SuppressWarnings("GrMethodMayBeStatic")
     protected Principal getUserPrincipal() {
         return FacesContext.currentInstance.externalContext.userPrincipal
     }
 
     boolean isAuthenticated() { userPrincipal != null }
 
+    @SuppressWarnings("GrMethodMayBeStatic")
     boolean inRole(Role role) {
         final ExternalContext context = FacesContext.currentInstance.externalContext
         return context.isUserInRole(role.name)
     }
 
+    @SuppressWarnings("GrMethodMayBeStatic")
     public String getUserName() { FacesContext.currentInstance.externalContext.remoteUser }
 
     public User getCurrentUser() {userRepository.getByLogin(userName)}
@@ -77,19 +77,23 @@ public abstract class BaseController implements Serializable {
      *
      * @param createIfNeeded Specifies if the session should be created if absent.
      */
+    @SuppressWarnings("GrMethodMayBeStatic")
     protected HttpSession getHttpSession(boolean createIfNeeded) {
         final ExternalContext context = FacesContext.currentInstance.externalContext
         return context.getSession(createIfNeeded) as HttpSession
     }
 
+    @SuppressWarnings("UnnecessaryQualifiedReference")
     protected mobi.eyeline.ips.util.RequestParam getParam() {
         return new RequestParam(request)
     }
 
+    @SuppressWarnings("UnnecessaryQualifiedReference")
     mobi.eyeline.ips.util.RequestParam.Value getParamValue(String name) {
         return getParam().get(name)
     }
 
+    @SuppressWarnings("GrMethodMayBeStatic")
     HttpServletRequest getRequest() {
         final ExternalContext context = FacesContext.currentInstance.externalContext
         return context.request as HttpServletRequest
@@ -111,18 +115,25 @@ public abstract class BaseController implements Serializable {
     //
 
     void addFacesMessage(ConstraintViolation<?> violation) {
-        addValidationError(violation.getMessage(), violation.getPropertyPath().toString())
+        addValidationError(violation.message, violation.propertyPath.toString())
     }
 
     void addFacesMessage(ConstraintViolation<?> violation,
                          Map<String, String> fieldNamesMapping) {
-        String pageFieldId = fieldNamesMapping[violation.propertyPath.toString()]
-        if (pageFieldId == null)
-            pageFieldId = violation.propertyPath.toString()
-        addValidationError(violation.message, pageFieldId)
+        def property = violation.propertyPath.toString()
+        addValidationError(violation.message, fieldNamesMapping[property] ?: property)
     }
 
     void addValidationError(String message, String id) {
+        addErrorMessage(message, id)
+    }
+
+    void addValidationError(String message) {
+        addValidationError(message, "")
+    }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    void addErrorMessage(String message, String id) {
         def facesMessage = new FacesMessage(
                 severity: FacesMessage.SEVERITY_ERROR,
                 summary: message,
@@ -134,24 +145,13 @@ public abstract class BaseController implements Serializable {
         addValidationError(message, "")
     }
 
-    void addErrorMessage(String message, String id) {
-        FacesMessage facesMessage = new FacesMessage()
-        facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR)
-        facesMessage.setSummary(message)
-        facesMessage.setDetail(message)
-        FacesContext.getCurrentInstance().addMessage(id, facesMessage)
-    }
-
-    public void addValidationError(String message) {
-        addValidationError(message, "")
-    }
-
+    @SuppressWarnings("GrMethodMayBeStatic")
     public void addInfoMessage(String message, String id) {
-        FacesMessage facesMessage = new FacesMessage()
-        facesMessage.setSeverity(FacesMessage.SEVERITY_INFO)
-        facesMessage.setSummary(message)
-        facesMessage.setDetail(message)
-        FacesContext.getCurrentInstance().addMessage(id, facesMessage)
+        def facesMessage = new FacesMessage(
+                severity: FacesMessage.SEVERITY_INFO,
+                summary: message,
+                detail: message)
+        FacesContext.currentInstance.addMessage(id, facesMessage)
     }
 
     public void addInfoMessage(String message) {
@@ -170,6 +170,7 @@ public abstract class BaseController implements Serializable {
         renderViolationMessage(violations, emptyMap())
     }
 
+    @SuppressWarnings("GrMethodMayBeStatic")
     Validator getValidator() {
         return Validation
                 .byDefaultProvider()
@@ -179,8 +180,24 @@ public abstract class BaseController implements Serializable {
                 .validator
     }
 
-    static ResourceBundle getResourceBundle() {
+    static IndexedBundle getStrings() {
         def context = FacesContext.currentInstance
-        return context.application.getResourceBundle(context, "bundle")
+        return new IndexedBundle(context.application.getResourceBundle(context, "bundle"))
+    }
+
+    static class IndexedBundle extends ResourceBundle {
+        private final ResourceBundle delegate
+
+        IndexedBundle(ResourceBundle delegate) {
+            this.delegate = delegate
+        }
+
+        @Override
+        protected Object handleGetObject(String key) { delegate.handleGetObject(key) }
+
+        @Override
+        Enumeration<String> getKeys() { delegate.getKeys() }
+
+        String getAt(String key) { getString(key) }
     }
 }

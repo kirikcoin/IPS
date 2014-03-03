@@ -107,7 +107,7 @@ class SurveyInvitesController extends BaseSurveyController {
 
         } else {
             addErrorMessage(
-                    resourceBundle.getString('invitations.block.advertising.company.dialog.id.error'),
+                    strings['invitations.block.advertising.company.dialog.id.error'],
                     'newIdentifier')
             madvIdError = true
         }

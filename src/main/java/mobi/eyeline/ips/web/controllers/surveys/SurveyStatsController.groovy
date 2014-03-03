@@ -64,8 +64,8 @@ class SurveyStatsController extends BaseSurveyController {
                     styleClass: 'resultsTable eyeline_list grid',
                     columnClasses: 'col1,col2,col3').with {
                 children << new HtmlOutputText()
-                children << new HtmlOutputText(value: resourceBundle.getString('survey.stats.answer'))
-                children << new HtmlOutputText(value: resourceBundle.getString('survey.stats.count'))
+                children << new HtmlOutputText(value: strings['survey.stats.answer'])
+                children << new HtmlOutputText(value: strings['survey.stats.count'])
 
                 q.activeOptions.each {
                     children << new HtmlPanelGroup(
@@ -91,10 +91,10 @@ class SurveyStatsController extends BaseSurveyController {
                     horizontal: true
             ).with {
                 children << new Bar(
-                        name: resourceBundle.getString('survey.stats.response.ratio.sent'),
+                        name: strings['survey.stats.response.ratio.sent'],
                         color: 'blue')
                 children << new Bar(
-                        name: resourceBundle.getString('survey.stats.response.ratio.answered'),
+                        name: strings['survey.stats.response.ratio.answered'],
                         color: 'green')
                 it
             }
@@ -127,7 +127,7 @@ class SurveyStatsController extends BaseSurveyController {
         //  (as empty charts seem to look ugly).
         def placeholder = {
             new HtmlOutputText(
-                value: resourceBundle.getString('survey.stats.question.no.data'),
+                value: strings['survey.stats.question.no.data'],
                 styleClass: 'placeholder')
         }
 
@@ -152,12 +152,10 @@ class SurveyStatsController extends BaseSurveyController {
 
         def model = new BarModel()
         model.addSection(
-                resourceBundle.getString('survey.stats.overall.sent.questions.title')
+                strings['survey.stats.overall.sent.questions.title']
         ).with {
-            addValue(resourceBundle.getString('survey.stats.overall.sent.questions.answered'),
-                    countAnswers(survey))
-            addValue(resourceBundle.getString('survey.stats.overall.sent.questions.sent'),
-                    countSentQuestions(survey))
+            addValue(strings['survey.stats.overall.sent.questions.answered'], countAnswers(survey))
+            addValue(strings['survey.stats.overall.sent.questions.sent'], countSentQuestions(survey))
         }
 
         return model
@@ -167,13 +165,13 @@ class SurveyStatsController extends BaseSurveyController {
         BarModel model = new BarModel()
 
         model.addSection(
-                resourceBundle.getString('survey.stats.overall.respondents.title')
+                strings['survey.stats.overall.respondents.title']
         ).with {
-            addValue(resourceBundle.getString('survey.stats.overall.respondents.invitations'),
+            addValue(strings['survey.stats.overall.respondents.invitations'],
                     surveyService.countInvitations(survey))
-            addValue(resourceBundle.getString('survey.stats.overall.respondents.respondents'),
+            addValue(strings['survey.stats.overall.respondents.respondents'],
                     respondentRepository.countBySurvey(survey))
-            addValue(resourceBundle.getString('survey.stats.overall.respondents.finished'),
+            addValue(strings['survey.stats.overall.respondents.finished'],
                     respondentRepository.countFinishedBySurvey(survey))
         }
 
@@ -193,10 +191,10 @@ class SurveyStatsController extends BaseSurveyController {
         new BarModel().with {
             addSection('').with {
                 addValue(
-                        resourceBundle.getString('survey.stats.response.ratio.answered'),
+                        strings['survey.stats.response.ratio.answered'],
                         answerRepository.count(question))
                 addValue(
-                        resourceBundle.getString('survey.stats.response.ratio.sent'),
+                        strings['survey.stats.response.ratio.sent'],
                         question.sentCount)
             }
             it

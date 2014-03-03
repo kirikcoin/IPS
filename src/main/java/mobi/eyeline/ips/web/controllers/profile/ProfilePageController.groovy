@@ -44,25 +44,21 @@ class ProfilePageController extends BaseController {
 
     private boolean updatePassword() {
         if (!userService.checkPassword(user, currentPassword)) {
-            addErrorMessage(
-                    resourceBundle.getString("profile.edit.password.invalid"),
-                    "currentPassword")
+            addErrorMessage(strings['profile.edit.password.invalid'], 'currentPassword')
             return false
         }
 
         if (newPassword == null) {
             // XXX: This case somehow passes validation.
             // Why is validator not triggered for empty fields?
-            addErrorMessage(
-                    resourceBundle.getString("profile.edit.message.password.required"),
-                    "newPassword")
+            addErrorMessage(strings['profile.edit.message.password.required'], 'newPassword')
             return false
         }
 
         if (newPassword != newPasswordConfirmation) {
             addErrorMessage(
-                    resourceBundle.getString("profile.edit.password.confirmation.mismatch"),
-                    "newPasswordConfirmation")
+                    strings['profile.edit.password.confirmation.mismatch'],
+                    'newPasswordConfirmation')
             return false
         }
 
@@ -76,9 +72,7 @@ class ProfilePageController extends BaseController {
         }
 
         if (!userService.isEmailAllowed(user)) {
-            addErrorMessage(
-                    resourceBundle.getString("client.dialog.validation.email.exists"),
-                    "email")
+            addErrorMessage(strings['client.dialog.validation.email.exists'], 'email')
             return false
         }
 

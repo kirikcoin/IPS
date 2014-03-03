@@ -125,16 +125,12 @@ class ClientListController extends BaseController {
                 ])
 
         if (!userService.isLoginAllowed(user)) {
-            addErrorMessage(
-                    resourceBundle.getString("client.dialog.validation.login.exists"),
-                    "clientSettingsLogin")
+            addErrorMessage(strings['client.dialog.validation.login.exists'], 'clientSettingsLogin')
             modifiedUserDataValidationError = true
         }
 
         if (!userService.isEmailAllowed(user)) {
-            addErrorMessage(
-                    resourceBundle.getString("client.dialog.validation.email.exists"),
-                    "clientSettingsEmail")
+            addErrorMessage(strings['client.dialog.validation.email.exists'], 'clientSettingsEmail')
             modifiedUserDataValidationError = true
         }
 

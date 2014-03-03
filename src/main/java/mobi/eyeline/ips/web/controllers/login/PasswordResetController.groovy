@@ -19,19 +19,17 @@ public class PasswordResetController extends BaseController {
 
     String resetPassword() {
         if (!EmailValidator.isValid(email)) {
-            addErrorMessage(
-                    resourceBundle.getString("passwrecovery.form.incorrectemail"),
-                    "email")
+            addErrorMessage(strings['passwrecovery.form.incorrectemail'], 'email')
             return null
         }
 
         try {
             userService.resetPassword((String) email)
-            return "DONE_RECOVERY"
+            return 'DONE_RECOVERY'
 
         } catch (LoginException e) {
             logger.warn(e.getMessage(), e)
-            return "RETRY_RECOVERY"
+            return 'RETRY_RECOVERY'
         }
     }
 
