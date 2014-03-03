@@ -12,5 +12,6 @@ class RespondentTest extends ValidationTestCase {
     void test2() {
         assertThat validate(new Respondent(msisdn: "foo")), hasSize(0)
         assertThat validate(new Respondent(msisdn: "123")), hasSize(0)
+
     }
 }

@@ -1,5 +1,7 @@
 package mobi.eyeline.ips.model
 
+import org.apache.commons.lang3.RandomStringUtils
+
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
 
@@ -7,7 +9,7 @@ class QuestionTest extends ValidationTestCase {
 
     void test1() {
         assertThat validate(new Question()), hasSize(2)
-        assertThat validate(new Question(title: "")), hasSize(2)
+        assertThat validate(new Question(title: "",)), hasSize(2)
     }
 
     void test2() {
@@ -18,6 +20,15 @@ class QuestionTest extends ValidationTestCase {
         def question =
                 new Question(title: "foo", options: [new QuestionOption(answer: 'Foo')])
         assertThat validate(question), hasSize(0)
+    }
+
+    void test4(){
+        def title = RandomStringUtils.randomAlphabetic(71)
+        def question =
+                new Question(title: title, options: [new QuestionOption(answer: 'Foo')])
+        def violations = validate question
+        assertThat validate(question), hasSize(1)
+        assertEquals "title", violations[0].propertyPath.first().name
     }
 
     void testMoveUpSkipped() {
@@ -109,4 +120,5 @@ class QuestionTest extends ValidationTestCase {
         survey.moveDown q1
         assertEquals([q1, q4, q3, q2], survey.questions)
     }
+
 }

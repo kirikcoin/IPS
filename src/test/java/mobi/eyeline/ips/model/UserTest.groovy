@@ -1,5 +1,7 @@
 package mobi.eyeline.ips.model
 
+import org.apache.commons.lang3.RandomStringUtils
+
 import static org.hamcrest.CoreMatchers.not
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
@@ -79,4 +81,106 @@ class UserTest extends ValidationTestCase {
 
         assertThat violations, not(empty())
     }
+
+    void test8() {
+        def randomString = RandomStringUtils.randomAlphabetic(71)
+        def violations = validate new User(
+                login: randomString,
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: randomString,
+                role: Role.CLIENT,
+                company: randomString
+        )
+        assertThat violations, hasSize(3)
+    }
+
+    void test9() {
+        def randomString = RandomStringUtils.randomAlphabetic(71)
+        def violations = validate new User(
+                login: randomString,
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: randomString,
+                role: Role.CLIENT,
+                company: "company"
+        )
+        assertThat violations, hasSize(2)
+    }
+
+    void test10() {
+        def randomString = RandomStringUtils.randomAlphabetic(71)
+        def violations = validate new User(
+                login: randomString,
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "John Doe",
+                role: Role.CLIENT,
+                company: "company"
+        )
+        assertThat violations, hasSize(1)
+        assertEquals "login", violations[0].propertyPath.first().name
+    }
+
+    void test11() {
+        def randomString = RandomStringUtils.randomAlphabetic(71)
+        def violations = validate new User(
+                login: "login",
+                password:  "123".pw(),
+                email:  randomString,
+                fullName: "John Doe",
+                role: Role.CLIENT,
+                company: "company"
+        )
+        assertThat violations, hasSize(2)
+        assertEquals "email", violations[0].propertyPath.first().name
+        assertEquals "email", violations[1].propertyPath.first().name
+    }
+
+    void test12() {
+        def randomString = RandomStringUtils.randomAlphabetic(71)
+        def violations = validate new User(
+                login: "login",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "John Doe",
+                role: Role.CLIENT,
+                company: "company",
+                phoneNumber:randomString
+        )
+        assertThat violations, hasSize(2)
+        assertEquals "phoneNumber", violations[0].propertyPath.first().name
+        assertEquals "phoneNumber", violations[1].propertyPath.first().name
+    }
+
+    void test13() {
+        def randomNumber= RandomStringUtils.randomNumeric(31)
+        def violations = validate new User(
+                login: "login",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "John Doe",
+                role: Role.CLIENT,
+                company: "company",
+                phoneNumber:randomNumber
+        )
+        assertThat violations, hasSize(1)
+        assertEquals "phoneNumber", violations[0].propertyPath.first().name
+    }
+
+    void test14() {
+        def randomNumber= RandomStringUtils.randomNumeric(29)
+        def violations = validate new User(
+                login: "login",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "John Doe",
+                role: Role.CLIENT,
+                company: "company",
+                phoneNumber:randomNumber
+        )
+        assertThat violations, hasSize(0)
+    }
+
+
 }
