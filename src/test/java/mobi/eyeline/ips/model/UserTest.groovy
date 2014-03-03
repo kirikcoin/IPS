@@ -83,25 +83,24 @@ class UserTest extends ValidationTestCase {
     }
 
     void test8() {
-        def randomString = RandomStringUtils.randomAlphabetic(71)
+
         def violations = validate new User(
-                login: randomString,
+                login: 'l'*71,
                 password:  "123".pw(),
                 email:  "username@example.com",
-                fullName: randomString,
+                fullName: 'f'*71,
                 role: Role.CLIENT,
-                company: randomString
+                company: 'c'*71
         )
         assertThat violations, hasSize(3)
     }
 
     void test9() {
-        def randomString = RandomStringUtils.randomAlphabetic(71)
         def violations = validate new User(
-                login: randomString,
+                login: 'l'*71,
                 password:  "123".pw(),
                 email:  "username@example.com",
-                fullName: randomString,
+                fullName: 'f'*71,
                 role: Role.CLIENT,
                 company: "company"
         )
@@ -109,9 +108,8 @@ class UserTest extends ValidationTestCase {
     }
 
     void test10() {
-        def randomString = RandomStringUtils.randomAlphabetic(71)
         def violations = validate new User(
-                login: randomString,
+                login: 'l'*71,
                 password:  "123".pw(),
                 email:  "username@example.com",
                 fullName: "John Doe",
@@ -123,11 +121,10 @@ class UserTest extends ValidationTestCase {
     }
 
     void test11() {
-        def randomString = RandomStringUtils.randomAlphabetic(71)
         def violations = validate new User(
                 login: "login",
                 password:  "123".pw(),
-                email:  randomString,
+                email:  'e'*71,
                 fullName: "John Doe",
                 role: Role.CLIENT,
                 company: "company"
@@ -138,7 +135,6 @@ class UserTest extends ValidationTestCase {
     }
 
     void test12() {
-        def randomString = RandomStringUtils.randomAlphabetic(71)
         def violations = validate new User(
                 login: "login",
                 password:  "123".pw(),
@@ -146,15 +142,13 @@ class UserTest extends ValidationTestCase {
                 fullName: "John Doe",
                 role: Role.CLIENT,
                 company: "company",
-                phoneNumber:randomString
+                phoneNumber:'p'*31
         )
         assertThat violations, hasSize(2)
         assertEquals "phoneNumber", violations[0].propertyPath.first().name
         assertEquals "phoneNumber", violations[1].propertyPath.first().name
     }
-
     void test13() {
-        def randomNumber= RandomStringUtils.randomNumeric(31)
         def violations = validate new User(
                 login: "login",
                 password:  "123".pw(),
@@ -162,14 +156,13 @@ class UserTest extends ValidationTestCase {
                 fullName: "John Doe",
                 role: Role.CLIENT,
                 company: "company",
-                phoneNumber:randomNumber
+                phoneNumber:'p'*9
         )
         assertThat violations, hasSize(1)
         assertEquals "phoneNumber", violations[0].propertyPath.first().name
     }
 
     void test14() {
-        def randomNumber= RandomStringUtils.randomNumeric(29)
         def violations = validate new User(
                 login: "login",
                 password:  "123".pw(),
@@ -177,10 +170,46 @@ class UserTest extends ValidationTestCase {
                 fullName: "John Doe",
                 role: Role.CLIENT,
                 company: "company",
-                phoneNumber:randomNumber
+                phoneNumber:'8'*31
         )
-        assertThat violations, hasSize(0)
+        assertThat violations, hasSize(1)
+        assertEquals "phoneNumber", violations[0].propertyPath.first().name
     }
 
+    void test15() {
+        def violations = validate new User(
+                login: "login",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "John Doe",
+                role: Role.CLIENT,
+                company: "company",
+                phoneNumber:'8'*29
+        )
+        assertThat violations, empty()
+    }
+
+    void test16() {
+        def violations = validate new User(
+                login: "login@+|]{[",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "John Doe",
+                role: Role.CLIENT,
+        )
+        assertThat violations, hasSize(1)
+        assertEquals "login", violations[0].propertyPath.first().name
+    }
+
+    void test17() {
+        def violations = validate new User(
+                login: "l.-l",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "John Doe",
+                role: Role.CLIENT,
+        )
+        assertThat violations, empty()
+    }
 
 }
