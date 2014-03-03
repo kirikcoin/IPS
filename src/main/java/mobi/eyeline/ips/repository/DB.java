@@ -17,10 +17,6 @@ public class DB {
         sessionFactory = configuration.buildSessionFactory();
     }
 
-    public Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }

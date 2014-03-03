@@ -50,9 +50,7 @@ public class AnswerOption extends UssdOption {
 
     @Override
     public Map<String, Object> getProperties() {
-        final Map<String, Object> properties = new HashMap<>();
-
-        properties.putAll(super.getProperties());
+        final Map<String, Object> properties = new HashMap<>(super.getProperties());
 
         properties.put(PARAM_QUESTION_ID, questionId);
         properties.put(PARAM_ANSWER_ID, answerId);

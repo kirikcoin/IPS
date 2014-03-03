@@ -1,7 +1,9 @@
 package mobi.eyeline.ips.messages;
 
 import mobi.eyeline.ips.util.RequestParseUtils;
+import org.apache.http.client.utils.URIBuilder;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,16 +62,16 @@ public abstract class UssdOption {
     }
 
     public String getUri() {
-        final StringBuilder uri = new StringBuilder();
+        final URIBuilder builder = new URIBuilder();
         for (Map.Entry<String, Object> entry : getProperties().entrySet()) {
-            uri.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
+            builder.addParameter(entry.getKey(), entry.getValue().toString());
         }
 
-        if (uri.length() != 0) {
-            uri.replace(uri.length() - 1, uri.length(), "");
+        try {
+            return builder.build().getRawQuery();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
-
-        return uri.toString();
     }
 
     public boolean isSkipValidation() {

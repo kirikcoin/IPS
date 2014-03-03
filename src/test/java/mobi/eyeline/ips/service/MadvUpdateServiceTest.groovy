@@ -2,7 +2,10 @@ package mobi.eyeline.ips.service
 
 import groovy.mock.interceptor.MockFor
 import mobi.eyeline.ips.external.MadvSoapApi
+import mobi.eyeline.ips.external.madv.BannerInfo
 import mobi.eyeline.ips.external.madv.CampaignsSoapImpl
+import mobi.eyeline.ips.external.madv.DeliveryInfo
+import mobi.eyeline.ips.model.InvitationUpdateStatus
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
@@ -15,6 +18,7 @@ import javax.xml.rpc.ServiceException
 import java.rmi.RemoteException
 
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.*
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.SUCCESSFUL
 
 class MadvUpdateServiceTest extends DbTestCase {
 
@@ -102,5 +106,32 @@ class MadvUpdateServiceTest extends DbTestCase {
 
         madvUpdateService.runNow(1)
         assertEquals UNDEFINED, surveyRepository.load(1).statistics.updateStatus
+    }
+
+    void testOk() {
+        def deliveries  = (0..3).collect {new DeliveryInfo(impressionsCount: it)} as DeliveryInfo[]
+        def banners     = (0..3).collect {new BannerInfo(impressionsCount: it)} as BannerInfo[]
+
+        def implClass = new MockFor(CampaignsSoapImpl).with {
+            demand.listDeliveries() { id -> assertEquals 42, id; deliveries }
+            demand.listBanners() { id -> assertEquals 42, id; banners }
+            it
+        }
+        def impl = implClass.proxyDelegateInstance() as CampaignsSoapImpl
+
+        def api = new MadvSoapApi() {
+            CampaignsSoapImpl get(String url, String login, String password) { impl }
+        }
+
+        def madvUpdateService = createService(config, api)
+
+        createSurvey(42.toString())
+
+        madvUpdateService.runNow(1)
+
+        surveyRepository.load(1).with {
+            assertEquals SUCCESSFUL, statistics.updateStatus
+            assertEquals 12, statistics.sentCount
+        }
     }
 }
