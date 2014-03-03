@@ -70,6 +70,7 @@ public class Services {
         ussdService = new UssdService(
                 config,
                 surveyService,
+                surveyRepository,
                 respondentRepository,
                 answerRepository,
                 questionRepository,

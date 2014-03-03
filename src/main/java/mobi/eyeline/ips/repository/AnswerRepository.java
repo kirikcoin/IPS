@@ -42,13 +42,13 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         try {
             transaction = session.beginTransaction();
 
+            clearSentCounts(session, respondent, survey.getQuestions());
+
             session.createQuery(
                     "delete Answer where question in :questions and respondent = :respondent")
                     .setParameterList("questions", survey.getQuestions())
                     .setEntity("respondent", respondent)
                     .executeUpdate();
-
-            clearSentCounts(session, respondent);
 
             transaction.commit();
 
@@ -67,16 +67,16 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         }
     }
 
-    private void clearSentCounts(Session session, Respondent respondent) {
+    private void clearSentCounts(Session session, Respondent respondent, List<Question> questions) {
         @SuppressWarnings("unchecked")
-        final List<Answer> answers = (List<Answer>) session.createQuery(
-                "from Answer where respondent = :respondent")
+        final List<Question> answeredQuestions = (List<Question>) session.createQuery(
+                "select answer.question from Answer answer" +
+                " where answer.respondent = :respondent and answer.question in :questions")
+                .setParameterList("questions", questions)
                 .setEntity("respondent", respondent)
                 .list();
 
-        for (Answer answer : answers) {
-            final Question question = answer.getQuestion();
-
+        for (Question question : answeredQuestions) {
             int decSentCount = question.getSentCount() - 1;
             if (decSentCount < 0) {
                 logger.error("Attempt to decrement question sent count resulted to negative value. " +

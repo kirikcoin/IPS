@@ -15,6 +15,7 @@ import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
+import mobi.eyeline.ips.repository.SurveyRepository;
 import mobi.eyeline.ips.util.RequestParseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ public class UssdService implements MessageHandler {
     private static final Logger logger = LoggerFactory.getLogger(UssdService.class);
 
     private final SurveyService surveyService;
+    private final SurveyRepository surveyRepository;
     private final RespondentRepository respondentRepository;
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
@@ -50,12 +52,14 @@ public class UssdService implements MessageHandler {
 
     public UssdService(Config config,
                        SurveyService surveyService,
+                       SurveyRepository surveyRepository,
                        RespondentRepository respondentRepository,
                        AnswerRepository answerRepository,
                        QuestionRepository questionRepository,
                        QuestionOptionRepository questionOptionRepository) {
 
         this.surveyService = surveyService;
+        this.surveyRepository = surveyRepository;
         this.respondentRepository = respondentRepository;
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
@@ -200,6 +204,9 @@ public class UssdService implements MessageHandler {
         respondentRepository.update(respondent);
 
         answerRepository.clear(survey, respondent);
+
+        // XXX: Why doesn't `refresh' work here?
+        survey = surveyRepository.load(survey.getId());
 
         final Question first = survey.getFirstQuestion();
         if (first != null) {

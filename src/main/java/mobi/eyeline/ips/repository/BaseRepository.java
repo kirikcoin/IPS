@@ -4,20 +4,18 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.internal.SessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public abstract class BaseRepository<E, K extends Serializable> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BaseRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(BaseRepository.class);
 
     private final DB db;
     protected final Class<E> entityClass;
@@ -96,7 +94,7 @@ public abstract class BaseRepository<E, K extends Serializable> {
                 try {
                     transaction.rollback();
                 } catch (HibernateException ee) {
-                    LOG.error(e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
             }
             throw e;
@@ -122,7 +120,7 @@ public abstract class BaseRepository<E, K extends Serializable> {
                 try {
                     transaction.rollback();
                 } catch (HibernateException ee) {
-                    LOG.error(e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
             }
             throw e;
@@ -145,7 +143,7 @@ public abstract class BaseRepository<E, K extends Serializable> {
                 try {
                     transaction.rollback();
                 } catch (HibernateException ee) {
-                    LOG.error(e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
             }
             throw e;
@@ -190,7 +188,7 @@ public abstract class BaseRepository<E, K extends Serializable> {
                 try {
                     transaction.rollback();
                 } catch (HibernateException ee) {
-                    LOG.error(e.getMessage(), e);
+                    logger.error(e.getMessage(), e);
                 }
             }
             throw e;

@@ -59,6 +59,7 @@ class UssdServiceTest extends DbTestCase {
         ussdService = new UssdService(
                 config,
                 surveyService,
+                surveyRepository,
                 respondentRepository,
                 answerRepository,
                 questionRepository,
@@ -353,5 +354,40 @@ class UssdServiceTest extends DbTestCase {
         ])
 
         assertEquals 'Second one', page1Again.text
+    }
+
+    void testRestart() {
+        def respondent = { respondentRepository.load(1) }
+
+        testFullCycle()
+
+        assertEquals 'With options',
+                answerRepository.getLast(survey(), respondent()).question.title
+        assertEquals([1, 1, 1],
+                questionRepository.list().sort { it.id }.collect { it.sentCount })
+
+        respondent().with {
+            assertEquals 3, it.answersCount
+            assertTrue it.finished
+        }
+        assertThat answerRepository.list(), hasSize(3)
+
+        // Load the landing page again.
+        // We expect the same output as the first time, statistics should be reset.
+
+        request([
+                (PARAM_MSISDN):    msisdn,
+                (PARAM_SURVEY_ID): sid
+        ]).with {
+            assertEquals 'First one', it.text
+        }
+
+        assertNull answerRepository.getLast(survey(), respondent())
+        assertEquals([1, 0, 0],
+                questionRepository.list().sort { it.id }.collect { it.sentCount })
+        respondent().with {
+            assertEquals 0, it.answersCount
+            assertFalse it.finished
+        }
     }
 }
