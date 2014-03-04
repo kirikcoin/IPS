@@ -15,10 +15,6 @@ class RespondentRepositoryTest extends DbTestCase {
         fillTestData()
     }
 
-    void testPlaceholder() {
-
-    }
-
     void testCountBySurvey() {
         assertEquals 1, respondentRepository.countBySurvey(survey1)
         assertEquals 2, respondentRepository.countBySurvey(survey2)
