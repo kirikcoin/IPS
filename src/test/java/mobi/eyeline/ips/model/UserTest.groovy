@@ -1,7 +1,5 @@
 package mobi.eyeline.ips.model
 
-import org.apache.commons.lang3.RandomStringUtils
-
 import static org.hamcrest.CoreMatchers.not
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
