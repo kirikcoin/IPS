@@ -7,7 +7,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 import static mobi.eyeline.ips.util.HashUtils.hashPassword;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 
 public class UserService {

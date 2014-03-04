@@ -5,11 +5,9 @@ import com.google.common.base.Predicates;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.util.Objects.equals;
 
 public class ListUtils {
 

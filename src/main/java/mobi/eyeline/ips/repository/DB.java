@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.repository;
 
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
@@ -14,6 +13,7 @@ public class DB {
                 .configure("/hibernate-model.cfg.xml")
                 .configure()
                 .addProperties(properties);
+        //noinspection deprecation
         sessionFactory = configuration.buildSessionFactory();
     }
 

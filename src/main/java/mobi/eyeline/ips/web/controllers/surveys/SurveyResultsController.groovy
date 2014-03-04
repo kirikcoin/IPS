@@ -44,8 +44,4 @@ class SurveyResultsController extends BaseSurveyController {
             }
         }
     }
-
-    public void apply() {
-        println "mobi.eyeline.ips.web.controllers.surveys.SurveyResultsController.apply"
-    }
 }

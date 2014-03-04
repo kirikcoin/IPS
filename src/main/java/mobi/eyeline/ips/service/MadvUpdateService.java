@@ -107,7 +107,7 @@ public class MadvUpdateService {
     private static abstract class BaseUpdateTask extends TimerTask {
         private final Config config;
         private final MadvSoapApi madvSoapApi;
-        private SurveyStatsRepository surveyStatsRepository;
+        private final SurveyStatsRepository surveyStatsRepository;
 
         protected BaseUpdateTask(Config config,
                                  MadvSoapApi madvSoapApi,

@@ -40,8 +40,9 @@ public class RequestParseUtils {
     /**
      * @return {@code defaultValue} if {@code key} is missing.
      */
-    public static boolean getBoolean(Map<String, String[]> map, String key, boolean defaultValue)
-            throws MissingParameterException {
+    public static boolean getBoolean(Map<String, String[]> map,
+                                     String key,
+                                     boolean defaultValue) {
 
         try {
             return getBoolean(map, key);

@@ -32,6 +32,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
         super(db);
     }
 
+    /*
     static DetachedCriteria getCriteriaSurvey(User user) {
         final DetachedCriteria criteria = DetachedCriteria
                 .forClass(Survey.class)
@@ -42,8 +43,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
             criteria.add(Restrictions.eq("client.id", user.getId()));
         }
         return criteria;
-    }
-
+    } */
 
     // TODO: Extract complex `list' methods to static `DetachedQuery` properties
     //       for direct use in controllers. This should result in code reuse, reduce

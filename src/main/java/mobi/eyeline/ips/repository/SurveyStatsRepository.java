@@ -14,10 +14,4 @@ public class SurveyStatsRepository extends BaseRepository<SurveyStats, Integer> 
         super(db);
     }
 
-    public void delete(Session session, Survey survey) {
-        session.createQuery("delete SurveyStats where survey = :survey")
-                .setEntity("survey",survey)
-                .executeUpdate();
-    }
-
 }

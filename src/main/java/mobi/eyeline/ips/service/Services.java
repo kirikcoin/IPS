@@ -41,7 +41,7 @@ public class Services {
     private final PushService pushService;
     private final SegmentationService segmentationService;
 
-    public Services(Config config) {
+    private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
 
         userRepository = new UserRepository(db);

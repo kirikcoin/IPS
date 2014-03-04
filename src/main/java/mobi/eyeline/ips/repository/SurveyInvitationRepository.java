@@ -4,9 +4,7 @@ package mobi.eyeline.ips.repository;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.SurveyInvitation;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -16,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation, Integer> {
-    private static final Logger LOG = LoggerFactory.getLogger(SurveyInvitationRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(SurveyInvitationRepository.class);
 
     public SurveyInvitationRepository(DB db) {
         super(db);

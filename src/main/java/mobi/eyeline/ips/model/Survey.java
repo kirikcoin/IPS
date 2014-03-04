@@ -219,9 +219,7 @@ public class Survey implements Serializable {
 
         Survey survey = (Survey) o;
 
-        if (id != null ? !id.equals(survey.id) : survey.id != null) return false;
-
-        return true;
+        return !(id != null ? !id.equals(survey.id) : survey.id != null);
     }
 
     @Override
