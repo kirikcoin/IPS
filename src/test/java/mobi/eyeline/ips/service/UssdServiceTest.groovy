@@ -353,7 +353,12 @@ class UssdServiceTest extends DbTestCase {
                 (PARAM_SURVEY_ID): sid
         ])
 
-        assertEquals 'Second one', page1Again.text
+        page1Again.with {
+            assertEquals 'Second one', text
+            assertEquals 'questionId=2&answerId=2&skip_validation=false&type=ANSWER&survey_id=1',
+                    options[0].uri
+            assertEquals 'O2', options[0].text
+        }
     }
 
     void testRestart() {

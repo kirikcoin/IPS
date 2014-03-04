@@ -8,6 +8,10 @@ public enum InvitationUpdateStatus {
     CAMPAIGN_NOT_FOUND("campaign_not_found", "status.campaign.not.found");
 
     private final String name;
+
+    /**
+     * Localization key.
+     */
     private final String message;
 
     private InvitationUpdateStatus(String name, String message) {
@@ -15,12 +19,12 @@ public enum InvitationUpdateStatus {
         this.message = message;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     @SuppressWarnings("UnusedDeclaration")

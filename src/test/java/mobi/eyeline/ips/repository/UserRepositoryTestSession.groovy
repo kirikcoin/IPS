@@ -32,7 +32,6 @@ class UserRepositoryTestSession extends DbTestCase {
         assertEquals 3, userRepository.listByRole(Role.CLIENT).size()
         assertEquals 2, userRepository.listByRole(Role.MANAGER).size()
         assertEquals 1, userRepository.listByRole(Role.ADMIN).size()
-
     }
 
     void fillTestData() {

@@ -9,9 +9,11 @@ class ResourceController implements Serializable {
     /**
      * @return Current request context path.
      */
+    @SuppressWarnings("GrMethodMayBeStatic")
     String getPath() {
         FacesContext.currentInstance.externalContext.requestContextPath
     }
 
+    @SuppressWarnings("GrMethodMayBeStatic")
     String getVersion() { BUILD_VERSION }
 }

@@ -20,6 +20,7 @@ public class LocaleController extends BaseController {
         FacesContext.currentInstance.externalContext.redirect(getFullUrl())
     }
 
+    @SuppressWarnings("GrMethodMayBeStatic")
     private String getFullUrl() {
         def context = FacesContext.currentInstance.externalContext
 
