@@ -48,7 +48,7 @@
     <dependency org="org.apache.myfaces.trinidad" name="trinidad-impl" rev="1.2.13"
                 transitive="false" conf="site->default"/>
 
-    <dependency org="mobi.eyeline.util" name="jsfcomponents" rev="1.96" transitive="false"
+    <dependency org="mobi.eyeline.util" name="jsfcomponents" rev="1.97" transitive="false"
                 conf="site->components"/>
     <dependency org="mobi.eyeline.util.extutils" name="lessparser" rev="1.6.1" conf="site->prod"/>
     <dependency org="mobi.eyeline.util.extutils" name="generalutils" rev="1.34.1"
