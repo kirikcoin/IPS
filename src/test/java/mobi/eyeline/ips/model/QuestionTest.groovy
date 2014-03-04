@@ -3,6 +3,7 @@ package mobi.eyeline.ips.model
 import org.apache.commons.lang3.RandomStringUtils
 
 import static org.hamcrest.MatcherAssert.assertThat
+import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.hasSize
 
 class QuestionTest extends ValidationTestCase {
@@ -19,15 +20,12 @@ class QuestionTest extends ValidationTestCase {
     void test3() {
         def question =
                 new Question(title: "foo", options: [new QuestionOption(answer: 'Foo')])
-        assertThat validate(question), hasSize(0)
+        assertThat validate(question), empty()
     }
 
-
-
     void test4(){
-        def title = RandomStringUtils.randomAlphabetic(71)
         def question =
-                new Question(title: title, options: [new QuestionOption(answer: 'Foo')])
+                new Question(title: 't'*71, options: [new QuestionOption(answer: 'Foo')])
         def violations = validate question
         assertThat validate(question), hasSize(1)
         assertEquals "title", violations[0].propertyPath.first().name
