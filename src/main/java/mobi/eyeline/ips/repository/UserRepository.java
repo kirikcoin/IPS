@@ -93,9 +93,6 @@ public class UserRepository extends BaseRepository<User, Integer> {
                 .list();
     }
 
-
-
-
     public List<User> list(String filter,
                            String orderColumn,
                            boolean orderAsc,
@@ -114,14 +111,13 @@ public class UserRepository extends BaseRepository<User, Integer> {
             filters.add(ilike("email", filter, MatchMode.ANYWHERE));
 
             criteria.add(or(filters.toArray(new Criterion[filters.size()])));
-
         }
 
         criteria.add(Restrictions.eq("role", Role.CLIENT));
         criteria.setFirstResult(offset).setMaxResults(limit);
 
         // TODO: may be in controller too
-        if(orderColumn != null) {
+        if (orderColumn != null) {
             final String property;
             switch (orderColumn) {
                 case "fullName":     property = "fullName";        break;
@@ -136,14 +132,15 @@ public class UserRepository extends BaseRepository<User, Integer> {
             criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
         }
 
-        return (List<User>) criteria.list();
+      //noinspection unchecked
+      return (List<User>) criteria.list();
     }
 
     public int count(String filter) {
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(User.class);
 
-        if(isNotBlank(filter)){
+        if (isNotBlank(filter)) {
             filter = filter.trim();
             final List<Criterion> filters = new ArrayList<>();
 
@@ -155,7 +152,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
             criteria.add(or(filters.toArray(new Criterion[filters.size()])));
 
         }
-        criteria.add(Restrictions.eq("role",Role.CLIENT));
+        criteria.add(Restrictions.eq("role", Role.CLIENT));
         criteria.setProjection(Projections.rowCount());
 
         return ((Number) criteria.uniqueResult()).intValue();

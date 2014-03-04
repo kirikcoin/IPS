@@ -128,8 +128,6 @@ public class TemplateService {
         return processTemplate(template, data);
     }
 
-
-
     public String formatPasswordRestore(final User user,
                                         final String rawNewPassword) {
         final Template template = loadTemplate("templates/mail-password-restore.ftl");

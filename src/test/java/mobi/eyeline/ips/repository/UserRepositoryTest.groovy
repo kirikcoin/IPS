@@ -1,8 +1,8 @@
 package mobi.eyeline.ips.repository
 
-import mobi.eyeline.ips.exceptions.LoginException
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
+import mobi.eyeline.ips.utils.HashUtilsSupport
 import org.junit.Assert
 
 import javax.validation.ConstraintViolationException
@@ -11,9 +11,17 @@ class UserRepositoryTest extends DbTestCase {
 
     private UserRepository userRepository
 
+    private DB db
+
     void setUp() {
-        super.setUp()
+        db = new DB(new Properties())
+        HashUtilsSupport.init()
+
         userRepository = new UserRepository(db)
+    }
+
+    void tearDown() {
+        db.sessionFactory.close()
     }
 
     void testLoginOk() {
@@ -84,28 +92,6 @@ class UserRepositoryTest extends DbTestCase {
         Assert.assertEquals savedId, fetched.id
     }
 
-    void testListByRole() {
-        [
-                new User(
-                        login: "user1", fullName: "User", password: "123".pw(), email: "mail@mail.ru", role: Role.CLIENT),
-                new User(
-                        login: "user2", fullName: "User", password: "123".pw(), email: "mail2@mail.ru", role: Role.ADMIN),
-                new User(
-                        login: "user3", fullName: "User", password: "123".pw(), email: "mail3@mail.ru", role: Role.MANAGER),
-                new User(
-                        login: "user4", fullName: "User", password: "123".pw(), email: "mail4@mail.ru", role: Role.MANAGER),
-                new User(
-                        login: "user5", fullName: "User", password: "123".pw(), email: "mail5@mail.ru", role: Role.CLIENT),
-                new User(
-                        login: "user6", fullName: "User", password: "123".pw(), email: "mail6@mail.ru", role: Role.CLIENT)
-        ].each {u -> userRepository.save u}
-
-        assertEquals 3, userRepository.listByRole(Role.CLIENT).size()
-        assertEquals 2, userRepository.listByRole(Role.MANAGER).size()
-        assertEquals 1, userRepository.listByRole(Role.ADMIN).size()
-
-    }
-
     void testUserModelValidation() {
         def users = [
                 new User(
@@ -131,5 +117,4 @@ class UserRepositoryTest extends DbTestCase {
             userRepository.save(users[3])
         }
     }
-
 }

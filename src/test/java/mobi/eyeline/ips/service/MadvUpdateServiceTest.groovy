@@ -5,12 +5,12 @@ import mobi.eyeline.ips.external.MadvSoapApi
 import mobi.eyeline.ips.external.madv.BannerInfo
 import mobi.eyeline.ips.external.madv.CampaignsSoapImpl
 import mobi.eyeline.ips.external.madv.DeliveryInfo
-import mobi.eyeline.ips.model.InvitationUpdateStatus
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.repository.DbTestCase
+import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.repository.SurveyStatsRepository
 
@@ -18,7 +18,6 @@ import javax.xml.rpc.ServiceException
 import java.rmi.RemoteException
 
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.*
-import static mobi.eyeline.ips.model.InvitationUpdateStatus.SUCCESSFUL
 
 class MadvUpdateServiceTest extends DbTestCase {
 
@@ -28,6 +27,8 @@ class MadvUpdateServiceTest extends DbTestCase {
 
     SurveyRepository surveyRepository
     SurveyStatsRepository surveyStatsRepository
+    SurveyInvitationRepository surveyInvitationRepository
+    SurveyService surveyService
 
     void setUp() {
         super.setUp()
@@ -43,6 +44,8 @@ class MadvUpdateServiceTest extends DbTestCase {
 
         surveyRepository = new SurveyRepository(db)
         surveyStatsRepository = new SurveyStatsRepository(db)
+        surveyInvitationRepository = new SurveyInvitationRepository(db)
+        surveyService = new SurveyService(surveyRepository, surveyInvitationRepository)
     }
 
     MadvUpdateService createService(Config config, MadvSoapApi api) {
@@ -132,6 +135,7 @@ class MadvUpdateServiceTest extends DbTestCase {
         surveyRepository.load(1).with {
             assertEquals SUCCESSFUL, statistics.updateStatus
             assertEquals 12, statistics.sentCount
+            assertEquals 12, surveyService.countInvitations(it)
         }
     }
 }
