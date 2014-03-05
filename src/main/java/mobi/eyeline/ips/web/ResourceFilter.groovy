@@ -10,7 +10,7 @@ import static mobi.eyeline.ips.web.BuildVersion.BUILD_VERSION
 class ResourceFilter implements Filter {
 
     private final Pattern FILTER_PATTERN_CSS =
-            Pattern.compile(".*\\.css\\.$BUILD_VERSION|.*\\.css")
+            Pattern.compile(".*\\.css$BUILD_VERSION|.*\\.css")
 
     @Override
     void init(FilterConfig filterConfig) {
