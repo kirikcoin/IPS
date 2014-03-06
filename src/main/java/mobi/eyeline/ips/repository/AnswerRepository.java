@@ -165,7 +165,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                 }
 
             } else {
-                property = "date";
+                property = "startDate";
             }
             criteria.addOrder(asc ? Order.asc(property) : Order.desc(property));
         }

@@ -210,7 +210,7 @@ class SurveyRepositoryTest extends DbTestCase {
                 it
             },
 
-            new Survey(id: 4, client: user4, active: false, ).with {
+            new Survey(id: 4, client: user4, active: false).with {
                 details = new SurveyDetails(survey: it, title: 'A C')
                 statistics = new SurveyStats(survey: it, accessNumber: "79130000008")
                 it
