@@ -7,9 +7,6 @@ import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
 
-/**
- * Created by dizan on 06.03.14.
- */
 class AnswerRepositoryTest extends DbTestCase {
     private AnswerRepository answerRepository
     private SurveyRepository surveyRepository
@@ -54,11 +51,11 @@ class AnswerRepositoryTest extends DbTestCase {
         assertEquals(1, answerRepository.count(survey(1), now, now + 2, '02'))
     }
 
-    void testList() {
+    void testList1() {
         fillTestData()
 
-        def results =
-                answerRepository.list(survey(1), now, now + 4,'', null, false, Integer.MAX_VALUE, 0)
+        def results = answerRepository.list(
+                survey(1), now, now + 4,'', null, false, Integer.MAX_VALUE, 0)
 
         assertThat results, hasSize(2)
 
@@ -73,33 +70,42 @@ class AnswerRepositoryTest extends DbTestCase {
             assertEquals this.respondent(1).id, respondent.id
             assertIds([1, 4, 6], answers)
         }
+    }
 
-        def results2 =
-                answerRepository.list(survey(1), now, now + 4,'02', null, false, Integer.MAX_VALUE, 0)
+    void testList2() {
+        fillTestData()
 
-        assertThat results2, hasSize(1)
+        def results = answerRepository.list(
+                survey(1), now, now + 4, '02', null, false, Integer.MAX_VALUE, 0)
 
-        results2[0].with {
+        assertThat results, hasSize(1)
+
+        results[0].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(2).id, respondent.id
             assertIds([2, 5, 7], answers)
         }
+    }
 
-        def results3 =
-                answerRepository.list(survey(1), now, now + 4,'', 'respondent', true, Integer.MAX_VALUE, 0)
+    void testList3() {
+        fillTestData()
 
-        results3[0].with {
+        def results = answerRepository.list(
+                survey(1), now, now + 4,'', 'respondent', true, Integer.MAX_VALUE, 0)
+
+        assertThat results, hasSize(2)
+
+        results[0].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(1).id, respondent.id
             assertIds([1, 4, 6], answers)
         }
 
-        results3[1].with {
+        results[1].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(2).id, respondent.id
             assertIds([2, 5, 7], answers)
         }
-
     }
 
     void testGetLast() {
@@ -129,6 +135,7 @@ class AnswerRepositoryTest extends DbTestCase {
     private void fillTestData() {
         Survey survey1, survey2, survey3, survey4
 
+        //noinspection GroovyUnusedAssignment
         [
                 survey1 = new Survey(id: 1),
                 survey2 = new Survey(id: 2),
