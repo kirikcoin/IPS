@@ -68,12 +68,37 @@ class AnswerRepositoryTest extends DbTestCase {
             assertIds([2, 5, 7], answers)
         }
 
-        results[0].with {
+        results[1].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(1).id, respondent.id
             assertIds([1, 4, 6], answers)
         }
 
+        def results2 =
+                answerRepository.list(survey(1), now, now + 4,'02', null, false, Integer.MAX_VALUE, 0)
+
+        assertThat results2, hasSize(1)
+
+        results2[0].with {
+            assertEquals this.survey(1).id, survey.id
+            assertEquals this.respondent(2).id, respondent.id
+            assertIds([2, 5, 7], answers)
+        }
+
+        def results3 =
+                answerRepository.list(survey(1), now, now + 4,'', 'respondent', true, Integer.MAX_VALUE, 0)
+
+        results3[0].with {
+            assertEquals this.survey(1).id, survey.id
+            assertEquals this.respondent(1).id, respondent.id
+            assertIds([1, 4, 6], answers)
+        }
+
+        results3[1].with {
+            assertEquals this.survey(1).id, survey.id
+            assertEquals this.respondent(2).id, respondent.id
+            assertIds([2, 5, 7], answers)
+        }
 
     }
 
