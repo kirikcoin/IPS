@@ -12,4 +12,10 @@
     <source>../WEB-INF/tags/confirmDialog.xhtml</source>
   </tag>
 
+  <tag>
+    <!-- Date range. -->
+    <tag-name>dateRange</tag-name>
+    <source>../WEB-INF/tags/dateRange.xhtml</source>
+  </tag>
+
 </facelet-taglib>

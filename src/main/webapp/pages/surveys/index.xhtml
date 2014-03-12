@@ -3,6 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
     >
 
   <ui:composition template="/templates/main.xhtml">
@@ -72,15 +73,13 @@
               </eye:column>
               <eye:column name="state" title="#{bundle['survey.list.table.state']}"
                           sortable="true">
-                <h:outputText value="#{bundle['survey.state.not.started']}"
-                              styleClass="survey_state_not_started"
-                              rendered="#{row.state == 'NOT_STARTED'}"/>
-                <h:outputText value="#{bundle['survey.state.in.progress']}"
-                              styleClass="survey_state_in_progress"
-                              rendered="#{row.state == 'IN_PROGRESS'}"/>
-                <h:outputText value="#{bundle['survey.state.finished']}"
-                              styleClass="survey_state_finished"
-                              rendered="#{row.state == 'FINISHED'}"/>
+                <ips:dateRange id="progressState"
+                               dateStart="#{row.startDate}"
+                               date="#{dateController.now}"
+                               dateEnd="#{row.endDate}"
+                               textBefore="#{bundle['survey.state.not.started']}"
+                               textInRange="#{bundle['survey.state.in.progress']}"
+                               textAfter="#{bundle['survey.state.finished']}"/>
               </eye:column>
               <eye:column name="period" title="#{bundle['survey.list.table.period']}"
                           sortable="true">

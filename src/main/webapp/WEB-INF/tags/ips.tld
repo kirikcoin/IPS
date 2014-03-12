@@ -64,4 +64,67 @@
     </attribute>
   </tag>
 
+  <tag>
+    <description>Отражает попадание даты в указанный промежуток</description>
+    <name>dateRange</name>
+    <tag-class>mobi.eyeline.util.jsf.components.base.BaseTag</tag-class>
+    <body-content>JSP</body-content>
+
+    <attribute>
+      <description>Идентификатор компонента</description>
+      <name>id</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+
+    <attribute>
+      <description>Начало промежутка</description>
+      <name>dateStart</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.Date</type>
+    </attribute>
+
+    <attribute>
+      <description>Дата</description>
+      <name>date</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.Date</type>
+    </attribute>
+
+    <attribute>
+      <description>Окончание промежутка</description>
+      <name>dateEnd</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.util.Date</type>
+    </attribute>
+
+    <attribute>
+      <description>Отображается в случае, когда дата раньше указанного промежутка</description>
+      <name>textBefore</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+
+    <attribute>
+      <description>Отображается в случае, когда дата попала в указанный промежуток</description>
+      <name>textInRange</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+
+    <attribute>
+      <description>Отображается в случае, когда дата позже указанного промежутка</description>
+      <name>textAfter</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
+
 </taglib>
