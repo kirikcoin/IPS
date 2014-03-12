@@ -456,27 +456,27 @@
                          value="#{surveySettingsController.question.title}"/>
 
           <br/>
-
-          <eye:dynamicTable id="questionOptions"
-                            value="#{surveySettingsController.questionOptions}"
-                            tableClass="table-narrow dtable"
-                            dragRows="true">
-            <eye:textColumn name="id"
-                            allowEmpty="true"
-                            columnClass="hidden"/>
-            <eye:textColumn name="answer"
-                            allowEditAfterAdd="true"
-                            allowEmpty="false"
-                            maxLength="70"
-                            title="#{bundle['question.option.label']}"/>
-            <eye:selectColumn name="terminal"
-                              values="#{surveySettingsController.terminalValues}"
-                              var="t" itemLabel="#{t.label}" itemValue="#{t.value}"
+          <h:panelGroup layout="block" style="overflow: auto; max-height: 295px">
+            <eye:dynamicTable id="questionOptions"
+                              value="#{surveySettingsController.questionOptions}"
+                              tableClass="table-narrow dtable"
+                              dragRows="true">
+              <eye:textColumn name="id"
+                              allowEmpty="true"
+                              columnClass="hidden"/>
+              <eye:textColumn name="answer"
                               allowEditAfterAdd="true"
-                              title="#{bundle['question.option.terminal.label']}"
-                              columnClass="colTerminal"/>
-          </eye:dynamicTable>
-
+                              allowEmpty="false"
+                              maxLength="70"
+                              title="#{bundle['question.option.label']}"/>
+              <eye:selectColumn name="terminal"
+                                values="#{surveySettingsController.terminalValues}"
+                                var="t" itemLabel="#{t.label}" itemValue="#{t.value}"
+                                allowEditAfterAdd="true"
+                                title="#{bundle['question.option.terminal.label']}"
+                                columnClass="colTerminal"/>
+            </eye:dynamicTable>
+          </h:panelGroup>
           <eye:buttons>
             <eye:button>
               <h:commandLink styleClass="button-green"
