@@ -12,7 +12,6 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import static mobi.eyeline.ips.web.controllers.surveys.SurveyListController.SurveyState.*
 
 class SurveyListController extends BaseController {
 
@@ -139,24 +138,6 @@ class SurveyListController extends BaseController {
         SurveySettingsController.goToSurvey(surveyId)
     }
 
-    static enum SurveyState {
-
-        /**
-         * now < {@link Survey#startDate}
-         */
-        NOT_STARTED,
-
-        /**
-         * {@link Survey#startDate} <= now <= {@link Survey#endDate}
-         */
-        IN_PROGRESS,
-
-        /**
-         * {@link Survey#endDate} < now
-         */
-        FINISHED
-    }
-
     static class TableItem implements Serializable {
 
         int id
@@ -168,15 +149,5 @@ class SurveyListController extends BaseController {
         Date endDate
 
         String accessNumber
-
-        public SurveyState getState() {
-            final Date now = new Date()
-
-            if (startDate.after(now)) return NOT_STARTED
-            if (startDate.before(now) && now.before(endDate)) return IN_PROGRESS
-            if (endDate.before(now)) return FINISHED
-
-            throw new AssertionError("Could not determine survey execution state")
-        }
     }
 }
