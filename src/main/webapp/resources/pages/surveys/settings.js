@@ -22,6 +22,10 @@ var page = {
       $.each(['groupEndMessage', 'groupSettings', 'questionsList'], function(i, e) {
         wireModificationLink(e);
       });
+
+      $(".eyeline_addbutton").click(function() {
+        $("#scrollableVariants").scrollTop(10000);
+      });
     });
 
   },
