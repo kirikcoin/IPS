@@ -60,4 +60,26 @@ class SegmentationServiceTest extends GroovyTestCase {
         assertEquals new SegmentationService.SegmentationInfo(1, 1, 160),
                 segmentationService.getSegmentationInfo(q)
     }
+
+    void test6() {
+        def q = new Question(title: 'Билд упал. Как так????')
+
+        (1..30)
+                .collect {new QuestionOption(answer: "Option number $it", active: true)}
+                .each {it.question = q; q.options << it}
+
+        assertEquals new SegmentationService.SegmentationInfo(9, 604, 70),
+                segmentationService.getSegmentationInfo(q)
+    }
+
+    void test7() {
+        def q = new Question(title: 'Question title')
+
+        (1..30)
+                .collect {new QuestionOption(answer: "Option number $it", active: true)}
+                .each {it.question = q; q.options << it}
+
+        assertEquals new SegmentationService.SegmentationInfo(4, 596, 160),
+                segmentationService.getSegmentationInfo(q)
+    }
 }

@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.Math.ceil;
-import static java.lang.Math.min;
+import static java.lang.Math.max;
 
 /**
  * @see com.eyelinecom.whoisd.sads2.common.USSDPageBuilder
@@ -33,7 +33,7 @@ public class SegmentationService {
         final int maxSymbolsPerSegment = getSegmentLength(text);
 
         final int segmentsCount = (int) ceil(
-                min((float) symbolsCount / maxSymbolsPerSegment, 1)
+                max((float) symbolsCount / maxSymbolsPerSegment, 1)
         );
 
         return new SegmentationInfo(segmentsCount, symbolsCount, maxSymbolsPerSegment);
