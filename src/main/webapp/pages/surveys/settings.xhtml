@@ -38,7 +38,13 @@
 
           $('#content').attr('action',
               '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
+
+          $( ".eyeline_addbutton" ).click(function() {
+            $(scrollableVariants).scrollTop($(scrollableVariants).height());
+          });
         });
+
+
         //    ]]>
       </script>
 
@@ -456,7 +462,7 @@
                          value="#{surveySettingsController.question.title}"/>
 
           <br/>
-          <h:panelGroup layout="block" style="overflow: auto; max-height: 295px">
+          <h:panelGroup id="scrollableVariants" layout="block" style="overflow: auto; max-height: 295px">
             <eye:dynamicTable id="questionOptions"
                               value="#{surveySettingsController.questionOptions}"
                               tableClass="table-narrow dtable"
