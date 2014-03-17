@@ -24,7 +24,9 @@ var page = {
       });
 
       $(".eyeline_addbutton").click(function() {
-        $("#scrollableVariants").scrollTop(10000);
+        var $outer = $("#scrollableVariants");
+        var $inner = $outer.find('table');
+        $outer.scrollTop($inner.height() - $outer.height());
       });
     });
 
