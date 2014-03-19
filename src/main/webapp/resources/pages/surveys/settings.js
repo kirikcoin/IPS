@@ -23,11 +23,14 @@ var page = {
         wireModificationLink(e);
       });
 
-      $(".eyeline_addbutton").click(function() {
-        var $outer = $("#scrollableVariants");
-        var $inner = $outer.find('table');
-        $outer.scrollTop($inner.height() - $outer.height());
-      });
+
+    jsfc('questionOptions').addListener(function (event) {
+        if (event.type == 'added') {
+            var $outer = $("#scrollableVariants");
+            var $inner = $outer.find('table');
+            $outer.scrollTop($inner.height() - $outer.height());
+        }
+    }) ;
     });
 
   },

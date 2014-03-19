@@ -460,7 +460,17 @@
                          value="#{surveySettingsController.question.title}"/>
 
           <br/>
-          <h:panelGroup id="scrollableVariants" layout="block" style="overflow: auto; max-height: 308px">
+
+          <h:panelGroup id="headerBlock" layout="block">
+            <h:panelGrid columns="2">
+              <h:outputText  value="#{bundle['question.option.label']}"/>
+              <h:outputText  value=" #{bundle['question.option.terminal.label']}"/>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup id="scrollableVariants" layout="block">
+
+
             <eye:dynamicTable id="questionOptions"
                               value="#{surveySettingsController.questionOptions}"
                               tableClass="table-narrow dtable"
@@ -472,12 +482,12 @@
                               allowEditAfterAdd="true"
                               allowEmpty="false"
                               maxLength="70"
-                              title="#{bundle['question.option.label']}"/>
+                              />
               <eye:selectColumn name="terminal"
                                 values="#{surveySettingsController.terminalValues}"
                                 var="t" itemLabel="#{t.label}" itemValue="#{t.value}"
                                 allowEditAfterAdd="true"
-                                title="#{bundle['question.option.terminal.label']}"
+
                                 columnClass="colTerminal"/>
             </eye:dynamicTable>
           </h:panelGroup>
