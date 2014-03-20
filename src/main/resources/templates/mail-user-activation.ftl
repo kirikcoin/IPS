@@ -21,10 +21,10 @@
 
   <tr>
     <td>
-      Ваш аккаунт в системе IPS со следующими учетными данными был вновь активирован.
+    ${bundle["email.user.activation.text"]}
       <ul>
         <li>
-          Логин: ${user.login}
+        ${bundle["email.message.login"]} ${user.login}
         </li>
       </ul>
     </td>
@@ -33,7 +33,7 @@
   <tr>
     <td>
       <p>
-        Для входа перейдите по <a href="${loginUrl}" target="_blank">ссылке</a>.
+      ${bundle["email.message.link.text"]} <a href="${loginUrl}" target="_blank">${bundle["email.message.link"]}</a>.
       </p>
     </td>
   </tr>

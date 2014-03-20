@@ -9,8 +9,11 @@ import mobi.eyeline.ips.properties.Config;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Thread-safe.
@@ -76,6 +79,23 @@ public class TemplateService {
         }
     }
 
+    private Map<String, String> bundle2map(ResourceBundle bundle) {
+        final Map<String, String> map = new HashMap<>();
+
+        final Enumeration<String> keys = bundle.getKeys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            map.put(key, bundle.getString(key));
+        }
+
+        return map;
+    }
+
+    protected String processEmailTemplate(Locale locale, Template template, Map<String, Object> data) {
+        final Map<String, Object> newParams = new HashMap<>(data);
+        newParams.put("bundle", bundle2map(ResourceBundle.getBundle("email", locale)));
+        return processTemplate(template, newParams);
+    }
 
     //
     //  Email templates.
@@ -92,7 +112,7 @@ public class TemplateService {
             put("loginUrl", properties.getLoginUrl());
         }};
 
-        return processTemplate(template, data);
+        return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 
     public String formatUserModified(final User user) {
@@ -103,7 +123,7 @@ public class TemplateService {
             put("loginUrl", properties.getLoginUrl());
         }};
 
-        return processTemplate(template, data);
+        return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 
     public String formatUserDeactivation(final User user) {
@@ -114,7 +134,7 @@ public class TemplateService {
             put("loginUrl", properties.getLoginUrl());
         }};
 
-        return processTemplate(template, data);
+        return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 
     public String formatUserActivation(final User user) {
@@ -125,7 +145,7 @@ public class TemplateService {
             put("loginUrl", properties.getLoginUrl());
         }};
 
-        return processTemplate(template, data);
+        return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 
     public String formatPasswordRestore(final User user,
@@ -138,6 +158,6 @@ public class TemplateService {
             put("loginUrl", properties.getLoginUrl());
         }};
 
-        return processTemplate(template, data);
+        return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 }

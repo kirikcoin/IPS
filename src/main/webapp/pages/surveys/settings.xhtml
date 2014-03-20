@@ -473,7 +473,6 @@
 
           <h:panelGroup id="scrollableVariants" layout="block">
 
-
             <eye:dynamicTable id="questionOptions"
                               value="#{surveySettingsController.questionOptions}"
                               tableClass="table-narrow dtable"
@@ -484,13 +483,11 @@
               <eye:textColumn name="answer"
                               allowEditAfterAdd="true"
                               allowEmpty="false"
-                              maxLength="70"
-                              />
+                              maxLength="70"/>
               <eye:selectColumn name="terminal"
                                 values="#{surveySettingsController.terminalValues}"
                                 var="t" itemLabel="#{t.label}" itemValue="#{t.value}"
                                 allowEditAfterAdd="true"
-
                                 columnClass="colTerminal"/>
             </eye:dynamicTable>
           </h:panelGroup>

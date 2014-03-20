@@ -21,10 +21,10 @@
 
   <tr>
     <td>
-      Ваш аккаунт в системе IPS со следующими учетными данными был деактивирован.
+    ${bundle["email.user.deactivation.text"]}
       <ul>
         <li>
-          Логин: ${user.login}
+        ${bundle["email.message.login"]} ${user.login}
         </li>
       </ul>
     </td>

@@ -21,13 +21,13 @@
 
   <tr>
     <td>
-      Вы были зарегистрированы в системе IPS со следующими учетными данными:
+    ${bundle["email.user.registration.text"]}
       <ul>
         <li>
-          Логин: ${user.login}
+        ${bundle["email.message.login"]} ${user.login}
         </li>
         <li>
-          Пароль: ${password}
+        ${bundle["email.message.password"]} ${password}
         </li>
       </ul>
     </td>
@@ -36,7 +36,7 @@
   <tr>
     <td>
       <p>
-        Для входа перейдите по <a href="${loginUrl}" target="_blank">ссылке</a>.
+      ${bundle["email.message.link.text"]} <a href="${loginUrl}" target="_blank">${bundle["email.message.link"]}</a>.
       </p>
     </td>
   </tr>

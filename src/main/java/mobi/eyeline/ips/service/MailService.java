@@ -5,6 +5,7 @@ import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -33,7 +34,7 @@ public class MailService {
     public void sendUserRegistration(User user, String rawPassword) {
         send(new Message(
                 user.getEmail(),
-                getSubject("email.subject.user.registration"),
+                getSubject("email.subject.user.registration", user.getLocale().asLocale()),
                 templateService.formatUserRegistration(user, rawPassword)
         ));
     }
@@ -41,7 +42,7 @@ public class MailService {
     public void sendUserModified(User user) {
         send(new Message(
                 user.getEmail(),
-                getSubject("email.subject.user.registration"),
+                getSubject("email.subject.user.modified", user.getLocale().asLocale()),
                 templateService.formatUserModified(user)
         ));
     }
@@ -49,13 +50,13 @@ public class MailService {
     public void sendUserModified(User user, String oldEmail) {
         send(new Message(
                 user.getEmail(),
-                getSubject("email.subject.user.modified"),
+                getSubject("email.subject.user.modified", user.getLocale().asLocale()),
                 templateService.formatUserModified(user)
         ));
 
         send(new Message(
                 oldEmail,
-                getSubject("email.subject.user.modified"),
+                getSubject("email.subject.user.modified", user.getLocale().asLocale()),
                 templateService.formatUserModified(user)
         ));
     }
@@ -63,7 +64,7 @@ public class MailService {
     public void sendUserDeactivation(User user) {
         send(new Message(
                 user.getEmail(),
-                getSubject("email.subject.user.deactivation"),
+                getSubject("email.subject.user.deactivation", user.getLocale().asLocale()),
                 templateService.formatUserDeactivation(user)
         ));
     }
@@ -71,7 +72,7 @@ public class MailService {
     public void sendUserActivation(User user) {
         send(new Message(
                 user.getEmail(),
-                getSubject("email.subject.user.activation"),
+                getSubject("email.subject.user.activation", user.getLocale().asLocale()),
                 templateService.formatUserActivation(user)
         ));
     }
@@ -79,13 +80,13 @@ public class MailService {
     public void sendPasswordRestore(User user, String rawNewPassword) {
         send(new Message(
                 user.getEmail(),
-                getSubject("email.subject.password.restore"),
+                getSubject("email.subject.password.restore", user.getLocale().asLocale()),
                 templateService.formatPasswordRestore(user, rawNewPassword)
         ));
     }
 
-    private String getSubject(String key) {
-        final ResourceBundle bundle = ResourceBundle.getBundle("email");
+    private String getSubject(String key, Locale locale) {
+        final ResourceBundle bundle = ResourceBundle.getBundle("email", locale);
         return bundle.getString(key);
     }
 

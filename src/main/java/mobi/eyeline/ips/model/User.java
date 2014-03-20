@@ -11,6 +11,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,6 +20,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+
+import static mobi.eyeline.ips.model.Locale.EN;
 
 @Entity
 @Table(name = "users")
@@ -89,6 +93,11 @@ public class User implements Serializable {
             message = "{invalid.phone.number}")
     @MaxSize(30)
     private String phoneNumber;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "locale")
+    private Locale locale = Locale.EN;
 
     public User() {
     }
@@ -163,6 +172,14 @@ public class User implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 
     @Override

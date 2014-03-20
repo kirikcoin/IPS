@@ -188,6 +188,12 @@
             <eye:inputText id="clientSettingsEmail"
                            maxlength="70"
                            value="#{clientListController.userForEdit.email}"/>
+
+            <h:outputLabel value="#{bundle['client.dialog.settings.field.locale']}"
+                           for="clientSettingsLocale"/>
+            <h:selectOneMenu id="clientSettingsLocale" value="#{clientListController.userForEdit.locale}">
+              <f:selectItems value="#{clientController.locales}"/>
+            </h:selectOneMenu>
           </h:panelGrid>
 
           <eye:buttons>

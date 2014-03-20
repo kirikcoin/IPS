@@ -1,6 +1,6 @@
 
 /**
-  Jsf components 1.95
+  Jsf components 1.100
 
   Copyright (c) Eyeline Communications Inc.
 **/
@@ -2934,7 +2934,7 @@ function EyelineDynamicTableComponent(tableId, columns, dragRows) {
   var visibleEl = $(tableId + "_visible");
   var tableInstance = this;
 
-  var handler;
+  var listeners = [];
 
   // PRIVATE
 
@@ -2993,9 +2993,11 @@ function EyelineDynamicTableComponent(tableId, columns, dragRows) {
       var row = tableElem.rows[i];
       row.className = "eyeline_row" + ((i + 1) & 1);
     }
-    if(handler) {
-      handler();
-    }
+
+    _onEvent({
+      type: 'deleted',
+      rowNum: rownum
+    });
   };
 
   this.addRow = function (values) {
@@ -3031,9 +3033,11 @@ function EyelineDynamicTableComponent(tableId, columns, dragRows) {
 
     var lastRow = tfoot.rows[tableId + "_newrow"];
     lastRow.className = "eyeline_row" + ((newCount + 1) & 1);
-    if(handler) {
-      handler();
-    }
+
+    _onEvent({
+      type: 'added'
+    });
+
     if(dragRows) {
       initDragRows();
     }
@@ -3054,11 +3058,43 @@ function EyelineDynamicTableComponent(tableId, columns, dragRows) {
     return this;
   };
 
-  var _change = function(_handler) {
-    handler = _handler;
+  var _onEvent = function (event) {
+    for (var i = 0; i < listeners.length; i++) {
+      listeners[i](event);
+    }
   };
 
-  this.change = _change;
+  /**
+   * Registers an event listener, which will be called on any supported
+   * table event with a single `event' argument.
+   *
+   * Event object has a mandatory `type' property denoting event type and an arbitrary
+   * number of event-specific fields.
+   *
+   * @param listener Handler to register.
+   * @return {EyelineDynamicTableComponent}
+   */
+  this.addListener = function (listener) {
+    listeners.push(listener);
+    return this;
+  };
+
+  this.removeListener = function (listener) {
+    for(var i = listeners.length - 1; i >= 0; i--) {
+      if (listeners[i] === listener) {
+        listeners.splice(i, 1);
+      }
+    }
+    return this;
+  };
+
+  /**
+   * @deprecated Use addListener/removeListener.
+   */
+  this.change = function (listener) {
+    listeners = [listener];
+    return this;
+  };
 
   var initDragRows = function() {
     $('#' + tableId + ' tbody').tableDnD({
@@ -3406,6 +3442,20 @@ function EyelineInputDateComponent(elementId, value, minDate, maxDate, inputTime
 
   this.hide = function() {
     _setVisible(false);
+  };
+
+  this.minDate = function(d) {
+    var e = $("#" + elementId);
+    if (d)
+      e.datepicker("option", "minDate", d);
+    return e.datepicker("option", "minDate");
+  };
+
+  this.maxDate = function(d) {
+    var e = $("#" + elementId);
+    if (d)
+      e.datepicker("option", "maxDate", d);
+    return e.datepicker("option", "maxDate");
   };
 }
 function createInputTime(elementId) {
@@ -4939,5 +4989,13 @@ function EyelineDialogComponent(id) {
 
   this.hide = function() {
     _setVisible(false);
+  };
+
+  this.title = function(title) {
+    var  t = $('#' + id + '_title');
+    if(title) {
+      t.text(title);
+    }
+    return t.text();
   };
 }

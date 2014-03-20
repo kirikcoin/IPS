@@ -81,6 +81,7 @@ class ClientListController extends BaseController {
                     login: userForEdit.login,
                     email: userForEdit.email,
                     password: HashUtils.hashPassword(password),
+                    locale: userLocale,
                     role: Role.CLIENT)
 
             if (validate(user)) {
@@ -99,6 +100,7 @@ class ClientListController extends BaseController {
                 company = userForEdit.company
                 login = userForEdit.login
                 email = userForEdit.email
+                locale = userForEdit.locale
             }
 
             if (validate(user)) {
