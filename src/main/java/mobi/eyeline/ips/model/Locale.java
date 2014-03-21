@@ -1,8 +1,5 @@
 package mobi.eyeline.ips.model;
 
-/**
- * Created by dizan on 20.03.14.
- */
 public enum Locale {
     EN,
     RU;

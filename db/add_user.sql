@@ -2,9 +2,9 @@
 # Template for account creation.
 #
 
-set @username   = 'vit';
-set @email      = 'vit@eyeline.mobi';
-set @full_name  = 'Виталий Гумиров';
+set @username   = 'jdoe';
+set @email      = 'jdoe@ussd.mobi';
+set @full_name  = 'J. Doe';
 set @password   = @username;
 set @role       = 'manager';
 # set @role       = 'client';
