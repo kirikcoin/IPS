@@ -6,27 +6,22 @@ import mobi.eyeline.ips.web.IPSViewHandler
 import javax.faces.context.FacesContext
 import javax.servlet.http.HttpServletRequest
 
-/**
- * author: Denis Enenko
- * date: 22.01.2014
- */
 public class LocaleController extends BaseController {
 
-    public void changeLocale() {
+    void changeLocale() {
         Locale locale = new Locale(getParamValue("lang").asString())
-
-        FacesContext.currentInstance.viewRoot.locale = locale
-        request.session.setAttribute(IPSViewHandler.LOCALE_PARAMETER, locale)
+        setLocaleAttributes(locale)
 
         FacesContext.currentInstance.externalContext.redirect(getFullUrl())
     }
 
-    public void changeLocale(User user) {
-        Locale locale = user.locale.asLocale()
-
+    private void setLocaleAttributes(Locale locale) {
         FacesContext.currentInstance.viewRoot.locale = locale
         request.session.setAttribute(IPSViewHandler.LOCALE_PARAMETER, locale)
+    }
 
+    void changeLocale(User user) {
+        setLocaleAttributes(user.locale.asLocale())
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")

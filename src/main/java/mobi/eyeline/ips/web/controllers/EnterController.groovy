@@ -10,12 +10,12 @@ import javax.faces.context.FacesContext
 class EnterController extends BaseController {
     private final UserRepository userRepository = Services.instance().userRepository
 
-    Object getInit() {
+    Object getRunOnLogin() {
         init()
         return null
     }
 
-    void init() {
+    private void init() {
         User user = userRepository.getByLogin(this.userName)
         new LocaleController().changeLocale(user)
 
