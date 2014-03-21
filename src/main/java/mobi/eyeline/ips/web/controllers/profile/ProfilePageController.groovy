@@ -6,6 +6,7 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.LocaleController
 
 class ProfilePageController extends BaseController {
 
@@ -18,11 +19,13 @@ class ProfilePageController extends BaseController {
 
     String newPassword
     String newPasswordConfirmation
+    LocaleController localeController
 
     boolean updateOk
 
     ProfilePageController() {
         user = userRepository.getByLogin(this.userName)
+        localeController = new LocaleController()
     }
 
     void saveProfile() {
@@ -36,6 +39,8 @@ class ProfilePageController extends BaseController {
         if (updateOk) {
             userRepository.update(user)
         }
+
+        localeController.changeLocale(user)
     }
 
     private boolean isPasswordIntact() {

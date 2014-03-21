@@ -188,8 +188,7 @@
   <!-- ======================================= PAGES =============================================================== -->
 
   <welcome-file-list>
-    <welcome-file>index.faces</welcome-file>
-    <welcome-file>enter.jsp</welcome-file>
+    <welcome-file>enter.faces</welcome-file>
   </welcome-file-list>
 
   <login-config>
@@ -205,7 +204,7 @@
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Страница редиректа</web-resource-name>
-      <url-pattern>/enter.jsp</url-pattern>
+      <url-pattern>/enter.faces</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
@@ -294,12 +293,12 @@
 
   <error-page>
     <error-code>408</error-code>
-    <location>/enter.jsp</location>
+    <location>/enter.faces</location>
   </error-page>
 
   <error-page>
     <error-code>400</error-code>
-    <location>/enter.jsp</location>
+    <location>/enter.faces</location>
   </error-page>
 
 </web-app>

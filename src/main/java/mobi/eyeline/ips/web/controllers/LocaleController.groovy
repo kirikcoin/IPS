@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers
 
+import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.web.IPSViewHandler
 
 import javax.faces.context.FacesContext
@@ -18,6 +19,14 @@ public class LocaleController extends BaseController {
         request.session.setAttribute(IPSViewHandler.LOCALE_PARAMETER, locale)
 
         FacesContext.currentInstance.externalContext.redirect(getFullUrl())
+    }
+
+    public void changeLocale(User user) {
+        Locale locale = user.locale.asLocale()
+
+        FacesContext.currentInstance.viewRoot.locale = locale
+        request.session.setAttribute(IPSViewHandler.LOCALE_PARAMETER, locale)
+
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")

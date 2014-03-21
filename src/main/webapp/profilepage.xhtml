@@ -56,6 +56,13 @@
                 <eye:inputText id="phoneNumber"
                                maxlength="30"
                                value="#{profilePageController.user.phoneNumber}"/>
+
+                <h:outputLabel value="#{bundle['profile.edit.locale']}"
+                               for="locale" />
+
+                <h:selectOneMenu id="locale" value="#{profilePageController.user.locale}">
+                  <f:selectItems value="#{clientController.locales}"/>
+                </h:selectOneMenu>
               </h:panelGrid>
 
               <h:panelGroup layout="block" styleClass="headerWithBottomSeparator">

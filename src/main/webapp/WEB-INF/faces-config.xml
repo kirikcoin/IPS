@@ -111,6 +111,12 @@
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
+  <managed-bean>
+    <managed-bean-name>enterController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.EnterController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
   <!-- VALIDATION ================================================================================================== -->
 
   <validator>
@@ -129,7 +135,7 @@
     <description>Навигация срабатывает при нажатии кнопки Login на странице входа</description>
     <navigation-case>
       <from-outcome>LOGIN</from-outcome>
-      <to-view-id>/enter.jsp</to-view-id>
+      <to-view-id>/enter.faces</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>
