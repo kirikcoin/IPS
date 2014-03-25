@@ -46,7 +46,16 @@
             ips.message.info("#{bundle['client.dialog.unblock.done']}");
           }
 
+          var dialogForEdit = "#{clientListController.dialogForEdit}";
+          if (dialogForEdit == "true") {
+            page.showSettingsDialog()
+          } else if (dialogForEdit == "false") {
+            page.showSettingsDialog();
+          }
+
+
         });
+
         //    ]]>
       </script>
     </ui:define>
@@ -82,13 +91,9 @@
               <eye:column name="fullName" title="#{bundle['client.list.table.fullname']}"
                           sortable="true" defaultSortOrder="asc">
                 <h:commandLink value="#{row.fullName}"
-                               action="null"
-                               onclick="return page.showSettingsDialogForEdit(
-                               '#{row.id}',
-                               '#{row.fullName}',
-                               '#{row.company}',
-                               '#{row.login}',
-                               '#{row.email}');"/>
+                               action="#{clientListController.fillUserForEdit}">
+                  <f:param name="userForEditId" value="#{row.id}"/>
+                </h:commandLink>
 
               </eye:column>
 
@@ -157,7 +162,8 @@
         <h:panelGroup layout="block" style="margin-top: 15px;">
           <h:commandLink value="#{bundle['client.list.button.createclient']}"
                          styleClass="button-black"
-                         onclick="return page.showSettingsDialogForCreate();"/>
+
+                         action="#{clientListController.fillUserForEdit}"/>
         </h:panelGroup>
 
         <eye:dialog id="clientSettingsDialog"

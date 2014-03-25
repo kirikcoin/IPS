@@ -35,24 +35,7 @@ var page = {
     return false;
   },
 
-  showSettingsDialogForEdit: function (id, fullname, company, login, email) {
-    ips.$byId('userId').val(id);
-    ips.$byId('clientSettingsFullName').val(fullname);
-    ips.$byId('clientSettingsCompany').val(company);
-    ips.$byId('clientSettingsLogin').val(login);
-    ips.$byId('clientSettingsEmail').val(email);
-
-    jsfc('clientSettingsDialog').show();
-    return false;
-  },
-
-  showSettingsDialogForCreate: function () {
-    ips.$byId('userId').val('');
-    ips.$byId('clientSettingsFullName').val('');
-    ips.$byId('clientSettingsCompany').val('');
-    ips.$byId('clientSettingsLogin').val('');
-    ips.$byId('clientSettingsEmail').val('');
-
+  showSettingsDialog: function () {
     jsfc('clientSettingsDialog').show();
     return false;
   },

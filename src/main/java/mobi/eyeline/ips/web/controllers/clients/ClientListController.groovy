@@ -23,6 +23,7 @@ class ClientListController extends BaseController {
     private final MailService mailService = Services.instance().mailService
 
     String search
+    Boolean dialogForEdit
 
     // User ID for creation/modification dialog, null if creating new account.
     Integer modifiedUserId
@@ -71,6 +72,17 @@ class ClientListController extends BaseController {
         }
     }
 
+    void fillUserForEdit(){
+        modifiedUserId = getParamValue("userForEditId").asInteger()
+        if(modifiedUserId != null) {
+            userForEdit = userRepository.get(modifiedUserId)
+            dialogForEdit = true
+        } else {
+            userForEdit= new User()
+            dialogForEdit = false
+        }
+    }
+
     void saveModifiedUser() {
         if (modifiedUserId == null) {
             // Create a new user account.
@@ -81,7 +93,7 @@ class ClientListController extends BaseController {
                     login: userForEdit.login,
                     email: userForEdit.email,
                     password: HashUtils.hashPassword(password),
-                    locale: userLocale,
+                    locale: userForEdit.locale,
                     role: Role.CLIENT)
 
             if (validate(user)) {
