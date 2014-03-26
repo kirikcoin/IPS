@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers.clients
 
+import groovy.transform.CompileStatic
 import mobi.eyeline.ips.exceptions.LoginException
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
@@ -14,6 +15,7 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+@CompileStatic
 class ClientListController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(ClientListController)
@@ -53,7 +55,7 @@ class ClientListController extends BaseController {
                         offset
                 )
 
-                return list.collect {
+                return list.collect { User it ->
                     new TableItem(
                             id: it.id,
                             fullName: it.fullName,
@@ -107,12 +109,12 @@ class ClientListController extends BaseController {
             String oldEmail = user.email
             String oldLogin = user.login
 
-            user.with {
-                fullName = userForEdit.fullName
-                company = userForEdit.company
-                login = userForEdit.login
-                email = userForEdit.email
-                locale = userForEdit.locale
+            user.with { User u ->
+                u.fullName = userForEdit.fullName
+                u.company = userForEdit.company
+                u.login = userForEdit.login
+                u.email = userForEdit.email
+                u.locale = userForEdit.locale
             }
 
             if (validate(user)) {

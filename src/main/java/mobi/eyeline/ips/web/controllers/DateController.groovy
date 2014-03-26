@@ -1,5 +1,8 @@
-package mobi.eyeline.ips.web.controllers;
+package mobi.eyeline.ips.web.controllers
 
+import groovy.transform.CompileStatic;
+
+@CompileStatic
 public class DateController extends BaseController {
 
     @SuppressWarnings("GrMethodMayBeStatic")

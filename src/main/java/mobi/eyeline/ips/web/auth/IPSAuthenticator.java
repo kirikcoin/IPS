@@ -12,7 +12,7 @@ public class IPSAuthenticator {
 
     private static final Logger logger = LoggerFactory.getLogger(IPSAuthenticator.class);
 
-    public String getUserRole(String login, String password) throws LoginException {
+    public User findUser(String login, String password) throws LoginException {
         final User user;
         try {
             user = Services.instance().getUserRepository().getUser(login, password);
@@ -32,6 +32,6 @@ public class IPSAuthenticator {
             return null;
         }
 
-        return user.getRole().getName();
+        return user;
     }
 }

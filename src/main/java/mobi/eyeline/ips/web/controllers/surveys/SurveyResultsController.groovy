@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import groovy.transform.CompileStatic
 import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
@@ -7,6 +8,7 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+@CompileStatic
 class SurveyResultsController extends BaseSurveyController {
     private static final Logger logger = LoggerFactory.getLogger(SurveyResultsController)
 
@@ -24,7 +26,7 @@ class SurveyResultsController extends BaseSurveyController {
                          DataTableSortOrder sortOrder) {
 
                 return answerRepository.list(
-                        SurveyResultsController.this.survey,
+                        getSurvey(),
                         periodStart,
                         periodEnd,
                         filter,
@@ -37,7 +39,7 @@ class SurveyResultsController extends BaseSurveyController {
             @Override
             int getRowsCount() {
                 return answerRepository.count(
-                        SurveyResultsController.this.survey,
+                        getSurvey(),
                         periodStart,
                         periodEnd,
                         filter)

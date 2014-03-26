@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
@@ -13,6 +14,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 
+@CompileStatic
 class SurveyListController extends BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(SurveyListController)
@@ -49,8 +51,7 @@ class SurveyListController extends BaseController {
                                 DataTableSortOrder sortOrder) {
 
                 def list = surveyRepository.list(
-                        isManagerRole() ?
-                                null : userRepository.getByLogin(SurveyListController.this.userName),
+                        isManagerRole() ? null : getCurrentUser(),
                         search,
                         true,
                         sortOrder.columnId,
@@ -58,7 +59,7 @@ class SurveyListController extends BaseController {
                         limit,
                         offset)
 
-                return list.collect {
+                return list.collect { Survey it ->
                     new TableItem(
                             id: it.id,
                             title: it.details.title,
@@ -72,8 +73,7 @@ class SurveyListController extends BaseController {
             @Override
             public int getRowsCount() {
                 surveyRepository.count(
-                        isManagerRole() ?
-                                null : userRepository.getByLogin(SurveyListController.this.userName),
+                        isManagerRole() ? null : getCurrentUser(),
                         search,
                         true)
             }

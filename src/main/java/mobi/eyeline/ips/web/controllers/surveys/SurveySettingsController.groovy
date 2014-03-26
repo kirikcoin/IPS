@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.repository.QuestionRepository
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory
 
 import javax.faces.context.FacesContext
 
+@CompileStatic
 class SurveySettingsController extends BaseSurveyController {
 
     private static final Logger logger = LoggerFactory.getLogger(SurveySettingsController)
@@ -133,8 +135,8 @@ class SurveySettingsController extends BaseSurveyController {
 
             questionOptions = new DynamicTableModel()
             question.options
-                    .findAll { it.active }
-                    .each {
+                    .findAll { QuestionOption it -> it.active }
+                    .each { QuestionOption it ->
                 def row = new DynamicTableRow()
                 row.setValue("answer", it.answer)
                 row.setValue("terminal", it.terminal)
@@ -177,12 +179,11 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     private Map<String, String> getPropertyMap(Question q) {
-        new HashMap().with {
-            (0..q.options.size()).each {
-                put("options[${it}].answer".toString(), "questionOptions_${it}_answer".toString())
-            }
-            it
+        def map = [:]
+        (0..q.options.size()).each {
+            map.put("options[${it}].answer".toString(), "questionOptions_${it}_answer".toString())
         }
+        map
     }
 
     void onCancel() {
@@ -205,30 +206,30 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     private void updateQuestionModel(Question persistedQuestion) {
-        def getId       = { row -> row.getValue('id') as String }
-        def getAnswer   = { row -> row.getValue('answer') as String }
-        def getTerminal = { row -> (row.getValue('terminal') as String).toBoolean() }
-        def index       = { row -> questionOptions.rows.indexOf(row) }
+        def getId       = { DynamicTableRow row -> row.getValue('id') as String }
+        def getAnswer   = { DynamicTableRow row -> row.getValue('answer') as String }
+        def getTerminal = { DynamicTableRow row -> (row.getValue('terminal') as String).toBoolean() }
+        def index       = { DynamicTableRow row -> questionOptions.rows.indexOf(row) }
 
         persistedQuestion.title = question.title
 
         def handleRemoved = {
             def retainedOptionIds = questionOptions.rows
-                    .collect { getId(it) }
-                    .findAll { !it.empty }
-                    .collect { it.toInteger() }
+                    .collect { DynamicTableRow row -> getId(row) }
+                    .findAll { String id -> !id.empty }
+                    .collect { String id -> id.toInteger() }
 
             persistedQuestion.options
-                    .findAll { !(it.id in retainedOptionIds) }
-                    .each { it.active = false }
+                    .findAll { QuestionOption opt -> !(opt.id in retainedOptionIds) }
+                    .each { QuestionOption opt -> opt.active = false }
         }
 
         def handleUpdated = {
-            persistedQuestion.activeOptions.each { option ->
+            persistedQuestion.activeOptions.each { QuestionOption option ->
                 questionOptions.rows
-                        .findAll { !getId(it).empty }
-                        .find { getId(it).toInteger() == option.id }
-                        .each { row ->
+                        .findAll { DynamicTableRow row -> !getId(row).empty }
+                        .find { DynamicTableRow row -> getId(row).toInteger() == option.id }
+                        .each { DynamicTableRow row ->
                     option.answer = getAnswer(row)
                     option.terminal = getTerminal(row)
                     option.moveTo index(row)
@@ -238,8 +239,8 @@ class SurveySettingsController extends BaseSurveyController {
 
         def handleAdded = {
             questionOptions.rows
-                    .findAll { getId(it).empty }
-                    .each { row ->
+                    .findAll { DynamicTableRow row -> getId(row).empty }
+                    .each { DynamicTableRow row ->
                 def option =
                         new QuestionOption(question: persistedQuestion, answer: getAnswer(row))
                 persistedQuestion.options.add option

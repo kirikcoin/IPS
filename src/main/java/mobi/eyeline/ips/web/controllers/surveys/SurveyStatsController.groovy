@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Survey
@@ -22,6 +23,7 @@ import javax.faces.component.html.HtmlOutputText
 import javax.faces.component.html.HtmlPanelGrid
 import javax.faces.component.html.HtmlPanelGroup
 
+@CompileStatic
 class SurveyStatsController extends BaseSurveyController {
     private static final Logger logger = LoggerFactory.getLogger(SurveyStatsController)
 
@@ -35,8 +37,8 @@ class SurveyStatsController extends BaseSurveyController {
 
     private HtmlPanelGroup createQuestionGroup() {
         new HtmlPanelGroup().with {
-            survey.activeQuestions.each { children << createQuestionTab(it) }
-            it
+            survey.activeQuestions.each { Question q -> children << createQuestionTab(q) }
+            it as HtmlPanelGroup
         }
     }
 
@@ -50,8 +52,8 @@ class SurveyStatsController extends BaseSurveyController {
                     height: 500,
                     pie: getOptionsRatioModel(q)
             ).with {
-                q.activeOptions.each {
-                    children << new Pie(name: "${it.answer}", color: colorLoop(it))
+                q.activeOptions.each { QuestionOption opt ->
+                    children << new Pie(name: "${opt.answer}", color: colorLoop(opt))
                 }
                 it
             }
@@ -67,13 +69,13 @@ class SurveyStatsController extends BaseSurveyController {
                 children << new HtmlOutputText(value: strings['survey.stats.answer'])
                 children << new HtmlOutputText(value: strings['survey.stats.count'])
 
-                q.activeOptions.each {
+                q.activeOptions.each { QuestionOption opt ->
                     children << new HtmlPanelGroup(
-                            style:      "background-color: ${colorLoop(it)}",
+                            style:      "background-color: ${colorLoop(opt)}",
                             styleClass: 'legend-color',
                             layout:     'block')
-                    children << new HtmlOutputText(value: it.answer)
-                    children << new HtmlOutputText(value: answerRepository.count(it))
+                    children << new HtmlOutputText(value: opt.answer)
+                    children << new HtmlOutputText(value: answerRepository.count(opt))
                 }
                 it
             }
@@ -91,10 +93,10 @@ class SurveyStatsController extends BaseSurveyController {
                     horizontal: true
             ).with {
                 children << new Bar(
-                        name: strings['survey.stats.response.ratio.sent'],
+                        name: strings['survey.stats.response.ratio.sent'] as String,
                         color: 'blue')
                 children << new Bar(
-                        name: strings['survey.stats.response.ratio.answered'],
+                        name: strings['survey.stats.response.ratio.answered'] as String,
                         color: 'green')
                 it
             }
@@ -106,20 +108,20 @@ class SurveyStatsController extends BaseSurveyController {
                 facets.put(
                         'header',
                         new HtmlOutputText(value: q.title))
-                it
+                it as UIComponent
             }
         }
 
         //  Group contents: grid with the charts/tables for the question.
         def createGroupContent = { Question q ->
             new HtmlPanelGrid(columns: 2, styleClass: 'question_details').with {
-                children << createOptionsRatio(q)
+                children << (createOptionsRatio(q) as UIComponent)
                 children << new HtmlPanelGrid().with {
-                    children << createResponseChart(q)
-                    children << createResponseTable(q)
-                    it
+                    children << (createResponseChart(q) as UIComponent)
+                    children << (createResponseTable(q) as UIComponent)
+                    it as UIComponent
                 }
-                it
+                it as UIComponent
             }
         }
 
@@ -131,9 +133,10 @@ class SurveyStatsController extends BaseSurveyController {
                 styleClass: 'placeholder')
         }
 
-        return createGroup(question).with {
-            children.add(question.sentCount == 0 ? placeholder() : createGroupContent(question))
-            it
+        return createGroup(question).with { UIComponent group ->
+            group.children << ((question.sentCount == 0 ?
+                    placeholder() : createGroupContent(question)) as UIComponent)
+            group
         }
     }
 
@@ -143,19 +146,21 @@ class SurveyStatsController extends BaseSurveyController {
 
     BarModel getSentQuestionsRatioModel() {
         def countSentQuestions = {Survey s ->
-            s.activeQuestions.collect { it.sentCount }.sum(0) as int
+            s.activeQuestions.collect { Question q -> q.sentCount }.sum(0) as int
         }
 
         def countAnswers = {Survey s ->
-            s.activeQuestions.collect { answerRepository.count(it) }.sum(0) as int
+            s.activeQuestions.collect { Question q -> answerRepository.count(q) }.sum(0) as int
         }
 
         def model = new BarModel()
         model.addSection(
                 strings['survey.stats.overall.sent.questions.title']
         ).with {
-            addValue(strings['survey.stats.overall.sent.questions.answered'], countAnswers(survey))
-            addValue(strings['survey.stats.overall.sent.questions.sent'], countSentQuestions(survey))
+            addValue(strings['survey.stats.overall.sent.questions.answered'] as String,
+                    countAnswers(survey))
+            addValue(strings['survey.stats.overall.sent.questions.sent'] as String,
+                    countSentQuestions(survey))
         }
 
         return model
@@ -167,11 +172,11 @@ class SurveyStatsController extends BaseSurveyController {
         model.addSection(
                 strings['survey.stats.overall.respondents.title']
         ).with {
-            addValue(strings['survey.stats.overall.respondents.invitations'],
+            addValue(strings['survey.stats.overall.respondents.invitations'] as String,
                     surveyService.countInvitations(survey))
-            addValue(strings['survey.stats.overall.respondents.respondents'],
+            addValue(strings['survey.stats.overall.respondents.respondents'] as String,
                     respondentRepository.countBySurvey(survey))
-            addValue(strings['survey.stats.overall.respondents.finished'],
+            addValue(strings['survey.stats.overall.respondents.finished'] as String,
                     respondentRepository.countFinishedBySurvey(survey))
         }
 
@@ -180,10 +185,10 @@ class SurveyStatsController extends BaseSurveyController {
 
     private PieModel getOptionsRatioModel(Question question) {
         new PieModel().with {
-            question.activeOptions.each { opt ->
+            question.activeOptions.each { QuestionOption opt ->
                 addPart("${opt.answer}", answerRepository.count(opt))
             }
-            it
+            it as PieModel
         }
     }
 
@@ -191,13 +196,13 @@ class SurveyStatsController extends BaseSurveyController {
         new BarModel().with {
             addSection('').with {
                 addValue(
-                        strings['survey.stats.response.ratio.answered'],
+                        strings['survey.stats.response.ratio.answered'] as String,
                         answerRepository.count(question))
                 addValue(
-                        strings['survey.stats.response.ratio.sent'],
+                        strings['survey.stats.response.ratio.sent'] as String,
                         question.sentCount)
             }
-            it
+            it as BarModel
         }
     }
 

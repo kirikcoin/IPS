@@ -1,5 +1,7 @@
 package mobi.eyeline.ips.web.auth;
 
+import mobi.eyeline.ips.model.User;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -28,13 +30,14 @@ public class IPSLoginModule implements LoginModule {
 
     @Override
     public boolean commit() throws LoginException {
-        IPSAuthenticator auth = new IPSAuthenticator();
-        String roleName = auth.getUserRole(name, password);
-        if (roleName == null)
+        final IPSAuthenticator auth = new IPSAuthenticator();
+        final User user = auth.findUser(name, password);
+        if (user == null) {
             return false;
+        }
 
-        subject.getPrincipals().add(new WebUser(name));
-        subject.getPrincipals().add(new WebRole(roleName));
+        subject.getPrincipals().add(new WebUser(name, user.getId()));
+        subject.getPrincipals().add(new WebRole(user.getRole().getName()));
         return true;
     }
 

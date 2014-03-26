@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers.profile
 
+import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
@@ -8,6 +9,7 @@ import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.LocaleController
 
+@CompileStatic
 class ProfilePageController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
@@ -24,7 +26,7 @@ class ProfilePageController extends BaseController {
     boolean updateOk
 
     ProfilePageController() {
-        user = userRepository.getByLogin(this.userName)
+        user = getCurrentUser()
         localeController = new LocaleController()
     }
 

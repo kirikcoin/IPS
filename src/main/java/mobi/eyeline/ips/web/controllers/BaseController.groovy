@@ -1,10 +1,13 @@
 package mobi.eyeline.ips.web.controllers
 
+import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.util.DelegateResourceBundle
 import mobi.eyeline.ips.util.RequestParam
+import mobi.eyeline.ips.web.auth.WebUser
 import mobi.eyeline.ips.web.validators.LocalizedMessageInterpolator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -17,10 +20,10 @@ import javax.servlet.http.HttpSession
 import javax.validation.ConstraintViolation
 import javax.validation.Validation
 import javax.validation.Validator
-import java.security.Principal
 
 import static java.util.Collections.emptyMap
 
+@CompileStatic
 public abstract class BaseController implements Serializable {
 
     private static final Logger logger = LoggerFactory.getLogger(BaseController)
@@ -39,8 +42,8 @@ public abstract class BaseController implements Serializable {
      * Returns principal of the current logged in user, possibly {@code null}.
      */
     @SuppressWarnings("GrMethodMayBeStatic")
-    protected Principal getUserPrincipal() {
-        return FacesContext.currentInstance.externalContext.userPrincipal
+    protected WebUser getUserPrincipal() {
+        return FacesContext.currentInstance.externalContext.userPrincipal as WebUser
     }
 
     boolean isAuthenticated() { userPrincipal != null }
@@ -51,10 +54,7 @@ public abstract class BaseController implements Serializable {
         return context.isUserInRole(role.name)
     }
 
-    @SuppressWarnings("GrMethodMayBeStatic")
-    public String getUserName() { FacesContext.currentInstance.externalContext.remoteUser }
-
-    public User getCurrentUser() {userRepository.getByLogin(userName)}
+    public User getCurrentUser() {userRepository.load(userPrincipal.id)}
 
     public boolean isClientRole() {
         return inRole(Role.CLIENT)
@@ -162,7 +162,7 @@ public abstract class BaseController implements Serializable {
                                    Map<String, String> fieldNamesMapping) {
 
         return !violations
-                .each { addFacesMessage(it, fieldNamesMapping) }
+                .each { ConstraintViolation it -> addFacesMessage(it, fieldNamesMapping) }
                 .empty
     }
 
@@ -185,18 +185,10 @@ public abstract class BaseController implements Serializable {
         return new IndexedBundle(context.application.getResourceBundle(context, "bundle"))
     }
 
-    static class IndexedBundle extends ResourceBundle {
-        private final ResourceBundle delegate
-
+    static class IndexedBundle extends DelegateResourceBundle {
         IndexedBundle(ResourceBundle delegate) {
-            this.delegate = delegate
+            super(delegate)
         }
-
-        @Override
-        protected Object handleGetObject(String key) { delegate.handleGetObject(key) }
-
-        @Override
-        Enumeration<String> getKeys() { delegate.getKeys() }
 
         String getAt(String key) { getString(key) }
     }
