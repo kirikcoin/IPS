@@ -20,4 +20,8 @@ class BaseSurveyController extends BaseController {
         survey = surveyRepository.load(surveyId)
         persistedSurvey = surveyRepository.load(surveyId)
     }
+
+    Survey getSurvey() {
+        return survey
+    }
 }
