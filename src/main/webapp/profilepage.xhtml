@@ -65,37 +65,44 @@
                 </h:selectOneMenu>
               </h:panelGrid>
 
-              <h:panelGroup layout="block" styleClass="headerWithBottomSeparator">
-                <h:outputText  value="#{bundle['profile.edit.changepassword']}"/>
-              </h:panelGroup>
 
-              <h:panelGrid columns="2" columnClasses="col1,col2">
-                <h:outputLabel value="#{bundle['profile.edit.currentpassword']}"
-                               for="currentPassword"/>
-                <eye:inputText id="currentPassword"
-                               secret="true"
-                               autocomplete="off"
-                               value="#{profilePageController.currentPassword}"
-                               trim="false"/>
 
-                <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
-                               for="newPassword" />
-                <eye:inputText id="newPassword"
-                               secret="true"
-                               autocomplete="off"
-                               validator="loginPasswordValidator"
-                               validatorMessage="#{bundle['profile.edit.message.password.validation']}"
-                               value="#{profilePageController.newPassword}"
-                               trim="false"/>
+              <eye:collapsingGroup opened="true" id="changePassword">
+                <f:facet name="header">
+                  <h:panelGroup>
+                    <h:outputText value="#{bundle['profile.edit.changepassword']}"/>
+                  </h:panelGroup>
+                </f:facet>
+                <div style="margin:10px"></div>
+                <h:panelGrid columns="2" columnClasses="col1,col2" id="changePasswordDisplay">
+                  <h:outputLabel value="#{bundle['profile.edit.currentpassword']}"
+                                 for="currentPassword"/>
+                  <eye:inputText id="currentPassword"
+                                 secret="true"
+                                 autocomplete="off"
+                                 value="#{profilePageController.currentPassword}"
+                                 trim="false"/>
 
-                <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
-                               for="newPasswordConfirmation" />
-                <eye:inputText id="newPasswordConfirmation"
-                               secret="true"
-                               autocomplete="off"
-                               value="#{profilePageController.newPasswordConfirmation}"
-                               trim="false"/>
-              </h:panelGrid>
+                  <h:outputLabel value="#{bundle['profile.edit.newpassword']}"
+                                 for="newPassword" />
+                  <eye:inputText id="newPassword"
+                                 secret="true"
+                                 autocomplete="off"
+                                 validator="loginPasswordValidator"
+                                 validatorMessage="#{bundle['profile.edit.message.password.validation']}"
+                                 value="#{profilePageController.newPassword}"
+                                 trim="false"/>
+
+                  <h:outputLabel value="#{bundle['profile.edit.confirmpassword']}"
+                                 for="newPasswordConfirmation" />
+                  <eye:inputText id="newPasswordConfirmation"
+                                 secret="true"
+                                 autocomplete="off"
+                                 value="#{profilePageController.newPasswordConfirmation}"
+                                 trim="false"/>
+                </h:panelGrid>
+                </eye:collapsingGroup>
+
                <div style="margin:10px"></div>
               <eye:buttons>
                 <eye:button>
