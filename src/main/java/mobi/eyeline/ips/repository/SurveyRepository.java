@@ -60,6 +60,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
         final Criteria criteria = session.createCriteria(Survey.class);
 
+
         criteria.createAlias("details", "details");
         criteria.createAlias("statistics", "statistics");
         criteria.createAlias("client", "client");
@@ -80,10 +81,10 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
             if (StringUtils.isNumeric(filter)) {
                 filters.add(eq("id", Integer.parseInt(filter)));
             }
-            filters.add(ilike("details.title", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
             if (user == null) {
-                filters.add(ilike("client.fullName", filter, MatchMode.ANYWHERE));
+                filters.add(EscapedRestrictions.ilike("client.fullName", filter, MatchMode.ANYWHERE));
             }
 
             criteria.add(or(
@@ -124,6 +125,8 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
         final Criteria criteria = session.createCriteria(Survey.class);
 
+
+
         criteria.createAlias("details", "details");
         criteria.createAlias("statistics", "statistics");
         criteria.createAlias("client", "client");
@@ -145,10 +148,10 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
                 filters.add(eq("id", Integer.parseInt(filter)));
             }
 
-            filters.add(ilike("details.title", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
             if (user == null) {
-                filters.add(ilike("client.fullName", filter, MatchMode.ANYWHERE));
+                filters.add(EscapedRestrictions.ilike("client.fullName", filter, MatchMode.ANYWHERE));
             }
 
             criteria.add(or(
