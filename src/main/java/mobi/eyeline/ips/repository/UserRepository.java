@@ -105,10 +105,10 @@ public class UserRepository extends BaseRepository<User, Integer> {
             filter = filter.trim();
             final List<Criterion> filters = new ArrayList<>();
 
-            filters.add(ilike("fullName", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("company", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("login", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("email", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE));
 
             criteria.add(or(filters.toArray(new Criterion[filters.size()])));
         }
@@ -132,8 +132,8 @@ public class UserRepository extends BaseRepository<User, Integer> {
             criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
         }
 
-      //noinspection unchecked
-      return (List<User>) criteria.list();
+        //noinspection unchecked
+        return (List<User>) criteria.list();
     }
 
     public int count(String filter) {
@@ -144,10 +144,10 @@ public class UserRepository extends BaseRepository<User, Integer> {
             filter = filter.trim();
             final List<Criterion> filters = new ArrayList<>();
 
-            filters.add(ilike("fullName", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("company", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("login", filter, MatchMode.ANYWHERE));
-            filters.add(ilike("email", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE));
 
             criteria.add(or(filters.toArray(new Criterion[filters.size()])));
 
