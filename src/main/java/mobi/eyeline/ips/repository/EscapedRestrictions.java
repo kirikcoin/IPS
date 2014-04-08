@@ -20,11 +20,11 @@ public class EscapedRestrictions {
         private static final String HIBERNATE_ESCAPE_CHAR = "\\";
 
         public EscapedILikeExpression(String propertyName, String value) {
-            super(propertyName, replaceAll(value));
+            super(propertyName, replaceAll(value), null, true);
         }
 
         public EscapedILikeExpression(String propertyName, String value, MatchMode matchMode) {
-            super(propertyName, replaceAll(value), matchMode);
+            super(propertyName, replaceAll(value), matchMode, null, true);
         }
 
         private static String replaceAll(String value) {

@@ -174,8 +174,8 @@ class SurveyRepositoryTest extends DbTestCase {
 
         def list = surveyRepository.&list
 
-        assertIds([3], list(null, user5, '', true, null, false, Integer.MAX_VALUE, 0))
-        assertIds([2], list(null, user6, '', true, null, false, Integer.MAX_VALUE, 0))
+        assertIds([1, 3], list(null, user5, '', true, null, false, Integer.MAX_VALUE, 0))
+        assertIds([1, 2], list(null, user6, '', true, null, false, Integer.MAX_VALUE, 0))
     }
 
     void testCount() {
