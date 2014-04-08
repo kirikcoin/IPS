@@ -6,6 +6,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -104,6 +105,14 @@ public class Survey implements Serializable {
             })
     private User client;
 
+    /**
+     * Пользователь, создавший данный опрос.
+     * В данный момент ролью этого пользоателя может быть только "Менеджер".
+     */
+    @JoinColumn(name = "owner_id")
+    @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    private User owner;
+
     public Survey() {
     }
 
@@ -181,6 +190,14 @@ public class Survey implements Serializable {
 
     public void setClient(User client) {
         this.client = client;
+    }
+
+    public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public void moveUp(Question question) {

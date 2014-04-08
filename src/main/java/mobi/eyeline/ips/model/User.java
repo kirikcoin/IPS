@@ -16,10 +16,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.List;
 
 import static mobi.eyeline.ips.model.Locale.EN;
 
@@ -98,6 +101,20 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "locale")
     private Locale locale = Locale.EN;
+
+    /**
+     * Актуально только для роли "Менеджер".
+     * При выставлении данного флага становятся доступны только опросы,
+     * созданные данным пользователем.
+     *
+     * @see Survey#owner
+     */
+    @Column(name = "only_own_surveys", columnDefinition = "BIT", nullable = false)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean onlyOwnSurveysVisible;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Survey> createdSurveys;
 
     public User() {
     }
@@ -180,6 +197,22 @@ public class User implements Serializable {
 
     public void setLocale(Locale locale) {
         this.locale = locale;
+    }
+
+    public boolean isOnlyOwnSurveysVisible() {
+        return onlyOwnSurveysVisible;
+    }
+
+    public void setOnlyOwnSurveysVisible(boolean onlyOwnSurveysVisible) {
+        this.onlyOwnSurveysVisible = onlyOwnSurveysVisible;
+    }
+
+    public List<Survey> getCreatedSurveys() {
+        return createdSurveys;
+    }
+
+    public void setCreatedSurveys(List<Survey> createdSurveys) {
+        this.createdSurveys = createdSurveys;
     }
 
     @Override

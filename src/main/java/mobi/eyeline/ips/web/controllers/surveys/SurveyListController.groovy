@@ -52,6 +52,8 @@ class SurveyListController extends BaseController {
 
                 def list = surveyRepository.list(
                         isManagerRole() ? null : getCurrentUser(),
+                        isManagerRole() && getCurrentUser().onlyOwnSurveysVisible ?
+                                getCurrentUser() : null,
                         search,
                         true,
                         sortOrder.columnId,
@@ -74,6 +76,8 @@ class SurveyListController extends BaseController {
             public int getRowsCount() {
                 surveyRepository.count(
                         isManagerRole() ? null : getCurrentUser(),
+                        isManagerRole() && getCurrentUser().onlyOwnSurveysVisible ?
+                                getCurrentUser() : null,
                         search,
                         true)
             }

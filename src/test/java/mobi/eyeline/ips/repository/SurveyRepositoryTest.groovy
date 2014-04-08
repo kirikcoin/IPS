@@ -2,6 +2,7 @@ package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.*
 
+import static mobi.eyeline.ips.model.Role.MANAGER
 import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
@@ -12,7 +13,7 @@ class SurveyRepositoryTest extends DbTestCase {
     private QuestionOptionRepository questionOptionRepository
     private UserRepository userRepository
 
-    User user1, user2, user3, user4
+    User user1, user2, user3, user4, user5, user6
 
     void setUp() {
         super.setUp()
@@ -154,29 +155,40 @@ class SurveyRepositoryTest extends DbTestCase {
 
         def list = surveyRepository.&list
 
-        assertIds([1, 2, 3, 4], list(null, '', null, null, false, Integer.MAX_VALUE, 0))
-        assertIds([1, 2, 4], list(null, 'A', null, null, false, Integer.MAX_VALUE, 0))
-        assertIds([1, 4, 2], list(null, 'A', null, 'title', true, Integer.MAX_VALUE, 0))
-        assertIds([4, 2, 1], list(null, 'A', null, 'id', false, Integer.MAX_VALUE, 0))
-        assertIds([3, 2, 1], list(null, '', true, 'accessNumber', false, Integer.MAX_VALUE, 0))
+        assertIds([1, 2, 3, 4], list(null, null, '', null, null, false, Integer.MAX_VALUE, 0))
+        assertIds([1, 2, 4], list(null, null, 'A', null, null, false, Integer.MAX_VALUE, 0))
+        assertIds([1, 4, 2], list(null, null, 'A', null, 'title', true, Integer.MAX_VALUE, 0))
+        assertIds([4, 2, 1], list(null, null, 'A', null, 'id', false, Integer.MAX_VALUE, 0))
+        assertIds([3, 2, 1], list(null, null, '', true, 'accessNumber', false, Integer.MAX_VALUE, 0))
 
-        assertIds([1, 3], list(null, 'F', true, null, false, Integer.MAX_VALUE, 0))
-        assertIds([1, 2, 3], list(null, '7', true, null, false, Integer.MAX_VALUE, 0))
-        assertIds([3], list(null, '07', true, null, false, Integer.MAX_VALUE, 0))
-        assertIds([2], list(user2, '', true, null, false, Integer.MAX_VALUE, 0))
+        assertIds([1, 3], list(null, null, 'F', true, null, false, Integer.MAX_VALUE, 0))
+        assertIds([1, 2, 3], list(null, null, '7', true, null, false, Integer.MAX_VALUE, 0))
+        assertIds([3], list(null, null, '07', true, null, false, Integer.MAX_VALUE, 0))
+        assertIds([2], list(user2, null, '', true, null, false, Integer.MAX_VALUE, 0))
+    }
+
+    void testListOwners() {
+        fillTestData()
+
+        def assertIds = { expected, surveys -> assertEquals(expected, surveys.collect { it.id }) }
+
+        def list = surveyRepository.&list
+
+        assertIds([3], list(null, user5, '', true, null, false, Integer.MAX_VALUE, 0))
+        assertIds([2], list(null, user6, '', true, null, false, Integer.MAX_VALUE, 0))
     }
 
     void testCount() {
         fillTestData();
 
-        assertEquals(3, surveyRepository.count(null, 'A', null))
-        assertEquals(3, surveyRepository.count(null, 'F', null))
-        assertEquals(4, surveyRepository.count(null, '7913', null))
+        assertEquals(3, surveyRepository.count(null, null, 'A', null))
+        assertEquals(3, surveyRepository.count(null, null, 'F', null))
+        assertEquals(4, surveyRepository.count(null, null, '7913', null))
 
-        assertEquals(2, surveyRepository.count(null, 'A', true))
-        assertEquals(3, surveyRepository.count(null, '7913', true))
-        assertEquals(1, surveyRepository.count(null, '4', null))
-        assertEquals(1, surveyRepository.count(user1, '', null))
+        assertEquals(2, surveyRepository.count(null, null, 'A', true))
+        assertEquals(3, surveyRepository.count(null, null, '7913', true))
+        assertEquals(1, surveyRepository.count(null, null, '4', null))
+        assertEquals(1, surveyRepository.count(user1, null, '', null))
     }
 
     private void fillTestData() {
@@ -184,12 +196,20 @@ class SurveyRepositoryTest extends DbTestCase {
             user1 = new User(login: 'user1', fullName: 'F B', email: 'mail@mail.ru'),
             user2 = new User(login: 'user2', fullName: 'D C', email: 'mail2@mail.ru'),
             user3 = new User(login: 'user3', fullName: 'D F', email: 'mail3@mail.ru'),
-            user4 = new User(login: 'user4', fullName: 'F C', email: 'mail4@mail.ru')
+            user4 = new User(login: 'user4', fullName: 'F C', email: 'mail4@mail.ru'),
         ].each { u ->
             u.role = Role.CLIENT
             u.password = '123'.pw()
             userRepository.save u
         }
+
+        userRepository.save user5 = new User(
+                login: 'user5', fullName: 'F C', email: 'mail5@mail.ru',
+                role: MANAGER, password: '123'.pw())
+
+        userRepository.save user6 = new User(
+                login: 'user6', fullName: 'F C', email: 'mail6@mail.ru',
+                role: MANAGER, password: '123'.pw(), onlyOwnSurveysVisible: true)
 
         [
             new Survey(id: 1, client: user1).with {
@@ -198,13 +218,13 @@ class SurveyRepositoryTest extends DbTestCase {
                 it
             },
 
-            new Survey(id: 2, client: user2).with {
+            new Survey(id: 2, client: user2, owner: user6).with {
                 details = new SurveyDetails(survey: it, title: 'B A')
                 statistics = new SurveyStats(survey: it, accessNumber: "79130000006")
                 it
             },
 
-            new Survey(id: 3, client: user3).with {
+            new Survey(id: 3, client: user3, owner: user5).with {
                 details = new SurveyDetails(survey: it, title: 'D C')
                 statistics = new SurveyStats(survey: it, accessNumber: "79130000007")
                 it
