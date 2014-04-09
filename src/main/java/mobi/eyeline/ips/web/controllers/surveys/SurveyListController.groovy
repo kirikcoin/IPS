@@ -115,7 +115,8 @@ class SurveyListController extends BaseController {
                 startDate: newSurveyStartDate,
                 endDate: newSurveyEndDate,
                 active: true,
-                client: userRepository.load(newSurveyClientId))
+                client: userRepository.load(newSurveyClientId),
+                owner: getCurrentUser())
         survey.details = new SurveyDetails(survey: survey, title: newSurveyTitle)
         survey.statistics = new SurveyStats(survey: survey)
 
