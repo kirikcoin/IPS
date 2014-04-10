@@ -7,6 +7,8 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LikeExpression;
 import org.hibernate.criterion.MatchMode;
 
+import static mobi.eyeline.ips.repository.DB.LIKE_ESCAPE_CHARACTER;
+
 
 public class EscapedRestrictions {
 
@@ -20,7 +22,6 @@ public class EscapedRestrictions {
 
 
     private static class EscapedILikeExpression extends LikeExpression {
-        private static final String HIBERNATE_ESCAPE_CHAR = "\\";
 
         public EscapedILikeExpression(String propertyName, String value) {
             super(propertyName, replaceAll(value), null, true);
@@ -31,15 +32,17 @@ public class EscapedRestrictions {
         }
 
         @Override
-        public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) throws HibernateException {
-            return super.toSqlString(criteria, criteriaQuery) + " ESCAPE '\\" + HIBERNATE_ESCAPE_CHAR + "'";
+        public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery)
+                throws HibernateException {
+            final String escapeExpression = DB.getEscapeExpression(criteriaQuery.getFactory());
+            return super.toSqlString(criteria, criteriaQuery) + escapeExpression;
         }
 
         private static String replaceAll(String value) {
             return value
-                    .replace("\\", HIBERNATE_ESCAPE_CHAR + "\\")
-                    .replace("_", HIBERNATE_ESCAPE_CHAR + "_")
-                    .replace("%", HIBERNATE_ESCAPE_CHAR + "%");
+                    .replace("\\",  LIKE_ESCAPE_CHARACTER + "\\")
+                    .replace("_",   LIKE_ESCAPE_CHARACTER + "_")
+                    .replace("%",   LIKE_ESCAPE_CHARACTER + "%");
         }
     }
 }
