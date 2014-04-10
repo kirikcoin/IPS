@@ -165,6 +165,22 @@ class SurveyRepositoryTest extends DbTestCase {
         assertIds([1, 2, 3], list(null, null, '7', true, null, false, Integer.MAX_VALUE, 0))
         assertIds([3], list(null, null, '07', true, null, false, Integer.MAX_VALUE, 0))
         assertIds([2], list(user2, null, '', true, null, false, Integer.MAX_VALUE, 0))
+
+
+    }
+
+    void testListWithSymbols(){
+        fillTestData()
+
+        def assertIds = { expected, surveys -> assertEquals(expected, surveys.collect { it.id }) }
+
+        def list = surveyRepository.&list
+
+        assertIds([2, 3], list(null, null, '_', null, null, false, Integer.MAX_VALUE, 0))
+        assertIds([1, 4], list(null, null, '%', null, null, false, Integer.MAX_VALUE, 0))
+        assertIds([1, 2], list(null, null, '\\', null, null, false, Integer.MAX_VALUE, 0))
+
+
     }
 
     void testListOwners() {
@@ -213,25 +229,25 @@ class SurveyRepositoryTest extends DbTestCase {
 
         [
             new Survey(id: 1, client: user1).with {
-                details = new SurveyDetails(survey: it, title: 'A A')
+                details = new SurveyDetails(survey: it, title: 'A A%\\')
                 statistics = new SurveyStats(survey: it, accessNumber: "79130000005")
                 it
             },
 
             new Survey(id: 2, client: user2, owner: user6).with {
-                details = new SurveyDetails(survey: it, title: 'B A')
+                details = new SurveyDetails(survey: it, title: 'B A_\\')
                 statistics = new SurveyStats(survey: it, accessNumber: "79130000006")
                 it
             },
 
             new Survey(id: 3, client: user3, owner: user5).with {
-                details = new SurveyDetails(survey: it, title: 'D C')
+                details = new SurveyDetails(survey: it, title: 'D C _')
                 statistics = new SurveyStats(survey: it, accessNumber: "79130000007")
                 it
             },
 
             new Survey(id: 4, client: user4, active: false).with {
-                details = new SurveyDetails(survey: it, title: 'A C')
+                details = new SurveyDetails(survey: it, title: 'A C%')
                 statistics = new SurveyStats(survey: it, accessNumber: "79130000008")
                 it
             }

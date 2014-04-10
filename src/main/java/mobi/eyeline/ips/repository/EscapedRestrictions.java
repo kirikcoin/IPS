@@ -1,5 +1,8 @@
 package mobi.eyeline.ips.repository;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.criterion.CriteriaQuery;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.LikeExpression;
 import org.hibernate.criterion.MatchMode;
@@ -25,6 +28,11 @@ public class EscapedRestrictions {
 
         public EscapedILikeExpression(String propertyName, String value, MatchMode matchMode) {
             super(propertyName, replaceAll(value), matchMode, null, true);
+        }
+
+        @Override
+        public String toSqlString(Criteria criteria, CriteriaQuery criteriaQuery) throws HibernateException {
+            return super.toSqlString(criteria, criteriaQuery) + " ESCAPE '\\" + HIBERNATE_ESCAPE_CHAR + "'";
         }
 
         private static String replaceAll(String value) {
