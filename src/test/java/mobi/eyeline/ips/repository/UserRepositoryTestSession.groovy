@@ -3,8 +3,6 @@ package mobi.eyeline.ips.repository
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 
-import static org.junit.Assert.assertEquals
-
 class UserRepositoryTestSession extends DbTestCase {
 
     private UserRepository userRepository
@@ -59,7 +57,6 @@ class UserRepositoryTestSession extends DbTestCase {
         assertIds([1, 3, 2], userRepository.list('b', 'fullName', true, Integer.MAX_VALUE, 0))
         assertIds([1, 4, 3], userRepository.list('a.com', 'company', false, 3, 0))
         assertIds([4, 1, 2, 3], userRepository.list('c', 'status', false, Integer.MAX_VALUE, 0))
-        assertIds([4, 1, 2, 3], userRepository.list('c', 'status', false, Integer.MAX_VALUE, 0))
     }
 
     void testListWithSymbols(){
@@ -72,8 +69,8 @@ class UserRepositoryTestSession extends DbTestCase {
         assertIds([1, 3, 4], list('_', null, true, Integer.MAX_VALUE, 0))
         assertIds([1, 2, 3], list('%', null, true, Integer.MAX_VALUE, 0))
         assertIds([1, 4], list('\\', null, true, Integer.MAX_VALUE, 0))
-
     }
+
     void testCount() {
         fillTestData()
 
