@@ -74,7 +74,7 @@ function EyelineDataTableComponent(tableId, tableOptions) {
       if(updateData) {
         bodyElement.html(data);
       }
-      navbar.setTotal(rowsCount);
+      navbar.setTotal(rowsCount, currentPageNumber);
 
       var checkboxes = $("[id*='" + tableId + "_rowCheck_']");
       $.each(checkboxes, function (idx, checkbox){
