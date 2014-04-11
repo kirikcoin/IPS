@@ -1,3 +1,4 @@
- -- changeset nedenzel:2
+-- liquibase formatted SQL
+-- changeset nedenzel:2
 
- ALTER TABLE `users` ADD `locale` varchar(255)  NOT NULL DEFAULT 'EN';
+ALTER TABLE `users` ADD `locale` varchar(255)  NOT NULL DEFAULT 'EN';
