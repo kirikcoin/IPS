@@ -3,6 +3,8 @@ package mobi.eyeline.ips.repository
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 
+import static org.junit.Assert.assertEquals
+
 class UserRepositoryTestSession extends DbTestCase {
 
     private UserRepository userRepository
@@ -36,10 +38,10 @@ class UserRepositoryTestSession extends DbTestCase {
 
     void fillTestData() {
         [
-                new User(login: 'a', email: 'b@a.com', fullName: 'A B', company: 'D'),
-                new User(login: 'b', email: 'c@a.com', fullName: 'D C', company: 'A'),
-                new User(login: 'c', email: 'd@a.com', fullName: 'D A', company: 'B'),
-                new User(login: 'd', email: 'a@a.com', fullName: 'A C', company: 'C', blocked: true)
+                new User(login: 'a', email: 'b@a.com', fullName: 'A B_', company: 'D\\%'),
+                new User(login: 'b', email: 'c@a.com', fullName: 'D C', company: 'A%'),
+                new User(login: 'c', email: 'd@a.com', fullName: 'D A%', company: 'B_'),
+                new User(login: 'd', email: 'a@a.com', fullName: 'A C_\\', company: 'C', blocked: true)
         ].each { user ->
             user.password = '12'.pw();
             user.role = Role.CLIENT;
@@ -57,8 +59,21 @@ class UserRepositoryTestSession extends DbTestCase {
         assertIds([1, 3, 2], userRepository.list('b', 'fullName', true, Integer.MAX_VALUE, 0))
         assertIds([1, 4, 3], userRepository.list('a.com', 'company', false, 3, 0))
         assertIds([4, 1, 2, 3], userRepository.list('c', 'status', false, Integer.MAX_VALUE, 0))
+        assertIds([4, 1, 2, 3], userRepository.list('c', 'status', false, Integer.MAX_VALUE, 0))
     }
 
+    void testListWithSymbols(){
+        fillTestData()
+
+        def assertIds = { expected, users -> assertEquals(expected, users.collect { it.id }) }
+
+        def list = userRepository.&list
+
+        assertIds([1, 3, 4], list('_', null, true, Integer.MAX_VALUE, 0))
+        assertIds([1, 2, 3], list('%', null, true, Integer.MAX_VALUE, 0))
+        assertIds([1, 4], list('\\', null, true, Integer.MAX_VALUE, 0))
+
+    }
     void testCount() {
         fillTestData()
 
