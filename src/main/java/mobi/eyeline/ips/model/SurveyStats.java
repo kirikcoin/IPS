@@ -118,4 +118,15 @@ public class SurveyStats implements Serializable {
     public void setUpdateStatus(InvitationUpdateStatus updateStatus) {
         this.updateStatus = updateStatus;
     }
+
+    public String toTraceString() {
+        return "SurveyStats{" +
+                "surveyId=" + getSurvey().getId() +
+                ", sentCount=" + sentCount +
+                ", campaign='" + campaign + '\'' +
+                ", accessNumber='" + accessNumber + '\'' +
+                ", lastUpdate=" + lastUpdate +
+                ", updateStatus=" + updateStatus +
+                '}';
+    }
 }

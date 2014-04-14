@@ -244,6 +244,21 @@ public class Survey implements Serializable {
         return id != null ? id.hashCode() : 0;
     }
 
+    public String toTraceString() {
+        // Note that we don't dump questions here.
+        return "Survey{" +
+                "id=" + id +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", active=" + active +
+                ", statistics=" + ((statistics == null) ? null : statistics.toTraceString()) +
+                ", details=" + ((details == null) ? null : details.toTraceString()) +
+                ", questions=" + questions +
+                ", client=" + ((client == null) ? null : client.toTraceString()) +
+                ", owner=" + ((owner == null) ? null : owner.toTraceString()) +
+                '}';
+    }
+
     @Override
     public String toString() {
         return "Survey{" +

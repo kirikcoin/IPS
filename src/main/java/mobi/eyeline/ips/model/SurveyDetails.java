@@ -72,4 +72,12 @@ public class SurveyDetails implements Serializable {
     public void setSurvey(Survey survey) {
         this.survey = survey;
     }
+
+    public String toTraceString() {
+        return "SurveyDetails{" +
+                "title='" + title + '\'' +
+                ", endText='" + endText + '\'' +
+                ", surveyId=" + survey.getId() +
+                '}';
+    }
 }

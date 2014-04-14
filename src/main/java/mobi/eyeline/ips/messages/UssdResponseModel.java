@@ -58,5 +58,18 @@ public class UssdResponseModel {
         public ErrorResponseModel() {
             super(USSD_BUNDLE.getString("ussd.error"));
         }
+
+        @Override
+        public String toString() {
+            return "UssdResponseModel{FATAL_ERROR}";
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "UssdResponseModel{" +
+                "text='" + text + '\'' +
+                ", options=" + options +
+                '}';
     }
 }

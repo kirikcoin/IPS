@@ -3,8 +3,8 @@ package mobi.eyeline.ips.service;
 import mobi.eyeline.ips.messages.AnswerOption;
 import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
-import mobi.eyeline.ips.messages.UssdResponseModel;
 import mobi.eyeline.ips.messages.UssdOption;
+import mobi.eyeline.ips.messages.UssdResponseModel;
 import mobi.eyeline.ips.model.Answer;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
@@ -17,6 +17,7 @@ import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import mobi.eyeline.ips.util.RequestParseUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +26,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static mobi.eyeline.ips.messages.UssdResponseModel.USSD_BUNDLE;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID;
+import static mobi.eyeline.ips.messages.UssdResponseModel.USSD_BUNDLE;
 import static mobi.eyeline.ips.util.RequestParseUtils.getBoolean;
 import static mobi.eyeline.ips.util.RequestParseUtils.getInt;
 import static mobi.eyeline.ips.util.RequestParseUtils.getString;
@@ -71,14 +72,33 @@ public class UssdService implements MessageHandler {
     public UssdResponseModel handle(Map<String, String[]> parameters)
             throws MissingParameterException {
 
+        final StopWatch timer;
+        if (logger.isTraceEnabled()) {
+            timer = new StopWatch();
+            timer.start();
+
+        } else {
+            timer = null;
+        }
+
+        UssdResponseModel response = null;
         try {
-            return handle0(parameters);
+            response = handle0(parameters);
 
         } catch (RuntimeException e) {
             logger.error("Error processing USSD request, parameters: " +
                     RequestParseUtils.toString(parameters), e);
-            return fatalError();
+            response = fatalError();
+
+        } finally {
+            if (timer != null) {
+                logger.trace("USSD request, millis: " + timer.getTime() +
+                        ". Request: " + RequestParseUtils.toString(parameters) + "," +
+                        " response: [" + response + "]");
+            }
         }
+
+        return response;
     }
 
     private UssdResponseModel handle0(Map<String, String[]> parameters)

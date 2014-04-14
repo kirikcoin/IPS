@@ -80,6 +80,15 @@ public abstract class UssdOption {
 
     public abstract UssdResponseModel handle(String msisdn, MessageHandler handler);
 
+    @Override
+    public String toString() {
+        return "UssdOption{" +
+                "key=" + key +
+                ", text='" + text + '\'' +
+                ", surveyId=" + surveyId +
+                '}';
+    }
+
     /**
      * @return {@code null} if the provided options do not match any valid message.
      */

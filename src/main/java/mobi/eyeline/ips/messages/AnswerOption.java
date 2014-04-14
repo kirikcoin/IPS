@@ -63,6 +63,14 @@ public class AnswerOption extends UssdOption {
         return handler.handle(msisdn, this);
     }
 
+    @Override
+    public String toString() {
+        return "AnswerOption{" +
+                "questionId=" + questionId +
+                ", answerId=" + answerId +
+                '}';
+    }
+
     public static AnswerOption parse(Map<String, String[]> options)
             throws MissingParameterException {
         return new AnswerOption(

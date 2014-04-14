@@ -230,4 +230,20 @@ public class User implements Serializable {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
+    public String toTraceString() {
+        return "User{" +
+                "id=" + id +
+                ", password='" + password + '\'' +
+                ", login='" + login + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", company='" + company + '\'' +
+                ", role=" + role +
+                ", blocked=" + blocked +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", locale=" + locale +
+                ", onlyOwnSurveysVisible=" + onlyOwnSurveysVisible +
+                '}';
+    }
 }
