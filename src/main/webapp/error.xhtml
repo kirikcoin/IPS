@@ -12,20 +12,20 @@
 
     <ui:define name="content">
       <c:if test="${param['id'] == 403}">
-        <c:set var="errorText" value="Извините, на эту страницу доступ запрещен!"/>
+        <c:set var="errorText" value="#{bundle['error.page.403']}"/>
       </c:if>
       <c:if test="${param['id'] == 404}">
-        <c:set var="errorText" value="Извините, запрошенная страница не найдена!"/>
+        <c:set var="errorText" value="#{bundle['error.page.404']}"/>
       </c:if>
       <c:if test="${param['id'] == 500}">
-        <c:set var="errorText" value="Извините, произошла внутренняя серверная ошибка!"/>
+        <c:set var="errorText" value="#{bundle['error.page.500']}"/>
       </c:if>
 
       <h:form prependId="false">
         <h:panelGroup id="error" layout="block" styleClass="border-shadow">
 
           <h:panelGroup layout="block" styleClass="page-header">
-            <h:outputText value="Ошибка на странице"/>
+            <h:outputText value="#{bundle['error.page.header']}"/>
           </h:panelGroup>
 
           <h:panelGroup id="errorBody" layout="block">
@@ -35,7 +35,9 @@
           </h:panelGroup>
 
           <h:panelGroup id="errorActionBtn" layout="block">
-            <a href="enter.faces" class="button-green">На главную</a>
+            <a href="enter.faces" class="button-green">
+              <h:outputText value="#{bundle['error.page.landing.page.link']}"/>
+            </a>
           </h:panelGroup>
 
         </h:panelGroup>
