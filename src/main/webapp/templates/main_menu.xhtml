@@ -20,7 +20,7 @@
               <h:outputText value="#{bundle['app.title']}"/>
 
               <div class="settingButtons">
-                <h:panelGrid columns="4">
+                <h:panelGrid columns="5">
                   <h:commandLink value="#{bundle['settings.profile.button']} |"
                                  action="PROFILE"
                                  rendered="#{userSession.authenticated}"
@@ -47,6 +47,15 @@
                     <h:graphicImage
                         value="#{resources.path}/resources/images/us.png"/>
                     <f:param name="lang" value="en"/>
+                    <f:param name="param" value="#{param}"/>
+                  </h:commandLink>
+
+                  <h:commandLink title="Slovencina"
+                                 action="#{localeController.changeLocale}"
+                                 style="margin-left:3px">
+                    <h:graphicImage
+                        value="#{resources.path}/resources/images/sk.png"/>
+                    <f:param name="lang" value="sk"/>
                     <f:param name="param" value="#{param}"/>
                   </h:commandLink>
 
