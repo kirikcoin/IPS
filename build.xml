@@ -1,4 +1,8 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="ips" basedir="." default="build">
+<project name="ips"
+         basedir="."
+         default="build"
+         xmlns:ivy="antlib:org.apache.ivy.ant"
+         xmlns:jacoco="antlib:org.jacoco.ant">
 
   <property name="project.name"       value="${ant.project.name}"/>
   <property name="release.version"    value="snapshot"/>
@@ -116,7 +120,7 @@
 
         <!-- Test -->
         <exclude name="junit*.jar"/>
-        <exclude name="emma*.jar"/>
+        <exclude name="org.jacoco*.jar"/>
         <exclude name="hsqldb*.jar"/>
         <exclude name="hamcrest*.jar"/>
 
@@ -175,78 +179,71 @@
     </groovyc>
   </target>
 
-  <target name="instrument" depends="compile">
-    <mkdir dir="${build.dir}/classes-instrumented"/>
-
-    <taskdef name="emma"
-             classname="com.vladium.emma.emmaTask"
-             classpathref="classpath"/>
-
-    <emma>
-      <instr instrpath="${build.dir}/classes"
-             destdir="${build.dir}/classes-instrumented"
-             metadatafile="${build.dir}/test/metadata.emma"
-             merge="true">
-        <filter includes="mobi.eyeline.ips.*"/>
-
-        <!-- Borrowed and untouched. -->
-        <filter excludes="mobi.eyeline.ips.util.RequestParam*"/>
-        <filter excludes="mobi.eyeline.ips.util.LessFilter*"/>
-
-        <!-- Generated. -->
-        <filter excludes="mobi.eyeline.ips.external.madv.*"/>
-
-        <filter excludes="mobi.eyeline.ips.web.controllers.*Controller*"/>
-      </instr>
-    </emma>
-  </target>
-
   <target name="test" description="Execute unit tests"
-          depends="compile-test, instrument">
+          depends="compile-test, compile">
     <mkdir dir="${test.dir}"/>
     <mkdir dir="${test.dir}/xml"/>
 
-    <junit printsummary="true" failureproperty="junit.failure" fork="true" dir="${test.dir}">
-      <classpath>
-        <pathelement location="${test.res.dir}"/>
-        <pathelement location="${resources.dir}"/>
-        <pathelement location="${build.dir}/classes-instrumented"/>
-        <pathelement location="${build.dir}/classes"/>
-        <pathelement location="${build.dir}/test-classes"/>
-      </classpath>
-
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
       <classpath refid="classpath"/>
+    </taskdef>
 
-      <batchtest fork="yes" todir="${test.dir}/xml">
-        <fileset dir="${build.dir}/test-classes">
-          <include name="**/*Test.class"/>
-          <!-- a '$' in the filename means it's an inner class -->
-          <exclude name="**/*$*"/>
-        </fileset>
+    <jacoco:coverage>
+      <junit printsummary="true" failureproperty="junit.failure" fork="true" dir="${test.dir}">
+        <classpath>
+          <pathelement location="${test.res.dir}"/>
+          <pathelement location="${resources.dir}"/>
+          <pathelement location="${build.dir}/classes"/>
+          <pathelement location="${build.dir}/test-classes"/>
+        </classpath>
 
-        <formatter type="xml"/>
-      </batchtest>
+        <classpath refid="classpath"/>
 
-      <!-- Workaround for Emma instrumentation
-           making JDK7 bytecode verification fail. -->
-      <jvmarg value="-XX:-UseSplitVerifier"/>
+        <batchtest fork="yes" todir="${test.dir}/xml">
+          <fileset dir="${build.dir}/test-classes">
+            <include name="**/*Test.class"/>
+            <!-- a '$' in the filename means it's an inner class -->
+            <exclude name="**/*$*"/>
+          </fileset>
 
-      <jvmarg value="-Demma.coverage.out.file=${test.dir}/coverage.emma"/>
-      <jvmarg value="-Demma.coverage.out.merge=true"/>
-    </junit>
+          <formatter type="xml"/>
+        </batchtest>
+      </junit>
+    </jacoco:coverage>
 
     <junitreport todir="${test.dir}/xml">
       <fileset dir="${test.dir}/xml"/>
       <report todir="${test.dir}/junit"/>
     </junitreport>
 
-    <emma enabled="true">
-      <report sourcepath="${src.dir}">
-        <fileset dir="${test.dir}" includes="*.emma"/>
-        <html outfile="${test.dir}/emma/index.html"/>
-        <xml outfile="${test.dir}/emma/index.xml"/>
-      </report>
-    </emma>
+    <jacoco:report>
+      <executiondata>
+        <file file="${test.dir}/jacoco.exec"/>
+      </executiondata>
+
+      <structure name="IPS">
+        <classfiles>
+          <fileset dir="${build.dir}/classes">
+            <!-- Borrowed and untouched. -->
+            <exclude name="mobi/eyeline/ips/util/RequestParam*"/>
+            <exclude name="mobi/eyeline/ips/util/LessFilter*"/>
+
+            <!-- Generated. -->
+            <exclude name="mobi/eyeline/ips/external/**/*"/>
+
+            <exclude name="mobi/eyeline/ips/web/controllers/*Controller*"/>
+            <exclude name="mobi/eyeline/ips/web/controllers/**/*Controller*"/>
+          </fileset>
+        </classfiles>
+        <sourcefiles encoding="UTF-8">
+          <fileset dir="${src.dir}"/>
+        </sourcefiles>
+      </structure>
+
+      <html destdir="${test.dir}/coverage"/>
+      <xml destfile="${test.dir}/coverage/report.xml"/>
+
+    </jacoco:report>
 
     <fail if="junit.failure" message="Unit test(s) failed. See reports!"/>
   </target>

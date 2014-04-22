@@ -101,8 +101,7 @@
     -->
 
     <dependency org="junit" name="junit" rev="4.7"/>
-    <dependency org="emma" name="emma" rev="2.1.5320"/>
-    <dependency org="emma" name="emma_ant" rev="2.1.5320"/>
+    <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.0.201403182114"/>
     <dependency org="org.hsqldb" name="hsqldb" rev="2.3.1"/>
     <dependency org="org.codehaus.groovy" name="groovy-all" rev="2.2.1"/>
     <dependency org="org.hamcrest" name="hamcrest-all" rev="1.3"/>
