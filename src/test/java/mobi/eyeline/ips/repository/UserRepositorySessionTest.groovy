@@ -3,7 +3,7 @@ package mobi.eyeline.ips.repository
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 
-class UserRepositoryTestSession extends DbTestCase {
+class UserRepositorySessionTest extends DbTestCase {
 
     private UserRepository userRepository
 

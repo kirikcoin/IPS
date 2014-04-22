@@ -189,7 +189,11 @@
     </taskdef>
 
     <jacoco:coverage>
-      <junit printsummary="true" failureproperty="junit.failure" fork="true" dir="${test.dir}">
+      <junit printsummary="true"
+             failureproperty="junit.failure"
+             fork="true"
+             forkmode="once"
+             dir="${test.dir}">
         <classpath>
           <pathelement location="${test.res.dir}"/>
           <pathelement location="${resources.dir}"/>
