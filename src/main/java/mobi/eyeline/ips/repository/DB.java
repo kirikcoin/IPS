@@ -5,7 +5,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.HSQLDialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.internal.SessionFactoryImpl;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 
 import java.util.Properties;
 
@@ -19,8 +20,11 @@ public class DB {
                 .configure("/hibernate-model.cfg.xml")
                 .configure()
                 .addProperties(properties);
-        //noinspection deprecation
-        sessionFactory = configuration.buildSessionFactory();
+
+        final ServiceRegistry serviceRegistry = new ServiceRegistryBuilder()
+                .applySettings(configuration.getProperties()).buildServiceRegistry();
+
+        sessionFactory = configuration.buildSessionFactory(serviceRegistry);
     }
 
     public SessionFactory getSessionFactory() {
