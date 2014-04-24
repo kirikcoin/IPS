@@ -1,6 +1,6 @@
 
 /**
-  Jsf components 1.102
+  Jsf components 1.103
 
   Copyright (c) Eyeline Communications Inc.
 **/
@@ -2512,8 +2512,9 @@ var NavBarControl = function(id, navbarOptions) {
     totalSize = totalRows;
     total.text(totalRows);
     setPageSize(pageSize, null);
+    setPage(pageNumber, null);  // Pre-initialization.
     if (currentPageNumber) {
-      setPage(pageNumber = currentPageNumber, null);
+      setPage(currentPageNumber, null);
     }
   };
 
