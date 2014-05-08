@@ -164,7 +164,7 @@
                   <h:panelGrid columns="2" columnClasses="settings-left,none">
                     <h:outputLabel for="newIdentifier"
                                    value="#{bundle['invitations.block.advertising.company.dialog.text']}"/>
-                    <eye:inputText id="newIdentifier"
+                    <eye:inputText id="newIdentifier" maxlength="10" cols="10"
                                    value="#{surveyInvitesController.madvId}"/>
                   </h:panelGrid>
 
