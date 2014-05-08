@@ -1,6 +1,6 @@
 
 /**
-  Jsf components 1.103
+  Jsf components 1.104
 
   Copyright (c) Eyeline Communications Inc.
 **/
@@ -3776,12 +3776,12 @@ function EyelinePageCalendarComponent(contentId) {
   };
 
 
-}function createUpdatableContent(contentId, updatePeriod) {
-  var content = new EyelineUpdatableContentComponent(contentId, updatePeriod);
+}function createUpdatableContent(contentId, updatePeriod, errorMessage) {
+  var content = new EyelineUpdatableContentComponent(contentId, updatePeriod, errorMessage);
   registerJsfComponent(contentId, content);
 }
 
-function EyelineUpdatableContentComponent(contentId, updatePeriod) {
+function EyelineUpdatableContentComponent(contentId, updatePeriod, errorMessage) {
 
   var c = $("#" + contentId);
 
@@ -3812,6 +3812,12 @@ function EyelineUpdatableContentComponent(contentId, updatePeriod) {
     $.ajaxSetup({cache: false});
     $.post(closestForm.attr("action"), formValues, function(data, status, resp) {
       if (status == 'success') {
+        var pageType = resp.getResponseHeader("Page-Type");
+        if (pageType != "Partial") {
+          progressOverlay.showError(errorMessage);
+          return;
+        }
+
         c.html(data);
         var nextUpdateTimeout = resp.getResponseHeader("nextUpdateTimeout");
         if (nextUpdateTimeout != null && nextUpdateTimeout != "0") {
@@ -3819,10 +3825,7 @@ function EyelineUpdatableContentComponent(contentId, updatePeriod) {
         }
 
         if(showOverlay) {
-          if(hideOverlayTimeout)
-            setTimeout(function() { progressOverlay.hide() }, hideOverlayTimeout);
-          else
-            progressOverlay.hide();
+          progressOverlay.hide(hideOverlayTimeout);
         }
       }
       if(callback) {
@@ -3858,8 +3861,11 @@ var ProgressUpdOverlay = function(parent) {
 
   var progressElement = $("<table>").addClass("eyeline_upd_content_overlay");
   $('<tr><td><div class="eyeline_upd_content_loading"></div></td></tr>').appendTo(progressElement);
-
   progressElement.insertAfter(parent);
+
+  var errorElement = $("<table>").addClass("eyeline_upd_content_error");
+  $('<tr><td><div class="eyeline_upd_content_error_msg"></div></td></tr>').appendTo(errorElement);
+  errorElement.insertAfter(parent);
 
   var showOverlay = function() {
     var x = parent.position().left;
@@ -3870,12 +3876,38 @@ var ProgressUpdOverlay = function(parent) {
     progressElement.show();
   };
 
+  var hideOverlay = function(timeout) {
+    if(timeout)
+      setTimeout(function() { progressElement.hide() }, timeout);
+    else
+      progressElement.hide();
+  };
+
   this.show = function() {
     showOverlay();
   };
 
-  this.hide = function() {
+  this.hide = function(timeout) {
+    hideOverlay(timeout);
+    errorElement.hide();
+  };
+
+  this.showError = function(message) {
     progressElement.hide();
+    var x = parent.position().left;
+    var y = parent.position().top;
+    var w = parent[0].offsetWidth;
+    var h = parent[0].offsetHeight;
+
+    var errorMsg = errorElement.find('div.eyeline_upd_content_error_msg');
+    errorMsg.text(message);
+
+    errorElement.css("left", x + 'px').css("top", y + 'px').css("width", w + 'px').css("height", h + 'px');
+    errorElement.show();
+  };
+
+  this.hideError = function() {
+    errorElement.hide();
   }
 };
 
