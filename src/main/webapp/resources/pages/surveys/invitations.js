@@ -66,6 +66,7 @@ var page = {
 
   onNewInviteShow: function() {
     jsfc('newInviteDialog').show();
+    $('#inviteValue').val('');
     return false;
   }
 };

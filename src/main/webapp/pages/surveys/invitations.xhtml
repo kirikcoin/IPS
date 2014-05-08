@@ -264,7 +264,7 @@
 
             <h:outputLabel for="inviteValue"
                            value="#{bundle['invitations.block.invitations.delivery.dialog.number.text']}"/>
-            <eye:inputText id="inviteValue"
+            <eye:inputText id="inviteValue" maxlength="8" size="9"
                            value="#{surveyInvitesController.inviteValue}"/>
           </h:panelGrid>
           <eye:buttons>
