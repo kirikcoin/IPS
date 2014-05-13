@@ -76,7 +76,7 @@ class SurveyResultsController extends BaseSurveyController {
             writer.println(text);
 
             for(SurveySession item:listForDownload) {
-                for(Answer answer:item.answers){
+                for(Answer answer:item.answers) {
                     text = item.respondent.msisdn +
                             ";" + answer.question.activeIndex +
                             ";\"" + answer.question.title + "\"" +

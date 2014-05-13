@@ -136,20 +136,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = session.createCriteria(Respondent.class);
-
-        criteria.createAlias("survey", "survey");
-
-        criteria.add(Restrictions.eq("survey", survey));
-
-        criteria.add(Restrictions.ge("startDate", from));
-        criteria.add(Restrictions.le("startDate", to));
-
-        if (isNotBlank(filter)) {
-            filter = filter.trim();
-
-            criteria.add(ilike("msisdn", filter, MatchMode.ANYWHERE));
-        }
+        final Criteria criteria = getCriteria(survey, from, to, filter, session);
 
         criteria.setFirstResult(offset).setMaxResults(limit);
 
@@ -183,6 +170,8 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         return results;
     }
 
+
+
     public List<SurveySession> list(Survey survey,
                                     Date from,
                                     Date to,
@@ -190,20 +179,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = session.createCriteria(Respondent.class);
-
-        criteria.createAlias("survey", "survey");
-
-        criteria.add(Restrictions.eq("survey", survey));
-
-        criteria.add(Restrictions.ge("startDate", from));
-        criteria.add(Restrictions.le("startDate", to));
-
-        if (isNotBlank(filter)) {
-            filter = filter.trim();
-
-            criteria.add(ilike("msisdn", filter, MatchMode.ANYWHERE));
-        }
+        final Criteria criteria = getCriteria(survey, from, to, filter, session);
 
         @SuppressWarnings("unchecked")
         final List<Respondent> respondents = (List<Respondent>) criteria.list();
@@ -225,6 +201,15 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         final Session session = getSessionFactory().getCurrentSession();
 
+        final Criteria criteria = getCriteria(survey, from, to, filter, session);
+
+        criteria.setProjection(Projections.rowCount());
+
+        //noinspection unchecked
+        return ((Number) criteria.uniqueResult()).intValue();
+    }
+
+    private Criteria getCriteria(Survey survey, Date from, Date to, String filter, Session session) {
         final Criteria criteria = session.createCriteria(Respondent.class);
 
         criteria.createAlias("survey", "survey");
@@ -239,11 +224,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
             criteria.add(ilike("msisdn", filter, MatchMode.ANYWHERE));
         }
-
-        criteria.setProjection(Projections.rowCount());
-
-        //noinspection unchecked
-        return ((Number) criteria.uniqueResult()).intValue();
+        return criteria;
     }
 
     public int count(QuestionOption option) {
