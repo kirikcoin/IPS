@@ -108,13 +108,25 @@
 
               </h:panelGrid>
 
-              <eye:buttons>
+            <eye:buttons>
                 <eye:button>
                   <h:outputLink value="#"
                                 onclick="jsfc('table').update(true); return false;"
                                 styleClass="button-green">
                     <h:outputText value="#{bundle['results.button.search']}"/>
                   </h:outputLink>
+                </eye:button>
+
+                <eye:button id ="downloadButton">
+                  <!--<h:outputLink value="#"
+                                onclick=""
+                                styleClass="button-green">
+                    <h:outputText value="#{bundle['results.button.download']}"/>
+
+                 </h:outputLink>-->
+                  <h:commandLink styleClass="button-green" value="#{bundle['results.button.download']}">
+                    <eye:fileDownloadListener method="#{surveyResultsController.download}" contentType="application/csv" filename="survey_id#{surveyResultsController.surveyId}_results.csv"/>
+                  </h:commandLink>
                 </eye:button>
                 <eye:space/>
               </eye:buttons>

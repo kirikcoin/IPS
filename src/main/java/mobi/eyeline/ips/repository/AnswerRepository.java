@@ -183,6 +183,41 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         return results;
     }
 
+    public List<SurveySession> list(Survey survey,
+                                    Date from,
+                                    Date to,
+                                    String filter) {
+
+        final Session session = getSessionFactory().getCurrentSession();
+
+        final Criteria criteria = session.createCriteria(Respondent.class);
+
+        criteria.createAlias("survey", "survey");
+
+        criteria.add(Restrictions.eq("survey", survey));
+
+        criteria.add(Restrictions.ge("startDate", from));
+        criteria.add(Restrictions.le("startDate", to));
+
+        if (isNotBlank(filter)) {
+            filter = filter.trim();
+
+            criteria.add(ilike("msisdn", filter, MatchMode.ANYWHERE));
+        }
+
+        @SuppressWarnings("unchecked")
+        final List<Respondent> respondents = (List<Respondent>) criteria.list();
+
+        final List<SurveySession> results = new ArrayList<>(respondents.size());
+        for (Respondent respondent : respondents) {
+            results.add(
+                    new SurveySession(survey, respondent, list(respondent))
+            );
+        }
+
+        return results;
+    }
+
     public int count(Survey survey,
                      Date from,
                      Date to,
