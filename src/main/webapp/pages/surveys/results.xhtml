@@ -21,6 +21,14 @@
         page.init();
 
         $(function () {
+          var onUpdate = function(event, result){
+            if(jsfc('table').getRowsCount() == 0){
+              $('#downloadButton').hide();
+            } else {
+              $('#downloadButton').show();
+            }
+          };
+          jsfc('table').bind('update',onUpdate);
 
           $('#content').attr('action',
               '/pages/surveys/results.faces?id=#{surveyResultsController.surveyId}');
