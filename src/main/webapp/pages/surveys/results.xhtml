@@ -22,10 +22,10 @@
 
         $(function () {
           var onUpdate = function(event, result){
-            if(jsfc('table').getRowsCount() == 0){
-              $('#downloadButton').hide();
-            } else {
+            if(jsfc('table').getRowsCount() != 0){
               $('#downloadButton').show();
+            } else {
+              $('#downloadButton').hide();
             }
           };
           jsfc('table').bind('update',onUpdate);
