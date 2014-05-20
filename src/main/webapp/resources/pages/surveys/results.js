@@ -11,11 +11,13 @@ var page = {
   },
 
   init: function () {
-
+    var onUpdate = function(event, result){
+       if(jsfc('table').getRowsCount() != 0)
+         $('#downloadButton').toggle();
+    };
+      jsfc('table').bind('update',onUpdate);
   }
-
 };
-
 
 
 function EyelineDataTableComponent(tableId, tableOptions) {

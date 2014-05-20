@@ -35,6 +35,8 @@
     <dependency org="commons-lang" name="commons-lang" rev="2.4" transitive="false"
                 conf="site->default"/>
 
+    <dependency org="net.sf.opencsv" name="opencsv" rev="2.3" transitive="false"/>
+
     <dependency org="com.sun.facelets" name="jsf-facelets" rev="1.1.14" transitive="false"
                 conf="site->default"/>
     <dependency org="org.apache.myfaces.core" name="myfaces-api" rev="1.2.9" transitive="false"
