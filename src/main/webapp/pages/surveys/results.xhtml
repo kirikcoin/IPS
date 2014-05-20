@@ -18,17 +18,9 @@
     <ui:define name="scripts">
       <script type="text/javascript">
         //            <![CDATA[
-        page.init();
 
         $(function () {
-          var onUpdate = function(event, result){
-            if(jsfc('table').getRowsCount() != 0){
-              $('#downloadButton').show();
-            } else {
-              $('#downloadButton').hide();
-            }
-          };
-          jsfc('table').bind('update',onUpdate);
+          page.init();
 
           $('#content').attr('action',
               '/pages/surveys/results.faces?id=#{surveyResultsController.surveyId}');

@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import au.com.bytecode.opencsv.CSVWriter
 import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.Answer
 import mobi.eyeline.ips.model.SurveySession
@@ -54,48 +55,133 @@ class SurveyResultsController extends BaseSurveyController {
         }
     }
 
+//
+//    void download(FacesContext context, OutputStream os) {
+//
+//        List<SurveySession> listForDownload = null;
+//        int count = answerRepository.count(
+//                getSurvey(),
+//                periodStart,
+//                periodEnd,
+//                filter)
+//        int limit = 100;
+//
+//        BufferedWriter writer = null;
+//
+//        String text;
+//        try{
+//            writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+//            text = strings['results.list.csv.msisdn'] +
+//                    ";" + strings['results.list.csv.question.number'] +
+//                    ";\"" + strings['results.list.csv.question.text']  + "\""+
+//                    ";" + strings['results.list.csv.questionoption.number']  +
+//                    ";\"" + strings['results.list.csv.questionoption.text']  + "\""+
+//                    ";" + strings['results.list.csv.date']
+//            writer.append(text);
+//            writer.newLine();
+//            writer.flush();
+//
+//            for(int i=0; i<=count%limit;i++){
+//                listForDownload = getRecords(i*limit,limit)
+//                for(SurveySession item:listForDownload) {
+//                    for(Answer answer:item.answers) {
+//                        text = item.respondent.msisdn +
+//                                ";" + answer.question.activeIndex +
+//                                ";\"" + answer.question.title.replace("\"","\\\"") + "\"" +
+//                                ";" + answer.option.activeIndex +
+//                                ";\"" + answer.option.answer + "\"" +
+//                                ";" + answer.date
+//
+//                        if(text != null && text.length()>0) {
+//                            writer.append(text);
+//                            writer.newLine();
+//                            writer.flush();
+//                        }
+//                    }
+//                }
+//                writer.flush()
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            if(writer != null) {
+//                writer.close();
+//            }
+//        }
+//    }
+
 
     void download(FacesContext context, OutputStream os) {
 
-        List<SurveySession> listForDownload = answerRepository.list(
+
+        OutputStreamWriter writer = null;
+        CSVWriter csvWriter =null;
+        int count = answerRepository.count(
                 getSurvey(),
                 periodStart,
                 periodEnd,
                 filter)
+        int limit = 100;
 
-        PrintWriter writer = null;
-        String text;
         try{
-            writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(os, "UTF-8")));
-            text = strings['results.list.csv.msisdn'] +
-                    ";" + strings['results.list.csv.question.number'] +
-                    ";\"" + strings['results.list.csv.question.text']  + "\""+
-                    ";" + strings['results.list.csv.questionoption.number']  +
-                    ";\"" + strings['results.list.csv.questionoption.text']  + "\""+
-                    ";" + strings['results.list.csv.date']
-            writer.println(text);
+            writer = new OutputStreamWriter(os, "UTF-8");
+            csvWriter = new CSVWriter(writer, ';' as char);
+            List<String[]> headerRecords = new ArrayList<String[]>();
+            //add header record
+            headerRecords.add([strings['results.list.csv.msisdn'],
+                    strings['results.list.csv.question.number'],
+                    strings['results.list.csv.question.text'],
+                    strings['results.list.csv.questionoption.number'],
+                    strings['results.list.csv.questionoption.text'],
+                    strings['results.list.csv.date']] as String[]);
+            csvWriter.writeAll(headerRecords);
 
-            for(SurveySession item:listForDownload) {
-                for(Answer answer:item.answers) {
-                    text = item.respondent.msisdn +
-                            ";" + answer.question.activeIndex +
-                            ";\"" + answer.question.title + "\"" +
-                            ";" + answer.option.activeIndex +
-                            ";\"" + answer.option.answer + "\"" +
-                            ";" + answer.date
-
-                    if(text != null && text.length()>0) {
-                        writer.println(text);
-                    }
-                }
+            for (int i = 0; i <= count % limit; i++) {
+                writeCSVData(getRecords(i*limit, limit),csvWriter);
+                csvWriter.flush();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if(writer != null) {
-                writer.close();
+                csvWriter.close();
             }
         }
     }
+
+    private List<SurveySession> getRecords(int offset, int limit) {
+        return answerRepository.list(
+                getSurvey(),
+                periodStart,
+                periodEnd,
+                filter,
+                limit,
+                offset)
+    }
+
+    private void writeCSVData(List<SurveySession> sessions, CSVWriter csvWriter) throws IOException {
+
+        List<String[]> data  = toStringArray(sessions);
+        csvWriter.writeAll(data);
+    }
+
+    private List<String[]> toStringArray(List<SurveySession> sessions) {
+        List<String[]> records = new ArrayList<String[]>();
+        for(SurveySession item:sessions) {
+            for(Answer answer:item.answers) {
+
+                records.add([item.respondent.msisdn,
+                        answer.question.activeIndex,
+                        answer.question.title,
+                        answer.option.activeIndex,
+                        answer.option.answer,
+                        answer.date] as String[]);
+            }
+        }
+
+        return records;
+    }
+
+
 }

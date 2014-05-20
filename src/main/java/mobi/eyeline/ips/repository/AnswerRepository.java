@@ -175,11 +175,15 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
     public List<SurveySession> list(Survey survey,
                                     Date from,
                                     Date to,
-                                    String filter) {
+                                    String filter,
+                                    int limit,
+                                    int offset) {
 
         final Session session = getSessionFactory().getCurrentSession();
 
         final Criteria criteria = getCriteria(survey, from, to, filter, session);
+
+        criteria.setFirstResult(offset).setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
         final List<Respondent> respondents = (List<Respondent>) criteria.list();
