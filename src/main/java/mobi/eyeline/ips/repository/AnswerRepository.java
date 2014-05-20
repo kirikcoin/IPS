@@ -14,6 +14,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +137,8 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = getCriteria(survey, from, to, filter, session);
+        final Criteria criteria = getCriteria(session, survey, from, to, filter);
+        criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
 
         criteria.setFirstResult(offset).setMaxResults(limit);
 
@@ -181,7 +183,8 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = getCriteria(survey, from, to, filter, session);
+        final Criteria criteria = getCriteria(session, survey, from, to, filter);
+        criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
 
         criteria.setFirstResult(offset).setMaxResults(limit);
 
@@ -205,7 +208,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = getCriteria(survey, from, to, filter, session);
+        final Criteria criteria = getCriteria(session, survey, from, to, filter);
 
         criteria.setProjection(Projections.rowCount());
 
@@ -213,10 +216,12 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         return ((Number) criteria.uniqueResult()).intValue();
     }
 
-    private Criteria getCriteria(Survey survey, Date from, Date to, String filter, Session session) {
+    private Criteria getCriteria(Session session,
+                                 Survey survey,
+                                 Date from,
+                                 Date to,
+                                 String filter) {
         final Criteria criteria = session.createCriteria(Respondent.class);
-
-        criteria.createAlias("survey", "survey");
 
         criteria.add(Restrictions.eq("survey", survey));
 
