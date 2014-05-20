@@ -36,7 +36,7 @@
                 conf="site->default"/>
 
     <dependency org="net.sf.opencsv" name="opencsv" rev="2.3" transitive="false"
-            conf="site-default"/>
+            conf="site->default"/>
 
     <dependency org="com.sun.facelets" name="jsf-facelets" rev="1.1.14" transitive="false"
                 conf="site->default"/>
