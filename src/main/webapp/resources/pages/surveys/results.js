@@ -11,15 +11,9 @@ var page = {
   },
 
   init: function () {
-    var onUpdate = function(event, result){
-       if(jsfc('table').getRowsCount() != 0){
-         $('#downloadButton').show();
-       }
-        else{
-         $('#downloadButton').hide();
-       }
-    };
-      jsfc('table').bind('update',onUpdate);
+    jsfc('table').bind('update', function () {
+      $('#downloadButton').toggle(jsfc('table').getRowsCount() != 0);
+    });
   }
 };
 
