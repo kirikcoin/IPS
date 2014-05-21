@@ -55,61 +55,6 @@ class SurveyResultsController extends BaseSurveyController {
         }
     }
 
-//
-//    void download(FacesContext context, OutputStream os) {
-//
-//        List<SurveySession> listForDownload = null;
-//        int count = answerRepository.count(
-//                getSurvey(),
-//                periodStart,
-//                periodEnd,
-//                filter)
-//        int limit = 100;
-//
-//        BufferedWriter writer = null;
-//
-//        String text;
-//        try{
-//            writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-//            text = strings['results.list.csv.msisdn'] +
-//                    ";" + strings['results.list.csv.question.number'] +
-//                    ";\"" + strings['results.list.csv.question.text']  + "\""+
-//                    ";" + strings['results.list.csv.questionoption.number']  +
-//                    ";\"" + strings['results.list.csv.questionoption.text']  + "\""+
-//                    ";" + strings['results.list.csv.date']
-//            writer.append(text);
-//            writer.newLine();
-//            writer.flush();
-//
-//            for(int i=0; i<=count%limit;i++){
-//                listForDownload = getRecords(i*limit,limit)
-//                for(SurveySession item:listForDownload) {
-//                    for(Answer answer:item.answers) {
-//                        text = item.respondent.msisdn +
-//                                ";" + answer.question.activeIndex +
-//                                ";\"" + answer.question.title.replace("\"","\\\"") + "\"" +
-//                                ";" + answer.option.activeIndex +
-//                                ";\"" + answer.option.answer + "\"" +
-//                                ";" + answer.date
-//
-//                        if(text != null && text.length()>0) {
-//                            writer.append(text);
-//                            writer.newLine();
-//                            writer.flush();
-//                        }
-//                    }
-//                }
-//                writer.flush()
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            if(writer != null) {
-//                writer.close();
-//            }
-//        }
-//    }
-
 
     void download(FacesContext context, OutputStream os) {
 
