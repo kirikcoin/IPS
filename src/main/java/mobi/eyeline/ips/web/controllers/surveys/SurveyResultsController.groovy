@@ -136,9 +136,8 @@ class SurveyResultsController extends BaseSurveyController {
                     strings['results.list.csv.date']] as String[]);
             csvWriter.writeAll(headerRecords);
 
-            for (int i = 0; i <= count % limit; i++) {
+            for (int i = 0; i <= count / limit; i++) {
                 writeCSVData(getRecords(i*limit, limit),csvWriter);
-                csvWriter.flush();
             }
 
         } catch (Exception e) {

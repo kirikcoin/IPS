@@ -12,8 +12,12 @@ var page = {
 
   init: function () {
     var onUpdate = function(event, result){
-       if(jsfc('table').getRowsCount() != 0)
-         $('#downloadButton').toggle();
+       if(jsfc('table').getRowsCount() != 0){
+         $('#downloadButton').show();
+       }
+        else{
+         $('#downloadButton').hide();
+       }
     };
       jsfc('table').bind('update',onUpdate);
   }

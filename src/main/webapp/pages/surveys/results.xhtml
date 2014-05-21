@@ -125,7 +125,7 @@
 
                  </h:outputLink>-->
                   <h:commandLink styleClass="button-green" value="#{bundle['results.button.download']}">
-                    <eye:fileDownloadListener method="#{surveyResultsController.download}" contentType="application/csv" filename="survey_id#{surveyResultsController.surveyId}_results.csv"/>
+                    <eye:fileDownloadListener method="#{surveyResultsController.download}" contentType="text/csv" filename="survey_id#{surveyResultsController.surveyId}_results.csv"/>
                   </h:commandLink>
                 </eye:button>
                 <eye:space/>
