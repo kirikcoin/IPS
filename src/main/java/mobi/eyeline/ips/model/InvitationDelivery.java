@@ -1,7 +1,7 @@
 package mobi.eyeline.ips.model;
 
 
-import com.sun.istack.internal.NotNull;
+
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -49,7 +50,14 @@ public class InvitationDelivery implements Serializable {
     private int speed;
 
     @Column(name = "errors_count")
-    private int errors_count;
+    private int errorsCount;
+
+    @NotNull
+    @Column(name = "input_file_name")
+    private String inputFile;
+
+    @Column(name = "current_position")
+    private int currentPosition;
 
 
     public InvitationDelivery() {
@@ -111,11 +119,27 @@ public class InvitationDelivery implements Serializable {
         this.speed = speed;
     }
 
-    public int getErrors_count() {
-        return errors_count;
+    public int getErrorsCount() {
+        return errorsCount;
     }
 
-    public void setErrors_count(int errors_count) {
-        this.errors_count = errors_count;
+    public void setErrorsCount(int errors_count) {
+        this.errorsCount = errors_count;
+    }
+
+    public String getInputFile() {
+        return inputFile;
+    }
+
+    public void setInputFile(String inputFile) {
+        this.inputFile = inputFile;
+    }
+
+    public int getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public void setCurrentPosition(int currentPosition) {
+        this.currentPosition = currentPosition;
     }
 }
