@@ -15,5 +15,7 @@
         <mapping class="mobi.eyeline.ips.model.Question"/>
         <mapping class="mobi.eyeline.ips.model.QuestionOption"/>
         <mapping class="mobi.eyeline.ips.model.Answer"/>
+
+        <mapping class="mobi.eyeline.ips.model.InvitationDelivery"/>
     </session-factory>
 </hibernate-configuration>

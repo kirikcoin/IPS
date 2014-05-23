@@ -116,6 +116,10 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "owner")
     private List<Survey> createdSurveys;
 
+    @Column(name = "can_send_invitations", columnDefinition = "BIT", nullable = false)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean canSendInvitations = false;
+
     public User() {
     }
 
@@ -213,6 +217,14 @@ public class User implements Serializable {
 
     public void setCreatedSurveys(List<Survey> createdSurveys) {
         this.createdSurveys = createdSurveys;
+    }
+
+    public boolean isCanSendInvitations() {
+        return canSendInvitations;
+    }
+
+    public void setCanSendInvitations(boolean canSendInvitations) {
+        this.canSendInvitations = canSendInvitations;
     }
 
     @Override
