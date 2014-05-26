@@ -2,10 +2,10 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import au.com.bytecode.opencsv.CSVWriter
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Answer
 import mobi.eyeline.ips.model.SurveySession
 import mobi.eyeline.ips.repository.AnswerRepository
-import mobi.eyeline.ips.repository.RespondentRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory
 import javax.faces.context.FacesContext
 
 @CompileStatic
+@Slf4j('logger')
 class SurveyResultsController extends BaseSurveyController {
-    private static final Logger logger = LoggerFactory.getLogger(SurveyResultsController)
 
     private final AnswerRepository answerRepository = Services.instance().answerRepository
 
@@ -96,6 +96,7 @@ class SurveyResultsController extends BaseSurveyController {
         }
     }
 
+    @SuppressWarnings("GrMethodMayBeStatic")
     private void writeCSVData(List<SurveySession> sessions,
                               CSVWriter csvWriter) {
         sessions.each { SurveySession session ->

@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.repository.QuestionRepository
@@ -12,15 +13,12 @@ import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 import javax.faces.context.FacesContext
 
 @CompileStatic
+@Slf4j('logger')
 class SurveySettingsController extends BaseSurveyController {
-
-    private static final Logger logger = LoggerFactory.getLogger(SurveySettingsController)
 
     private final QuestionRepository questionRepository = Services.instance().questionRepository
     private final UserRepository userRepository = Services.instance().userRepository

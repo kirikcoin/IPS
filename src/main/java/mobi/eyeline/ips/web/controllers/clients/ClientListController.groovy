@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.web.controllers.clients
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.exceptions.LoginException
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
@@ -16,9 +17,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 @CompileStatic
+@Slf4j('logger')
 class ClientListController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClientListController)
 
     private final UserRepository userRepository = Services.instance().userRepository
     private final UserService userService = Services.instance().userService

@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.SurveyInvitation
 import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.repository.SurveyInvitationRepository
@@ -10,15 +11,12 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
 
 @CompileStatic
+@Slf4j('logger')
 class SurveyInvitesController extends BaseSurveyController {
-
-    private static final Logger logger = LoggerFactory.getLogger(SurveyInvitesController)
 
     private final SurveyInvitationRepository surveyInvitationRepository =
             Services.instance().surveyInvitationRepository

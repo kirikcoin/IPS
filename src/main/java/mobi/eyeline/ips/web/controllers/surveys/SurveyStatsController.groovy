@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Survey
@@ -15,8 +16,6 @@ import mobi.eyeline.util.jsf.components.chart.pie.Pie
 import mobi.eyeline.util.jsf.components.chart.pie.PieChart
 import mobi.eyeline.util.jsf.components.chart.pie.PieModel
 import mobi.eyeline.util.jsf.components.collapsing_group.CollapsingGroup
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 import javax.faces.component.UIComponent
 import javax.faces.component.html.HtmlOutputText
@@ -24,8 +23,8 @@ import javax.faces.component.html.HtmlPanelGrid
 import javax.faces.component.html.HtmlPanelGroup
 
 @CompileStatic
+@Slf4j('logger')
 class SurveyStatsController extends BaseSurveyController {
-    private static final Logger logger = LoggerFactory.getLogger(SurveyStatsController)
 
     private final AnswerRepository answerRepository = Services.instance().answerRepository
     private final RespondentRepository respondentRepository = Services.instance().respondentRepository

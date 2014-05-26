@@ -1,18 +1,16 @@
 package mobi.eyeline.ips.web.controllers.login
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.exceptions.LoginException
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.EmailValidator
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @CompileStatic
+@Slf4j('logger')
 public class PasswordResetController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(PasswordResetController)
 
     private final UserService userService = Services.instance().userService
 

@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
@@ -10,14 +11,10 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-
 
 @CompileStatic
+@Slf4j('logger')
 class SurveyListController extends BaseController {
-
-    private static final Logger logger = LoggerFactory.getLogger(SurveyListController)
 
     private final SurveyRepository surveyRepository = Services.instance().surveyRepository
     private final UserRepository userRepository = Services.instance().userRepository

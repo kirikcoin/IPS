@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.web.controllers
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
@@ -9,8 +10,6 @@ import mobi.eyeline.ips.util.DelegateResourceBundle
 import mobi.eyeline.ips.util.RequestParam
 import mobi.eyeline.ips.web.auth.WebUser
 import mobi.eyeline.ips.web.validators.LocalizedMessageInterpolator
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 import javax.faces.application.FacesMessage
 import javax.faces.context.ExternalContext
@@ -24,9 +23,8 @@ import javax.validation.Validator
 import static java.util.Collections.emptyMap
 
 @CompileStatic
+@Slf4j('logger')
 public abstract class BaseController implements Serializable {
-
-    private static final Logger logger = LoggerFactory.getLogger(BaseController)
 
     private final UserRepository userRepository = Services.instance().userRepository
 
