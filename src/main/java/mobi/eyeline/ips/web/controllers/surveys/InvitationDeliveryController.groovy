@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
-import javafx.beans.binding.ListBinding
 import mobi.eyeline.ips.model.InvitationDelivery
 import mobi.eyeline.ips.model.InvitationDeliveryType
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository
