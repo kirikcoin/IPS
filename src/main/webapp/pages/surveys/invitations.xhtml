@@ -32,6 +32,7 @@
           if (#{surveyInvitesController.madvIdError}) {
             page.onMadvEditClick();
           }
+
         });
 //            ]]>
       </script>
@@ -186,6 +187,83 @@
               </h:panelGroup>
             </eye:collapsingGroup>
 
+            <eye:collapsingGroup id="invitationsDelivery" opened="true">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['invitations.deliveries.title']}"/>
+                </h:panelGroup>
+              </f:facet>
+
+              <h:panelGroup>
+                <eye:dataTable id="deliveriesTable"
+                               value="#{invitationDeliveryController.tableModel}"
+                               var="row"
+                               pageSize="50"
+                               tableClass="grid">
+                  <f:facet name="ifEmpty">
+                    <h:outputText value="#{bundle['results.empty']}"/>
+                  </f:facet>
+
+                  <eye:row innerRows="${row.text}">
+
+                    <eye:column name="date"
+                                title="#{bundle['invitations.deliveries.table.startdate']}"
+                                sortable="true"
+                                defaultSortOrder="desc">
+                      <h:outputText value="#{row.date}">
+                        <f:convertDateTime type="both" dateStyle="short"/>
+                      </h:outputText>
+                    </eye:column>
+
+                    <eye:column name="type"
+                                title="#{bundle['invitations.deliveries.table.type']}"
+                                sortable="true">
+                      <h:outputText value="#{row.type}"/>
+                    </eye:column>
+
+                    <eye:column name="speed"
+                                title="#{bundle['invitations.deliveries.table.speed']}"
+                                sortable="true">
+                      <h:outputText value="#{row.speed} #{bundle['invitations.deliveries.table.speed.metric']}"/>
+                    </eye:column>
+
+                    <eye:column name="progress"
+                                title="#{bundle['invitations.deliveries.table.progress']}">
+                      <h:outputText value="#{row.currentPosition}"/>
+                    </eye:column>
+
+                    <eye:column name="errorsCount"
+                                title="#{bundle['invitations.deliveries.table.errorscount']}"
+                                sortable="true">
+                      <h:outputText value="#{row.errorsCount}"/>
+                    </eye:column>
+
+                    <eye:column name="action"
+                                title="#{bundle['invitations.deliveries.table.action']}"
+                                columnClass="actionColumn">
+                      <h:outputText value=""/>
+                      <f:facet name="inner">
+                        <h:outputText value="#{row.text}"/>
+                      </f:facet>
+                    </eye:column>
+
+                  </eye:row>
+                </eye:dataTable>
+              </h:panelGroup>
+
+              <eye:buttons id="addDelivery">
+                <eye:button>
+                  <h:commandLink value="#{bundle['invitations.deliveries.button.add']}"
+                                 onclick="return page.onNewDeliveryShow();"
+                                 styleClass="button-green">
+                  </h:commandLink>
+                </eye:button>
+
+                <eye:space/>
+              </eye:buttons>
+
+            </eye:collapsingGroup>
+
             <eye:collapsingGroup id="groupInvites"
                                  opened="true">
               <f:facet name="header">
@@ -246,11 +324,65 @@
               </eye:buttons>
 
             </eye:collapsingGroup>
+
+
           </h:panelGroup>
 
           <h:panelGroup layout="block" styleClass="page-footer"/>
 
         </h:panelGroup>
+
+        <eye:dialog id="newDeliveryDialog"
+                    title="#{bundle['invitations.deliveries.dialog.title']}"
+                    width="520">
+          <h:panelGrid columns="2">
+
+            <h:outputLabel for="deliveryType"
+                           value="#{bundle['invitations.deliveries.dialog.type']}"/>
+            <eye:inputText id="deliveryType" maxlength="8" size="9"
+                           value=""/>
+          </h:panelGrid>
+
+          <div style="margin-bottom: 10px"></div>
+
+          <h:outputLabel for="invitationText"
+                         value="#{bundle['invitations.deliveries.dialog.invitationtext']}"/>
+          <eye:inputText id="invitationText"
+                         rows="3"
+                         maxlength="70"
+                         value=""/>
+
+          <div style="margin-bottom: 10px"></div>
+
+          <h:panelGrid columns="2" cellpadding="5">
+
+            <h:outputLabel for="deliveryRecievers"
+                           value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
+            <eye:inputText id="deliveryRecievers" maxlength="8" size="9"
+                           value=""/>
+
+            <h:outputLabel for="deliverySpeed"
+                           value="#{bundle['invitations.deliveries.dialog.speed']}"/>
+            <eye:inputText id="deliverySpeed" maxlength="8" size="9"
+                           value=""/>
+
+          </h:panelGrid>
+
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['dialog.save']}"
+                             action="null"/>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['dialog.cancel']}"
+                             onclick="return page.onNewDeliveryCancel();"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
 
         <eye:dialog id="newInviteDialog"
                     title="#{bundle['invitations.block.invitations.delivery.dialog.title']}"

@@ -5,6 +5,7 @@ import mobi.eyeline.ips.external.MadvSoapApi;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.DB;
+import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
@@ -30,6 +31,7 @@ public class Services {
     private final QuestionOptionRepository questionOptionRepository;
     private final AnswerRepository answerRepository;
     private final SurveyInvitationRepository surveyInvitationRepository;
+    private final InvitationDeliveryRepository invitationDeliveryRepository;
 
     private final SurveyService surveyService;
     private final TemplateService templateService;
@@ -52,6 +54,7 @@ public class Services {
         questionOptionRepository = new QuestionOptionRepository(db);
         answerRepository = new AnswerRepository(db);
         surveyInvitationRepository = new SurveyInvitationRepository(db);
+        invitationDeliveryRepository = new InvitationDeliveryRepository(db);
 
         surveyService = new SurveyService(
                 surveyRepository,
@@ -136,6 +139,10 @@ public class Services {
 
     public SurveyInvitationRepository getSurveyInvitationRepository() {
         return surveyInvitationRepository;
+    }
+
+    public InvitationDeliveryRepository getInvitationDeliveryRepository() {
+        return invitationDeliveryRepository;
     }
 
     public SurveyService getSurveyService() {

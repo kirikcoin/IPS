@@ -1,6 +1,15 @@
 var page = {
 
   init: function () {
+
+
+    jsfc('deliveriesTable').bind('update', function () {
+
+      var $inner = $('tr.eyeline_inner');
+      $inner.find('td:lt(6)').css('display', 'none');
+      $inner.find('td.actionColumn').attr('colspan', 7)
+    });
+
     function wireModificationLink(groupId) {
       var $header = ips.$byId(groupId + '_header');
       $header.click(function (e) {
@@ -67,6 +76,17 @@ var page = {
   onNewInviteShow: function() {
     jsfc('newInviteDialog').show();
     $('#inviteValue').val('');
+    return false;
+  },
+
+  onNewDeliveryCancel: function() {
+    jsfc('newDeliveryDialog').hide();
+    ips.message.hideAll();
+    return false;
+  },
+
+  onNewDeliveryShow: function() {
+    jsfc('newDeliveryDialog').show();
     return false;
   }
 };
