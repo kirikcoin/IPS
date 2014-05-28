@@ -50,6 +50,8 @@
                 transitive="false" conf="site->default"/>
     <dependency org="org.apache.myfaces.trinidad" name="trinidad-impl" rev="1.2.13"
                 transitive="false" conf="site->default"/>
+    <dependency org="javax.portlet" name="portlet-api" rev="1.0"
+                transitive="false" conf="site->default"/>
 
     <dependency org="mobi.eyeline.util" name="jsfcomponents" rev="1.107" transitive="false"
                 conf="site->components"/>

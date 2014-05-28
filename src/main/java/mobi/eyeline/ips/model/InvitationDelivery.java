@@ -2,6 +2,8 @@ package mobi.eyeline.ips.model;
 
 
 
+import mobi.eyeline.ips.validation.MaxSize;
+import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
@@ -14,11 +16,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
+@Proxy(lazy = false)
 @Table(name = "deliveries")
 public class InvitationDelivery implements Serializable {
 
@@ -43,16 +49,19 @@ public class InvitationDelivery implements Serializable {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean active;
 
+    @MaxSize(value = 100, message ="{invitations.deliveries.dialog.invitationtext.size}" )
     @Column(name = "text", columnDefinition = "TEXT")
     private String text;
 
     @Column(name = "speed")
+    @Max(value = 100, message = "{invitations.deliveries.dialog.speed.max}")
+    @Min(value=1, message="{invitations.deliveries.dialog.speed.max}")
     private int speed;
 
     @Column(name = "errors_count")
     private int errorsCount;
 
-    @NotNull
+    @NotNull(message = "{invitations.deliveries.dialog.receiversfile.required}")
     @Column(name = "input_file_name")
     private String inputFile;
 

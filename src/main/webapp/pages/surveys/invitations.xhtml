@@ -23,6 +23,10 @@
 
           page.init();
 
+          if ("#{invitationDeliveryController.deliveryModifyError}" == "true") {
+            page.onNewDeliveryShow();
+          }
+
           $('#content').attr('action',
               '/pages/surveys/invitations.faces?id=#{surveyInvitesController.surveyId}');
 
@@ -32,6 +36,9 @@
           if (#{surveyInvitesController.madvIdError}) {
             page.onMadvEditClick();
           }
+
+
+
 
         });
 //            ]]>
@@ -207,7 +214,7 @@
                   <eye:row innerRows="${row.text}">
 
                     <eye:column name="date"
-                                title="#{bundle['invitations.deliveries.table.startdate']}"
+                                title="#{bundle['invitations.deliveries.table.date']}"
                                 sortable="true"
                                 defaultSortOrder="desc">
                       <h:outputText value="#{row.date}">
@@ -339,32 +346,33 @@
 
             <h:outputLabel for="deliveryType"
                            value="#{bundle['invitations.deliveries.dialog.type']}"/>
-            <eye:inputText id="deliveryType" maxlength="8" size="9"
-                           value=""/>
+            <h:selectOneMenu id="deliveryType" value="#{invitationDeliveryController.invitationDelivery.type}">
+              <f:selectItems value="#{invitationDeliveryController.types}"/>
+            </h:selectOneMenu>
           </h:panelGrid>
 
-          <div style="margin-bottom: 10px"></div>
 
-          <h:outputLabel for="invitationText"
-                         value="#{bundle['invitations.deliveries.dialog.invitationtext']}"/>
-          <eye:inputText id="invitationText"
-                         rows="3"
-                         maxlength="70"
-                         value=""/>
+          <div id="invitationTextBlock">
+            <div style="margin-bottom: 10px"></div>
+            <h:outputLabel for="invitationText"
+                           value="#{bundle['invitations.deliveries.dialog.invitationtext']}" />
+            <eye:inputText id="invitationText"
+                           rows="3"
+                           maxlength="100"
+                           value="#{invitationDeliveryController.invitationDelivery.text}"/>
 
-          <div style="margin-bottom: 10px"></div>
-
+             <div style="margin-bottom: 10px"></div>
+          </div>
           <h:panelGrid columns="2" cellpadding="5">
 
-            <h:outputLabel for="deliveryRecievers"
+            <h:outputLabel for="deliveryReceievers"
                            value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
-            <eye:inputText id="deliveryRecievers" maxlength="8" size="9"
-                           value=""/>
+            <eye:inputFile id="deliveryReceievers" value="#{invitationDeliveryController.inputFile}"/>
 
             <h:outputLabel for="deliverySpeed"
                            value="#{bundle['invitations.deliveries.dialog.speed']}"/>
-            <eye:inputText id="deliverySpeed" maxlength="8" size="9"
-                           value=""/>
+            <eye:inputText id="deliverySpeed" maxlength="3" size="9"
+                           value="#{invitationDeliveryController.invitationDelivery.speed}"/>
 
           </h:panelGrid>
 
@@ -372,7 +380,7 @@
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['dialog.save']}"
-                             action="null"/>
+                             action="#{invitationDeliveryController.saveDelivery}"/>
             </eye:button>
             <eye:button>
               <h:commandLink styleClass="button-green"

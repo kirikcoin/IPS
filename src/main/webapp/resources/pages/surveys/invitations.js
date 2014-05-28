@@ -10,6 +10,10 @@ var page = {
       $inner.find('td.actionColumn').attr('colspan', 7)
     });
 
+    $("#deliveryType").change(function(){
+      $('#invitationTextBlock').toggle($('#deliveryType').val()=="USSD_PUSH");
+    });
+
     function wireModificationLink(groupId) {
       var $header = ips.$byId(groupId + '_header');
       $header.click(function (e) {

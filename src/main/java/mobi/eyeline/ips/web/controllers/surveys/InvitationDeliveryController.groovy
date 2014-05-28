@@ -1,21 +1,32 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.InvitationDelivery
 import mobi.eyeline.ips.model.InvitationDeliveryType
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
-/**
- * Created by dizan on 26.05.14.
- */
+import javax.faces.model.SelectItem
+
+@CompileStatic
+@Slf4j('logger')
 class InvitationDeliveryController extends BaseSurveyController {
-    private static final Logger logger = LoggerFactory.getLogger(SurveyInvitesController)
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().getInvitationDeliveryRepository()
+
+    boolean deliveryModifyError
+
+    InvitationDelivery invitationDelivery
+    UploadedFile inputFile
+
+    InvitationDeliveryController() {
+        invitationDelivery = new InvitationDelivery()
+    }
 
     DataTableModel getTableModel() {
         return new DataTableModel() {
@@ -30,10 +41,11 @@ class InvitationDeliveryController extends BaseSurveyController {
                         limit,
                         offset)
                 return list.collect {InvitationDelivery it ->
+                    String type = BaseController.strings["invitations.deliveries.table.type.$it.type".toString()]
                     new TableItem(
                             id: it.id,
                             date: it.date,
-                            type: it.type,
+                            type: type,
                             speed: it.speed,
                             currentPosition : it.currentPosition,
                             errorsCount: it.errorsCount,
@@ -49,10 +61,35 @@ class InvitationDeliveryController extends BaseSurveyController {
         }
     }
 
+    public void saveDelivery() {
+        invitationDelivery.survey = getSurvey()
+        invitationDelivery.date = new Date()
+        invitationDelivery.inputFile = (inputFile != null) ? inputFile.filename : null
+
+        if(validate(invitationDelivery))
+          invitationDeliveryRepository.save(invitationDelivery);
+    }
+
+    private boolean validate(InvitationDelivery invitationDelivery){
+        deliveryModifyError =
+                renderViolationMessage(validator.validate(invitationDelivery), [
+                        'text':         'invitationText',
+                        'speed':        'deliverySpeed',
+                        'inputFile':    'deliveryReceievers',
+                ])
+        return !deliveryModifyError
+    }
+
+    List<SelectItem> getTypes() {
+        InvitationDeliveryType.values().collect {
+            new SelectItem(it, strings["invitations.deliveries.table.type.$it".toString()])
+        }
+    }
+
     static class TableItem implements Serializable {
         int id
         Date date
-        InvitationDeliveryType type
+        String type
         int speed
         int currentPosition
         int errorsCount
@@ -61,7 +98,6 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     static class TextValue {
         String text
-
 
         @Override
         public String toString() {
