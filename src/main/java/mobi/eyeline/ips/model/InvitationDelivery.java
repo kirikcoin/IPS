@@ -40,14 +40,15 @@ public class InvitationDelivery implements Serializable {
     @Column(name = "date")
     private Date date;
 
-    @Column(name = "type")
     @NotNull
+    @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private InvitationDeliveryType type;
 
-    @Column(name = "active", columnDefinition = "BIT")
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean active;
+    @NotNull
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private InvitationDeliveryStatus status = InvitationDeliveryStatus.INACTIVE;
 
     @MaxSize(value = 100, message ="{invitations.deliveries.dialog.invitationtext.size}" )
     @Column(name = "text", columnDefinition = "TEXT")
@@ -67,7 +68,6 @@ public class InvitationDelivery implements Serializable {
 
     @Column(name = "current_position")
     private int currentPosition;
-
 
     public InvitationDelivery() {
     }
@@ -104,12 +104,12 @@ public class InvitationDelivery implements Serializable {
         this.type = type;
     }
 
-    public boolean isActive() {
-        return active;
+    public InvitationDeliveryStatus getStatus() {
+        return status;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(InvitationDeliveryStatus status) {
+        this.status = status;
     }
 
     public String getText() {
