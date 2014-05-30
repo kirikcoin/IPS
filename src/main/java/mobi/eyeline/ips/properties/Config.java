@@ -26,6 +26,8 @@ public interface Config {
     public String getSadsPushUrl();
     public int getSadsMaxSessions();
 
+    public String getSkinDefault();
+
     public static class XmlConfigImpl implements Config {
 
         private final String smtpHost;
@@ -47,6 +49,8 @@ public interface Config {
 
         private final String sadsPushUrl;
         private final int sadsMaxSessions;
+
+        private final String skinDefault;
 
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
@@ -77,6 +81,11 @@ public interface Config {
             {
                 sadsPushUrl = sads.getString("push.url");
                 sadsMaxSessions = sads.getInt("max.sessions", 4);
+            }
+
+            final XmlConfigSection ui = xmlConfig.getSection("ui");
+            {
+                skinDefault = ui.getString("skin.default");
             }
         }
 
@@ -135,6 +144,10 @@ public interface Config {
 
         public int getSadsMaxSessions() {
             return sadsMaxSessions;
+        }
+
+        public String getSkinDefault() {
+            return skinDefault;
         }
     }
 }

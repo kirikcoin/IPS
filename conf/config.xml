@@ -26,9 +26,9 @@
 
     <!-- Local DB. -->
 
-    <!--<param name="hibernate.connection.url" type="string">jdbc:mysql://192.168.3.209/ips?useUnicode=true&amp;characterEncoding=UTF-8</param>-->
-    <!--<param name="hibernate.connection.username" type="string">ips</param>-->
-    <!--<param name="hibernate.connection.password" type="string">ips</param>-->
+    <!--<param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips?useUnicode=true&amp;characterEncoding=UTF-8</param>
+    <param name="hibernate.connection.username" type="string">ips</param>
+    <param name="hibernate.connection.password" type="string">bagel</param>-->
 
     <!-- Nedenzel local DB. -->
     <!--<param name="hibernate.connection.url" type="string">jdbc:mysql://192.168.3.130/my_ips?useUnicode=true&amp;characterEncoding=UTF-8</param>-->
@@ -58,4 +58,7 @@
     <param name="max.sessions" type="int">4</param>
   </section>
 
+  <section name="ui">
+    <param name="skin.default" type="string">araks</param>
+  </section>
 </config>

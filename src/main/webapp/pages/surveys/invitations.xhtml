@@ -216,7 +216,7 @@
                     <h:outputText value="#{bundle['results.empty']}"/>
                   </f:facet>
 
-                  <eye:row innerData="" innerRows="${row.text}" >
+                  <eye:row innerData="true">
 
                     <eye:column name="date"
                                 title="#{bundle['invitations.deliveries.table.date']}"
@@ -275,14 +275,11 @@
 
                       <h:outputText value=")"
                                     rendered="#{row.status!='COMPLETED'}"/>
-
-
-
-                      <f:facet name="inner">
-                        <h:outputText value="#{row.text}"/>
-                      </f:facet>
                     </eye:column>
 
+                    <f:facet name="innerData">
+                      <h:outputText value="#{row.text}"/>
+                    </f:facet>
                   </eye:row>
                 </eye:dataTable>
               </h:panelGroup>

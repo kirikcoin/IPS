@@ -1,5 +1,7 @@
 package mobi.eyeline.ips.web.controllers
 
+import mobi.eyeline.ips.service.Services
+
 import javax.faces.context.FacesContext
 
 import static mobi.eyeline.ips.web.BuildVersion.BUILD_VERSION
@@ -24,5 +26,5 @@ class ResourceController implements Serializable {
      * @return Skin-specific stylesheet path part value.
      */
     @SuppressWarnings("GrMethodMayBeStatic")
-    String getSkin() { 'araks' }
+    String getSkin() { Services.instance().skinService.defaultSkin }
 }

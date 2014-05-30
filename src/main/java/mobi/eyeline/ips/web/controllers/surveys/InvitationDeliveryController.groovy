@@ -65,7 +65,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                             errorsCount: it.errorsCount,
                             status: it.status,
                             statusString: statusString,
-                            text: [new TextValue(text: it.text)]
+                            text: it.text
                     )
                 }
             }
@@ -181,16 +181,7 @@ class InvitationDeliveryController extends BaseSurveyController {
         int errorsCount
         InvitationDeliveryStatus status
         String statusString
-        List<TextValue> text
-    }
-
-    static class TextValue {
         String text
-
-        @Override
-        public String toString() {
-            text
-        }
     }
 
     static class FileValidationResult {

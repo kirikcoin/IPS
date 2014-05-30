@@ -45,6 +45,7 @@ public class Services {
     private final PushService pushService;
     private final SegmentationService segmentationService;
     private final ResultsExportService resultsExportService;
+    private final SkinService skinService;
 
     private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -92,6 +93,7 @@ public class Services {
         pushService = new PushService(config);
         segmentationService = new SegmentationService();
         resultsExportService = new ResultsExportService(answerRepository);
+        skinService = new SkinService(config.getSkinDefault());
     }
 
     public static synchronized void initialize(Config properties) {
@@ -184,5 +186,9 @@ public class Services {
 
     public ResultsExportService getResultsExportService() {
         return resultsExportService;
+    }
+
+    public SkinService getSkinService() {
+        return skinService;
     }
 }

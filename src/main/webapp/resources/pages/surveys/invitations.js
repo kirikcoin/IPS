@@ -2,14 +2,6 @@ var page = {
 
   init: function () {
 
-
-    jsfc('deliveriesTable').bind('update', function () {
-
-      var $inner = $('tr.eyeline_inner');
-      $inner.find('td:lt(6)').css('display', 'none');
-      $inner.find('td.actionColumn').attr('colspan', 7)
-    });
-
     $("#deliveryType").change(function(){
       $('#invitationTextBlock').toggle($('#deliveryType').val()=="USSD_PUSH");
       $('#invitationText').val("");
