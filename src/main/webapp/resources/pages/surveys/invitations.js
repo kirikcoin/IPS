@@ -12,6 +12,7 @@ var page = {
 
     $("#deliveryType").change(function(){
       $('#invitationTextBlock').toggle($('#deliveryType').val()=="USSD_PUSH");
+      $('#invitationText').val("");
     });
 
     function wireModificationLink(groupId) {

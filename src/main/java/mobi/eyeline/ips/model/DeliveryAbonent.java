@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import mobi.eyeline.ips.web.validators.PhoneValidator;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 @Entity
@@ -30,7 +32,9 @@ public class DeliveryAbonent implements Serializable {
     private InvitationDelivery invitationDelivery;
 
     @NotNull
-    @Column(name = "msisdn")
+    @Column(name = "msisdn",length = 15)
+    @Pattern(regexp = PhoneValidator.PHONE_REGEXP,
+            message = "{invalid.phone.number}")
     private String msisdn;
 
     @NotNull

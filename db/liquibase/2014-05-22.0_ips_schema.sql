@@ -32,6 +32,7 @@ CREATE TABLE `delivery_abonents` (
   `delivery_id` int(11) NOT NULL,
   `msisdn` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL DEFAULT 'NEW',
+  `last_update` datetime DEFAULT ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `FK_delivery_abonents_deliveries` (`delivery_id`),
   CONSTRAINT `FK_delivery_abonents_deliveries` FOREIGN KEY (`delivery_id`) REFERENCES `deliveries` (`id`)
