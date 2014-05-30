@@ -44,6 +44,7 @@ public class Services {
     private final MadvUpdateService madvUpdateService;
     private final PushService pushService;
     private final SegmentationService segmentationService;
+    private final ResultsExportService resultsExportService;
 
     private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -90,6 +91,7 @@ public class Services {
                 surveyRepository);
         pushService = new PushService(config);
         segmentationService = new SegmentationService();
+        resultsExportService = new ResultsExportService(answerRepository);
     }
 
     public static synchronized void initialize(Config properties) {
@@ -178,5 +180,9 @@ public class Services {
 
     public SegmentationService getSegmentationService() {
         return segmentationService;
+    }
+
+    public ResultsExportService getResultsExportService() {
+        return resultsExportService;
     }
 }
