@@ -37,7 +37,12 @@
             page.onMadvEditClick();
           }
 
-
+          var dialogForEdit = "#{invitationDeliveryController.dialogForEdit}";
+          if (dialogForEdit == "true") {
+            page.onNewDeliveryShow()
+          } else if (dialogForEdit == "false") {
+            page.onNewDeliveryShow();
+          }
 
 
         });
@@ -211,7 +216,7 @@
                     <h:outputText value="#{bundle['results.empty']}"/>
                   </f:facet>
 
-                  <eye:row innerRows="${row.text}">
+                  <eye:row innerData="" innerRows="${row.text}" >
 
                     <eye:column name="date"
                                 title="#{bundle['invitations.deliveries.table.date']}"
@@ -248,7 +253,31 @@
                     <eye:column name="action"
                                 title="#{bundle['invitations.deliveries.table.status']}"
                                 columnClass="actionColumn">
-                      <h:outputText value=""/>
+                      <h:outputText value="#{row.statusString}"/>
+
+                      <h:outputText value=" ("
+                                    rendered="#{row.status!='COMPLETED'}"/>
+
+                      <h:commandLink value="#{bundle['invitations.deliveries.table.status.activate']}"
+                                    rendered="#{row.status=='INACTIVE'}"/>
+
+                      <h:commandLink value="#{bundle['invitations.deliveries.table.status.pause']}"
+                                    rendered="#{row.status=='ACTIVE'}"/>
+
+                      <h:outputText value=" | "
+                                    rendered="#{row.status!='COMPLETED'}"/>
+
+                      <h:commandLink value="#{bundle['invitations.deliveries.table.status.edit']}"
+                                     action="#{invitationDeliveryController.fillDeliveryForEdit}"
+                                     rendered="#{row.status!='COMPLETED'}">
+                        <f:param name="modifiedDeliveryId" value="#{row.id}"/>
+                      </h:commandLink>
+
+                      <h:outputText value=")"
+                                    rendered="#{row.status!='COMPLETED'}"/>
+
+
+
                       <f:facet name="inner">
                         <h:outputText value="#{row.text}"/>
                       </f:facet>
@@ -261,7 +290,8 @@
               <eye:buttons id="addDelivery">
                 <eye:button>
                   <h:commandLink value="#{bundle['invitations.deliveries.button.add']}"
-                                 onclick="return page.onNewDeliveryShow();"
+                                 action="#{invitationDeliveryController.fillDeliveryForEdit}"
+
                                  styleClass="button-green">
                   </h:commandLink>
                 </eye:button>

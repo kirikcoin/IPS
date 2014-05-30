@@ -5,6 +5,7 @@ import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.DeliveryAbonent
 import mobi.eyeline.ips.model.DeliveryAbonentStatus
 import mobi.eyeline.ips.model.InvitationDelivery
+import mobi.eyeline.ips.model.InvitationDeliveryStatus
 import mobi.eyeline.ips.model.InvitationDeliveryType
 import mobi.eyeline.ips.repository.DeliveryAbonentRepository
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository
@@ -29,6 +30,9 @@ class InvitationDeliveryController extends BaseSurveyController {
     boolean deliveryModifyError
 
     InvitationDelivery invitationDelivery
+    Boolean dialogForEdit
+    Integer modifiedDeliveryId
+
     List<String> abonents
     UploadedFile inputFile
     String progress
@@ -51,6 +55,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                         offset)
                 return list.collect {InvitationDelivery it ->
                     String type = BaseController.strings["invitations.deliveries.table.type.$it.type".toString()]
+                    String statusString = BaseController.strings["invitations.deliveries.table.status.$it.status".toString()]
                     new TableItem(
                             id: it.id,
                             date: it.date,
@@ -58,6 +63,8 @@ class InvitationDeliveryController extends BaseSurveyController {
                             speed: it.speed,
                             currentPosition : it.currentPosition,
                             errorsCount: it.errorsCount,
+                            status: it.status,
+                            statusString: statusString,
                             text: [new TextValue(text: it.text)]
                     )
                 }
@@ -67,6 +74,17 @@ class InvitationDeliveryController extends BaseSurveyController {
             int getRowsCount() {
                 return invitationDeliveryRepository.count(getSurvey())
             }
+        }
+    }
+
+    public void fillDeliveryForEdit() {
+        modifiedDeliveryId = getParamValue("modifiedDeliveryId").asInteger()
+        if(modifiedDeliveryId != null){
+            invitationDelivery = invitationDeliveryRepository.get(modifiedDeliveryId)
+            dialogForEdit = true
+        } else {
+            invitationDelivery = new InvitationDelivery()
+            dialogForEdit = false
         }
     }
 
@@ -161,6 +179,8 @@ class InvitationDeliveryController extends BaseSurveyController {
         int speed
         int currentPosition
         int errorsCount
+        InvitationDeliveryStatus status
+        String statusString
         List<TextValue> text
     }
 
