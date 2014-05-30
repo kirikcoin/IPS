@@ -16,4 +16,13 @@ class ResourceController implements Serializable {
 
     @SuppressWarnings("GrMethodMayBeStatic")
     String getVersion() { BUILD_VERSION }
+
+    /**
+     * Skin-specific stylesheets are located under a skin-specific path.
+     * Common stylesheets are referenced by skin-specific ones.
+     *
+     * @return Skin-specific stylesheet path part value.
+     */
+    @SuppressWarnings("GrMethodMayBeStatic")
+    String getSkin() { 'araks' }
 }
