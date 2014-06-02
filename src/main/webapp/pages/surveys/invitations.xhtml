@@ -37,6 +37,20 @@
             page.onMadvEditClick();
           }
 
+          var activateError = "#{invitationDeliveryController.activateError}";
+          if (activateError == "true") {
+            ips.message.error("#{bundle['invitations.deliveries.table.status.activate.dialog.error']}");
+          } else if (activateError == "false") {
+            ips.message.info("#{bundle['invitations.deliveries.table.status.activate.dialog.done']}");
+          }
+
+          var pauseError = "#{invitationDeliveryController.pauseError}";
+          if (pauseError == "true") {
+            ips.message.error("#{bundle['invitations.deliveries.table.status.pause.dialog.error']}");
+          } else if (pauseError == "false") {
+            ips.message.info("#{bundle['invitations.deliveries.table.status.pause.dialog.done']}");
+          }
+
           var dialogForEdit = "#{invitationDeliveryController.dialogForEdit}";
           if (dialogForEdit == "true") {
             page.onNewDeliveryShow()
@@ -264,9 +278,11 @@
                                     rendered="#{row.status!='COMPLETED'}"/>
 
                       <h:commandLink value="#{bundle['invitations.deliveries.table.status.activate']}"
-                                    rendered="#{row.status=='INACTIVE'}"/>
+                                     onclick="return page.showActivateDialog('#{row.id}');"
+                                     rendered="#{row.status=='INACTIVE'}"/>
 
                       <h:commandLink value="#{bundle['invitations.deliveries.table.status.pause']}"
+                                    onclick="return page.showPauseDialog('#{row.id}');"
                                     rendered="#{row.status=='ACTIVE'}"/>
 
                       <h:outputText value=" | "
@@ -469,6 +485,17 @@
                            actionBean="#{surveyInvitesController}"
                            actionName="deleteInvite"/>
 
+        <ips:confirmDialog id="deliveryActivateDialog"
+                           text="#{bundle['invitations.deliveries.table.status.activate.dialog.text']}"
+                           title="#{bundle['invitations.deliveries.table.status.activate.dialog.title']}"
+                           actionBean="#{invitationDeliveryController}"
+                           actionName="activateDelivery"/>
+
+        <ips:confirmDialog id="deliveryPauseDialog"
+                           text="#{bundle['invitations.deliveries.table.status.pause.dialog.text']}"
+                           title="#{bundle['invitations.deliveries.table.status.pause.dialog.title']}"
+                           actionBean="#{invitationDeliveryController}"
+                           actionName="pauseDelivery"/>
       </h:form>
 
     </ui:define>

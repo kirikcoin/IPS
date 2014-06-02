@@ -28,6 +28,8 @@ class InvitationDeliveryController extends BaseSurveyController {
             Services.instance().getDeliveryAbonentRepository()
 
     boolean deliveryModifyError
+    Boolean activateError
+    Boolean pauseError
 
     InvitationDelivery invitationDelivery
     Boolean dialogForEdit
@@ -54,7 +56,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                         sortOrder.asc,
                         limit,
                         offset)
-                return list.collect {InvitationDelivery it ->
+                return list.collect { InvitationDelivery it ->
                     String type = BaseController.strings["invitations.deliveries.table.type.$it.type".toString()]
                     String statusString = BaseController.strings["invitations.deliveries.table.status.$it.status".toString()]
                     new TableItem(
@@ -62,7 +64,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                             date: it.date,
                             type: type,
                             speed: it.speed,
-                            currentPosition : it.currentPosition,
+                            currentPosition: it.currentPosition,
                             errorsCount: it.errorsCount,
                             status: it.status,
                             statusString: statusString,
@@ -80,7 +82,7 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     public void fillDeliveryForEdit() {
         modifiedDeliveryId = getParamValue("modifiedDeliveryId").asInteger()
-        if(modifiedDeliveryId != null){
+        if (modifiedDeliveryId != null) {
             invitationDelivery = invitationDeliveryRepository.get(modifiedDeliveryId)
             modifiedDeliveryFilename = invitationDelivery.inputFile
             dialogForEdit = true
@@ -91,18 +93,18 @@ class InvitationDeliveryController extends BaseSurveyController {
     }
 
     public void saveDelivery() {
-        if(modifiedDeliveryId == null) {
+        if (modifiedDeliveryId == null) {
             invitationDelivery.survey = getSurvey()
             invitationDelivery.date = new Date()
             invitationDelivery.inputFile = (inputFile != null) ? inputFile.filename : null
 
-            if(validate(invitationDelivery)){
-                if (validate(inputFile)){
+            if (validate(invitationDelivery)) {
+                if (validate(inputFile)) {
                     invitationDeliveryRepository.save(invitationDelivery)
-                    abonents.each {String msisdn->
+                    abonents.each { String msisdn ->
                         deliveryAbonentRepository.save(
                                 new DeliveryAbonent(
-                                        msisdn:msisdn,
+                                        msisdn: msisdn,
                                         invitationDelivery: invitationDelivery,
                                         status: DeliveryAbonentStatus.NEW
                                 )
@@ -111,38 +113,37 @@ class InvitationDeliveryController extends BaseSurveyController {
                 }
             }
         } else {
-            InvitationDelivery editedInvitationDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
+            InvitationDelivery editedDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
 
-            editedInvitationDelivery.with { InvitationDelivery invDel ->
+            editedDelivery.with { InvitationDelivery invDel ->
                 invDel.type = invitationDelivery.type
                 invDel.text = invitationDelivery.text
                 invDel.speed = invitationDelivery.speed
             }
 
-            if(validate(editedInvitationDelivery)){
-                invitationDeliveryRepository.update(editedInvitationDelivery)
+            if (validate(editedDelivery)) {
+                invitationDeliveryRepository.update(editedDelivery)
             }
 
         }
 
     }
 
-    private boolean validate(InvitationDelivery invitationDelivery){
+    private boolean validate(InvitationDelivery invitationDelivery) {
 
         deliveryModifyError =
                 renderViolationMessage(validator.validate(invitationDelivery), [
-                        'text':         'invitationText',
-                        'speed':        'deliverySpeed',
-                        'inputFile':    'deliveryReceievers',
+                        'text': 'invitationText',
+                        'speed': 'deliverySpeed',
+                        'inputFile': 'deliveryReceievers',
                 ])
-
 
         return !deliveryModifyError
     }
 
-    private boolean validate(UploadedFile file){
+    private boolean validate(UploadedFile file) {
         FileValidationResult result = validateFile(file)
-        if(result.error){
+        if (result.error) {
             addErrorMessage(result.errorMessage, 'deliveryReceievers')
             deliveryModifyError = true
         }
@@ -154,26 +155,26 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     private FileValidationResult validateFile(UploadedFile file) {
         PhoneValidator phoneValidator = new PhoneValidator()
-        FileValidationResult validationResult= new FileValidationResult(error: false)
+        FileValidationResult validationResult = new FileValidationResult(error: false)
 
         def msisdns = []
         try {
             file.inputStream.eachLine('UTF-8') { String line, int lineNumber ->
 
-                   if (!line.startsWith('#')) {
-                       line = line.replace('+', '')
-                       if(!phoneValidator.validate(line)) {
-                           validationResult.generateInvalidErrorMessage(lineNumber,line)
-                           throw new FileValidateException()
-                       }
-                       if(msisdns.contains(line)){
-                           validationResult.generateDublicateErrorMessage(lineNumber,line)
-                           throw new FileValidateException()
-                       }
-                       msisdns << line
-                   }
+                if (!line.startsWith('#')) {
+                    line = line.replace('+', '')
+                    if (!phoneValidator.validate(line)) {
+                        validationResult.generateInvalidErrorMessage(lineNumber, line)
+                        throw new FileValidateException()
+                    }
+                    if (msisdns.contains(line)) {
+                        validationResult.generateDublicateErrorMessage(lineNumber, line)
+                        throw new FileValidateException()
+                    }
+                    msisdns << line
+                }
             }
-        }catch (FileValidateException){
+        } catch (FileValidateException) {
             return validationResult
         }
 
@@ -181,6 +182,34 @@ class InvitationDeliveryController extends BaseSurveyController {
 
         return validationResult;
     }
+
+    void activateDelivery() {
+        try {
+            InvitationDelivery editedDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
+            editedDelivery.status = InvitationDeliveryStatus.ACTIVE
+            invitationDeliveryRepository.update(editedDelivery)
+            activateError = false
+
+        } catch (Exception e) {
+            logger.error("Error deactivating account", e)
+            activateError = true
+        }
+    }
+
+    void pauseDelivery() {
+        try {
+            InvitationDelivery editedDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
+            editedDelivery.status = InvitationDeliveryStatus.INACTIVE
+            invitationDeliveryRepository.update(editedDelivery)
+            pauseError = false
+
+        } catch (Exception e) {
+            logger.error("Error pause account", e)
+            pauseError = true
+        }
+    }
+
+
 
     List<SelectItem> getTypes() {
         InvitationDeliveryType.values().collect {
@@ -206,7 +235,7 @@ class InvitationDeliveryController extends BaseSurveyController {
         List<String> msisdns
 
         void generateInvalidErrorMessage(int lineNumber, String invalidString) {
-            error=true
+            error = true
             String bundleMessage = BaseController.strings["invitations.deliveries.dialog.file.error.invalid"]
             errorMessage = MessageFormat.format(
                     bundleMessage,
@@ -215,9 +244,9 @@ class InvitationDeliveryController extends BaseSurveyController {
         }
 
         void generateDublicateErrorMessage(int lineNumber, String invalidString) {
-            error=true
+            error = true
             String bundleMessage = BaseController.strings["invitations.deliveries.dialog.file.error.dublicate"]
-            errorMessage= MessageFormat.format(
+            errorMessage = MessageFormat.format(
                     bundleMessage,
                     invalidString,
                     lineNumber);
@@ -225,7 +254,7 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     }
 
-    static class FileValidateException extends Exception{
+    static class FileValidateException extends Exception {
 
     }
 }

@@ -85,5 +85,18 @@ var page = {
   onNewDeliveryShow: function() {
     jsfc('newDeliveryDialog').show();
     return false;
+  },
+
+  showActivateDialog: function (id) {
+    ips.$byId('deliveryId').val(id);
+    jsfc('deliveryActivateDialog').show();
+    return false;
+  },
+
+  showPauseDialog: function (id) {
+    ips.$byId('deliveryId').val(id);
+    jsfc('deliveryPauseDialog').show();
+    return false;
   }
+
 };
