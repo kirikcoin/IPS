@@ -1,263 +1,83 @@
-@import "../../../styles/functions";
-
-@buttonHeight: 41px;
+@import "../../../styles/functions.less";
 
 
 // ОБЩИЕ СТИЛИ ---------------------------------------------------------------------------------------------------------
 
-html {
-  height: 100%;
-}
-
 body {
-  font-weight: normal;
-  font-style: normal;
-  color: #000000;
   font-family: Georgia, serif;
-  font-size: 13px;
-  display: block;
-  width: 1200px;
-  height: 100%;
-  margin: 0 auto;
 }
 
 a {
   color: #78a0bb;
 }
 
-table {
-  border: 0;
-  width: 100%;
-  border-spacing: 0;
-}
 
-img {
-  border: none;
-}
 
-input, textarea, select, button {
-  border: 1px solid #C8C8C8;
-  color: #000000;
-  font-size: 100%;
-}
-
-select {
-  background: white;
-}
-
-input {
-  z-index: 10;
-}
-
-textarea {
-  height: 80px;
-  width: 100%;
-}
-
-form {
-  display: inline;
-}
-
-th {
-  text-align: left;
-  font-weight: normal;
-  white-space: nowrap;
-}
-
-hr {
-  color: #C8BE9E;
-  height: 1px;
-}
-
-input.radio, input.check {
-  padding: 0;
-  margin: 0;
-}
-
-input.radio {
-  border: none;
-}
 
 // ФОН СТРАНИЦЫ --------------------------------------------------------------------------------------------------------
 
 #pageBackground {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -9999;
   #__f > .radial-eclipse-gradient-background(white, white);
 }
 
 // ВСПЛЫВАЮЩИЕ СООБЩЕНИЯ -----------------------------------------------------------------------------------------------
 
-#messages {
-
-  .message (@color) {
-    padding: 10px 10px 10px 10px;
-    cursor: pointer;
-    color : @color;
-  }
-
-  .error-message {
-    .message (#e3000a);
-  }
-
-  .info-message {
-    .message (#079239);
-  }
-}
-
-#jsf_messages {
-  .error-message, .info-message {
-    display: none;
-//    display: block;
-  }
-
-  :first-child {
-    display: block;
-  }
-}
-
 #jsf_messages, #page_messages {
-  list-style-type: none;
-  padding: 0px;
-  background-color: white;
-  white-space: nowrap;
-  text-align: left;
-  border: 1px solid #C0C0C0;
-  box-shadow: #898989 0px 2px 30px 0px;
+  #__f > .border-radius(0);
 }
 
 // СТИЛЬ СТРАНИЦЫ ------------------------------------------------------------------------------------------------------
 
 .border-shadow {
-//  border: 1px solid #c0c0c0;
-  overflow: hidden;
-  background-color: #ffffff;
+  border: none;
+  box-shadow: none;
 
+  #__f > .border-radius(0);
 }
 
 .page-header {
-//  background-color: #444;
-  background-repeat: no-repeat;
-//  #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.5));
+  background-color: inherit;
+  #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
 
-  #__f > .border-top-left-radius (4px);
-  #__f > .border-top-right-radius (4px);
+  #__f > .border-top-left-radius (0);
+  #__f > .border-top-right-radius (0);
 
   color: #dc555f;
-  font-size: 16px;
-  font-weight: 700;
-  padding: 9px 9px 9px 10px;
-
-  .page-header-buttons {
-    width: auto;
-    float: right;
-    margin-top: -5px;
-    margin-bottom: -5px;
-    font-size: 13px;
-  }
-
-  .page-header-input {
-    text-align: right;
-    float: right;
-
-    div.eyeline_inputText {
-      display: inline-block;
-    }
-
-    label {
-      margin-right: 10px;
-      vertical-align: middle;
-      white-space: nowrap;
-      font-size: 13px;
-    }
-  }
 }
-
-.page-body {
-  background-color:#ffffff;
-  padding:5px;
-}
-
-.page-footer {
-//  border: 1px solid #C0C0C0;
-  border-top: none;
-  height: 5px;
-  #__f > .border-bottom-left-radius (4px);
-  #__f > .border-bottom-right-radius (4px);
-}
-
-
 
 // СТИЛИ ТАБЛИЦ --------------------------------------------------------------------------------------------------------
 
-table.grid {
-  border: 0!important;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-table.grid>tfoot>tr>td {
-  border: 0!important;
-}
 
 table.grid>thead>tr>th {
   background-color: #ffffff;
-  border: 1px solid #c0c0c0;
-//  font-weight: 700;
+//  border: none;
   font-weight: normal;
-  height: 32px;
-  padding-bottom: 5px;
-  padding-left: 12px;
-  padding-right: 12px;
-  padding-top: 5px;
-  text-align: center;
-}
-
-table.table-narrow {
-  width: auto;
-  tr {
-    height:auto;
-  }
-  td {
-    padding: 2px 3px!important;
-  }
+  height: initial;
+  padding: 0;
 }
 
 
 // ТАБИКИ --------------------------------------------------------------------------------------------------------------
 
 .tabs {
-  font-size: 16px;
   border-top: 1px solid #c0c0c0;
   border-bottom: 1px solid #c0c0c0;
+  background-color: inherit;
 
   .tab {
-    background-repeat: repeat-x;
-    border-right: 1px solid #9E9FA0;
-    padding: 7px 14px;
 
     a {
-      text-decoration: none;
       color: #78a0bb;
     }
   }
 
-  .tab:hover {
-    background-color: rgba(0,0,0,.0980392);
-  }
-
   .tab_active {
+    background: none;
     background-color: #eeeeee;
-    border-right: 1px solid #9E9FA0;
-    padding: 7px 14px;
 
     a {
       color: #78a0bb !important;
-      text-decoration: none;
+      text-shadow: none;
     }
   }
 
@@ -267,58 +87,48 @@ table.table-narrow {
 
 #__buttons {
   .button {
-    font-weight: bold;
-    font-style: normal;
-
-    text-align: center;
-    text-decoration: none;
-//    vertical-align: middle; //todo Можно удалить? Из-за этого свойства в IE некорректно работает border-radius.
-    min-width: 75px;
-    padding: 5px 16px;
-    color: #fff;
-//    #__f > .border-radius(5px);
+    #__f > .border-radius(0);
   }
 
   .button-green {
+    background: none;
     background-color: #78a0bb;
-    height: @buttonHeight;
     .button;
   }
 
   .button-green_disabled {
+    background: none;
     background-color: #A8B3BB;
   }
 
   .button-green_hover {
     background-color: #498BB8;
-    background-image: none;
   }
 
   .button-black {
     background-color: #78a0bb;
     background-repeat: no-repeat;
-//    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.5));
+    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
     .button;
   }
 
   .button-black_hover {
+    background: none;
     background-color: #498BB8;
   }
 
   .button-heading {
-//    border: 1px solid #767676;
-    color: #fff;
+    border: none;
 
     background-color: #78a0bb;
-    background-repeat: no-repeat;
 
-//    #__f > .box-shadow(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.3));
+    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
+    box-shadow: none;
 
     .button;
   }
 
   .button-heading_hover {
-    background-image: none;
     background-color: #498BB8;
   }
 }
@@ -355,10 +165,6 @@ a.button-heading:hover {
   #__buttons > .button-heading_hover;
 }
 
-div.menu-bar.button-green {
-  display: inline-block;
-}
-
 div.menu-bar.button-green>a:first-child {
   #__buttons > .button-green;
 }
@@ -374,88 +180,15 @@ div.menu-bar.button-green>a:first-child {
 div.menu-bar.button-green>a:first-child:hover {
   #__buttons > .button-green_hover;
 }
-
-.headerWithBottomSeparator{
-  border-bottom:2px solid #afafaf;
-  margin: 20px 0px 10px 0px;
-  font-size:15px;
-  font-weight:bold;
-}
-
-table.dtable th.dragColumn {
-  min-width: 20px!important;
-}
-
-/* Стиль ячейки, с помощью которой можно переместить строку */
-table.dtable td.dragHandle {
-  cursor: move;
-  text-align: left;
-  width: 10px;
-  padding-left: 0 !important;
-}
-
-// Same for new added row (unmovable).
-table.dtable tfoot td:first-child {
-  text-align: left;
-  width: 10px;
-  padding-left: 0 !important;
-}
-
-/* Маркер перемещаемой строки */
-table.dtable td.dragHandle:before {
-  font-family: Lucida Sans Unicode, Arial Unicode MS, Arial;
-  content: '\2261';
-  font-size: 14px;
-  color: #808080;
-}
-
-table.dtable tfoot td:first-child:before {
-  font-family: Lucida Sans Unicode, Arial Unicode MS, Arial;
-  content: '\2261';
-  font-size: 14px;
-  color: #D5D5D5;
-}
-
-/* Стиль применяемый к строке после начала перемещения */
-table.dtable tr.dragRow {
-  background-color: #efefef !important;
-}
-
-.eyeline_dialog_title {
-  border: none;
-}
-
-td.eyeline_button {
-  height: @buttonHeight;  // FF compatibility.
-}
-
 
 div.eyeline_inputDate {
-  font-size: 1em;
-  border-radius: 1em;
   font-family: Georgia, serif;
-
-  input.hasDatepicker, button.ui-datepicker-trigger {
-    font-size: inherit;
-    height: 16px;
-    padding: 1px;
-//    margin: 0.1em 0.2em;
-    margin: 0em 0.2em;
-    -moz-box-sizing: content-box;
-    -webkit-box-sizing: content-box;
-    box-sizing: content-box;
-  }
-
-  button.ui-datepicker-trigger {
-    vertical-align: top;
-    width: 20px;
-  }
-
-  input.hasDatepicker {
-    margin-left: 0;
-  }
 }
 
 input.hasDatepicker {
   text-align: left !important;
+}
+
+#error .page-header {
+  text-align: center;
 }

@@ -12,60 +12,26 @@
 
 .menuTitle {
   background-color: #78a0bb;
-  background-repeat: no-repeat;
-  /*background-image: -moz-linear-gradient(top, transparent, rgba(0, 0, 0, 0.5));*/
-  /*background-image: -ms-linear-gradient(top, transparent, rgba(0, 0, 0, 0.5));*/
-  /*background-image: -o-linear-gradient(top, transparent, rgba(0, 0, 0, 0.5));*/
-  /*background-image: -webkit-linear-gradient(top, transparent, rgba(0, 0, 0, 0.5));*/
-  /*background-image: linear-gradient(top, transparent, rgba(0, 0, 0, 0.5));*/
+  background-image: none;
 
-  line-height: 24px;
-  color: #FFFFFF;
   font-family: Georgia, serif;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: bold;
-  padding: 0 10px;
-}
-.settingButtons {
-  float: right;
-  display: inline;
-}
-.settingButtons table tr td {
-  height: 24px;
 }
 .exitButton {
-  margin-left: 4px;
-  color: #FFFFFF;
-  text-decoration: none;
   font-family: Georgia, serif;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: normal;
 }
 
 .menuButtons {
   background-color: #ffffff;
-  line-height: 25px;
-  height: 25px;
   border-bottom: 1px solid #999999;
 }
 .menuButton {
   font-family: Georgia, serif;
   color: #78a0bb;
-  font-style: normal;
-  /*font-weight: bold;*/
-  padding: 3px 10px;
-  text-decoration: none;
-  font-size: 15px;
+  font-weight: normal;
 }
 .menuButtonSelected {
   background-color: #eeeeee;
   font-family: Georgia, serif;
   color: #78a0bb;
-  font-style: normal;
-  /*font-weight: bold;*/
-  padding: 4px 10px;
-  text-decoration: none;
-  font-size: 15px;
+  font-weight: normal;
 }
