@@ -16,6 +16,7 @@ class ServiceTest extends GroovyTestCase {
             configClass.demand.getMailFrom() { '' }
             configClass.demand.getLoginUrl() { '' }
             configClass.demand.getSadsMaxSessions() { 1 }
+            configClass.demand.getSkinDefault() { '' }
 
             configClass.proxyDelegateInstance() as Config
         }
