@@ -1,3 +1,4 @@
+@import "../../../styles/jsf-components-ips-design.css";
 
 /* BUTTONS ---------------------------------------------------------------------------------------------------------- */
 
@@ -81,7 +82,7 @@ table.eyeline_buttons div.menu-bar a {
   cursor: pointer;
   padding-left: 20px;
   min-height: 17px;
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: bold;
@@ -100,7 +101,7 @@ table.eyeline_buttons div.menu-bar a {
 
 .eyeline_collapsingGroupBody {
   margin-left: 20px;
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: normal;
@@ -116,7 +117,7 @@ table.eyeline_list th {
   text-align: center;
   vertical-align: middle;
   padding: 2px 0px 2px 0px;
-  font-family: Arial;
+  font-family: Georgia;
   font-style: normal;
   font-weight: bold;
   color: #000000;
@@ -153,7 +154,7 @@ table.eyeline_list tr.eyeline_row1 {
 }
 
 table.eyeline_list tr.eyeline_inner {
-  background-color: #ffffdf;
+  background-color: rgba(120, 160, 187, 0.2) !important;
 }
 
 table.eyeline_list tr.eyeline_row0 td,
@@ -186,7 +187,7 @@ table.eyeline_list th a:hover {
 table.eyeline_list tbody a,
 table.eyeline_list tbody a:visited,
 table.eyeline_list tbody a:hover {
-  color: #079239;
+  color: #78a0bb;
 }
 
 table.eyeline_list th a.eyeline_up {
@@ -387,7 +388,7 @@ table.select_button_area td {
 .select_menu_content {
   background-color: #F0F0F0;
   border: 1px solid #333333;
-  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-family: Georgia, serif;
   font-size: 11px;
   font-weight: normal;
   margin-top: 20px;
@@ -405,7 +406,7 @@ table.select_button_area td {
   padding-right: 12px;
   color: #333333;
   font-size: 11px;
-  font-family: Verdana, Arial, Tahoma, Helvetica, sans, sans-serif;
+  font-family: Georgia, serif;
 }
 
 /* Открытие/Закрытие inner rows */
@@ -512,7 +513,7 @@ table.eyeline_data_table_filter a.xi {
 div.eyeline_inputDate input {
   width: 73px;
   height: 18px;
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: normal;
@@ -550,7 +551,7 @@ div.eyeline_inputText {
 
 /*Стиль для компонента input text*/
 .eyeline_inputText_component {
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: normal;
@@ -562,7 +563,7 @@ div.eyeline_inputText {
 
 /*Стиль для компонента textarea*/
 .eyeline_textarea_component {
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: normal;
@@ -675,7 +676,7 @@ table.eyeline_page_calendar td {
 .eyeline_progress_bar_precent_text {
   color: black;
   text-shadow: white 0 0 5px;
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: bold;
@@ -689,7 +690,7 @@ table.eyeline_page_calendar td {
 /*Стиль внешнего div*/
 div.eyeline_selectManyShuttle {
   white-space: nowrap;
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: normal;
@@ -766,7 +767,7 @@ div.eyeline_selectManyShuttle table.select_buttons input {
 /*Стиль тела*/
 .eyeline_selectManyChecklist .lbody {
   white-space: nowrap;
-  font-family: Arial, Verdana, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: normal;
@@ -803,7 +804,7 @@ div.eyeline_selectManyShuttle table.select_buttons input {
   border: 1px solid #C8C8C8;
   color: #000000;
   display: none;
-  font-family: Arial,Verdana,sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   font-style: normal;
   font-weight: normal;

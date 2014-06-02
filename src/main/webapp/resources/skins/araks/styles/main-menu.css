@@ -1,9 +1,11 @@
+@import "../../../styles/main-menu.css";
+
 /* Стили главного меню */
 
 .ipsLogo {
   width: 129px;
   height: 49px;
-  background: url(../../../images/logo_araks.png);
+  background: url(../images/logo_araks.png);
 }
 
 .menuTitle {

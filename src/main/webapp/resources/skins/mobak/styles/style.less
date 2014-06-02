@@ -1,4 +1,4 @@
-@import "functions";
+@import "../../../styles/functions";
 
 @buttonHeight: 41px;
 
@@ -13,7 +13,7 @@ body {
   font-weight: normal;
   font-style: normal;
   color: #000000;
-  font-family: Arial, Verdana, Helvetica, sans-serif;
+  font-family: Georgia, serif;
   font-size: 13px;
   display: block;
   width: 1200px;
@@ -22,7 +22,7 @@ body {
 }
 
 a {
-  color: #079239;
+  color: #78a0bb;
 }
 
 table {
@@ -128,30 +128,26 @@ input.radio {
   text-align: left;
   border: 1px solid #C0C0C0;
   box-shadow: #898989 0px 2px 30px 0px;
-  
-  #__f > .border-radius(5px);
 }
 
 // СТИЛЬ СТРАНИЦЫ ------------------------------------------------------------------------------------------------------
 
 .border-shadow {
-  box-shadow: 0 0 10px #cfcfcf;
-  border: 1px solid #c0c0c0;
+//  border: 1px solid #c0c0c0;
   overflow: hidden;
   background-color: #ffffff;
 
-  #__f > .border-radius(5px);
 }
 
 .page-header {
-  background-color: #444;
+//  background-color: #444;
   background-repeat: no-repeat;
-  #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.5));
+//  #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.5));
 
   #__f > .border-top-left-radius (4px);
   #__f > .border-top-right-radius (4px);
 
-  color: #fff;
+  color: #dc555f;
   font-size: 16px;
   font-weight: 700;
   padding: 9px 9px 9px 10px;
@@ -209,9 +205,10 @@ table.grid>tfoot>tr>td {
 }
 
 table.grid>thead>tr>th {
-  background-color: #f0f0f0;
+  background-color: #ffffff;
   border: 1px solid #c0c0c0;
-  font-weight: 700;
+//  font-weight: 700;
+  font-weight: normal;
   height: 32px;
   padding-bottom: 5px;
   padding-left: 12px;
@@ -235,7 +232,8 @@ table.table-narrow {
 
 .tabs {
   font-size: 16px;
-  background-color: #F0F0F0;
+  border-top: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
 
   .tab {
     background-repeat: repeat-x;
@@ -244,7 +242,7 @@ table.table-narrow {
 
     a {
       text-decoration: none;
-      color: #000000;
+      color: #78a0bb;
     }
   }
 
@@ -253,13 +251,12 @@ table.table-narrow {
   }
 
   .tab_active {
-    background: url(../../../images/green-active.png) repeat-x;
+    background-color: #eeeeee;
     border-right: 1px solid #9E9FA0;
     padding: 7px 14px;
 
     a {
-      color: #ffffff!important;
-      text-shadow: #414243 0px 1px 0px;
+      color: #78a0bb !important;
       text-decoration: none;
     }
   }
@@ -279,51 +276,50 @@ table.table-narrow {
     min-width: 75px;
     padding: 5px 16px;
     color: #fff;
-    #__f > .border-radius(5px);
+//    #__f > .border-radius(5px);
   }
 
   .button-green {
-    background: url(../../../images/green-active.png) repeat-x center;
+    background-color: #78a0bb;
     height: @buttonHeight;
     .button;
   }
 
   .button-green_disabled {
-    background: url(../../../images/green-disabled.png) center!important;
+    background-color: #A8B3BB;
   }
 
   .button-green_hover {
-    background-color: #079239;
+    background-color: #498BB8;
     background-image: none;
   }
 
   .button-black {
-    background-color: #444;
+    background-color: #78a0bb;
     background-repeat: no-repeat;
-    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.5));
+//    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.5));
     .button;
   }
 
   .button-black_hover {
-    background: #38393a none;
+    background-color: #498BB8;
   }
 
   .button-heading {
-    border: 1px solid #767676;
+//    border: 1px solid #767676;
     color: #fff;
 
-    background-color: #444;
+    background-color: #78a0bb;
     background-repeat: no-repeat;
 
-    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.5));
-    #__f > .box-shadow(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.3));
+//    #__f > .box-shadow(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.3));
 
     .button;
   }
 
   .button-heading_hover {
     background-image: none;
-    background-color: #38393a;
+    background-color: #498BB8;
   }
 }
 
@@ -437,7 +433,7 @@ td.eyeline_button {
 div.eyeline_inputDate {
   font-size: 1em;
   border-radius: 1em;
-  font-family: sans-serif;
+  font-family: Georgia, serif;
 
   input.hasDatepicker, button.ui-datepicker-trigger {
     font-size: inherit;
