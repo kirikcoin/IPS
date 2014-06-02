@@ -92,7 +92,7 @@ public class Services {
                 surveyRepository);
         pushService = new PushService(config);
         segmentationService = new SegmentationService();
-        resultsExportService = new ResultsExportService(answerRepository);
+        resultsExportService = new ResultsExportService(answerRepository, 100);
         skinService = new SkinService(config.getSkinDefault());
     }
 

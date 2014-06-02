@@ -12,12 +12,12 @@ import mobi.eyeline.ips.repository.AnswerRepository
 @Slf4j('logger')
 public class ResultsExportService {
 
-    private static final int CHUNK_SIZE = 100
-
     private final AnswerRepository answerRepository
+    private final int chunkSize
 
-    ResultsExportService(AnswerRepository answerRepository) {
+    ResultsExportService(AnswerRepository answerRepository, int chunkSize) {
         this.answerRepository = answerRepository
+        this.chunkSize = chunkSize
     }
 
     void writeCsv(OutputStream os,
@@ -41,14 +41,14 @@ public class ResultsExportService {
                         filter)
 
                 // Write in chunks.
-                (0..count / CHUNK_SIZE).each { int i ->
+                (0..count / chunkSize).each { int i ->
                     def records = answerRepository.list(
                             survey,
                             periodStart,
                             periodEnd,
                             filter,
-                            CHUNK_SIZE,
-                            i * CHUNK_SIZE)
+                            chunkSize,
+                            i * chunkSize)
                     writeCSVData records, csvWriter
                 }
 
