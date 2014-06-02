@@ -32,6 +32,7 @@ class InvitationDeliveryController extends BaseSurveyController {
     InvitationDelivery invitationDelivery
     Boolean dialogForEdit
     Integer modifiedDeliveryId
+    String modifiedDeliveryFilename
 
     List<String> abonents
     UploadedFile inputFile
@@ -81,6 +82,7 @@ class InvitationDeliveryController extends BaseSurveyController {
         modifiedDeliveryId = getParamValue("modifiedDeliveryId").asInteger()
         if(modifiedDeliveryId != null){
             invitationDelivery = invitationDeliveryRepository.get(modifiedDeliveryId)
+            modifiedDeliveryFilename = invitationDelivery.inputFile
             dialogForEdit = true
         } else {
             invitationDelivery = new InvitationDelivery()
@@ -89,24 +91,38 @@ class InvitationDeliveryController extends BaseSurveyController {
     }
 
     public void saveDelivery() {
-        invitationDelivery.survey = getSurvey()
-        invitationDelivery.date = new Date()
-        invitationDelivery.inputFile = (inputFile != null) ? inputFile.filename : null
+        if(modifiedDeliveryId == null) {
+            invitationDelivery.survey = getSurvey()
+            invitationDelivery.date = new Date()
+            invitationDelivery.inputFile = (inputFile != null) ? inputFile.filename : null
 
-        if(validate(invitationDelivery)){
-            if (validate(inputFile)){
-                invitationDeliveryRepository.save(invitationDelivery)
-
-                abonents.each {String msisdn->
-                    deliveryAbonentRepository.save(
-                            new DeliveryAbonent(
-                                    msisdn:msisdn,
-                                    invitationDelivery: invitationDelivery,
-                                    status: DeliveryAbonentStatus.NEW
-                            )
-                    )
+            if(validate(invitationDelivery)){
+                if (validate(inputFile)){
+                    invitationDeliveryRepository.save(invitationDelivery)
+                    abonents.each {String msisdn->
+                        deliveryAbonentRepository.save(
+                                new DeliveryAbonent(
+                                        msisdn:msisdn,
+                                        invitationDelivery: invitationDelivery,
+                                        status: DeliveryAbonentStatus.NEW
+                                )
+                        )
+                    }
                 }
             }
+        } else {
+            InvitationDelivery editedInvitationDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
+
+            editedInvitationDelivery.with { InvitationDelivery invDel ->
+                invDel.type = invitationDelivery.type
+                invDel.text = invitationDelivery.text
+                invDel.speed = invitationDelivery.speed
+            }
+
+            if(validate(editedInvitationDelivery)){
+                invitationDeliveryRepository.update(editedInvitationDelivery)
+            }
+
         }
 
     }
