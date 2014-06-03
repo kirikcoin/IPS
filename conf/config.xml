@@ -59,6 +59,11 @@
   </section>
 
   <section name="ui">
-    <param name="skin.default" type="string">araks</param>
+    <param name="skin.default" type="string">mobak</param>
+  </section>
+
+  <section name="deliveries">
+    <param name="push.ussd.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-push&amp;subscriber=XXX&amp;message=MSG&amp;resource_id=ID</param>
+    <param name="push.nidialog.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-srvpush&amp;subscriber=XXX&amp;resource_id=ID&amp;survey_id=SID</param>
   </section>
 </config>

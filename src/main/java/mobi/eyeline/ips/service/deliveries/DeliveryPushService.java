@@ -5,9 +5,6 @@ import mobi.eyeline.ips.service.BasePushService;
 
 import java.io.IOException;
 
-/**
- * @author andy
- */
 public class DeliveryPushService extends BasePushService {
 
     public DeliveryPushService(Config config) {

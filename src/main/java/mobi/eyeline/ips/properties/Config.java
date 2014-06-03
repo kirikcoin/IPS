@@ -26,6 +26,9 @@ public interface Config {
     public String getSadsPushUrl();
     public int getSadsMaxSessions();
 
+    public String getDeliveryUssdPushUrl();
+    public String getDeliveryNIPushUrl();
+
     public String getSkinDefault();
 
     public static class XmlConfigImpl implements Config {
@@ -49,6 +52,9 @@ public interface Config {
 
         private final String sadsPushUrl;
         private final int sadsMaxSessions;
+
+        private String deliveryUssdPushUrl;
+        private String deliveryNIPushUrl;
 
         private final String skinDefault;
 
@@ -86,6 +92,12 @@ public interface Config {
             final XmlConfigSection ui = xmlConfig.getSection("ui");
             {
                 skinDefault = ui.getString("skin.default");
+            }
+
+            final XmlConfigSection deliveries = xmlConfig.getSection("deliveries");
+            {
+                deliveryUssdPushUrl = deliveries.getString("push.ussd.url");
+                deliveryNIPushUrl = deliveries.getString("push.nidialog.url");
             }
         }
 
@@ -140,6 +152,14 @@ public interface Config {
 
         public String getSadsPushUrl() {
             return sadsPushUrl;
+        }
+
+        public String getDeliveryUssdPushUrl() {
+            return deliveryUssdPushUrl;
+        }
+
+        public String getDeliveryNIPushUrl() {
+            return deliveryNIPushUrl;
         }
 
         public int getSadsMaxSessions() {
