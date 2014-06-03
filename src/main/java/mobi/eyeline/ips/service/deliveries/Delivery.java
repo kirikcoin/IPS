@@ -4,25 +4,33 @@ import mobi.eyeline.ips.model.InvitationDelivery;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 class Delivery {
 
     private final InvitationDelivery invitationDelivery;
-
-    private long lastSentMillis = 0;
-    private long proposedDelayMillis;
-
+    private final int messagesQueueSize;
     private final BlockingQueue<Message> messages = new LinkedBlockingQueue<>();
 
+    private long lastSentMillis = 0;
+    private volatile long proposedDelayMillis;
 
-    Delivery(InvitationDelivery invitationDelivery) {
+    private volatile boolean stopped;
+
+    public Delivery(InvitationDelivery invitationDelivery,
+                    int messagesQueueSize) {
+
         this.invitationDelivery = invitationDelivery;
-        this.proposedDelayMillis = TimeUnit.SECONDS.toMillis(1 / invitationDelivery.getSpeed());
+        this.messagesQueueSize = messagesQueueSize;
+        setSpeed(invitationDelivery.getSpeed());
     }
 
-    public InvitationDelivery getInvitationDelivery() {
+    public InvitationDelivery getModel() {
         return invitationDelivery;
+    }
+
+    public void setSpeed(int messagesPerSecond) {
+        assert messagesPerSecond > 0;
+        this.proposedDelayMillis = (long) (1.0 / messagesPerSecond) * 1000;
     }
 
     /**
@@ -38,28 +46,31 @@ class Delivery {
             final long proposedNext = lastSentMillis + proposedDelayMillis;
             return now > proposedNext ? 0 : proposedNext - now;
         }
-
-
-
     }
 
-    public BlockingQueue<Message> getMessages() {
-        return messages;
+    public Message poll() {
+        return messages.poll();
+    }
+
+    public void put(Message message) throws InterruptedException {
+        messages.put(message);
+    }
+
+    public boolean shouldBeFilled() {
+        final double loadFactor = 0.5;
+        return (messages.size() / messagesQueueSize) < loadFactor;
+    }
+
+    public int getFreeSize() {
+        return messagesQueueSize - messages.size();
     }
 
     /**
      * Updates the last sent timestamp.
-     * @return Current required delay.
      */
-    public long markSentNow() {
+    public void onMessageSent() {
         lastSentMillis = System.currentTimeMillis();
-        return getCurrentDelay();
     }
-
-    public String getUrl(String msisdn, Long id) {
-        return null;
-    }
-
 
     public static class Message {
         private final int id;
@@ -77,5 +88,13 @@ class Delivery {
         public String getMsisdn() {
             return msisdn;
         }
+    }
+
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    public void setStopped() {
+        this.stopped = true;
     }
 }

@@ -29,6 +29,9 @@ public interface Config {
     public String getDeliveryUssdPushUrl();
     public String getDeliveryNIPushUrl();
 
+    public int getPushThreadsNumber();
+    public int getMessageQueueBaseline();
+
     public String getSkinDefault();
 
     public static class XmlConfigImpl implements Config {
@@ -53,10 +56,12 @@ public interface Config {
         private final String sadsPushUrl;
         private final int sadsMaxSessions;
 
-        private String deliveryUssdPushUrl;
-        private String deliveryNIPushUrl;
-
         private final String skinDefault;
+
+        private final String deliveryUssdPushUrl;
+        private final String deliveryNIPushUrl;
+        private final int pushThreadsNumber;
+        private final int messageQueueBaseline;
 
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
@@ -98,6 +103,8 @@ public interface Config {
             {
                 deliveryUssdPushUrl = deliveries.getString("push.ussd.url");
                 deliveryNIPushUrl = deliveries.getString("push.nidialog.url");
+                pushThreadsNumber = deliveries.getInt("push.threads.number");
+                messageQueueBaseline = deliveries.getInt("push.message.queue");
             }
         }
 
@@ -168,6 +175,16 @@ public interface Config {
 
         public String getSkinDefault() {
             return skinDefault;
+        }
+
+        @Override
+        public int getPushThreadsNumber() {
+            return pushThreadsNumber;
+        }
+
+        @Override
+        public int getMessageQueueBaseline() {
+            return messageQueueBaseline;
         }
     }
 }

@@ -98,8 +98,14 @@ public class Services {
         segmentationService = new SegmentationService();
         resultsExportService = new ResultsExportService(answerRepository, 100);
         skinService = new SkinService(config.getSkinDefault());
+
         deliveryPushService = new DeliveryPushService(config);
-        deliveryService = new DeliveryService(invitationDeliveryRepository, deliveryAbonentRepository, deliveryPushService,10,10);
+        deliveryService = new DeliveryService(
+                invitationDeliveryRepository,
+                deliveryAbonentRepository,
+                deliveryPushService,
+                config
+        );
     }
 
     public static synchronized void initialize(Config properties) {
@@ -196,5 +202,9 @@ public class Services {
 
     public SkinService getSkinService() {
         return skinService;
+    }
+
+    public DeliveryService getDeliveryService() {
+        return deliveryService;
     }
 }

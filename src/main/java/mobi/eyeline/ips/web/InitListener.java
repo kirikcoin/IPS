@@ -41,6 +41,7 @@ public class InitListener implements ServletContextListener {
         initJaasAuthorization(servletContextEvent);
 
         Services.instance().getMadvUpdateService().start();
+        Services.instance().getDeliveryService().start();
     }
 
     private Config initProperties(File configDir) {
@@ -85,5 +86,8 @@ public class InitListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
+        try {
+            Services.instance().getDeliveryService().stop();
+        } catch (InterruptedException ignored) {}
     }
 }

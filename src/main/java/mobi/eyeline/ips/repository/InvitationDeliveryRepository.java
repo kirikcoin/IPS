@@ -5,6 +5,7 @@ import mobi.eyeline.ips.model.DeliveryAbonent;
 import mobi.eyeline.ips.model.DeliveryAbonentStatus;
 import mobi.eyeline.ips.model.InvitationDelivery;
 
+import mobi.eyeline.ips.model.InvitationDeliveryStatus;
 import mobi.eyeline.ips.model.Survey;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -12,11 +13,14 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.hibernate.criterion.Restrictions.and;
+import static org.hibernate.criterion.Restrictions.eq;
 
 public class InvitationDeliveryRepository extends BaseRepository<InvitationDelivery, Integer> {
     private static final Logger logger = LoggerFactory.getLogger(InvitationDeliveryRepository.class);
@@ -33,7 +37,7 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(InvitationDelivery.class);
 
-        criteria.add(Restrictions.eq("survey", survey));
+        criteria.add(eq("survey", survey));
         criteria.setFirstResult(offset).setMaxResults(limit);
         if (orderColumn != null) {
             final String property;
@@ -48,6 +52,7 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
 
             criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
         }
+        //noinspection unchecked
         return (List<InvitationDelivery>) criteria.list();
     }
 
@@ -55,7 +60,7 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(InvitationDelivery.class);
 
-        criteria.add(Restrictions.eq("survey", survey));
+        criteria.add(eq("survey", survey));
         criteria.setProjection(Projections.rowCount());
         return ((Number) criteria.uniqueResult()).intValue();
     }
@@ -90,6 +95,71 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         } finally {
             session.close();
         }
+    }
+
+    public List<DeliveryAbonent> fetchAndMark(InvitationDelivery delivery,
+                                              int limit) {
+
+        final Session session = getSessionFactory().openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+
+            final List<DeliveryAbonent> results;
+            {
+                final Criteria criteria = session.createCriteria(DeliveryAbonent.class);
+                criteria.add(
+                        and(
+                                eq("invitationDelivery", delivery),
+                                eq("status", DeliveryAbonentStatus.NEW)));
+                criteria.setMaxResults(limit);
+
+                //noinspection unchecked
+                results = (List<DeliveryAbonent>) criteria.list();
+            }
+
+            if (!results.isEmpty()) {
+                final List<Integer> ids = new ArrayList<>(results.size());
+                for (DeliveryAbonent result : results) {
+                    ids.add(result.getId());
+                }
+
+                session.createQuery(
+                        "UPDATE DeliveryAbonent" +
+                        " SET status = :newState" +
+                        " WHERE id IN (:ids)")
+                        .setParameter("newState", DeliveryAbonentStatus.QUEUED)
+                        .setParameterList("ids", ids)
+                        .executeUpdate();
+            }
+
+            transaction.commit();
+
+            return results;
+
+        } catch (HibernateException e) {
+            if ((transaction != null) && transaction.isActive()) {
+                try {
+                    transaction.rollback();
+                } catch (HibernateException ee) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+            throw e;
+
+        } finally {
+            session.close();
+        }
+    }
+
+    public List<InvitationDelivery> list(InvitationDeliveryStatus state) {
+        final Session session = getSessionFactory().getCurrentSession();
+        final Criteria criteria = session.createCriteria(InvitationDelivery.class);
+
+        criteria.add(eq("status", state));
+
+        //noinspection unchecked
+        return (List<InvitationDelivery>) criteria.list();
     }
 
 }
