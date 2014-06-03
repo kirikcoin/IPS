@@ -1,11 +1,9 @@
 package mobi.eyeline.ips.repository;
 
 
-import mobi.eyeline.ips.model.DeliveryAbonent;
-import mobi.eyeline.ips.model.DeliveryAbonentStatus;
+import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.model.InvitationDelivery;
 
-import mobi.eyeline.ips.model.InvitationDeliveryStatus;
 import mobi.eyeline.ips.model.Survey;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -73,10 +71,10 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
 
             session.save(delivery);
             for(String msisdn:msisdns){
-                DeliveryAbonent abonent= new DeliveryAbonent();
+                DeliverySubscriber abonent= new DeliverySubscriber();
                 abonent.setMsisdn(msisdn);
                 abonent.setInvitationDelivery(delivery);
-                abonent.setStatus(DeliveryAbonentStatus.NEW);
+                abonent.setState(DeliverySubscriber.State.NEW);
 
                 session.save(delivery);
             }
@@ -97,7 +95,7 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         }
     }
 
-    public List<DeliveryAbonent> fetchAndMark(InvitationDelivery delivery,
+    public List<DeliverySubscriber> fetchAndMark(InvitationDelivery delivery,
                                               int limit) {
 
         final Session session = getSessionFactory().openSession();
@@ -105,30 +103,30 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         try {
             transaction = session.beginTransaction();
 
-            final List<DeliveryAbonent> results;
+            final List<DeliverySubscriber> results;
             {
-                final Criteria criteria = session.createCriteria(DeliveryAbonent.class);
+                final Criteria criteria = session.createCriteria(DeliverySubscriber.class);
                 criteria.add(
                         and(
                                 eq("invitationDelivery", delivery),
-                                eq("status", DeliveryAbonentStatus.NEW)));
+                                eq("state", DeliverySubscriber.State.NEW)));
                 criteria.setMaxResults(limit);
 
                 //noinspection unchecked
-                results = (List<DeliveryAbonent>) criteria.list();
+                results = (List<DeliverySubscriber>) criteria.list();
             }
 
             if (!results.isEmpty()) {
                 final List<Integer> ids = new ArrayList<>(results.size());
-                for (DeliveryAbonent result : results) {
+                for (DeliverySubscriber result : results) {
                     ids.add(result.getId());
                 }
 
                 session.createQuery(
-                        "UPDATE DeliveryAbonent" +
-                        " SET status = :newState" +
+                        "UPDATE DeliverySubscriber" +
+                        " SET state = :newState" +
                         " WHERE id IN (:ids)")
-                        .setParameter("newState", DeliveryAbonentStatus.QUEUED)
+                        .setParameter("newState", DeliverySubscriber.State.QUEUED)
                         .setParameterList("ids", ids)
                         .executeUpdate();
             }
@@ -152,11 +150,11 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         }
     }
 
-    public List<InvitationDelivery> list(InvitationDeliveryStatus state) {
+    public List<InvitationDelivery> list(InvitationDelivery.State state) {
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(InvitationDelivery.class);
 
-        criteria.add(eq("status", state));
+        criteria.add(eq("state", state));
 
         //noinspection unchecked
         return (List<InvitationDelivery>) criteria.list();

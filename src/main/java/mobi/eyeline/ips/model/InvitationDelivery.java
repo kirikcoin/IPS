@@ -1,10 +1,9 @@
 package mobi.eyeline.ips.model;
 
 
-
 import mobi.eyeline.ips.validation.MaxSize;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Proxy;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +18,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -43,31 +41,31 @@ public class InvitationDelivery implements Serializable {
     @NotNull
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    private InvitationDeliveryType type;
+    private Type type;
 
     @NotNull
-    @Column(name = "status")
+    @Column(name = "state")
     @Enumerated(EnumType.STRING)
-    private InvitationDeliveryStatus status = InvitationDeliveryStatus.INACTIVE;
+    private State state = State.INACTIVE;
 
-    @MaxSize(value = 100, message ="{invitations.deliveries.dialog.invitationtext.size}" )
+    @MaxSize(value = 100, message = "{invitations.deliveries.dialog.invitationtext.size}")
     @Column(name = "text", columnDefinition = "TEXT")
     private String text;
 
     @Column(name = "speed")
     @Max(value = 100, message = "{invitations.deliveries.dialog.speed.max}")
-    @Min(value=1, message="{invitations.deliveries.dialog.speed.max}")
+    @Min(value = 1, message = "{invitations.deliveries.dialog.speed.max}")
     private int speed;
-
-    @Column(name = "errors_count")
-    private int errorsCount;
 
     @NotNull(message = "{invitations.deliveries.dialog.receiversfile.required}")
     @Column(name = "input_file_name")
     private String inputFile;
 
-    @Column(name = "current_position")
-    private int currentPosition;
+    @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('DELIVERED', 'UNDELIVERED'))")
+    private Integer processedCount;
+
+    @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('UNDELIVERED'))")
+    private Integer errorsCount;
 
     public InvitationDelivery() {
     }
@@ -96,20 +94,20 @@ public class InvitationDelivery implements Serializable {
         this.date = date;
     }
 
-    public InvitationDeliveryType getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(InvitationDeliveryType type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
-    public InvitationDeliveryStatus getStatus() {
-        return status;
+    public State getState() {
+        return state;
     }
 
-    public void setStatus(InvitationDeliveryStatus status) {
-        this.status = status;
+    public void setState(State status) {
+        this.state = status;
     }
 
     public String getText() {
@@ -128,14 +126,6 @@ public class InvitationDelivery implements Serializable {
         this.speed = speed;
     }
 
-    public int getErrorsCount() {
-        return errorsCount;
-    }
-
-    public void setErrorsCount(int errors_count) {
-        this.errorsCount = errors_count;
-    }
-
     public String getInputFile() {
         return inputFile;
     }
@@ -144,11 +134,45 @@ public class InvitationDelivery implements Serializable {
         this.inputFile = inputFile;
     }
 
-    public int getCurrentPosition() {
-        return currentPosition;
+    public Integer getProcessedCount() {
+        return processedCount;
     }
 
-    public void setCurrentPosition(int currentPosition) {
-        this.currentPosition = currentPosition;
+    public Integer getErrorsCount() {
+        return errorsCount;
+    }
+
+    public static enum State {
+
+        /**
+         * Valid, not running.
+         *
+         * Initial state, can be switched to {@linkplain #ACTIVE}.
+         */
+        INACTIVE,
+
+        /**
+         * Terminal state: no unprocessed subscribers remain.
+         */
+        COMPLETED,
+
+        /**
+         * Is allowed to proceed.
+         * From this we can either get {@linkplain #COMPLETED} or {@linkplain #INACTIVE}.
+         */
+        ACTIVE
+    }
+
+    public static enum Type {
+
+        /**
+         * Subscriber gets USSD message.
+         */
+        USSD_PUSH,
+
+        /**
+         * Subscriber gets first page of an associated survey.
+         */
+        NI_DIALOG
     }
 }

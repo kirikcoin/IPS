@@ -17,6 +17,9 @@ class ServiceTest extends GroovyTestCase {
             configClass.demand.getLoginUrl() { '' }
             configClass.demand.getSadsMaxSessions() { 1 }
             configClass.demand.getSkinDefault() { '' }
+            configClass.demand.getSadsMaxSessions() { 1 }
+            configClass.demand.getMessageQueueBaseline() { 10 }
+            configClass.demand.getPushThreadsNumber() { 2 }
 
             configClass.proxyDelegateInstance() as Config
         }

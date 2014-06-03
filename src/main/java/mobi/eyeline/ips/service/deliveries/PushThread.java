@@ -1,9 +1,9 @@
 package mobi.eyeline.ips.service.deliveries;
 
 import com.google.common.base.Throwables;
-import mobi.eyeline.ips.model.DeliveryAbonentStatus;
-import mobi.eyeline.ips.model.InvitationDeliveryType;
-import mobi.eyeline.ips.repository.DeliveryAbonentRepository;
+import mobi.eyeline.ips.model.DeliverySubscriber;
+import mobi.eyeline.ips.model.InvitationDelivery;
+import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,22 +17,22 @@ class PushThread implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(PushThread.class);
 
-    private final BlockingQueue<Delivery> deliveriesToSend;
-    private final BlockingQueue<Delivery> deliveriesToFetch;
+    private final BlockingQueue<DeliveryWrapper> deliveriesToSend;
+    private final BlockingQueue<DeliveryWrapper> deliveriesToFetch;
     private final DeliveryPushService deliveryPushService;
-    private final DeliveryAbonentRepository deliveryAbonentRepository;
+    private final DeliverySubscriberRepository deliverySubscriberRepository;
     private final Timer timer;
 
-    public PushThread(BlockingQueue<Delivery> deliveriesToSend,
-                      BlockingQueue<Delivery> deliveriesToFetch,
+    public PushThread(BlockingQueue<DeliveryWrapper> deliveriesToSend,
+                      BlockingQueue<DeliveryWrapper> deliveriesToFetch,
                       DeliveryPushService deliveryPushService,
-                      DeliveryAbonentRepository deliveryAbonentRepository,
+                      DeliverySubscriberRepository deliverySubscriberRepository,
                       Timer timer) {
 
         this.deliveriesToSend = deliveriesToSend;
         this.deliveriesToFetch = deliveriesToFetch;
         this.deliveryPushService = deliveryPushService;
-        this.deliveryAbonentRepository = deliveryAbonentRepository;
+        this.deliverySubscriberRepository = deliverySubscriberRepository;
         this.timer = timer;
     }
 
@@ -50,14 +50,14 @@ class PushThread implements Runnable {
     }
 
     private void loop() throws InterruptedException {
-        final Delivery delivery = deliveriesToSend.take();
+        final DeliveryWrapper delivery = deliveriesToSend.take();
 
         if (delivery.isStopped()) {
             // Just removed from the queue, so it's OK.
             logger.debug("Delivery is stopped, throwing out, id = [" + delivery + "]");
 
         } else {
-            final Delivery.Message message = delivery.poll();
+            final DeliveryWrapper.Message message = delivery.poll();
             if (message == null) {
                 logger.debug("Delivery: [" + delivery + "] is empty");
                 doSchedule(delivery, TimeUnit.SECONDS.toMillis(1));
@@ -68,8 +68,8 @@ class PushThread implements Runnable {
         }
     }
 
-    private void handleNextMessage(Delivery delivery,
-                                   Delivery.Message message) throws InterruptedException {
+    private void handleNextMessage(DeliveryWrapper delivery,
+                                   DeliveryWrapper.Message message) throws InterruptedException {
         try {
             doProcess(delivery, message);
         } catch (Exception e) {
@@ -86,8 +86,8 @@ class PushThread implements Runnable {
         }
     }
 
-    private void doProcess(Delivery delivery,
-                           Delivery.Message message) {
+    private void doProcess(DeliveryWrapper delivery,
+                           DeliveryWrapper.Message message) {
         try {
             try {
                 doPush(delivery, message);
@@ -103,9 +103,9 @@ class PushThread implements Runnable {
         }
     }
 
-    private void doPush(Delivery next,
-                        Delivery.Message message) throws IOException {
-        final InvitationDeliveryType type = next.getModel().getType();
+    private void doPush(DeliveryWrapper next,
+                        DeliveryWrapper.Message message) throws IOException {
+        final InvitationDelivery.Type type = next.getModel().getType();
         switch (type) {
             case USSD_PUSH:
                 deliveryPushService.pushUssd(
@@ -124,12 +124,12 @@ class PushThread implements Runnable {
         }
     }
 
-    private void doMark(Delivery.Message message, boolean success) {
-        deliveryAbonentRepository.updateState(message.getId(),
-                success ? DeliveryAbonentStatus.SENT : DeliveryAbonentStatus.UNDELIVERED);
+    private void doMark(DeliveryWrapper.Message message, boolean success) {
+        deliverySubscriberRepository.updateState(message.getId(),
+                success ? DeliverySubscriber.State.SENT : DeliverySubscriber.State.UNDELIVERED);
     }
 
-    private void doSchedule(final Delivery delivery,
+    private void doSchedule(final DeliveryWrapper delivery,
                             long delayMillis) {
 
         timer.schedule(new TimerTask() {

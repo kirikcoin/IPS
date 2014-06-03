@@ -17,6 +17,6 @@
         <mapping class="mobi.eyeline.ips.model.Answer"/>
 
         <mapping class="mobi.eyeline.ips.model.InvitationDelivery"/>
-        <mapping class="mobi.eyeline.ips.model.DeliveryAbonent"/>
+        <mapping class="mobi.eyeline.ips.model.DeliverySubscriber"/>
     </session-factory>
 </hibernate-configuration>

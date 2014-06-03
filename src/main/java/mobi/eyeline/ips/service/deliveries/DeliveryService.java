@@ -3,7 +3,7 @@ package mobi.eyeline.ips.service.deliveries;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.properties.Config;
-import mobi.eyeline.ips.repository.DeliveryAbonentRepository;
+import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class DeliveryService {
     private static final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
 
     private final InvitationDeliveryRepository invitationDeliveryRepository;
-    private final DeliveryAbonentRepository deliveryAbonentRepository;
+    private final DeliverySubscriberRepository deliverySubscriberRepository;
     private final DeliveryPushService deliveryPushService;
 
     private final int messagesQueueSize;
@@ -30,17 +30,17 @@ public class DeliveryService {
     private final ExecutorService fetchExecutor;
     private final ExecutorService pushExecutor;
 
-    private final LinkedBlockingQueue<Delivery> toFetch = new LinkedBlockingQueue<>();
-    private final LinkedBlockingQueue<Delivery> toSend = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<DeliveryWrapper> toFetch = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<DeliveryWrapper> toSend = new LinkedBlockingQueue<>();
 
-    private final ConcurrentHashMap<Integer, Delivery> deliveries = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
 
     public DeliveryService(InvitationDeliveryRepository invitationDeliveryRepository,
-                           DeliveryAbonentRepository deliveryAbonentRepository,
+                           DeliverySubscriberRepository deliverySubscriberRepository,
                            DeliveryPushService deliveryPushService,
                            Config config) {
         this.invitationDeliveryRepository = invitationDeliveryRepository;
-        this.deliveryAbonentRepository = deliveryAbonentRepository;
+        this.deliverySubscriberRepository = deliverySubscriberRepository;
         this.deliveryPushService = deliveryPushService;
 
         this.messagesQueueSize = config.getMessageQueueBaseline();
@@ -74,7 +74,7 @@ public class DeliveryService {
                     toSend,
                     toFetch,
                     deliveryPushService,
-                    deliveryAbonentRepository,
+                    deliverySubscriberRepository,
                     timer));
         }
 
@@ -83,7 +83,7 @@ public class DeliveryService {
 
         // Start deliveries.
 
-        deliveryAbonentRepository.clearQueued();
+        deliverySubscriberRepository.clearQueued();
         for (InvitationDelivery delivery : invitationDeliveryRepository.list()) {
             start(delivery.getId());
         }
@@ -107,7 +107,7 @@ public class DeliveryService {
      * @param invitationDeliveryId    Database ID.
      */
     public void stop(Integer invitationDeliveryId) {
-        final Delivery delivery = deliveries.get(invitationDeliveryId);
+        final DeliveryWrapper delivery = deliveries.get(invitationDeliveryId);
         if (delivery == null) {
             throw new IllegalStateException("Unknown delivery, id = " + invitationDeliveryId);
         }
@@ -120,25 +120,31 @@ public class DeliveryService {
         delivery.setStopped();
     }
 
+    public void stop(InvitationDelivery delivery) {
+        stop(delivery.getId());
+    }
+
     /**
      * @param invitationDeliveryId    Database ID.
      */
     public void start(Integer invitationDeliveryId) {
+        start(invitationDeliveryRepository.load(invitationDeliveryId));
+    }
 
-        final Delivery existing = deliveries.get(invitationDeliveryId);
-        if (existing != null && !existing.isStopped()) {
+    public void start(InvitationDelivery delivery) {
+        DeliveryWrapper wrapper = deliveries.get(delivery.getId());
+        if (wrapper != null && !wrapper.isStopped()) {
             throw new IllegalStateException("Attempt to start an already running delivery, " +
-                    "id = " + invitationDeliveryId);
+                    "id = " + delivery.getId());
+        } else {
+            wrapper = new DeliveryWrapper(delivery, messagesQueueSize);
+            deliveries.put(delivery.getId(), wrapper);
         }
 
-        final Delivery delivery = new Delivery(
-                invitationDeliveryRepository.load(invitationDeliveryId),
-                messagesQueueSize);
-
-        deliveries.put(invitationDeliveryId, delivery);
+        deliverySubscriberRepository.clearQueued(delivery);
 
         try {
-            toSend.put(delivery);
+            toSend.put(wrapper);
         } catch (InterruptedException e) {
             logger.warn(e.getMessage(), e);
         }

@@ -5,7 +5,7 @@ import mobi.eyeline.ips.external.MadvSoapApi;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.DB;
-import mobi.eyeline.ips.repository.DeliveryAbonentRepository;
+import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
@@ -20,6 +20,7 @@ import mobi.eyeline.ips.service.deliveries.DeliveryService;
 /**
  * Service lookup.
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class Services {
 
     private static Services instance;
@@ -35,7 +36,7 @@ public class Services {
     private final AnswerRepository answerRepository;
     private final SurveyInvitationRepository surveyInvitationRepository;
     private final InvitationDeliveryRepository invitationDeliveryRepository;
-    private final DeliveryAbonentRepository deliveryAbonentRepository;
+    private final DeliverySubscriberRepository deliverySubscriberRepository;
 
     private final SurveyService surveyService;
     private final TemplateService templateService;
@@ -63,7 +64,7 @@ public class Services {
         answerRepository = new AnswerRepository(db);
         surveyInvitationRepository = new SurveyInvitationRepository(db);
         invitationDeliveryRepository = new InvitationDeliveryRepository(db);
-        deliveryAbonentRepository = new DeliveryAbonentRepository(db);
+        deliverySubscriberRepository = new DeliverySubscriberRepository(db);
 
         surveyService = new SurveyService(
                 surveyRepository,
@@ -102,7 +103,7 @@ public class Services {
         deliveryPushService = new DeliveryPushService(config);
         deliveryService = new DeliveryService(
                 invitationDeliveryRepository,
-                deliveryAbonentRepository,
+                deliverySubscriberRepository,
                 deliveryPushService,
                 config
         );
@@ -164,8 +165,8 @@ public class Services {
         return invitationDeliveryRepository;
     }
 
-    public DeliveryAbonentRepository getDeliveryAbonentRepository() {
-        return deliveryAbonentRepository;
+    public DeliverySubscriberRepository getDeliverySubscriberRepository() {
+        return deliverySubscriberRepository;
     }
 
     public SurveyService getSurveyService() {

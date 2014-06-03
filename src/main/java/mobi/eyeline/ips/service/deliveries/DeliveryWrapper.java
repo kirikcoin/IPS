@@ -5,7 +5,7 @@ import mobi.eyeline.ips.model.InvitationDelivery;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-class Delivery {
+class DeliveryWrapper {
 
     private final InvitationDelivery invitationDelivery;
     private final int messagesQueueSize;
@@ -16,8 +16,8 @@ class Delivery {
 
     private volatile boolean stopped;
 
-    public Delivery(InvitationDelivery invitationDelivery,
-                    int messagesQueueSize) {
+    public DeliveryWrapper(InvitationDelivery invitationDelivery,
+                           int messagesQueueSize) {
 
         this.invitationDelivery = invitationDelivery;
         this.messagesQueueSize = messagesQueueSize;

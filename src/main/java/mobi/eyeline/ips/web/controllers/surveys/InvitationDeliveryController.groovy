@@ -3,9 +3,8 @@ package mobi.eyeline.ips.web.controllers.surveys
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.InvitationDelivery
-import mobi.eyeline.ips.model.InvitationDeliveryStatus
-import mobi.eyeline.ips.model.InvitationDeliveryType
-import mobi.eyeline.ips.repository.DeliveryAbonentRepository
+
+import mobi.eyeline.ips.repository.DeliverySubscriberRepository
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.util.DeliveryUtils
@@ -27,8 +26,8 @@ import java.text.MessageFormat
 class InvitationDeliveryController extends BaseSurveyController {
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().invitationDeliveryRepository
-    private final DeliveryAbonentRepository deliveryAbonentRepository =
-            Services.instance().deliveryAbonentRepository
+    private final DeliverySubscriberRepository deliverySubscriberRepository =
+            Services.instance().deliverySubscriberRepository
 
     boolean deliveryModifyError
     Boolean activateError
@@ -61,15 +60,15 @@ class InvitationDeliveryController extends BaseSurveyController {
                         offset)
                 return list.collect { InvitationDelivery it ->
                     String type = BaseController.strings["invitations.deliveries.table.type.$it.type".toString()]
-                    String statusString = BaseController.strings["invitations.deliveries.table.status.$it.status".toString()]
+                    String statusString = BaseController.strings["invitations.deliveries.table.status.$it.state".toString()]
                     new TableItem(
                             id: it.id,
                             date: it.date,
                             type: type,
                             speed: it.speed,
-                            currentPosition: it.currentPosition,
+                            currentPosition: it.processedCount,
                             errorsCount: it.errorsCount,
-                            status: it.status,
+                            status: it.state,
                             statusString: statusString,
                             text: it.text
                     )
@@ -169,7 +168,7 @@ class InvitationDeliveryController extends BaseSurveyController {
     void activateDelivery() {
         try {
             InvitationDelivery editedDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
-            editedDelivery.status = InvitationDeliveryStatus.ACTIVE
+            editedDelivery.state = InvitationDelivery.State.ACTIVE
             invitationDeliveryRepository.update(editedDelivery)
             activateError = false
 
@@ -182,7 +181,7 @@ class InvitationDeliveryController extends BaseSurveyController {
     void pauseDelivery() {
         try {
             InvitationDelivery editedDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
-            editedDelivery.status = InvitationDeliveryStatus.INACTIVE
+            editedDelivery.state = InvitationDelivery.State.INACTIVE
             invitationDeliveryRepository.update(editedDelivery)
             pauseError = false
 
@@ -194,7 +193,7 @@ class InvitationDeliveryController extends BaseSurveyController {
 
 
     List<SelectItem> getTypes() {
-        InvitationDeliveryType.values().collect {
+        InvitationDelivery.Type.values().collect {
             new SelectItem(it, strings["invitations.deliveries.table.type.$it".toString()])
         }
     }
@@ -206,7 +205,7 @@ class InvitationDeliveryController extends BaseSurveyController {
         int speed
         int currentPosition
         int errorsCount
-        InvitationDeliveryStatus status
+        InvitationDelivery.State status
         String statusString
         String text
     }
