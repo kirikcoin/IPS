@@ -298,7 +298,7 @@
                     </eye:column>
 
                     <f:facet name="innerData">
-                      <h:outputText value="#{row.text}"/>
+                      <h:outputText value="#{bundle['invitations.deliveries.dialog.invitationtext']} #{row.text}"/>
                     </f:facet>
                   </eye:row>
                 </eye:dataTable>
@@ -411,11 +411,11 @@
           </div>
           <h:panelGrid columns="2" cellpadding="5">
 
-            <h:outputLabel for="deliveryReceievers"
+            <h:outputLabel for="deliveryReceivers"
                            value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
-            <eye:inputFile  id="deliveryReceievers" value="#{invitationDeliveryController.inputFile}"
+            <eye:inputFile  id="deliveryReceivers" value="#{invitationDeliveryController.inputFile}"
                     rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"/>
-            <h:outputText id ="deliveryReceievers" value="#{invitationDeliveryController.modifiedDeliveryFilename}"
+            <h:outputText id ="deliveryReceivers" value="#{invitationDeliveryController.modifiedDeliveryFilename}"
                           rendered="#{invitationDeliveryController.modifiedDeliveryId!=null}"/>
 
             <h:outputLabel for="deliverySpeed"
