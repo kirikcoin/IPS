@@ -14,6 +14,7 @@ import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import mobi.eyeline.ips.repository.SurveyStatsRepository;
 import mobi.eyeline.ips.repository.UserRepository;
+import mobi.eyeline.ips.service.deliveries.DeliveryService;
 
 /**
  * Service lookup.
@@ -46,6 +47,7 @@ public class Services {
     private final SegmentationService segmentationService;
     private final ResultsExportService resultsExportService;
     private final SkinService skinService;
+    private final DeliveryService deliveryService;
 
     private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -94,6 +96,7 @@ public class Services {
         segmentationService = new SegmentationService();
         resultsExportService = new ResultsExportService(answerRepository, 100);
         skinService = new SkinService(config.getSkinDefault());
+        deliveryService = new DeliveryService(invitationDeliveryRepository, deliveryAbonentRepository, deliveryPushService);
     }
 
     public static synchronized void initialize(Config properties) {
