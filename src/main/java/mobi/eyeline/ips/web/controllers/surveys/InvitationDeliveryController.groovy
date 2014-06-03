@@ -32,9 +32,9 @@ import java.text.MessageFormat
 class InvitationDeliveryController extends BaseSurveyController {
     // TODO-1: Use property accessors instead of get()-methods.
     private final InvitationDeliveryRepository invitationDeliveryRepository =
-            Services.instance().getInvitationDeliveryRepository()
+            Services.instance().invitationDeliveryRepository
     private final DeliveryAbonentRepository deliveryAbonentRepository =
-            Services.instance().getDeliveryAbonentRepository()
+            Services.instance().deliveryAbonentRepository
 
     boolean deliveryModifyError
     Boolean activateError
@@ -189,7 +189,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                     msisdns << line
                 }
             }
-        } catch (FileValidateException) {
+        } catch (FileValidateException e) {
             // TODO-7: Incorrect syntax in `catch' clause?
             return validationResult
         }
