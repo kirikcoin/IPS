@@ -19,9 +19,18 @@ import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
 
+// TODO-9: UI, USSD push message text: maybe, add some caption to it?
+// Was:
+//    My message
+// Proposal:
+//    Message content: My message
+//
+// TODO-10: If "1.1" is entered in the speed input, dialog closes with "Conversion error"
+// TODO-11: "Expand" links in the table don't get proper pointer (see `Results' tab)
 @CompileStatic
 @Slf4j('logger')
 class InvitationDeliveryController extends BaseSurveyController {
+    // TODO-1: Use property accessors instead of get()-methods.
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().getInvitationDeliveryRepository()
     private final DeliveryAbonentRepository deliveryAbonentRepository =
@@ -98,6 +107,8 @@ class InvitationDeliveryController extends BaseSurveyController {
             invitationDelivery.date = new Date()
             invitationDelivery.inputFile = (inputFile != null) ? inputFile.filename : null
 
+            // TODO-2: Persist survey and associated MSISDNs in a single transaction
+            // (extract this code to some repository-class?).
             if (validate(invitationDelivery)) {
                 if (validate(inputFile)) {
                     invitationDeliveryRepository.save(invitationDelivery)
@@ -135,6 +146,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                 renderViolationMessage(validator.validate(invitationDelivery), [
                         'text': 'invitationText',
                         'speed': 'deliverySpeed',
+                        // TODO-8: Correct spelling is `receivers'.
                         'inputFile': 'deliveryReceievers',
                 ])
 
@@ -144,6 +156,7 @@ class InvitationDeliveryController extends BaseSurveyController {
     private boolean validate(UploadedFile file) {
         FileValidationResult result = validateFile(file)
         if (result.error) {
+            // TODO-8: Correct spelling is `receivers'.
             addErrorMessage(result.errorMessage, 'deliveryReceievers')
             deliveryModifyError = true
         }
@@ -157,6 +170,8 @@ class InvitationDeliveryController extends BaseSurveyController {
         PhoneValidator phoneValidator = new PhoneValidator()
         FileValidationResult validationResult = new FileValidationResult(error: false)
 
+        // TODO-3: Parsing and validation should be decoupled from controller,
+        // moved to service-class and get some tests.
         def msisdns = []
         try {
             file.inputStream.eachLine('UTF-8') { String line, int lineNumber ->
@@ -175,6 +190,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                 }
             }
         } catch (FileValidateException) {
+            // TODO-7: Incorrect syntax in `catch' clause?
             return validationResult
         }
 
@@ -191,6 +207,7 @@ class InvitationDeliveryController extends BaseSurveyController {
             activateError = false
 
         } catch (Exception e) {
+            // TODO-4: Correct error message.
             logger.error("Error deactivating account", e)
             activateError = true
         }
@@ -204,6 +221,7 @@ class InvitationDeliveryController extends BaseSurveyController {
             pauseError = false
 
         } catch (Exception e) {
+            // TODO-5: What's an `account' here?
             logger.error("Error pause account", e)
             pauseError = true
         }
@@ -243,6 +261,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                     lineNumber);
         }
 
+        // TODO-6: Correct is `duplicate'
         void generateDublicateErrorMessage(int lineNumber, String invalidString) {
             error = true
             String bundleMessage = BaseController.strings["invitations.deliveries.dialog.file.error.dublicate"]
