@@ -155,8 +155,6 @@ class InvitationDeliveryController extends BaseSurveyController {
         FileValidationResult validationResult = new FileValidationResult(error: false)
         DeliveryUtils utils = new DeliveryUtils()
 
-        // TODO-3: Parsing and validation should be decoupled from controller,
-        // moved to service-class and get some tests.
         def msisdns = []
         try {
             msisdns = utils.parseFile(inputFile.inputStream)

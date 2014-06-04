@@ -16,6 +16,7 @@ import mobi.eyeline.ips.repository.SurveyStatsRepository;
 import mobi.eyeline.ips.repository.UserRepository;
 import mobi.eyeline.ips.service.deliveries.DeliveryPushService;
 import mobi.eyeline.ips.service.deliveries.DeliveryService;
+import mobi.eyeline.ips.service.deliveries.NotificationService;
 
 /**
  * Service lookup.
@@ -51,6 +52,7 @@ public class Services {
     private final SkinService skinService;
     private final DeliveryPushService deliveryPushService;
     private final DeliveryService deliveryService;
+    private final NotificationService notificationService;
 
     private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -107,6 +109,7 @@ public class Services {
                 deliveryPushService,
                 config
         );
+        notificationService = new NotificationService(deliverySubscriberRepository);
     }
 
     public static synchronized void initialize(Config properties) {
@@ -207,5 +210,9 @@ public class Services {
 
     public DeliveryService getDeliveryService() {
         return deliveryService;
+    }
+
+    public NotificationService getNotificationService() {
+        return notificationService;
     }
 }
