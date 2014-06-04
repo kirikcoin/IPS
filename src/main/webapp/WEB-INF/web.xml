@@ -175,6 +175,17 @@
     <servlet-class>org.apache.myfaces.trinidad.webapp.ResourceServlet</servlet-class>
   </servlet>
 
+  <servlet>
+    <description>Servlet for deliveries notifications</description>
+    <servlet-name>notificationHandler</servlet-name>
+    <servlet-class>mobi.eyeline.ips.web.servlets.DeliveryNotificationServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>notificationHandler</servlet-name>
+    <url-pattern>/notificationHandler/*</url-pattern>
+  </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>faces</servlet-name>
     <url-pattern>*.faces</url-pattern>

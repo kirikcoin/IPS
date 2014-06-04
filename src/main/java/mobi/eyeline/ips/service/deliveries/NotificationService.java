@@ -21,6 +21,6 @@ public class NotificationService {
         DeliverySubscriber subscriber = deliverySubscriberRepository.load(id);
         subscriber.setState(status == 2 ?  DELIVERED : UNDELIVERED);
         deliverySubscriberRepository.update(subscriber);
-        logger.info("Subscriber, id = " + id + " was updated, status = ",subscriber.getState());
+        logger.debug("Subscriber, id = " + id + " was updated, status = ",subscriber.getState());
     }
 }
