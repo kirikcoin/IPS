@@ -122,6 +122,11 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     }
 
+    public void startDelivery(){
+        invitationDelivery.state = InvitationDelivery.State.ACTIVE
+        saveDelivery()
+    }
+
     private boolean validate(InvitationDelivery invitationDelivery) {
 
         deliveryModifyError =
