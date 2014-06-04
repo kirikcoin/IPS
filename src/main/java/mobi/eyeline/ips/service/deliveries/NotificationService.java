@@ -20,12 +20,13 @@ public class NotificationService {
     }
 
     public int handleNotification(int id, int status) {
-
         DeliverySubscriber subscriber = deliverySubscriberRepository.get(id);
+
         if (subscriber == null) {
             return HttpServletResponse.SC_BAD_REQUEST;
         }
         subscriber.setState(status == 2 ? DELIVERED : UNDELIVERED);
+
         try {
             deliverySubscriberRepository.update(subscriber);
             logger.debug("Subscriber, id = " + id + " was updated, status = ", subscriber.getState());
