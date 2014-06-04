@@ -176,14 +176,14 @@
   </servlet>
 
   <servlet>
-    <description>Servlet for deliveries notifications</description>
-    <servlet-name>notificationHandler</servlet-name>
+    <description>Servlet for delivery notifications</description>
+    <servlet-name>deliveryNotification</servlet-name>
     <servlet-class>mobi.eyeline.ips.web.servlets.DeliveryNotificationServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>notificationHandler</servlet-name>
-    <url-pattern>/notificationHandler/*</url-pattern>
+    <servlet-name>deliveryNotification</servlet-name>
+    <url-pattern>/inform/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
