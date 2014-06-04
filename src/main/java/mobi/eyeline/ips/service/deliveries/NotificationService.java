@@ -2,6 +2,7 @@ package mobi.eyeline.ips.service.deliveries;
 
 import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
+import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +18,22 @@ public class NotificationService {
         this.deliverySubscriberRepository = deliverySubscriberRepository;
     }
 
-    public void handleNotification(int id, int status) {
-        DeliverySubscriber subscriber = deliverySubscriberRepository.load(id);
-        subscriber.setState(status == 2 ?  DELIVERED : UNDELIVERED);
-        deliverySubscriberRepository.update(subscriber);
-        logger.debug("Subscriber, id = " + id + " was updated, status = ",subscriber.getState());
+    public int handleNotification(int id, int status) {
+
+        DeliverySubscriber subscriber = deliverySubscriberRepository.get(id);
+        if (subscriber == null) {
+            return 400;
+        }
+        subscriber.setState(status == 2 ? DELIVERED : UNDELIVERED);
+        try {
+            deliverySubscriberRepository.update(subscriber);
+            logger.debug("Subscriber, id = " + id + " was updated, status = ", subscriber.getState());
+        } catch (Exception ignored) {
+            logger.debug("Error in subscriber updating");
+            return 500;
+        }
+
+        return 200;
+
     }
 }
