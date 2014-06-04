@@ -17,6 +17,7 @@ import mobi.eyeline.ips.repository.UserRepository;
 import mobi.eyeline.ips.service.deliveries.DeliveryPushService;
 import mobi.eyeline.ips.service.deliveries.DeliveryService;
 import mobi.eyeline.ips.service.deliveries.NotificationService;
+import mobi.eyeline.ips.util.CsvParseService;
 
 /**
  * Service lookup.
@@ -53,6 +54,8 @@ public class Services {
     private final DeliveryPushService deliveryPushService;
     private final DeliveryService deliveryService;
     private final NotificationService notificationService;
+
+    private final CsvParseService csvParseService;
 
     private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -110,6 +113,7 @@ public class Services {
                 config
         );
         notificationService = new NotificationService(deliverySubscriberRepository);
+        csvParseService = new CsvParseService();
     }
 
     public static synchronized void initialize(Config properties) {
@@ -210,6 +214,10 @@ public class Services {
 
     public DeliveryService getDeliveryService() {
         return deliveryService;
+    }
+
+    public CsvParseService getCsvParseService() {
+        return csvParseService;
     }
 
     public NotificationService getNotificationService() {

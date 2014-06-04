@@ -3,13 +3,12 @@ package mobi.eyeline.ips.web.controllers.surveys
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.InvitationDelivery
-
-import mobi.eyeline.ips.repository.DeliverySubscriberRepository
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository
 import mobi.eyeline.ips.service.Services
-import mobi.eyeline.ips.util.DeliveryUtils
-import mobi.eyeline.ips.util.DeliveryUtils.DuplicateMsisdnException
-import mobi.eyeline.ips.util.DeliveryUtils.InvalidMsisdnFormatException
+import mobi.eyeline.ips.util.CsvParseService
+import mobi.eyeline.ips.util.CsvParseService.CsvLineException
+import mobi.eyeline.ips.util.CsvParseService.DuplicateMsisdnException
+import mobi.eyeline.ips.util.CsvParseService.InvalidMsisdnFormatException
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
@@ -18,7 +17,6 @@ import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
 
-
 // TODO-10: If "1.1" is entered in the speed input, dialog closes with "Conversion error"
 // TODO-11: "Expand" links in the table don't get proper pointer (see `Results' tab)
 @CompileStatic
@@ -26,8 +24,7 @@ import java.text.MessageFormat
 class InvitationDeliveryController extends BaseSurveyController {
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().invitationDeliveryRepository
-    private final DeliverySubscriberRepository deliverySubscriberRepository =
-            Services.instance().deliverySubscriberRepository
+    private final CsvParseService csvParseService = Services.instance().csvParseService
 
     boolean deliveryModifyError
     Boolean activateError
@@ -52,24 +49,24 @@ class InvitationDeliveryController extends BaseSurveyController {
             List getRows(int offset,
                          int limit,
                          DataTableSortOrder sortOrder) {
+
                 final List<InvitationDelivery> list = invitationDeliveryRepository.list(
                         getSurvey(),
                         sortOrder.columnId,
                         sortOrder.asc,
                         limit,
                         offset)
+
                 return list.collect { InvitationDelivery it ->
-                    String type = BaseController.strings["invitations.deliveries.table.type.$it.type".toString()]
-                    String statusString = BaseController.strings["invitations.deliveries.table.status.$it.state".toString()]
                     new TableItem(
                             id: it.id,
                             date: it.date,
-                            type: type,
+                            type: InvitationDeliveryController.nameOf(it.type),
                             speed: it.speed,
                             currentPosition: it.processedCount,
                             errorsCount: it.errorsCount,
                             status: it.state,
-                            statusString: statusString,
+                            statusString: InvitationDeliveryController.nameOf(it.state),
                             text: it.text
                     )
                 }
@@ -80,6 +77,16 @@ class InvitationDeliveryController extends BaseSurveyController {
                 return invitationDeliveryRepository.count(getSurvey())
             }
         }
+    }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    static String nameOf(InvitationDelivery.Type type) {
+        BaseController.strings["invitations.deliveries.table.type.$type".toString()]
+    }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    static String nameOf(InvitationDelivery.State state) {
+        BaseController.strings["invitations.deliveries.table.status.$state".toString()]
     }
 
     public void fillDeliveryForEdit() {
@@ -152,20 +159,13 @@ class InvitationDeliveryController extends BaseSurveyController {
     }
 
     private FileValidationResult validateFile(UploadedFile file) {
-        FileValidationResult validationResult = new FileValidationResult(error: false)
-        DeliveryUtils utils = new DeliveryUtils()
-
-        def msisdns = []
         try {
-            msisdns = utils.parseFile(inputFile.inputStream)
+            def list = csvParseService.parseFile file.inputStream
+            return new FileValidationResult(list)
 
-        } catch (InvalidMsisdnFormatException e1) {
-            validationResult.generateInvalidErrorMessage(e1.lineNumber, e1.invalidString)
-        } catch (DuplicateMsisdnException e2) {
-            validationResult.generateDuplicateErrorMessage(e2.lineNumber, e2.invalidString)
+        } catch (CsvLineException e) {
+            return new FileValidationResult(e)
         }
-        validationResult.msisdns = msisdns
-        return validationResult
     }
 
     void activateDelivery() {
@@ -197,7 +197,7 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     List<SelectItem> getTypes() {
         InvitationDelivery.Type.values().collect {
-            new SelectItem(it, strings["invitations.deliveries.table.type.$it".toString()])
+            InvitationDelivery.Type t -> new SelectItem(t, nameOf(t))
         }
     }
 
@@ -214,31 +214,40 @@ class InvitationDeliveryController extends BaseSurveyController {
     }
 
     static class FileValidationResult {
-        boolean error
-        String errorMessage
-        List<String> msisdns
+        final boolean error
+        final String errorMessage
+        final List<String> msisdns
 
-        void generateInvalidErrorMessage(int lineNumber, String invalidString) {
-            error = true
-            String bundleMessage = BaseController.strings["invitations.deliveries.dialog.file.error.invalid"]
-            errorMessage = MessageFormat.format(
-                    bundleMessage,
-                    invalidString,
-                    lineNumber);
+        FileValidationResult(List<String> msisdns) {
+            this.error = false
+            this.errorMessage = null
+            this.msisdns = msisdns
         }
 
-        void generateDuplicateErrorMessage(int lineNumber, String invalidString) {
+        FileValidationResult(CsvLineException e) {
             error = true
-            String bundleMessage = BaseController.strings["invitations.deliveries.dialog.file.error.duplicate"]
-            errorMessage = MessageFormat.format(
-                    bundleMessage,
-                    invalidString,
-                    lineNumber);
+            msisdns = null
+
+            switch (e) {
+                case InvalidMsisdnFormatException:
+                    errorMessage = MessageFormat.format(
+                            BaseController.strings['invitations.deliveries.dialog.file.error.invalid'] as String,
+                            e.lineContent,
+                            e.lineNumber)
+                    break
+
+                case DuplicateMsisdnException:
+                    errorMessage = MessageFormat.format(
+                            BaseController.strings['invitations.deliveries.dialog.file.error.duplicate'] as String,
+                            e.lineContent,
+                            e.lineNumber)
+                    break
+
+                default:
+                    errorMessage = null // To fix warning
+                    throw new AssertionError()
+            }
         }
-
-    }
-
-    static class FileValidateException extends Exception {
 
     }
 }

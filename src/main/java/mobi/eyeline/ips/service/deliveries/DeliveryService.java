@@ -155,7 +155,15 @@ public class DeliveryService {
      * @param newSpeed             Messages per second.
      */
     public void updateSpeed(Integer invitationDeliveryId, int newSpeed) {
-        deliveries.get(invitationDeliveryId).setSpeed(newSpeed);
+        final DeliveryWrapper delivery = deliveries.get(invitationDeliveryId);
+        if (delivery == null) {
+            throw new IllegalStateException("Unknown delivery, id = " + invitationDeliveryId);
+        }
+
+        delivery.setSpeed(newSpeed);
     }
 
+    public void updateSpeed(InvitationDelivery delivery, int newSpeed) {
+        updateSpeed(delivery.getId(), newSpeed);
+    }
 }
