@@ -109,4 +109,11 @@ div.eyeline_selectManyShuttle {
 
 .eyeline_dialog_title {
   border-radius: 0;
+  background-color: #78a0bb;
+
+  background-image: -moz-linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+  background-image: -ms-linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+  background-image: -o-linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+  background-image: -webkit-linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+  background-image: linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
 }

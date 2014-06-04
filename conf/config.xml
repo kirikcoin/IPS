@@ -46,7 +46,7 @@
   </section>
 
   <section name="madv">
-    <param name="update.enabled" type="boolean">true</param>
+    <param name="update.enabled" type="boolean">false</param>
     <param name="update.delay.minutes" type="int">15</param>
     <param name="url" type="string">http://localhost:9080/services/campaigns</param>
     <param name="login" type="string">user@ussd.mobi</param>
@@ -63,9 +63,17 @@
   </section>
 
   <section name="deliveries">
-    <param name="push.ussd.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-push</param>
-    <param name="push.nidialog.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-srvpush</param>
+    <!--<param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
+    <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>-->
+
+    <param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
+    <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>
+
+    <!--<param name="push.ussd.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-push</param>
+    <param name="push.nidialog.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-srvpush</param>-->
+
     <param name="push.threads.number" type="int">2</param>
     <param name="push.message.queue" type="int">100</param>
+    <param name="push.update.batch.size" type="int">10</param>
   </section>
 </config>
