@@ -129,15 +129,17 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
                 results = (List<DeliverySubscriber>) criteria.list();
             }
 
-            // Set current position to the maximal ID
-            final int maxId = Collections.max(results, DeliverySubscriber.ID_COMPARATOR).getId();
-            session.createQuery(
-                    "UPDATE InvitationDelivery" +
-                    " SET currentPosition = :maxId" +
-                    " WHERE id = :id")
-                    .setParameter("maxId", maxId)
-                    .setParameter("id", delivery.getId())
-                    .executeUpdate();
+            if (!results.isEmpty()) {
+                // Set current position to the maximal ID
+                final int maxId = Collections.max(results, DeliverySubscriber.ID_COMPARATOR).getId();
+                session.createQuery(
+                        "UPDATE InvitationDelivery" +
+                        " SET currentPosition = :maxId" +
+                        " WHERE id = :id")
+                        .setParameter("maxId", maxId)
+                        .setParameter("id", delivery.getId())
+                        .executeUpdate();
+            }
 
             transaction.commit();
 
@@ -159,13 +161,30 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
     }
 
     public List<InvitationDelivery> list(InvitationDelivery.State state) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(InvitationDelivery.class);
+        final Session session = getSessionFactory().openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
 
-        criteria.add(eq("state", state));
+            final Criteria criteria = session.createCriteria(InvitationDelivery.class);
+            criteria.add(eq("state", state));
 
-        //noinspection unchecked
-        return (List<InvitationDelivery>) criteria.list();
+            //noinspection unchecked
+            return (List<InvitationDelivery>) criteria.list();
+
+        } catch (HibernateException e) {
+            if ((transaction != null) && transaction.isActive()) {
+                try {
+                    transaction.rollback();
+                } catch (HibernateException ee) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+            throw e;
+
+        } finally {
+            session.close();
+        }
     }
 
 }

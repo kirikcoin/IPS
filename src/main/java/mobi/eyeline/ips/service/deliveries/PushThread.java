@@ -1,50 +1,52 @@
 package mobi.eyeline.ips.service.deliveries;
 
 import com.google.common.base.Throwables;
-import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
+import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
+import mobi.eyeline.ips.service.Services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
 
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.NEW;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
 
-class PushThread implements Runnable {
+class PushThread extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(PushThread.class);
 
-    private final BlockingQueue<DeliveryWrapper> deliveriesToSend;
+    private final DelayQueue<DeliveryWrapper> deliveriesToSend;
     private final BlockingQueue<DeliveryWrapper> deliveriesToFetch;
     private final DeliveryPushService deliveryPushService;
     private final DeliverySubscriberRepository deliverySubscriberRepository;
-    private final Timer timer;
+    private final InvitationDeliveryRepository invitationDeliveryRepository;
 
-    public PushThread(BlockingQueue<DeliveryWrapper> deliveriesToSend,
+    public PushThread(String name,
+                      DelayQueue<DeliveryWrapper> deliveriesToSend,
                       BlockingQueue<DeliveryWrapper> deliveriesToFetch,
                       DeliveryPushService deliveryPushService,
                       DeliverySubscriberRepository deliverySubscriberRepository,
-                      Timer timer) {
+                      InvitationDeliveryRepository invitationDeliveryRepository) {
+
+        super(name);
 
         this.deliveriesToSend = deliveriesToSend;
         this.deliveriesToFetch = deliveriesToFetch;
         this.deliveryPushService = deliveryPushService;
         this.deliverySubscriberRepository = deliverySubscriberRepository;
-        this.timer = timer;
+        this.invitationDeliveryRepository = invitationDeliveryRepository;
     }
 
     @Override
     public void run() {
         try {
-            //noinspection InfiniteLoopStatement
-            while (true) {
+            while (!isInterrupted()) {
                 loop();
             }
 
@@ -58,16 +60,30 @@ class PushThread implements Runnable {
 
         if (delivery.isStopped()) {
             // Just removed from the queue, so it's OK.
-            logger.debug("Delivery is stopped, throwing out, id = [" + delivery + "]");
+            logger.info("Delivery is stopped, throwing out, id = [" + delivery + "]");
 
         } else {
             final DeliveryWrapper.Message message = delivery.poll();
             if (message == null) {
-                logger.debug("Delivery: [" + delivery + "] is empty");
-                doSchedule(delivery, TimeUnit.SECONDS.toMillis(1));
+                logger.trace("Delivery: [" + delivery + "] is empty");
+
+                if (delivery.isEmpty()) {
+                    final InvitationDelivery dbModel = delivery.getModel();
+                    dbModel.setState(InvitationDelivery.State.COMPLETED);
+                    invitationDeliveryRepository.update(dbModel);
+                    Services.instance().getDeliveryService().onDeliveryKick(delivery);
+
+                } else {
+                    delivery.setDelay(TimeUnit.SECONDS.toMillis(1));
+                    doSchedule(delivery);
+                }
 
             } else {
                 handleNextMessage(delivery, message);
+            }
+
+            if (delivery.shouldBeFilled()) {
+                deliveriesToFetch.put(delivery);
             }
         }
     }
@@ -75,6 +91,9 @@ class PushThread implements Runnable {
     private void handleNextMessage(DeliveryWrapper delivery,
                                    DeliveryWrapper.Message message) throws InterruptedException {
         try {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Delivery: [" + delivery + "], message = [" + message + "]");
+            }
             doProcess(delivery, message);
         } catch (Exception e) {
             Throwables.propagateIfInstanceOf(e, InterruptedException.class);
@@ -82,11 +101,7 @@ class PushThread implements Runnable {
                     "delivery = [" + delivery + "], message = [" + message + "]");
 
         } finally {
-            doSchedule(delivery, delivery.getCurrentDelay());
-        }
-
-        if (delivery.shouldBeFilled()) {
-            deliveriesToFetch.put(delivery);
+            doSchedule(delivery);
         }
     }
 
@@ -137,19 +152,7 @@ class PushThread implements Runnable {
                 success ? SENT : UNDELIVERED, NEW);
     }
 
-    private void doSchedule(final DeliveryWrapper delivery,
-                            long delayMillis) {
-
-        // XXX: Consider changing Timer to DelayedQueue.
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    deliveriesToSend.put(delivery);
-                } catch (InterruptedException e) {
-                    logger.info(e.getMessage(), e);
-                }
-            }
-        }, delayMillis);
+    private void doSchedule(final DeliveryWrapper delivery) {
+        deliveriesToSend.put(delivery);
     }
 }

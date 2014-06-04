@@ -77,6 +77,16 @@ public class DeliverySubscriber implements Serializable {
         this.state = status;
     }
 
+    @Override
+    public String toString() {
+        return "DeliverySubscriber{" +
+                "id=" + getId() +
+                ", delivery=" + getInvitationDelivery().getId() +
+                ", msisdn='" + getMsisdn() + '\'' +
+                ", state=" + getState() +
+                '}';
+    }
+
     public static enum State {
 
         /**

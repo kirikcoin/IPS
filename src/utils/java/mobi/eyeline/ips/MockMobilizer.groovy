@@ -16,7 +16,8 @@ import java.util.concurrent.LinkedBlockingQueue
  * Exposes {@code localhost:8000/push} URL.
  * For each pushed message schedules either erroneous or successful notification.
  */
-class MockMobilizer {
+@Grab(group = 'org.apache.httpcomponents', module = 'httpclient', version = '4.2.4')
+class Mock {
 
     private static final String SENDER_URL = 'http://localhost:8080/inform'
     private static final int N_REPORTING_THREADS = 8
@@ -24,7 +25,7 @@ class MockMobilizer {
     private final LinkedBlockingQueue<Message> messages = new LinkedBlockingQueue()
 
     void run() {
-        HttpServer.create(new InetSocketAddress(8000), 0).with {
+        HttpServer.create(new InetSocketAddress(8888), 0).with {
             createContext '/push', new PushHandler()
             setExecutor(null)
             start()
@@ -45,8 +46,13 @@ class MockMobilizer {
             messages << new Message(resourceId)
 
             xcg.with {
-                sendResponseHeaders(200, 0)
-                responseBody.close()
+                String response = 'Queued'
+                sendResponseHeaders(200, response.length())
+
+                responseBody.with {
+                    write response.bytes
+                    close()
+                }
             }
         }
     }
@@ -86,9 +92,11 @@ class MockMobilizer {
     }
 
     static void main(String[] args) {
-        new MockMobilizer().with { srv ->
+        new Mock().with { srv ->
             Thread.start { srv.run() }
             srv.runReporters()
         }
     }
 }
+
+Mock.main()

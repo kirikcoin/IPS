@@ -5,6 +5,7 @@ import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.InvitationDelivery
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.deliveries.DeliveryService
 import mobi.eyeline.ips.util.CsvParseService
 import mobi.eyeline.ips.util.CsvParseService.CsvLineException
 import mobi.eyeline.ips.util.CsvParseService.DuplicateMsisdnException
@@ -17,6 +18,9 @@ import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
 
+import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
+import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
+
 // TODO-10: If "1.1" is entered in the speed input, dialog closes with "Conversion error"
 // TODO-11: "Expand" links in the table don't get proper pointer (see `Results' tab)
 @CompileStatic
@@ -25,6 +29,7 @@ class InvitationDeliveryController extends BaseSurveyController {
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().invitationDeliveryRepository
     private final CsvParseService csvParseService = Services.instance().csvParseService
+    private final DeliveryService deliveryService = Services.instance().deliveryService
 
     boolean deliveryModifyError
     Boolean activateError
@@ -35,9 +40,13 @@ class InvitationDeliveryController extends BaseSurveyController {
     Integer modifiedDeliveryId
     String modifiedDeliveryFilename
 
-    List<String> abonents
+    List<String> msisdnList
     UploadedFile inputFile
     String progress
+
+    final List<SelectItem> types = InvitationDelivery.Type.values().collect {
+        InvitationDelivery.Type t -> new SelectItem(t, nameOf(t))
+    }
 
     InvitationDeliveryController() {
         invitationDelivery = new InvitationDelivery()
@@ -58,15 +67,17 @@ class InvitationDeliveryController extends BaseSurveyController {
                         offset)
 
                 return list.collect { InvitationDelivery it ->
+                    //noinspection UnnecessaryQualifiedReference
                     new TableItem(
                             id: it.id,
                             date: it.date,
                             type: InvitationDeliveryController.nameOf(it.type),
                             speed: it.speed,
-                            currentPosition: it.processedCount,
+                            processedCount: it.processedCount,
+                            totalCount: it.totalCount,
                             errorsCount: it.errorsCount,
-                            status: it.state,
-                            statusString: InvitationDeliveryController.nameOf(it.state),
+                            state: it.state,
+                            stateString: InvitationDeliveryController.nameOf(it.state),
                             text: it.text
                     )
                 }
@@ -81,11 +92,13 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     @SuppressWarnings("GrMethodMayBeStatic")
     static String nameOf(InvitationDelivery.Type type) {
+        //noinspection UnnecessaryQualifiedReference
         BaseController.strings["invitations.deliveries.table.type.$type".toString()]
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
     static String nameOf(InvitationDelivery.State state) {
+        //noinspection UnnecessaryQualifiedReference
         BaseController.strings["invitations.deliveries.table.status.$state".toString()]
     }
 
@@ -95,6 +108,7 @@ class InvitationDeliveryController extends BaseSurveyController {
             invitationDelivery = invitationDeliveryRepository.get(modifiedDeliveryId)
             modifiedDeliveryFilename = invitationDelivery.inputFile
             dialogForEdit = true
+
         } else {
             invitationDelivery = new InvitationDelivery()
             dialogForEdit = false
@@ -103,34 +117,42 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     public void saveDelivery() {
         if (modifiedDeliveryId == null) {
+            // Create new.
             invitationDelivery.survey = getSurvey()
             invitationDelivery.date = new Date()
-            invitationDelivery.inputFile = (inputFile != null) ? inputFile.filename : null
+            invitationDelivery.inputFile = inputFile?.filename
 
-            if (validate(invitationDelivery)) {
-                if (validate(inputFile)) {
-                    invitationDeliveryRepository.save(invitationDelivery, abonents)
+            if (validate(invitationDelivery) && validate(inputFile)) {
+                invitationDeliveryRepository.save(invitationDelivery, msisdnList)
+
+                if (invitationDelivery.state == ACTIVE) {
+                    deliveryService.start invitationDelivery
                 }
             }
+
         } else {
+            // Update existing.
             InvitationDelivery editedDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
 
-            editedDelivery.with { InvitationDelivery invDel ->
-                invDel.type = invitationDelivery.type
-                invDel.text = invitationDelivery.text
-                invDel.speed = invitationDelivery.speed
+            boolean speedChanged = editedDelivery != invitationDelivery.speed
+
+            editedDelivery.with {
+                type = invitationDelivery.type
+                text = invitationDelivery.text
+                speed = invitationDelivery.speed
             }
 
             if (validate(editedDelivery)) {
                 invitationDeliveryRepository.update(editedDelivery)
+                if (speedChanged) {
+                    deliveryService.updateSpeed(editedDelivery)
+                }
             }
-
         }
-
     }
 
-    public void startDelivery(){
-        invitationDelivery.state = InvitationDelivery.State.ACTIVE
+    public void startDelivery() {
+        invitationDelivery.state = ACTIVE
         saveDelivery()
     }
 
@@ -153,7 +175,7 @@ class InvitationDeliveryController extends BaseSurveyController {
             deliveryModifyError = true
         }
 
-        abonents = result.msisdns
+        msisdnList = result.msisdnList
 
         return !deliveryModifyError
     }
@@ -170,9 +192,12 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     void activateDelivery() {
         try {
-            InvitationDelivery editedDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
-            editedDelivery.state = InvitationDelivery.State.ACTIVE
-            invitationDeliveryRepository.update(editedDelivery)
+            InvitationDelivery delivery = invitationDeliveryRepository.load modifiedDeliveryId
+            delivery.state = ACTIVE
+
+            invitationDeliveryRepository.update delivery
+            deliveryService.start delivery
+
             activateError = false
 
         } catch (Exception e) {
@@ -183,9 +208,12 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     void pauseDelivery() {
         try {
-            InvitationDelivery editedDelivery = invitationDeliveryRepository.load(modifiedDeliveryId)
-            editedDelivery.state = InvitationDelivery.State.INACTIVE
-            invitationDeliveryRepository.update(editedDelivery)
+            InvitationDelivery delivery = invitationDeliveryRepository.load modifiedDeliveryId
+            delivery.state = INACTIVE
+
+            invitationDeliveryRepository.update delivery
+            deliveryService.stop delivery
+
             pauseError = false
 
         } catch (Exception e) {
@@ -194,53 +222,43 @@ class InvitationDeliveryController extends BaseSurveyController {
         }
     }
 
-
-    List<SelectItem> getTypes() {
-        InvitationDelivery.Type.values().collect {
-            InvitationDelivery.Type t -> new SelectItem(t, nameOf(t))
-        }
-    }
-
     static class TableItem implements Serializable {
         int id
         Date date
         String type
         int speed
-        int currentPosition
+        int processedCount
+        int totalCount
         int errorsCount
-        InvitationDelivery.State status
-        String statusString
+        InvitationDelivery.State state
+        String stateString
         String text
     }
 
     static class FileValidationResult {
         final boolean error
         final String errorMessage
-        final List<String> msisdns
+        final List<String> msisdnList
 
-        FileValidationResult(List<String> msisdns) {
+        FileValidationResult(List<String> msisdnList) {
             this.error = false
             this.errorMessage = null
-            this.msisdns = msisdns
+            this.msisdnList = msisdnList
         }
 
         FileValidationResult(CsvLineException e) {
             error = true
-            msisdns = null
+            msisdnList = null
+
+            def genMessage = { String k -> MessageFormat.format(k, e.lineContent, e.lineNumber) }
 
             switch (e) {
                 case InvalidMsisdnFormatException:
-                    errorMessage = MessageFormat.format(
-                            BaseController.strings['invitations.deliveries.dialog.file.error.invalid'] as String,
-                            e.lineContent,
-                            e.lineNumber)
+                    errorMessage = genMessage 'invitations.deliveries.dialog.file.error.invalid'
                     break
 
                 case DuplicateMsisdnException:
-                    errorMessage = MessageFormat.format(
-                            BaseController.strings['invitations.deliveries.dialog.file.error.duplicate'] as String,
-                            e.lineContent,
-                            e.lineNumber)
+                    errorMessage = genMessage 'invitations.deliveries.dialog.file.error.duplicate'
                     break
 
                 default:

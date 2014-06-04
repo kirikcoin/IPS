@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.service.deliveries;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
@@ -8,54 +7,60 @@ import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Timer;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.DelayQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
 
-import static java.util.concurrent.Executors.newFixedThreadPool;
+import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE;
 
 public class DeliveryService {
 
     private static final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
 
     private final InvitationDeliveryRepository invitationDeliveryRepository;
-    private final DeliverySubscriberRepository deliverySubscriberRepository;
-    private final DeliveryPushService deliveryPushService;
 
     private final int messagesQueueSize;
-    private final int pushThreadsNumber;
 
-    private final ExecutorService fetchExecutor;
-    private final ExecutorService pushExecutor;
+    private final StateUpdateThread stateUpdateThread;
 
     private final LinkedBlockingQueue<DeliveryWrapper> toFetch = new LinkedBlockingQueue<>();
-    private final LinkedBlockingQueue<DeliveryWrapper> toSend = new LinkedBlockingQueue<>();
+    private final DelayQueue<DeliveryWrapper> toSend = new DelayQueue<>();
+    private final BlockingQueue<DeliveryWrapper.Message> toUpdate = new LinkedBlockingQueue<>();
 
     private final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
+
+    private final List<Thread> allThreads = new ArrayList<>();
 
     public DeliveryService(InvitationDeliveryRepository invitationDeliveryRepository,
                            DeliverySubscriberRepository deliverySubscriberRepository,
                            DeliveryPushService deliveryPushService,
                            Config config) {
         this.invitationDeliveryRepository = invitationDeliveryRepository;
-        this.deliverySubscriberRepository = deliverySubscriberRepository;
-        this.deliveryPushService = deliveryPushService;
 
         this.messagesQueueSize = config.getMessageQueueBaseline();
-        this.pushThreadsNumber = config.getPushThreadsNumber();
 
-        fetchExecutor =
-                newFixedThreadPool(1, createTf("push-fetch-%d"));
-        pushExecutor =
-                newFixedThreadPool(pushThreadsNumber, createTf("push-%d"));
+        for (int i = 0; i < config.getPushThreadsNumber(); i++) {
+            allThreads.add(new PushThread("push-" + i,
+                    toSend,
+                    toFetch,
+                    deliveryPushService,
+                    deliverySubscriberRepository,
+                    invitationDeliveryRepository));
+        }
+
+        allThreads.add(new FetchThread("push-fetch", invitationDeliveryRepository, toFetch));
+        allThreads.add(stateUpdateThread = new StateUpdateThread(
+                "push-state", config, toUpdate, deliverySubscriberRepository));
     }
 
-    private static ThreadFactory createTf(String name) {
-        return new ThreadFactoryBuilder().setNameFormat(name).build();
+    // XXX:DEBUG
+    void onDeliveryKick(DeliveryWrapper delivery) {
+        System.out.println("XXX:DEBUG: " + delivery + "," + " time = " + (new Date().getTime() - delivery.lastStartMillis));
     }
-
 
     //
     //  Lifecycle.
@@ -67,23 +72,13 @@ public class DeliveryService {
     public void start() {
 
         // Start the threads.
-
-        final Timer timer = new Timer("push-timer");
-        for (int i = 0; i < pushThreadsNumber; i++) {
-            pushExecutor.submit(new PushThread(
-                    toSend,
-                    toFetch,
-                    deliveryPushService,
-                    deliverySubscriberRepository,
-                    timer));
+        for (Thread thread : allThreads) {
+            thread.start();
         }
-
-        fetchExecutor.execute(
-                new FetchThread(invitationDeliveryRepository, toFetch));
 
         // Start deliveries.
 
-        for (InvitationDelivery delivery : invitationDeliveryRepository.list()) {
+        for (InvitationDelivery delivery : invitationDeliveryRepository.list(ACTIVE)) {
             start(delivery.getId());
         }
 
@@ -93,8 +88,16 @@ public class DeliveryService {
      * Stops all the underlying threads, should be called on application shutdown.
      */
     public void stop() throws InterruptedException {
-        pushExecutor.shutdownNow();
-        fetchExecutor.shutdownNow();
+
+        for (Thread thread : allThreads) {
+            thread.interrupt();
+        }
+
+        stateUpdateThread.processRemaining();
+
+        for (Thread thread : allThreads) {
+            thread.join();
+        }
     }
 
 
@@ -144,11 +147,7 @@ public class DeliveryService {
         delivery.setCurrentPosition(0);
         invitationDeliveryRepository.update(delivery);
 
-        try {
-            toSend.put(wrapper);
-        } catch (InterruptedException e) {
-            logger.warn(e.getMessage(), e);
-        }
+        toSend.put(wrapper);
     }
 
     /**
@@ -164,7 +163,7 @@ public class DeliveryService {
         delivery.setSpeed(newSpeed);
     }
 
-    public void updateSpeed(InvitationDelivery delivery, int newSpeed) {
-        updateSpeed(delivery.getId(), newSpeed);
+    public void updateSpeed(InvitationDelivery delivery) {
+        updateSpeed(delivery.getId(), delivery.getSpeed());
     }
 }

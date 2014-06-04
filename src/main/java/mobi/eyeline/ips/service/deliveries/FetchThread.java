@@ -3,21 +3,24 @@ package mobi.eyeline.ips.service.deliveries;
 import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
+import mobi.eyeline.ips.service.Services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-class FetchThread implements Runnable {
+class FetchThread extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(FetchThread.class);
 
     private final InvitationDeliveryRepository invitationDeliveryRepository;
     private final BlockingQueue<DeliveryWrapper> toFetch;
 
-    public FetchThread(InvitationDeliveryRepository invitationDeliveryRepository,
+    public FetchThread(String name,
+                       InvitationDeliveryRepository invitationDeliveryRepository,
                        BlockingQueue<DeliveryWrapper> queue) {
+        super(name);
 
         this.invitationDeliveryRepository = invitationDeliveryRepository;
         this.toFetch = queue;
@@ -26,8 +29,7 @@ class FetchThread implements Runnable {
     @Override
     public void run() {
         try {
-            //noinspection InfiniteLoopStatement
-            while (true) {
+            while (!isInterrupted()) {
                 loop();
             }
 
@@ -49,10 +51,16 @@ class FetchThread implements Runnable {
     }
 
     private void doProcessDelivery(DeliveryWrapper delivery) throws InterruptedException {
+        final int freeSize = delivery.getFreeSize();
+        if (freeSize <= 0) {
+            logger.debug("Skipping [" + delivery + "] as already full");
+            return;
+        }
+
         final List<DeliverySubscriber> subscribers =
                 invitationDeliveryRepository.fetchNext(
                         delivery.getModel(),
-                        delivery.getFreeSize());
+                        freeSize);
 
         if (subscribers.isEmpty()) {
             logger.info("All messages in delivery = [" + delivery + "] are processed");
@@ -74,10 +82,6 @@ class FetchThread implements Runnable {
     }
 
     private void onCompleted(DeliveryWrapper delivery) {
-        final InvitationDelivery dbModel = delivery.getModel();
-        dbModel.setState(InvitationDelivery.State.COMPLETED);
-        invitationDeliveryRepository.update(dbModel);
-
-        delivery.setStopped();
+        delivery.setEmpty(true);
     }
 }

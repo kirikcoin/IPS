@@ -31,6 +31,7 @@ public interface Config {
 
     public int getPushThreadsNumber();
     public int getMessageQueueBaseline();
+    public int getStateUpdateBatchSize();
 
     public String getSkinDefault();
 
@@ -62,6 +63,7 @@ public interface Config {
         private final String deliveryNIPushUrl;
         private final int pushThreadsNumber;
         private final int messageQueueBaseline;
+        private final int stateUpdateBatchSize;
 
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
@@ -105,6 +107,7 @@ public interface Config {
                 deliveryNIPushUrl = deliveries.getString("push.nidialog.url");
                 pushThreadsNumber = deliveries.getInt("push.threads.number");
                 messageQueueBaseline = deliveries.getInt("push.message.queue");
+                stateUpdateBatchSize = deliveries.getInt("push.update.batch.size");
             }
         }
 
@@ -185,6 +188,10 @@ public interface Config {
         @Override
         public int getMessageQueueBaseline() {
             return messageQueueBaseline;
+        }
+
+        public int getStateUpdateBatchSize() {
+            return stateUpdateBatchSize;
         }
     }
 }

@@ -75,7 +75,6 @@
         <h:inputHidden id="deliveryFilename"
                        value="#{invitationDeliveryController.modifiedDeliveryFilename}"/>
 
-
         <h:panelGroup layout="block" styleClass="border-shadow">
 
           <h:panelGrid columns="2" styleClass="page-header">
@@ -236,6 +235,7 @@
 
                   <eye:row innerData="true">
 
+                    <!-- Delivery date -->
                     <eye:column name="date"
                                 title="#{bundle['invitations.deliveries.table.date']}"
                                 sortable="true"
@@ -245,56 +245,63 @@
                       </h:outputText>
                     </eye:column>
 
+                    <!-- Delivery type -->
                     <eye:column name="type"
                                 title="#{bundle['invitations.deliveries.table.type']}"
                                 sortable="true">
                       <h:outputText value="#{row.type}"/>
                     </eye:column>
 
+                    <!-- Delivery speed -->
                     <eye:column name="speed"
                                 title="#{bundle['invitations.deliveries.table.speed']}"
                                 sortable="true">
                       <h:outputText value="#{row.speed} #{bundle['invitations.deliveries.table.speed.metric']}"/>
                     </eye:column>
 
+                    <!-- Delivery progress -->
                     <eye:column name="progress"
                                 title="#{bundle['invitations.deliveries.table.progress']}">
-                      <h:outputText value="#{row.currentPosition}"/>
+                      <h:outputText value="#{row.processedCount}"/>
+                      <h:outputText value=" / "/>
+                      <h:outputText value="#{row.totalCount}"/>
                     </eye:column>
 
+                    <!-- Delivery errors -->
                     <eye:column name="errorsCount"
                                 title="#{bundle['invitations.deliveries.table.errorscount']}"
                                 sortable="true">
                       <h:outputText value="#{row.errorsCount}"/>
                     </eye:column>
 
+                    <!-- Delivery action -->
                     <eye:column name="action"
                                 title="#{bundle['invitations.deliveries.table.status']}"
                                 columnClass="actionColumn">
-                      <h:outputText value="#{row.statusString}"/>
+                      <h:outputText value="#{row.stateString}"/>
 
                       <h:outputText value=" ("
-                                    rendered="#{row.status!='COMPLETED'}"/>
+                                    rendered="#{row.state!='COMPLETED'}"/>
 
                       <h:commandLink value="#{bundle['invitations.deliveries.table.status.activate']}"
                                      onclick="return page.showActivateDialog('#{row.id}');"
-                                     rendered="#{row.status=='INACTIVE'}"/>
+                                     rendered="#{row.state=='INACTIVE'}"/>
 
                       <h:commandLink value="#{bundle['invitations.deliveries.table.status.pause']}"
                                     onclick="return page.showPauseDialog('#{row.id}');"
-                                    rendered="#{row.status=='ACTIVE'}"/>
+                                    rendered="#{row.state=='ACTIVE'}"/>
 
                       <h:outputText value=" | "
-                                    rendered="#{row.status!='COMPLETED'}"/>
+                                    rendered="#{row.state!='COMPLETED'}"/>
 
                       <h:commandLink value="#{bundle['invitations.deliveries.table.status.edit']}"
                                      action="#{invitationDeliveryController.fillDeliveryForEdit}"
-                                     rendered="#{row.status!='COMPLETED'}">
+                                     rendered="#{row.state!='COMPLETED'}">
                         <f:param name="modifiedDeliveryId" value="#{row.id}"/>
                       </h:commandLink>
 
                       <h:outputText value=")"
-                                    rendered="#{row.status!='COMPLETED'}"/>
+                                    rendered="#{row.state!='COMPLETED'}"/>
                     </eye:column>
 
                     <f:facet name="innerData">
@@ -392,7 +399,8 @@
 
             <h:outputLabel for="deliveryType"
                            value="#{bundle['invitations.deliveries.dialog.type']}"/>
-            <h:selectOneMenu id="deliveryType" value="#{invitationDeliveryController.invitationDelivery.type}">
+            <h:selectOneMenu id="deliveryType"
+                             value="#{invitationDeliveryController.invitationDelivery.type}">
               <f:selectItems value="#{invitationDeliveryController.types}"/>
             </h:selectOneMenu>
           </h:panelGrid>
@@ -413,9 +421,12 @@
 
             <h:outputLabel for="deliveryReceivers"
                            value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
-            <eye:inputFile  id="deliveryReceivers" value="#{invitationDeliveryController.inputFile}"
-                    rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"/>
-            <h:outputText id ="deliveryReceivers" value="#{invitationDeliveryController.modifiedDeliveryFilename}"
+            <eye:inputFile id="deliveryReceivers"
+                           value="#{invitationDeliveryController.inputFile}"
+                           rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"/>
+
+            <h:outputText id ="deliveryReceivers"
+                          value="#{invitationDeliveryController.modifiedDeliveryFilename}"
                           rendered="#{invitationDeliveryController.modifiedDeliveryId!=null}"/>
 
             <h:outputLabel for="deliverySpeed"

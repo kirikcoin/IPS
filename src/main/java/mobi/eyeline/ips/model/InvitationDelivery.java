@@ -64,8 +64,11 @@ public class InvitationDelivery implements Serializable {
     @Column(name = "current_position")
     private int currentPosition;
 
-    @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('DELIVERED', 'UNDELIVERED'))")
+    @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('SENT', 'DELIVERED', 'UNDELIVERED'))")
     private Integer processedCount;
+
+    @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id)")
+    private Integer totalCount;
 
     @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('UNDELIVERED'))")
     private Integer errorsCount;
@@ -147,6 +150,10 @@ public class InvitationDelivery implements Serializable {
 
     public Integer getProcessedCount() {
         return processedCount;
+    }
+
+    public Integer getTotalCount() {
+        return totalCount;
     }
 
     public Integer getErrorsCount() {

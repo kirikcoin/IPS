@@ -5,7 +5,6 @@ import mobi.eyeline.ips.service.BasePushService;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 public class DeliveryPushService extends BasePushService {
@@ -17,14 +16,13 @@ public class DeliveryPushService extends BasePushService {
     public void pushUssd(int id, String msisdn, String message) throws IOException {
         try {
             final String pushUrl = config.getDeliveryUssdPushUrl();
-            final URIBuilder builder;
-            builder = new URIBuilder(pushUrl);
+            final URIBuilder builder = new URIBuilder(pushUrl);
 
             builder.addParameter("subscriber", msisdn);
             builder.addParameter("message", message);
             builder.addParameter("resource_id", String.valueOf(id));
 
-            doRequest(new URI(pushUrl));
+            doRequest(builder.build());
 
         } catch (URISyntaxException e) {
             throw new IOException(e);
@@ -40,7 +38,7 @@ public class DeliveryPushService extends BasePushService {
             builder.addParameter("survey_id", String.valueOf(surveyId));
             builder.addParameter("resource_id", String.valueOf(id));
 
-            doRequest(new URI(pushUrl));
+            doRequest(builder.build());
 
         } catch (URISyntaxException e) {
             throw new IOException(e);

@@ -1,11 +1,15 @@
 package mobi.eyeline.ips.service.deliveries;
 
+import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.model.InvitationDelivery;
 
+import java.util.Date;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Delayed;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-class DeliveryWrapper {
+class DeliveryWrapper implements Delayed {
 
     private final InvitationDelivery invitationDelivery;
     private final int messagesQueueSize;
@@ -15,6 +19,10 @@ class DeliveryWrapper {
     private volatile long proposedDelayMillis;
 
     private volatile boolean stopped;
+    private volatile boolean empty;
+
+    // XXX:DEBUG
+    long lastStartMillis = new Date().getTime();
 
     public DeliveryWrapper(InvitationDelivery invitationDelivery,
                            int messagesQueueSize) {
@@ -36,7 +44,7 @@ class DeliveryWrapper {
     /**
      * @return Required delay till the next proposed send, positive or zero millis.
      */
-    public long getCurrentDelay() {
+    private long getCurrentDelay() {
         final long now = System.currentTimeMillis();
 
         if (lastSentMillis == 0) {
@@ -46,6 +54,22 @@ class DeliveryWrapper {
             final long proposedNext = lastSentMillis + proposedDelayMillis;
             return now > proposedNext ? 0 : proposedNext - now;
         }
+    }
+
+    void setDelay(long delayMillis) {
+        lastSentMillis = System.currentTimeMillis() + delayMillis;
+    }
+
+    @Override
+    public long getDelay(TimeUnit unit) {
+        return unit.convert(getCurrentDelay(), unit);
+    }
+
+    @Override
+    public int compareTo(Delayed o) {
+        return Long.compare(
+                this.getDelay(TimeUnit.MILLISECONDS),
+                o.getDelay(TimeUnit.MILLISECONDS));
     }
 
     public Message poll() {
@@ -72,9 +96,33 @@ class DeliveryWrapper {
         lastSentMillis = System.currentTimeMillis();
     }
 
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    public void setStopped() {
+        this.stopped = true;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public void setEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    @Override
+    public String toString() {
+        return "DeliveryWrapper{" +
+                "model.id=" + getModel().getId() +
+                '}';
+    }
+
     public static class Message {
         private final int id;
         private final String msisdn;
+        private DeliverySubscriber.State state;
 
         public Message(int id, String msisdn) {
             this.id = id;
@@ -88,13 +136,21 @@ class DeliveryWrapper {
         public String getMsisdn() {
             return msisdn;
         }
-    }
 
-    public boolean isStopped() {
-        return stopped;
-    }
+        DeliverySubscriber.State getState() {
+            return state;
+        }
 
-    public void setStopped() {
-        this.stopped = true;
+        void setState(DeliverySubscriber.State state) {
+            this.state = state;
+        }
+
+        @Override
+        public String toString() {
+            return "Message{" +
+                    "id=" + id +
+                    ", msisdn='" + msisdn + '\'' +
+                    '}';
+        }
     }
 }

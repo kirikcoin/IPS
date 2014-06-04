@@ -15,18 +15,19 @@ class CsvParseService {
     List<String> parseFile(InputStream inputStream) throws CsvLineException {
         def lines = new LinkedHashSet<String>()
 
-        inputStream.eachLine('UTF-8') { String line, int lineNumber ->
-            if (!line.startsWith('#')) {
-                line = line.replace('+', '')
+        inputStream.eachLine('UTF-8') { String original, int lineNumber ->
+            original = original.trim()
+            if (!original.startsWith('#')) {
+                String line = original.replaceFirst('^\\+', '')
 
                 if (!phoneValidator.validate(line)) {
-                    logger.debug "CSV parse error: $lineNumber: $line"
-                    throw new InvalidMsisdnFormatException(lineNumber, line)
+                    logger.debug "CSV parse error: $lineNumber: $original"
+                    throw new InvalidMsisdnFormatException(lineNumber, original)
                 }
 
                 if (lines.contains(line)) {
-                    logger.debug "CSV parse error: $lineNumber: $line"
-                    throw new DuplicateMsisdnException(lineNumber, line)
+                    logger.debug "CSV parse error: $lineNumber: $original"
+                    throw new DuplicateMsisdnException(lineNumber, original)
                 }
                 lines << line
             }
