@@ -15,10 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.hibernate.criterion.Restrictions.and;
 import static org.hibernate.criterion.Restrictions.eq;
+import static org.hibernate.criterion.Restrictions.gt;
 
 public class InvitationDeliveryRepository extends BaseRepository<InvitationDelivery, Integer> {
     private static final Logger logger = LoggerFactory.getLogger(InvitationDeliveryRepository.class);
@@ -95,7 +98,7 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         }
     }
 
-    public List<DeliverySubscriber> fetchAndMark(InvitationDelivery delivery,
+    public List<DeliverySubscriber> fetchNext(InvitationDelivery delivery,
                                               int limit) {
 
         final Session session = getSessionFactory().openSession();
@@ -103,33 +106,38 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         try {
             transaction = session.beginTransaction();
 
+            // Update current position as passed in entity might not be attached or out of date.
+            final int currentPos = ((Number) session.createQuery(
+                    "SELECT d.currentPosition" +
+                    " FROM InvitationDelivery d" +
+                    " WHERE d = :delivery")
+                    .setEntity("delivery", delivery)
+                    .uniqueResult()).intValue();
+
+            // Get next chunk of messages.
             final List<DeliverySubscriber> results;
             {
                 final Criteria criteria = session.createCriteria(DeliverySubscriber.class);
                 criteria.add(
                         and(
                                 eq("invitationDelivery", delivery),
-                                eq("state", DeliverySubscriber.State.NEW)));
+                                eq("state", DeliverySubscriber.State.NEW),
+                                gt("id", currentPos)));
                 criteria.setMaxResults(limit);
 
                 //noinspection unchecked
                 results = (List<DeliverySubscriber>) criteria.list();
             }
 
-            if (!results.isEmpty()) {
-                final List<Integer> ids = new ArrayList<>(results.size());
-                for (DeliverySubscriber result : results) {
-                    ids.add(result.getId());
-                }
-
-                session.createQuery(
-                        "UPDATE DeliverySubscriber" +
-                        " SET state = :newState" +
-                        " WHERE id IN (:ids)")
-                        .setParameter("newState", DeliverySubscriber.State.QUEUED)
-                        .setParameterList("ids", ids)
-                        .executeUpdate();
-            }
+            // Set current position to the maximal ID
+            final int maxId = Collections.max(results, DeliverySubscriber.ID_COMPARATOR).getId();
+            session.createQuery(
+                    "UPDATE InvitationDelivery" +
+                    " SET currentPosition = :maxId" +
+                    " WHERE id = :id")
+                    .setParameter("maxId", maxId)
+                    .setParameter("id", delivery.getId())
+                    .executeUpdate();
 
             transaction.commit();
 

@@ -13,6 +13,10 @@ import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.NEW;
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
+
 class PushThread implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(PushThread.class);
@@ -125,13 +129,18 @@ class PushThread implements Runnable {
     }
 
     private void doMark(DeliveryWrapper.Message message, boolean success) {
+        // Update state only for NEW messages to handle the following scenario:
+        // 1. Message gets sent
+        // 2. Notification arrives, state is updated to either DELIVERED or UNDELIVERED
+        // 3. Finally comes to updating to SENT after step 1.
         deliverySubscriberRepository.updateState(message.getId(),
-                success ? DeliverySubscriber.State.SENT : DeliverySubscriber.State.UNDELIVERED);
+                success ? SENT : UNDELIVERED, NEW);
     }
 
     private void doSchedule(final DeliveryWrapper delivery,
                             long delayMillis) {
 
+        // XXX: Consider changing Timer to DelayedQueue.
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

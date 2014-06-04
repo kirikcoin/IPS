@@ -17,7 +17,10 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
         super(db);
     }
 
-    public void updateState(int id, DeliverySubscriber.State state) {
+    public void updateState(int id,
+                            DeliverySubscriber.State newState,
+                            DeliverySubscriber.State oldState) {
+
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
@@ -25,10 +28,11 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
 
             session.createQuery(
                     "UPDATE DeliverySubscriber" +
-                    " SET state = :newState" +
-                    " WHERE id = :id")
-                    .setParameter("newState", state)
+                            " SET state = :newState" +
+                            " WHERE id = :id AND state = :oldState")
+                    .setParameter("newState", newState)
                     .setParameter("id", id)
+                    .setParameter("oldState", oldState)
                     .executeUpdate();
 
             transaction.commit();
@@ -48,66 +52,4 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
         }
     }
 
-    public void clearQueued(InvitationDelivery invitationDelivery) {
-        final Session session = getSessionFactory().openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-
-            session.createQuery(
-                    "UPDATE DeliverySubscriber" +
-                    " SET state = :newState" +
-                    " WHERE state = :oldState and invitationDelivery = :invitationDelivery")
-                    .setParameter("newState", DeliverySubscriber.State.NEW)
-                    .setParameter("oldState", DeliverySubscriber.State.QUEUED)
-                    .setParameter("invitationDelivery", invitationDelivery)
-                    .executeUpdate();
-
-            transaction.commit();
-
-        } catch (HibernateException e) {
-            if ((transaction != null) && transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (HibernateException ee) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            throw e;
-
-        } finally {
-            session.close();
-        }
-    }
-
-    public void clearQueued() {
-        final Session session = getSessionFactory().openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-
-            session.createQuery(
-                    "UPDATE DeliverySubscriber" +
-                    " SET state = :newState" +
-                    " WHERE state = :oldState")
-                    .setParameter("newState", DeliverySubscriber.State.NEW)
-                    .setParameter("oldState", DeliverySubscriber.State.QUEUED)
-                    .executeUpdate();
-
-            transaction.commit();
-
-        } catch (HibernateException e) {
-            if ((transaction != null) && transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (HibernateException ee) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            throw e;
-
-        } finally {
-            session.close();
-        }
-    }
 }

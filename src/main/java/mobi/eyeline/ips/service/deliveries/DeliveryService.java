@@ -25,7 +25,7 @@ public class DeliveryService {
     private final DeliveryPushService deliveryPushService;
 
     private final int messagesQueueSize;
-    final int pushThreadsNumber;
+    private final int pushThreadsNumber;
 
     private final ExecutorService fetchExecutor;
     private final ExecutorService pushExecutor;
@@ -83,7 +83,6 @@ public class DeliveryService {
 
         // Start deliveries.
 
-        deliverySubscriberRepository.clearQueued();
         for (InvitationDelivery delivery : invitationDeliveryRepository.list()) {
             start(delivery.getId());
         }
@@ -141,7 +140,9 @@ public class DeliveryService {
             deliveries.put(delivery.getId(), wrapper);
         }
 
-        deliverySubscriberRepository.clearQueued(delivery);
+        // XXX: should we reload entity here?
+        delivery.setCurrentPosition(0);
+        invitationDeliveryRepository.update(delivery);
 
         try {
             toSend.put(wrapper);

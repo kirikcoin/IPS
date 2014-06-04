@@ -50,7 +50,7 @@ class FetchThread implements Runnable {
 
     private void doProcessDelivery(DeliveryWrapper delivery) throws InterruptedException {
         final List<DeliverySubscriber> subscribers =
-                invitationDeliveryRepository.fetchAndMark(
+                invitationDeliveryRepository.fetchNext(
                         delivery.getModel(),
                         delivery.getFreeSize());
 

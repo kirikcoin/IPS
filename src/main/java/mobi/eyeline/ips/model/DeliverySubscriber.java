@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.util.Comparator;
 
 @Entity
 @Proxy(lazy = false)
@@ -81,17 +82,9 @@ public class DeliverySubscriber implements Serializable {
         /**
          * Initial state.
          *
-         * From this we can get to {@linkplain #QUEUED}.
-         */
-        NEW,
-
-        /**
-         * Assigned once an entry is fetched, but not yet sent
-         * (i.e. queued somewhere in service internals).
-         *
          * From this we can get to either {@linkplain #SENT} or {@linkplain #UNDELIVERED}.
          */
-        QUEUED,
+        NEW,
 
         /**
          * Assigned once an entry has been successfully sent.
@@ -116,4 +109,12 @@ public class DeliverySubscriber implements Serializable {
          */
         UNDELIVERED
     }
+
+    public static final Comparator<DeliverySubscriber> ID_COMPARATOR =
+            new Comparator<DeliverySubscriber>() {
+                @Override
+                public int compare(DeliverySubscriber o1, DeliverySubscriber o2) {
+                    return Integer.compare(o1.getId(), o2.getId());
+                }
+            };
 }

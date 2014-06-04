@@ -13,6 +13,7 @@ CREATE TABLE `deliveries` (
   `date` datetime default NULL,
   `type` varchar(255) NOT NULL,
   `state` varchar(255) NOT NULL DEFAULT 'INACTIVE',
+  `current_position` int(11) NOT NULL DEFAULT 0,
   `text`  text DEFAULT NULL,
   `speed`  int(3) DEFAULT '1',
   `input_file_name` varchar(255) NOT NULL,
