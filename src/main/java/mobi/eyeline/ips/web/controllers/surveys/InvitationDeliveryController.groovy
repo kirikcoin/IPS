@@ -164,7 +164,7 @@ class InvitationDeliveryController extends BaseSurveyController {
         } catch (InvalidMsisdnFormatException e1) {
             validationResult.generateInvalidErrorMessage(e1.lineNumber, e1.invalidString)
         } catch (DuplicateMsisdnException e2) {
-            validationResult.generateDublicateErrorMessage(e2.lineNumber, e2.invalidString)
+            validationResult.generateDuplicateErrorMessage(e2.lineNumber, e2.invalidString)
         }
         validationResult.msisdns = msisdns
         return validationResult
@@ -229,7 +229,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                     lineNumber);
         }
 
-        void generateDublicateErrorMessage(int lineNumber, String invalidString) {
+        void generateDuplicateErrorMessage(int lineNumber, String invalidString) {
             error = true
             String bundleMessage = BaseController.strings["invitations.deliveries.dialog.file.error.duplicate"]
             errorMessage = MessageFormat.format(
