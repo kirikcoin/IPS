@@ -400,9 +400,14 @@
             <h:outputLabel for="deliveryType"
                            value="#{bundle['invitations.deliveries.dialog.type']}"/>
             <h:selectOneMenu id="deliveryType"
-                             value="#{invitationDeliveryController.invitationDelivery.type}">
+                             value="#{invitationDeliveryController.invitationDelivery.type}"
+                             rendered="#{invitationDeliveryController.modifiedDeliveryId==null || invitationDeliveryController.invitationDelivery.state != 'ACTIVE'}">
               <f:selectItems value="#{invitationDeliveryController.types}"/>
             </h:selectOneMenu>
+
+            <h:outputText id ="deliveryType"
+                          value="#{invitationDeliveryController.typeString}"
+                          rendered="#{invitationDeliveryController.modifiedDeliveryId!=null and invitationDeliveryController.invitationDelivery.state == 'ACTIVE'}"/>
           </h:panelGrid>
 
 
@@ -413,7 +418,12 @@
             <eye:inputText id="invitationText"
                            rows="3"
                            maxlength="100"
-                           value="#{invitationDeliveryController.invitationDelivery.text}"/>
+                           value="#{invitationDeliveryController.invitationDelivery.text}"
+                           rendered="#{invitationDeliveryController.modifiedDeliveryId==null || invitationDeliveryController.invitationDelivery.state != 'ACTIVE'}"/>
+
+            <h:outputText id ="invitationText"
+                          value="#{invitationDeliveryController.invitationDelivery.text}"
+                          rendered="#{invitationDeliveryController.modifiedDeliveryId!=null and invitationDeliveryController.invitationDelivery.state == 'ACTIVE'}"/>
 
              <div style="margin-bottom: 10px"></div>
           </div>
@@ -440,7 +450,8 @@
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['invitations.deliveries.dialog.button.start']}"
-                             action="#{invitationDeliveryController.startDelivery}"/>
+                             action="#{invitationDeliveryController.startDelivery}"
+                             rendered="#{invitationDeliveryController.modifiedDeliveryId==null || invitationDeliveryController.invitationDelivery.state != 'ACTIVE'}"/>
             </eye:button>
 
             <eye:button>

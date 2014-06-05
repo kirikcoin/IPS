@@ -38,6 +38,7 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     InvitationDelivery invitationDelivery
     String speedString
+    String typeString
     Boolean dialogForEdit
     Integer modifiedDeliveryId
     String modifiedDeliveryFilename
@@ -110,6 +111,7 @@ class InvitationDeliveryController extends BaseSurveyController {
             invitationDelivery = invitationDeliveryRepository.get(modifiedDeliveryId)
             modifiedDeliveryFilename = invitationDelivery.inputFile
             speedString = invitationDelivery.speed
+            typeString = nameOf(invitationDelivery.type)
             dialogForEdit = true
 
         } else {
@@ -139,9 +141,14 @@ class InvitationDeliveryController extends BaseSurveyController {
 
             boolean speedChanged = editedDelivery != invitationDelivery.speed
 
-            editedDelivery.type = invitationDelivery.type
-            editedDelivery.text = invitationDelivery.text
-            editedDelivery.speed = invitationDelivery.speed
+            if(editedDelivery.state == ACTIVE){
+                editedDelivery.speed = invitationDelivery.speed
+            } else {
+                editedDelivery.type = invitationDelivery.type
+                editedDelivery.text = invitationDelivery.text
+                editedDelivery.speed = invitationDelivery.speed
+            }
+
 
             if (validate(editedDelivery)) {
                 invitationDeliveryRepository.update(editedDelivery)
