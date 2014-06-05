@@ -158,7 +158,7 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     private boolean validate(InvitationDelivery invitationDelivery) {
 
-        Pattern pattern = Pattern.compile('^[1-9]\\d{1,3}+$')
+        Pattern pattern = Pattern.compile('^[1-9]\\d{0,2}+$')
 
         if(pattern.matcher(speedString).matches()){
             invitationDelivery.speed = Integer.parseInt(speedString)
