@@ -43,7 +43,8 @@ public class DeliveryService {
 
         this.messagesQueueSize = config.getMessageQueueBaseline();
 
-        for (int i = 0; i < config.getPushThreadsNumber(); i++) {
+        final int pushThreadsNumber = config.getPushThreadsNumber();
+        for (int i = 0; i < pushThreadsNumber; i++) {
             allThreads.add(new PushThread("push-" + i,
                     toSend,
                     toFetch,

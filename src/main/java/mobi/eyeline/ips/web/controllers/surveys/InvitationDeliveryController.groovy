@@ -138,11 +138,9 @@ class InvitationDeliveryController extends BaseSurveyController {
 
             boolean speedChanged = editedDelivery != invitationDelivery.speed
 
-            editedDelivery.with {
-                type = invitationDelivery.type
-                text = invitationDelivery.text
-                speed = invitationDelivery.speed
-            }
+            editedDelivery.type = invitationDelivery.type
+            editedDelivery.text = invitationDelivery.text
+            editedDelivery.speed = invitationDelivery.speed
 
             if (validate(editedDelivery)) {
                 invitationDeliveryRepository.update(editedDelivery)

@@ -20,6 +20,7 @@ class ServiceTest extends GroovyTestCase {
             configClass.demand.getSadsMaxSessions() { 1 }
             configClass.demand.getMessageQueueBaseline() { 10 }
             configClass.demand.getPushThreadsNumber() { 2 }
+            configClass.demand.getStateUpdateBatchSize() { 10 }
 
             configClass.proxyDelegateInstance() as Config
         }
