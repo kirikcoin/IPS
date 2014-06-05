@@ -17,6 +17,7 @@ import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
+import java.util.regex.Pattern
 
 import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
 import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
@@ -36,6 +37,7 @@ class InvitationDeliveryController extends BaseSurveyController {
     Boolean pauseError
 
     InvitationDelivery invitationDelivery
+    String speedString
     Boolean dialogForEdit
     Integer modifiedDeliveryId
     String modifiedDeliveryFilename
@@ -158,12 +160,22 @@ class InvitationDeliveryController extends BaseSurveyController {
 
     private boolean validate(InvitationDelivery invitationDelivery) {
 
+        Pattern pattern = Pattern.compile('^[1-9]\\d{1,3}+$')
+
+        if(pattern.matcher(speedString).matches()){
+            invitationDelivery.speed = Integer.parseInt(speedString)
+        } else {
+            addErrorMessage(strings['invitations.deliveries.dialog.speed.max'], 'deliveryReceivers')
+            deliveryModifyError = true
+        }
         deliveryModifyError =
                 renderViolationMessage(validator.validate(invitationDelivery), [
                         'text': 'invitationText',
                         'speed': 'deliverySpeed',
                         'inputFile': 'deliveryReceivers',
                 ])
+
+
 
         return !deliveryModifyError
     }
