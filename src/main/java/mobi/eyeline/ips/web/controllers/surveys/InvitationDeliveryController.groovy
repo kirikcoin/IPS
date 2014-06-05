@@ -75,6 +75,7 @@ class InvitationDeliveryController extends BaseSurveyController {
                             id: it.id,
                             date: it.date,
                             type: InvitationDeliveryController.nameOf(it.type),
+                            typeValue: it.type,
                             speed: it.speed,
                             processedCount: it.processedCount,
                             totalCount: it.totalCount,
@@ -244,6 +245,7 @@ class InvitationDeliveryController extends BaseSurveyController {
         int id
         Date date
         String type
+        InvitationDelivery.Type typeValue
         int speed
         int processedCount
         int totalCount
@@ -268,7 +270,10 @@ class InvitationDeliveryController extends BaseSurveyController {
             error = true
             msisdnList = null
 
-            def genMessage = { String k -> MessageFormat.format(k, e.lineContent, e.lineNumber) }
+            def genMessage = { String k ->
+                //noinspection UnnecessaryQualifiedReference
+                MessageFormat.format(BaseController.strings[k] as String, e.lineContent, e.lineNumber)
+            }
 
             switch (e) {
                 case InvalidMsisdnFormatException:

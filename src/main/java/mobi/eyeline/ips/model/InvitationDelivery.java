@@ -178,7 +178,11 @@ public class InvitationDelivery implements Serializable {
          * Is allowed to proceed.
          * From this we can either get {@linkplain #COMPLETED} or {@linkplain #INACTIVE}.
          */
-        ACTIVE
+        ACTIVE;
+
+        public boolean isEditable() {
+            return this == INACTIVE;
+        }
     }
 
     public static enum Type {

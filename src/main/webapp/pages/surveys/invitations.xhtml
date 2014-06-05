@@ -233,7 +233,7 @@
                     <h:outputText value="#{bundle['results.empty']}"/>
                   </f:facet>
 
-                  <eye:row innerData="true">
+                  <eye:row innerData="#{row.typeValue == 'USSD_PUSH'}">
 
                     <!-- Delivery date -->
                     <eye:column name="date"
@@ -401,15 +401,10 @@
                            value="#{bundle['invitations.deliveries.dialog.type']}"/>
             <h:selectOneMenu id="deliveryType"
                              value="#{invitationDeliveryController.invitationDelivery.type}"
-                             rendered="#{invitationDeliveryController.modifiedDeliveryId==null || invitationDeliveryController.invitationDelivery.state != 'ACTIVE'}">
+                             disabled="#{!invitationDeliveryController.invitationDelivery.state.editable}">
               <f:selectItems value="#{invitationDeliveryController.types}"/>
             </h:selectOneMenu>
-
-            <h:outputText id ="deliveryType"
-                          value="#{invitationDeliveryController.typeString}"
-                          rendered="#{invitationDeliveryController.modifiedDeliveryId!=null and invitationDeliveryController.invitationDelivery.state == 'ACTIVE'}"/>
           </h:panelGrid>
-
 
           <div id="invitationTextBlock">
             <div style="margin-bottom: 10px"></div>
@@ -418,12 +413,8 @@
             <eye:inputText id="invitationText"
                            rows="3"
                            maxlength="100"
-                           value="#{invitationDeliveryController.invitationDelivery.text}"
-                           rendered="#{invitationDeliveryController.modifiedDeliveryId==null || invitationDeliveryController.invitationDelivery.state != 'ACTIVE'}"/>
-
-            <h:outputText id ="invitationText"
-                          value="#{invitationDeliveryController.invitationDelivery.text}"
-                          rendered="#{invitationDeliveryController.modifiedDeliveryId!=null and invitationDeliveryController.invitationDelivery.state == 'ACTIVE'}"/>
+                           readonly="#{!invitationDeliveryController.invitationDelivery.state.editable}"
+                           value="#{invitationDeliveryController.invitationDelivery.text}"/>
 
              <div style="margin-bottom: 10px"></div>
           </div>

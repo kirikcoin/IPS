@@ -17,7 +17,10 @@ class CsvParseService {
 
         inputStream.eachLine('UTF-8') { String original, int lineNumber ->
             original = original.trim()
-            if (!original.startsWith('#')) {
+            if (original.startsWith('#') || original.empty) {
+                // Skip comments and empty lines.
+
+            } else {
                 String line = original.replaceFirst('^\\+', '')
 
                 if (!phoneValidator.validate(line)) {
