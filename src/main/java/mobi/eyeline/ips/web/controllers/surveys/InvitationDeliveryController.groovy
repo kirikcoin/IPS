@@ -109,6 +109,7 @@ class InvitationDeliveryController extends BaseSurveyController {
         if (modifiedDeliveryId != null) {
             invitationDelivery = invitationDeliveryRepository.get(modifiedDeliveryId)
             modifiedDeliveryFilename = invitationDelivery.inputFile
+            speedString = invitationDelivery.speed
             dialogForEdit = true
 
         } else {
@@ -160,7 +161,7 @@ class InvitationDeliveryController extends BaseSurveyController {
 
         Pattern pattern = Pattern.compile('^[1-9]\\d{0,2}+$')
 
-        if(pattern.matcher(speedString).matches()){
+        if(speedString!= null && pattern.matcher(speedString).matches()){
             invitationDelivery.speed = Integer.parseInt(speedString)
         } else {
             addErrorMessage(strings['invitations.deliveries.dialog.speed.max'], 'deliveryReceivers')
