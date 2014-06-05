@@ -158,7 +158,8 @@ public class DeliveryService {
     public void updateSpeed(Integer invitationDeliveryId, int newSpeed) {
         final DeliveryWrapper delivery = deliveries.get(invitationDeliveryId);
         if (delivery == null) {
-            throw new IllegalStateException("Unknown delivery, id = " + invitationDeliveryId);
+            logger.debug("Changing speed of inactive delivery, id = " + invitationDeliveryId);
+            return;
         }
 
         delivery.setSpeed(newSpeed);
