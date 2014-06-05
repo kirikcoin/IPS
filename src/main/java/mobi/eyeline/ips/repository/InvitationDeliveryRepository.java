@@ -3,7 +3,6 @@ package mobi.eyeline.ips.repository;
 
 import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.model.InvitationDelivery;
-
 import mobi.eyeline.ips.model.Survey;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -14,9 +13,7 @@ import org.hibernate.criterion.Projections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.hibernate.criterion.Restrictions.and;
@@ -74,12 +71,11 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
 
             session.save(delivery);
             for(String msisdn:msisdns){
-                DeliverySubscriber abonent= new DeliverySubscriber();
-                abonent.setMsisdn(msisdn);
-                abonent.setInvitationDelivery(delivery);
-                abonent.setState(DeliverySubscriber.State.NEW);
+                final DeliverySubscriber subscriber = new DeliverySubscriber();
+                subscriber.setMsisdn(msisdn);
+                subscriber.setInvitationDelivery(delivery);
 
-                session.save(delivery);
+                session.save(subscriber);
             }
 
             transaction.commit();

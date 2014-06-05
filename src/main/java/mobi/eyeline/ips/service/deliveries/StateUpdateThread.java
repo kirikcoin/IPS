@@ -51,7 +51,7 @@ public class StateUpdateThread extends Thread {
             }
 
         } catch (InterruptedException e) {
-            logger.info("Push thread interrupted");
+            logger.info("StateUpdate thread interrupted");
         }
     }
 
@@ -80,10 +80,9 @@ public class StateUpdateThread extends Thread {
     public void processRemaining() {
         final List<DeliveryWrapper.Message> chunk = new ArrayList<>();
         toUpdate.drainTo(chunk);
+        logger.debug("Updating " + chunk.size() + " entries on shutdown");
+
         if (!chunk.isEmpty()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Updating " + chunk.size() + " entries on shutdown");
-            }
             deliverySubscriberRepository.updateState(
                     transform(chunk, asPair),
                     DeliverySubscriber.State.NEW);

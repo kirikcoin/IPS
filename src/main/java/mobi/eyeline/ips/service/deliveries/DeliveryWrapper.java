@@ -52,7 +52,7 @@ class DeliveryWrapper implements Delayed {
 
         } else {
             final long proposedNext = lastSentMillis + proposedDelayMillis;
-            return now > proposedNext ? 0 : proposedNext - now;
+            return Math.max(0, proposedNext - now);
         }
     }
 
@@ -62,7 +62,7 @@ class DeliveryWrapper implements Delayed {
 
     @Override
     public long getDelay(TimeUnit unit) {
-        return unit.convert(getCurrentDelay(), unit);
+        return unit.convert(getCurrentDelay(), TimeUnit.MILLISECONDS);
     }
 
     @Override

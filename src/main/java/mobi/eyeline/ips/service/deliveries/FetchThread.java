@@ -34,7 +34,7 @@ class FetchThread extends Thread {
             }
 
         } catch (InterruptedException e) {
-            logger.info("Push thread interrupted");
+            logger.info("Fetch thread interrupted");
         }
     }
 
