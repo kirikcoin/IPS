@@ -97,7 +97,7 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
     public List<DeliverySubscriber> fetchNext(InvitationDelivery delivery,
                                               int limit) {
 
-        final Session session = getSessionFactory().openSession();
+        final Session session = getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
@@ -151,8 +151,6 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
             }
             throw e;
 
-        } finally {
-            session.close();
         }
     }
 

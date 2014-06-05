@@ -1,16 +1,14 @@
 package mobi.eyeline.ips.service.deliveries;
 
 import mobi.eyeline.ips.model.DeliverySubscriber;
-import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
-import mobi.eyeline.ips.service.Services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-class FetchThread extends Thread {
+class FetchThread extends LoopThread {
 
     private static final Logger logger = LoggerFactory.getLogger(FetchThread.class);
 
@@ -27,22 +25,11 @@ class FetchThread extends Thread {
     }
 
     @Override
-    public void run() {
-        try {
-            while (!isInterrupted()) {
-                loop();
-            }
-
-        } catch (InterruptedException e) {
-            logger.info("Fetch thread interrupted");
-        }
-    }
-
-    private void loop() throws InterruptedException {
+    protected void loop() throws InterruptedException {
         final DeliveryWrapper delivery = toFetch.take();
 
         try {
-            doProcessDelivery(delivery);
+            doProcess(delivery);
 
         } catch (Exception e) {
             logger.error("Delivery processing failed: [" + delivery + "]", e);
@@ -50,17 +37,20 @@ class FetchThread extends Thread {
         }
     }
 
-    private void doProcessDelivery(DeliveryWrapper delivery) throws InterruptedException {
-        final int freeSize = delivery.getFreeSize();
-        if (freeSize <= 0) {
+    private void doProcess(DeliveryWrapper delivery) throws InterruptedException {
+        if (!delivery.shouldBeFilled()) {
             logger.debug("Skipping [" + delivery + "] as already full");
             return;
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Processing [" + delivery + "], freeSize = [" + delivery.getFreeSize() + "]");
         }
 
         final List<DeliverySubscriber> subscribers =
                 invitationDeliveryRepository.fetchNext(
                         delivery.getModel(),
-                        freeSize);
+                        delivery.getMessagesQueueSize());
 
         if (subscribers.isEmpty()) {
             logger.info("All messages in delivery = [" + delivery + "] are processed");

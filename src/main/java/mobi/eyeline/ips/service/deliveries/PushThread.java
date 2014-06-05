@@ -13,111 +13,114 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
 
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.NEW;
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
-
-class PushThread extends Thread {
+class PushThread extends LoopThread {
 
     private static final Logger logger = LoggerFactory.getLogger(PushThread.class);
 
-    private final DelayQueue<DeliveryWrapper> deliveriesToSend;
-    private final BlockingQueue<DeliveryWrapper> deliveriesToFetch;
+    private static final long WAIT_TO_FILL = TimeUnit.SECONDS.toMillis(1);
+
+    private final DelayQueue<DeliveryWrapper> toSend;
+    private final BlockingQueue<DeliveryWrapper> toFetch;
+    private final BlockingQueue<DeliveryWrapper.Message> toMark;
+
     private final DeliveryPushService deliveryPushService;
     private final DeliverySubscriberRepository deliverySubscriberRepository;
     private final InvitationDeliveryRepository invitationDeliveryRepository;
 
     public PushThread(String name,
-                      DelayQueue<DeliveryWrapper> deliveriesToSend,
-                      BlockingQueue<DeliveryWrapper> deliveriesToFetch,
+
+                      DelayQueue<DeliveryWrapper> toSend,
+                      BlockingQueue<DeliveryWrapper> toFetch,
+                      BlockingQueue<DeliveryWrapper.Message> toMark,
+
                       DeliveryPushService deliveryPushService,
                       DeliverySubscriberRepository deliverySubscriberRepository,
                       InvitationDeliveryRepository invitationDeliveryRepository) {
 
         super(name);
 
-        this.deliveriesToSend = deliveriesToSend;
-        this.deliveriesToFetch = deliveriesToFetch;
+        this.toSend = toSend;
+        this.toFetch = toFetch;
+        this.toMark = toMark;
+
         this.deliveryPushService = deliveryPushService;
         this.deliverySubscriberRepository = deliverySubscriberRepository;
         this.invitationDeliveryRepository = invitationDeliveryRepository;
     }
 
     @Override
-    public void run() {
-        try {
-            while (!isInterrupted()) {
-                loop();
-            }
-
-        } catch (InterruptedException e) {
-            logger.info("Push thread interrupted");
-        }
-    }
-
-    private void loop() throws InterruptedException {
-        final DeliveryWrapper delivery = deliveriesToSend.take();
+    protected void loop() throws InterruptedException {
+        final DeliveryWrapper delivery = toSend.take();
 
         if (delivery.isStopped()) {
             // Just removed from the queue, so it's OK.
-            logger.info("Delivery is stopped, throwing out, id = [" + delivery + "]");
+            logger.info("Delivery is stopped, throwing out [" + delivery + "]");
 
         } else {
             final DeliveryWrapper.Message message = delivery.poll();
             if (message == null) {
-                logger.trace("Delivery: [" + delivery + "] is empty");
-
-                if (delivery.isEmpty()) {
-                    final InvitationDelivery dbModel = delivery.getModel();
-                    dbModel.setState(InvitationDelivery.State.COMPLETED);
-                    invitationDeliveryRepository.update(dbModel);
-                    Services.instance().getDeliveryService().onDeliveryKick(delivery);
-
-                } else {
-                    delivery.setDelay(TimeUnit.SECONDS.toMillis(1));
-                    doSchedule(delivery);
-                }
+                handleEmpty(delivery);
 
             } else {
-                handleNextMessage(delivery, message);
+                handleMessage(delivery, message);
             }
 
             if (delivery.shouldBeFilled()) {
-                deliveriesToFetch.put(delivery);
+                toFetch.put(delivery);
             }
         }
     }
 
-    private void handleNextMessage(DeliveryWrapper delivery,
-                                   DeliveryWrapper.Message message) throws InterruptedException {
-        try {
-            if (logger.isTraceEnabled()) {
-                logger.trace("Delivery: [" + delivery + "], message = [" + message + "]");
-            }
-            doProcess(delivery, message);
-        } catch (Exception e) {
-            Throwables.propagateIfInstanceOf(e, InterruptedException.class);
-            logger.error("Processing failed, " +
-                    "delivery = [" + delivery + "], message = [" + message + "]");
+    private void handleEmpty(DeliveryWrapper delivery) {
+        if (logger.isTraceEnabled()) {
+            logger.trace("Delivery: [" + delivery + "] is empty");
+        }
 
-        } finally {
+        if (delivery.isEmpty()) {
+            // Fetch process marked this one as having no more entries in DB,
+            // so just update the state accordingly.
+            final InvitationDelivery dbModel =
+                    invitationDeliveryRepository.load(delivery.getModel().getId());
+            dbModel.setState(InvitationDelivery.State.COMPLETED);
+            invitationDeliveryRepository.update(dbModel);
+
+            // XXX:DEBUG
+            Services.instance().getDeliveryService().onDeliveryKick(delivery);
+
+        } else {
+            delivery.setDelay(WAIT_TO_FILL);
             doSchedule(delivery);
         }
     }
 
-    private void doProcess(DeliveryWrapper delivery,
-                           DeliveryWrapper.Message message) {
+    private void handleMessage(DeliveryWrapper delivery,
+                               DeliveryWrapper.Message message) throws InterruptedException {
+        try {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Delivery: [" + delivery + "], message = [" + message + "]");
+            }
+            doHandleMessage(delivery, message);
+
+        } catch (Exception e) {
+            Throwables.propagateIfInstanceOf(e, InterruptedException.class);
+            logger.error("Processing failed, " +
+                    "delivery = [" + delivery + "], message = [" + message + "]");
+        }
+    }
+
+    private void doHandleMessage(DeliveryWrapper delivery,
+                                 DeliveryWrapper.Message message) throws InterruptedException {
         try {
             try {
                 doPush(delivery, message);
             } finally {
-                delivery.onMessageSent();
+                doSchedule(delivery.onMessageSent());
             }
 
             doMark(message, true);
 
         } catch (IOException e) {
-            logger.warn(e.getMessage(), e);
+            logger.warn("Message sending failed", e);
             doMark(message, false);
         }
     }
@@ -143,16 +146,12 @@ class PushThread extends Thread {
         }
     }
 
-    private void doMark(DeliveryWrapper.Message message, boolean success) {
-        // Update state only for NEW messages to handle the following scenario:
-        // 1. Message gets sent
-        // 2. Notification arrives, state is updated to either DELIVERED or UNDELIVERED
-        // 3. Finally comes to updating to SENT after step 1.
-        deliverySubscriberRepository.updateState(message.getId(),
-                success ? SENT : UNDELIVERED, NEW);
+    private void doMark(DeliveryWrapper.Message message,
+                        boolean success) throws InterruptedException {
+        toMark.put(message.setState(success));
     }
 
     private void doSchedule(final DeliveryWrapper delivery) {
-        deliveriesToSend.put(delivery);
+        toSend.put(delivery);
     }
 }

@@ -14,26 +14,27 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import static com.google.common.collect.Lists.transform;
+import static mobi.eyeline.ips.service.deliveries.DeliveryWrapper.Message;
 
-public class StateUpdateThread extends Thread {
+public class StateUpdateThread extends LoopThread {
 
     private static final Logger logger = LoggerFactory.getLogger(StateUpdateThread.class);
 
     private final int batchSize;
-    private final BlockingQueue<DeliveryWrapper.Message> toUpdate;
+    private final BlockingQueue<Message> toUpdate;
     private final DeliverySubscriberRepository deliverySubscriberRepository;
 
-    private final Function<DeliveryWrapper.Message, Pair<Integer, DeliverySubscriber.State>> asPair =
-            new Function<DeliveryWrapper.Message, Pair<Integer, DeliverySubscriber.State>>() {
+    private final Function<Message, Pair<Integer, DeliverySubscriber.State>> asPair =
+            new Function<Message, Pair<Integer, DeliverySubscriber.State>>() {
                 @Override
-                public Pair<Integer, DeliverySubscriber.State> apply(DeliveryWrapper.Message input) {
+                public Pair<Integer, DeliverySubscriber.State> apply(Message input) {
                     return Pair.of(input.getId(), input.getState());
                 }
             };
 
     public StateUpdateThread(String name,
                              Config config,
-                             BlockingQueue<DeliveryWrapper.Message> toUpdate,
+                             BlockingQueue<Message> toUpdate,
                              DeliverySubscriberRepository deliverySubscriberRepository) {
 
         super(name);
@@ -44,23 +45,37 @@ public class StateUpdateThread extends Thread {
     }
 
     @Override
-    public void run() {
-        try {
-            while (!isInterrupted()) {
-                loop();
-            }
+    protected void loop() throws InterruptedException {
+        final List<Message> chunk = fetchChunk();
+        updateChunk(chunk);
+    }
 
-        } catch (InterruptedException e) {
-            logger.info("StateUpdate thread interrupted");
+    private List<Message> fetchChunk() throws InterruptedException {
+        final List<Message> chunk = new ArrayList<>(batchSize);
+        chunk.add(toUpdate.take());
+        toUpdate.drainTo(chunk, batchSize - 1);
+
+        return chunk;
+    }
+
+    private void updateChunk(List<Message> chunk) {
+        try {
+            doUpdateChunk(chunk);
+
+        } catch (Exception e) {
+            logger.error("State update error", e);
         }
     }
 
-    private void loop() throws InterruptedException {
-        final List<DeliveryWrapper.Message> chunk = fetchChunk();
+    private void doUpdateChunk(List<Message> chunk) {
         if (!chunk.isEmpty()) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Updating " + chunk.size() + " entries");
             }
+            // Update state only for NEW messages to handle the following scenario:
+            // 1. Message gets sent
+            // 2. Notification arrives, state is updated to either DELIVERED or UNDELIVERED
+            // 3. Finally comes to updating to SENT after step 1.
             deliverySubscriberRepository.updateState(
                     transform(chunk, asPair),
                     DeliverySubscriber.State.NEW);
@@ -69,23 +84,11 @@ public class StateUpdateThread extends Thread {
         }
     }
 
-    private List<DeliveryWrapper.Message> fetchChunk() throws InterruptedException {
-        final List<DeliveryWrapper.Message> chunk = new ArrayList<>(batchSize);
-        chunk.add(toUpdate.take());
-        toUpdate.drainTo(chunk, batchSize - 1);
-
-        return chunk;
-    }
-
     public void processRemaining() {
-        final List<DeliveryWrapper.Message> chunk = new ArrayList<>();
+        final List<Message> chunk = new ArrayList<>(toUpdate.size());
         toUpdate.drainTo(chunk);
         logger.debug("Updating " + chunk.size() + " entries on shutdown");
 
-        if (!chunk.isEmpty()) {
-            deliverySubscriberRepository.updateState(
-                    transform(chunk, asPair),
-                    DeliverySubscriber.State.NEW);
-        }
+        updateChunk(chunk);
     }
 }

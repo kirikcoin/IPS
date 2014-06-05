@@ -29,7 +29,7 @@ public class DeliveryService {
 
     private final LinkedBlockingQueue<DeliveryWrapper> toFetch = new LinkedBlockingQueue<>();
     private final DelayQueue<DeliveryWrapper> toSend = new DelayQueue<>();
-    private final BlockingQueue<DeliveryWrapper.Message> toUpdate = new LinkedBlockingQueue<>();
+    private final BlockingQueue<DeliveryWrapper.Message> toMark = new LinkedBlockingQueue<>();
 
     private final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
 
@@ -48,6 +48,7 @@ public class DeliveryService {
             allThreads.add(new PushThread("push-" + i,
                     toSend,
                     toFetch,
+                    toMark,
                     deliveryPushService,
                     deliverySubscriberRepository,
                     invitationDeliveryRepository));
@@ -55,7 +56,7 @@ public class DeliveryService {
 
         allThreads.add(new FetchThread("push-fetch", invitationDeliveryRepository, toFetch));
         allThreads.add(stateUpdateThread = new StateUpdateThread(
-                "push-state", config, toUpdate, deliverySubscriberRepository));
+                "push-state", config, toMark, deliverySubscriberRepository));
     }
 
     // XXX:DEBUG
@@ -109,7 +110,7 @@ public class DeliveryService {
     /**
      * @param invitationDeliveryId    Database ID.
      */
-    public void stop(Integer invitationDeliveryId) {
+    private void stop(Integer invitationDeliveryId) {
         final DeliveryWrapper delivery = deliveries.get(invitationDeliveryId);
         if (delivery == null) {
             throw new IllegalStateException("Unknown delivery, id = " + invitationDeliveryId);
@@ -130,11 +131,13 @@ public class DeliveryService {
     /**
      * @param invitationDeliveryId    Database ID.
      */
-    public void start(Integer invitationDeliveryId) {
+    private void start(Integer invitationDeliveryId) {
         start(invitationDeliveryRepository.load(invitationDeliveryId));
     }
 
     public void start(InvitationDelivery delivery) {
+        delivery = invitationDeliveryRepository.load(delivery.getId());
+
         DeliveryWrapper wrapper = deliveries.get(delivery.getId());
         if (wrapper != null && !wrapper.isStopped()) {
             throw new IllegalStateException("Attempt to start an already running delivery, " +
@@ -144,7 +147,6 @@ public class DeliveryService {
             deliveries.put(delivery.getId(), wrapper);
         }
 
-        // XXX: should we reload entity here?
         delivery.setCurrentPosition(0);
         invitationDeliveryRepository.update(delivery);
 

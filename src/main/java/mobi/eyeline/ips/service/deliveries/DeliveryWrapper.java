@@ -4,16 +4,21 @@ import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.model.InvitationDelivery;
 
 import java.util.Date;
-import java.util.concurrent.BlockingQueue;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Delayed;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
 
 class DeliveryWrapper implements Delayed {
 
+    private static final double LOAD_FACTOR = 0.5;
+
     private final InvitationDelivery invitationDelivery;
     private final int messagesQueueSize;
-    private final BlockingQueue<Message> messages = new LinkedBlockingQueue<>();
+    private final Queue<Message> messages = new ConcurrentLinkedQueue<>();
 
     private long lastSentMillis = 0;
     private volatile long proposedDelayMillis;
@@ -24,12 +29,12 @@ class DeliveryWrapper implements Delayed {
     // XXX:DEBUG
     long lastStartMillis = new Date().getTime();
 
-    public DeliveryWrapper(InvitationDelivery invitationDelivery,
+    public DeliveryWrapper(InvitationDelivery model,
                            int messagesQueueSize) {
 
-        this.invitationDelivery = invitationDelivery;
+        this.invitationDelivery = model;
         this.messagesQueueSize = messagesQueueSize;
-        setSpeed(invitationDelivery.getSpeed());
+        setSpeed(model.getSpeed());
     }
 
     public InvitationDelivery getModel() {
@@ -76,24 +81,28 @@ class DeliveryWrapper implements Delayed {
         return messages.poll();
     }
 
-    public void put(Message message) throws InterruptedException {
-        messages.put(message);
+    public void put(Message message) {
+        messages.add(message);
     }
 
     public boolean shouldBeFilled() {
-        final double loadFactor = 0.5;
-        return (messages.size() / messagesQueueSize) < loadFactor;
+        return (messages.size() / messagesQueueSize) < LOAD_FACTOR;
     }
 
     public int getFreeSize() {
-        return messagesQueueSize - messages.size();
+        return Math.max(0, messagesQueueSize - messages.size());
+    }
+
+    public int getMessagesQueueSize() {
+        return messagesQueueSize;
     }
 
     /**
      * Updates the last sent timestamp.
      */
-    public void onMessageSent() {
+    public DeliveryWrapper onMessageSent() {
         lastSentMillis = System.currentTimeMillis();
+        return this;
     }
 
     public boolean isStopped() {
@@ -141,8 +150,13 @@ class DeliveryWrapper implements Delayed {
             return state;
         }
 
-        void setState(DeliverySubscriber.State state) {
+        Message setState(DeliverySubscriber.State state) {
             this.state = state;
+            return this;
+        }
+
+        Message setState(boolean sent) {
+            return setState(sent ? SENT : UNDELIVERED);
         }
 
         @Override

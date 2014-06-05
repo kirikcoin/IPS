@@ -42,6 +42,7 @@ public class InitListener implements ServletContextListener {
 
         Services.instance().getMadvUpdateService().start();
         Services.instance().getDeliveryService().start();
+        Services.instance().getNotificationService().start();
     }
 
     private Config initProperties(File configDir) {
@@ -88,6 +89,7 @@ public class InitListener implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         try {
             Services.instance().getDeliveryService().stop();
+            Services.instance().getNotificationService().stop();
         } catch (InterruptedException ignored) {}
     }
 }

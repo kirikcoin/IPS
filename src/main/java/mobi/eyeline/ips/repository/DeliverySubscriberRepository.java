@@ -57,7 +57,7 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
     public void updateState(List<Pair<Integer, DeliverySubscriber.State>> idsAndStates,
                             DeliverySubscriber.State oldState) {
 
-        final Session session = getSessionFactory().openSession();
+        final Session session = getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
@@ -85,30 +85,27 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
             }
             throw e;
 
-        } finally {
-            session.close();
         }
     }
 
-    public int updateState(int id,
-                           DeliverySubscriber.State newState) {
+    public void updateState(List<Pair<Integer, DeliverySubscriber.State>> idsAndStates) {
 
-        final Session session = getSessionFactory().openSession();
+        final Session session = getSessionFactory().getCurrentSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
 
-            final int updatedCount = session.createQuery(
-                    "UPDATE DeliverySubscriber" +
-                    " SET state = :newState" +
-                    " WHERE id = :id")
-                    .setParameter("newState", newState)
-                    .setParameter("id", id)
-                    .executeUpdate();
+            for (Pair<Integer, DeliverySubscriber.State> idAndState : idsAndStates) {
+                session.createQuery(
+                        "UPDATE DeliverySubscriber" +
+                        " SET state = :newState" +
+                        " WHERE id = :id")
+                        .setParameter("newState", idAndState.getValue())
+                        .setParameter("id", idAndState.getKey())
+                        .executeUpdate();
+            }
 
             transaction.commit();
-
-            return updatedCount;
 
         } catch (HibernateException e) {
             if ((transaction != null) && transaction.isActive()) {
@@ -120,8 +117,6 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
             }
             throw e;
 
-        } finally {
-            session.close();
         }
     }
 }

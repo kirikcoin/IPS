@@ -36,7 +36,8 @@ public class DeliveryNotificationServlet extends HttpServlet {
         }
     }
 
-    private void doGet0(HttpServletRequest req, HttpServletResponse resp) {
+    private void doGet0(HttpServletRequest req, HttpServletResponse resp)
+            throws InterruptedException {
         final NotificationService.Notification notification = parse(req);
         if (notification == null) {
             resp.setStatus(SC_BAD_REQUEST);
