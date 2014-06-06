@@ -18,6 +18,8 @@ class ServiceTest extends GroovyTestCase {
             configClass.demand.getSadsMaxSessions() { 1 }
             configClass.demand.getSkinDefault() { '' }
             configClass.demand.getSadsMaxSessions() { 1 }
+            configClass.demand.getDeliveryUssdPushUrl() { '' }
+            configClass.demand.getDeliveryNIPushUrl() { '' }
             configClass.demand.getMessageQueueBaseline() { 10 }
             configClass.demand.getPushThreadsNumber() { 2 }
             configClass.demand.getStateUpdateBatchSize() { 10 }
@@ -29,6 +31,14 @@ class ServiceTest extends GroovyTestCase {
 
         shouldFail(AssertionError) {
             Services.initialize(newConfig())
+        }
+    }
+
+    void testUninitialized() {
+        //noinspection GroovyAccessibility
+        Services.instance = null
+        shouldFail(AssertionError) {
+            Services.instance()
         }
     }
 }

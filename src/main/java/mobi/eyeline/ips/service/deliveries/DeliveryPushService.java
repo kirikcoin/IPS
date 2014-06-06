@@ -9,18 +9,25 @@ import java.net.URISyntaxException;
 
 public class DeliveryPushService extends BasePushService {
 
+    private final String ussdPushUrl;
+    private final String niDialogPushUrl;
+
     public DeliveryPushService(Config config) {
         super(config);
+
+        ussdPushUrl = config.getDeliveryUssdPushUrl();
+        niDialogPushUrl = config.getDeliveryNIPushUrl();
     }
 
-    public void pushUssd(int id, String msisdn, String message) throws IOException {
+    public void pushUssd(final int id,
+                         final String msisdn,
+                         final String message) throws IOException {
         try {
-            final String pushUrl = config.getDeliveryUssdPushUrl();
-            final URIBuilder builder = new URIBuilder(pushUrl);
-
-            builder.addParameter("subscriber", msisdn);
-            builder.addParameter("message", message);
-            builder.addParameter("resource_id", String.valueOf(id));
+            final URIBuilder builder = new URIBuilder(ussdPushUrl) {{
+                addParameter("subscriber", msisdn);
+                addParameter("message", message);
+                addParameter("resource_id", String.valueOf(id));
+            }};
 
             doRequest(builder.build());
 
@@ -29,14 +36,15 @@ public class DeliveryPushService extends BasePushService {
         }
     }
 
-    public void niDialog(int id, String msisdn, int surveyId) throws IOException {
+    public void niDialog(final int id,
+                         final String msisdn,
+                         final int surveyId) throws IOException {
         try {
-            final String pushUrl = config.getDeliveryNIPushUrl();
-            final URIBuilder builder = new URIBuilder(pushUrl);
-
-            builder.addParameter("subscriber", msisdn);
-            builder.addParameter("survey_id", String.valueOf(surveyId));
-            builder.addParameter("resource_id", String.valueOf(id));
+            final URIBuilder builder = new URIBuilder(niDialogPushUrl) {{
+                addParameter("subscriber", msisdn);
+                addParameter("survey_id", String.valueOf(surveyId));
+                addParameter("resource_id", String.valueOf(id));
+            }};
 
             doRequest(builder.build());
 

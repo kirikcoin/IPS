@@ -1,5 +1,8 @@
 package mobi.eyeline.ips.service.deliveries;
 
+import com.j256.simplejmx.common.JmxAttributeMethod;
+import com.j256.simplejmx.common.JmxOperation;
+import com.j256.simplejmx.common.JmxResource;
 import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
@@ -15,8 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import static com.j256.simplejmx.common.JmxOperationInfo.OperationAction.ACTION;
 import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE;
 
+@JmxResource(domainName = "mobi.eyeline.ips")
 public class DeliveryService {
 
     private static final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
@@ -27,9 +32,16 @@ public class DeliveryService {
 
     private final StateUpdateThread stateUpdateThread;
 
-    private final LinkedBlockingQueue<DeliveryWrapper> toFetch = new LinkedBlockingQueue<>();
-    private final DelayQueue<DeliveryWrapper.DelayedDeliveryWrapper> toSend = new DelayQueue<>();
-    private final BlockingQueue<DeliveryWrapper.Message> toMark = new LinkedBlockingQueue<>();
+    @SuppressWarnings("FieldCanBeLocal")
+    private final LinkedBlockingQueue<DeliveryWrapper> toFetch =
+            new LinkedBlockingQueue<>();
+
+    private final DelayQueue<DeliveryWrapper.DelayedDeliveryWrapper> toSend =
+            new DelayQueue<>();
+
+    @SuppressWarnings("FieldCanBeLocal")
+    private final BlockingQueue<DeliveryWrapper.Message> toMark =
+            new LinkedBlockingQueue<>();
 
     private final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
 
@@ -62,6 +74,26 @@ public class DeliveryService {
     // XXX:DEBUG
     void onDeliveryKick(DeliveryWrapper delivery) {
         System.out.println("XXX:DEBUG: " + delivery + "," + " time = " + (new Date().getTime() - delivery.lastStartMillis));
+    }
+
+    @JmxAttributeMethod
+    public int getToFetchSize() {
+        return toFetch.size();
+    }
+
+    @JmxAttributeMethod
+    public int getToSendSize() {
+        return toSend.size();
+    }
+
+    @JmxAttributeMethod
+    public int getToMarkSize() {
+        return toMark.size();
+    }
+
+    @JmxAttributeMethod
+    public String getDeliveryInfo() {
+        return deliveries.values().toString();
     }
 
     //
@@ -110,7 +142,8 @@ public class DeliveryService {
     /**
      * @param invitationDeliveryId    Database ID.
      */
-    private void stop(Integer invitationDeliveryId) {
+    @JmxOperation(parameterNames = {"invitationDeliveryId"}, operationAction = ACTION)
+    public void stop(Integer invitationDeliveryId) {
         final DeliveryWrapper delivery = deliveries.get(invitationDeliveryId);
         if (delivery == null) {
             // Attempt to stop an already stopped delivery
@@ -127,7 +160,8 @@ public class DeliveryService {
     /**
      * @param invitationDeliveryId    Database ID.
      */
-    private void start(Integer invitationDeliveryId) {
+    @JmxOperation(parameterNames = {"invitationDeliveryId"}, operationAction = ACTION)
+    public void start(Integer invitationDeliveryId) {
         start(invitationDeliveryRepository.load(invitationDeliveryId));
     }
 
@@ -154,6 +188,7 @@ public class DeliveryService {
      * @param invitationDeliveryId Database ID.
      * @param newSpeed             Messages per second.
      */
+    @JmxOperation(parameterNames = {"invitationDeliveryId", "newSpeed"}, operationAction = ACTION)
     public void updateSpeed(Integer invitationDeliveryId, int newSpeed) {
         final DeliveryWrapper delivery = deliveries.get(invitationDeliveryId);
         if (delivery == null) {

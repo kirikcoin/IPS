@@ -35,6 +35,8 @@ public interface Config {
 
     public String getSkinDefault();
 
+    public boolean getExposeJmxBeans();
+
     public static class XmlConfigImpl implements Config {
 
         private final String smtpHost;
@@ -64,6 +66,8 @@ public interface Config {
         private final int pushThreadsNumber;
         private final int messageQueueBaseline;
         private final int stateUpdateBatchSize;
+
+        private final boolean exposeJmxBeans;
 
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
@@ -108,6 +112,11 @@ public interface Config {
                 pushThreadsNumber = deliveries.getInt("push.threads.number");
                 messageQueueBaseline = deliveries.getInt("push.message.queue");
                 stateUpdateBatchSize = deliveries.getInt("push.update.batch.size");
+            }
+
+            final XmlConfigSection other = xmlConfig.getSection("other");
+            {
+                exposeJmxBeans = other.getBool("expose.jmx.beans");
             }
         }
 
@@ -192,6 +201,11 @@ public interface Config {
 
         public int getStateUpdateBatchSize() {
             return stateUpdateBatchSize;
+        }
+
+        @Override
+        public boolean getExposeJmxBeans() {
+            return exposeJmxBeans;
         }
     }
 }

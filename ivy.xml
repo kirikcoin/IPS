@@ -85,6 +85,8 @@
     <!-- HTTP -->
     <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.2.4" conf="site->default"/>
 
+    <!-- JMX -->
+    <dependency org="com.j256.simplejmx" name="simplejmx" rev="1.9" conf="site->default"/>
 
     <!--
         Provided

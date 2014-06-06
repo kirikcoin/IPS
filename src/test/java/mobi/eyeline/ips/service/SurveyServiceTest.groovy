@@ -2,6 +2,7 @@ package mobi.eyeline.ips.service
 
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.repository.DbTestCase
+import mobi.eyeline.ips.repository.InvitationDeliveryRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 
 class SurveyServiceTest extends DbTestCase {
@@ -9,6 +10,7 @@ class SurveyServiceTest extends DbTestCase {
     Survey survey
 
     SurveyRepository surveyRepository
+    InvitationDeliveryRepository invitationDeliveryRepository
     SurveyService surveyService
 
     void setUp() {
@@ -17,6 +19,7 @@ class SurveyServiceTest extends DbTestCase {
         survey = new Survey(id: 1)
 
         surveyRepository = new SurveyRepository(db)
+        invitationDeliveryRepository = new InvitationDeliveryRepository(db)
 
         surveyService = new SurveyService(surveyRepository, null, invitationDeliveryRepository)
     }

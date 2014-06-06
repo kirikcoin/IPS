@@ -1,6 +1,8 @@
 package mobi.eyeline.ips.service.deliveries;
 
 import com.google.common.base.Function;
+import com.j256.simplejmx.common.JmxAttributeMethod;
+import com.j256.simplejmx.common.JmxResource;
 import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,6 +20,7 @@ import static com.google.common.collect.Lists.transform;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.DELIVERED;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
 
+@JmxResource(domainName = "mobi.eyeline.ips")
 public class NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
@@ -31,6 +34,11 @@ public class NotificationService {
                 10,
                 toUpdate,
                 deliverySubscriberRepository);
+    }
+
+    @JmxAttributeMethod
+    private int getToUpdateSize() {
+        return toUpdate.size();
     }
 
     public void start() {

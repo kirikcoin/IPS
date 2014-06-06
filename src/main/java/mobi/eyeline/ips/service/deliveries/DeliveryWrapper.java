@@ -20,7 +20,6 @@ class DeliveryWrapper {
     private final int messagesQueueSize;
     private final Queue<Message> messages = new ConcurrentLinkedQueue<>();
 
-    private long lastSentMillis = 0;
     private volatile long proposedDelayMillis;
 
     private volatile boolean stopped;
@@ -43,7 +42,7 @@ class DeliveryWrapper {
 
     public void setSpeed(int messagesPerSecond) {
         assert messagesPerSecond > 0;
-        this.proposedDelayMillis = (long) (1.0 / messagesPerSecond) * 1000;
+        this.proposedDelayMillis = (long) ((1.0 / messagesPerSecond) * 1000);
     }
 
     public long getProposedDelayMillis() {
@@ -70,14 +69,6 @@ class DeliveryWrapper {
         return messagesQueueSize;
     }
 
-    /**
-     * Updates the last sent timestamp.
-     */
-    DeliveryWrapper onMessageSent() {
-        lastSentMillis = System.currentTimeMillis();
-        return this;
-    }
-
     public boolean isStopped() {
         return stopped;
     }
@@ -98,6 +89,9 @@ class DeliveryWrapper {
     public String toString() {
         return "DeliveryWrapper{" +
                 "model.id=" + getModel().getId() +
+                ",size=" + size() +
+                ",stopped=" + stopped +
+                ",empty=" + empty +
                 '}';
     }
 
@@ -128,7 +122,7 @@ class DeliveryWrapper {
             return this;
         }
 
-        Message setState(boolean sent) {
+        Message setSent(boolean sent) {
             return setState(sent ? SENT : UNDELIVERED);
         }
 
@@ -149,7 +143,7 @@ class DeliveryWrapper {
         private final long delayMillis;
 
         private DelayedDeliveryWrapper(DeliveryWrapper deliveryWrapper,
-                                         long delayMillis) {
+                                       long delayMillis) {
             this.deliveryWrapper = deliveryWrapper;
             this.delayMillis = delayMillis;
         }

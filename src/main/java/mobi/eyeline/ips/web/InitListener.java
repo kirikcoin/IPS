@@ -3,6 +3,7 @@ package mobi.eyeline.ips.web;
 import com.eyeline.utils.config.ConfigException;
 import com.eyeline.utils.config.xml.XmlConfig;
 import mobi.eyeline.ips.properties.Config;
+import mobi.eyeline.ips.service.JmxBeansService;
 import mobi.eyeline.ips.service.Services;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -43,6 +44,8 @@ public class InitListener implements ServletContextListener {
         Services.instance().getMadvUpdateService().start();
         Services.instance().getDeliveryService().start();
         Services.instance().getNotificationService().start();
+
+        JmxBeansService.initialize(config);
     }
 
     private Config initProperties(File configDir) {

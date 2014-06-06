@@ -149,6 +149,6 @@ class PushThread extends LoopThread {
 
     private void doMark(DeliveryWrapper.Message message,
                         boolean success) throws InterruptedException {
-        toMark.put(message.setState(success));
+        toMark.put(message.setSent(success));
     }
 }

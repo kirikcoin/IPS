@@ -10,6 +10,7 @@ import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.repository.DbTestCase
+import mobi.eyeline.ips.repository.InvitationDeliveryRepository
 import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.repository.SurveyStatsRepository
@@ -28,6 +29,7 @@ class MadvUpdateServiceTest extends DbTestCase {
     SurveyRepository surveyRepository
     SurveyStatsRepository surveyStatsRepository
     SurveyInvitationRepository surveyInvitationRepository
+    InvitationDeliveryRepository invitationDeliveryRepository
     SurveyService surveyService
 
     void setUp() {
@@ -45,6 +47,7 @@ class MadvUpdateServiceTest extends DbTestCase {
         surveyRepository = new SurveyRepository(db)
         surveyStatsRepository = new SurveyStatsRepository(db)
         surveyInvitationRepository = new SurveyInvitationRepository(db)
+        invitationDeliveryRepository = new InvitationDeliveryRepository(db)
         surveyService = new SurveyService(surveyRepository, surveyInvitationRepository, invitationDeliveryRepository)
     }
 
