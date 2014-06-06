@@ -45,7 +45,7 @@ class MadvUpdateServiceTest extends DbTestCase {
         surveyRepository = new SurveyRepository(db)
         surveyStatsRepository = new SurveyStatsRepository(db)
         surveyInvitationRepository = new SurveyInvitationRepository(db)
-        surveyService = new SurveyService(surveyRepository, surveyInvitationRepository)
+        surveyService = new SurveyService(surveyRepository, surveyInvitationRepository, invitationDeliveryRepository)
     }
 
     MadvUpdateService createService(Config config, MadvSoapApi api) {

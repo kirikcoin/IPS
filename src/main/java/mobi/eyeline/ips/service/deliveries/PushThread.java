@@ -13,13 +13,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
 
+import static mobi.eyeline.ips.service.deliveries.DeliveryWrapper.DelayedDeliveryWrapper;
+
 class PushThread extends LoopThread {
 
     private static final Logger logger = LoggerFactory.getLogger(PushThread.class);
 
-    private static final long WAIT_TO_FILL = TimeUnit.SECONDS.toMillis(1);
+    private static final long WAIT_TO_FILL = TimeUnit.SECONDS.toMillis(2);
 
-    private final DelayQueue<DeliveryWrapper> toSend;
+    private final DelayQueue<DelayedDeliveryWrapper> toSend;
     private final BlockingQueue<DeliveryWrapper> toFetch;
     private final BlockingQueue<DeliveryWrapper.Message> toMark;
 
@@ -29,7 +31,7 @@ class PushThread extends LoopThread {
 
     public PushThread(String name,
 
-                      DelayQueue<DeliveryWrapper> toSend,
+                      DelayQueue<DelayedDeliveryWrapper> toSend,
                       BlockingQueue<DeliveryWrapper> toFetch,
                       BlockingQueue<DeliveryWrapper.Message> toMark,
 
@@ -50,7 +52,7 @@ class PushThread extends LoopThread {
 
     @Override
     protected void loop() throws InterruptedException {
-        final DeliveryWrapper delivery = toSend.take();
+        final DeliveryWrapper delivery = toSend.take().getDeliveryWrapper();
 
         if (delivery.isStopped()) {
             // Just removed from the queue, so it's OK.
@@ -88,8 +90,7 @@ class PushThread extends LoopThread {
             Services.instance().getDeliveryService().onDeliveryKick(delivery);
 
         } else {
-            delivery.setDelay(WAIT_TO_FILL);
-            doSchedule(delivery);
+            toSend.put(DelayedDeliveryWrapper.forDelay(delivery, WAIT_TO_FILL));
         }
     }
 
@@ -114,7 +115,7 @@ class PushThread extends LoopThread {
             try {
                 doPush(delivery, message);
             } finally {
-                doSchedule(delivery.onMessageSent());
+                toSend.put(DelayedDeliveryWrapper.forSent(delivery));
             }
 
             doMark(message, true);
@@ -149,9 +150,5 @@ class PushThread extends LoopThread {
     private void doMark(DeliveryWrapper.Message message,
                         boolean success) throws InterruptedException {
         toMark.put(message.setState(success));
-    }
-
-    private void doSchedule(final DeliveryWrapper delivery) {
-        toSend.put(delivery);
     }
 }

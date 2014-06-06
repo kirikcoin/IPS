@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -116,12 +118,22 @@ public class NotificationService {
         }
 
         private void updateChunk(List<Notification> chunk) {
-            try {
-                doUpdateChunk(chunk);
+            int retries = 3;
 
-            } catch (Exception e) {
-                logger.error("State update error", e);
-            }
+            do {
+                try {
+                    doUpdateChunk(chunk);
+
+                } catch (Exception e) {
+                    if (retries == 0) {
+                        logger.warn("State update error", e);
+                    } else {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("State update failed, retrying (" + e.getMessage() + " )");
+                        }
+                    }
+                }
+            } while (retries-- > 0);
         }
 
         private void doUpdateChunk(List<Notification> chunk) {

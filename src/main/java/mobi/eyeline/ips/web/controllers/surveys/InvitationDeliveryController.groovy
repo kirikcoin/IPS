@@ -22,8 +22,6 @@ import java.util.regex.Pattern
 import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
 import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
 
-// TODO-10: If "1.1" is entered in the speed input, dialog closes with "Conversion error"
-// TODO-11: "Expand" links in the table don't get proper pointer (see `Results' tab)
 @CompileStatic
 @Slf4j('logger')
 class InvitationDeliveryController extends BaseSurveyController {

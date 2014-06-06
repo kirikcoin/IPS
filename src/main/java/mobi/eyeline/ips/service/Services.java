@@ -73,7 +73,7 @@ public class Services {
 
         surveyService = new SurveyService(
                 surveyRepository,
-                surveyInvitationRepository);
+                surveyInvitationRepository, invitationDeliveryRepository);
         templateService = new TemplateService(config);
 
         mailService = new MailService(templateService,

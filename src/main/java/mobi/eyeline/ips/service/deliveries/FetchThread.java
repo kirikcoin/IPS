@@ -44,7 +44,7 @@ class FetchThread extends LoopThread {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Processing [" + delivery + "], freeSize = [" + delivery.getFreeSize() + "]");
+            logger.debug("Processing [" + delivery + "], size = [" + delivery.size() + "]");
         }
 
         final List<DeliverySubscriber> subscribers =
@@ -72,6 +72,6 @@ class FetchThread extends LoopThread {
     }
 
     private void onCompleted(DeliveryWrapper delivery) {
-        delivery.setEmpty(true);
+        delivery.setEmpty();
     }
 }

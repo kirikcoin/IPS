@@ -18,7 +18,7 @@ class SurveyServiceTest extends DbTestCase {
 
         surveyRepository = new SurveyRepository(db)
 
-        surveyService = new SurveyService(surveyRepository, null)
+        surveyService = new SurveyService(surveyRepository, null, invitationDeliveryRepository)
     }
 
     void test1() {

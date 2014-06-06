@@ -181,4 +181,15 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         }
     }
 
+    public int countSent(Survey survey) {
+        final Session session = getSessionFactory().getCurrentSession();
+
+        return ((Number) session.createQuery(
+                "select count(d)" +
+                " from DeliverySubscriber d" +
+                " where (d.state = :state) and (d.invitationDelivery.survey = :survey)")
+                .setParameter("state", DeliverySubscriber.State.DELIVERED)
+                .setEntity("survey", survey)
+                .uniqueResult()).intValue();
+    }
 }

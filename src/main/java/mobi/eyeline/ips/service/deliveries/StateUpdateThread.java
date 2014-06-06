@@ -59,12 +59,22 @@ public class StateUpdateThread extends LoopThread {
     }
 
     private void updateChunk(List<Message> chunk) {
-        try {
-            doUpdateChunk(chunk);
+        int retries = 3;
 
-        } catch (Exception e) {
-            logger.error("State update error", e);
-        }
+        do {
+            try {
+                doUpdateChunk(chunk);
+            } catch (Exception e) {
+                if (retries == 0) {
+                    logger.warn("State update error", e);
+                } else {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("State update failed, retrying (" + e.getMessage() + " )");
+                    }
+                }
+            }
+
+        } while (retries-->0);
     }
 
     private void doUpdateChunk(List<Message> chunk) {

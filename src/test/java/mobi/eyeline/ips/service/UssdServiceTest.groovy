@@ -50,7 +50,7 @@ class UssdServiceTest extends DbTestCase {
         // Dependencies
         surveyRepository = new SurveyRepository(db)
         surveyInvitationRepository = new SurveyInvitationRepository(db)
-        surveyService = new SurveyService(surveyRepository, surveyInvitationRepository)
+        surveyService = new SurveyService(surveyRepository, surveyInvitationRepository, invitationDeliveryRepository)
         respondentRepository = new RespondentRepository(db)
         answerRepository = new AnswerRepository(db)
         questionRepository = new QuestionRepository(db)

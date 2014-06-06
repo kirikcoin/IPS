@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.service;
 
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import org.slf4j.Logger;
@@ -12,11 +13,14 @@ public class SurveyService {
 
     private final SurveyRepository surveyRepository;
     private final SurveyInvitationRepository surveyInvitationRepository;
+    private final InvitationDeliveryRepository invitationDeliveryRepository;
 
     public SurveyService(SurveyRepository surveyRepository,
-                         SurveyInvitationRepository surveyInvitationRepository) {
+                         SurveyInvitationRepository surveyInvitationRepository,
+                         InvitationDeliveryRepository invitationDeliveryRepository) {
         this.surveyRepository = surveyRepository;
         this.surveyInvitationRepository = surveyInvitationRepository;
+        this.invitationDeliveryRepository = invitationDeliveryRepository;
     }
 
     /**
@@ -52,10 +56,16 @@ public class SurveyService {
     }
 
     /**
-     * @return Overall invitations count, including both manually specified and obtained from MADV,
+     * @return Overall invitations count, including:
+     * <ul>
+     *     <li>Obtained from MADV,</li>
+     *     <li>Actually performed deliveries,</li>
+     *     <li>Manually specified,</li>
+     * </ul>
      */
     public int countInvitations(Survey survey) {
         return survey.getStatistics().getSentCount() +
+                invitationDeliveryRepository.countSent(survey) +
                 surveyInvitationRepository.count(survey);
     }
 }

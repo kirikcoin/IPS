@@ -45,12 +45,16 @@ var page = {
     return false;
   },
 
+  getEditables: function() {
+    return $('#madvNotBound, #addInvitations, #addDelivery, .deliveryActions, .delInvitation, a.modify-left');
+  },
+
   disableEditables: function() {
-    $('#madvNotBound, #addInvitations, a.modify-left').hide();
+    this.getEditables().hide();
   },
 
   enableEditables: function() {
-    $('#madvNotBound, #addInvitations, a.modify-left').show();
+    this.getEditables().show();
   },
 
   onRemoveBindingClick: function() {

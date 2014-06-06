@@ -280,28 +280,31 @@
                                 columnClass="actionColumn">
                       <h:outputText value="#{row.stateString}"/>
 
-                      <h:outputText value=" ("
-                                    rendered="#{row.state!='COMPLETED'}"/>
+                      <span class="deliveryActions">
 
-                      <h:commandLink value="#{bundle['invitations.deliveries.table.status.activate']}"
-                                     onclick="return page.showActivateDialog('#{row.id}');"
-                                     rendered="#{row.state=='INACTIVE'}"/>
+                        <h:outputText value=" ("
+                                      rendered="#{row.state!='COMPLETED'}"/>
 
-                      <h:commandLink value="#{bundle['invitations.deliveries.table.status.pause']}"
-                                    onclick="return page.showPauseDialog('#{row.id}');"
-                                    rendered="#{row.state=='ACTIVE'}"/>
+                        <h:commandLink value="#{bundle['invitations.deliveries.table.status.activate']}"
+                                       onclick="return page.showActivateDialog('#{row.id}');"
+                                       rendered="#{row.state=='INACTIVE'}"/>
 
-                      <h:outputText value=" | "
-                                    rendered="#{row.state!='COMPLETED'}"/>
+                        <h:commandLink value="#{bundle['invitations.deliveries.table.status.pause']}"
+                                      onclick="return page.showPauseDialog('#{row.id}');"
+                                      rendered="#{row.state=='ACTIVE'}"/>
 
-                      <h:commandLink value="#{bundle['invitations.deliveries.table.status.edit']}"
-                                     action="#{invitationDeliveryController.fillDeliveryForEdit}"
-                                     rendered="#{row.state!='COMPLETED'}">
-                        <f:param name="modifiedDeliveryId" value="#{row.id}"/>
-                      </h:commandLink>
+                        <h:outputText value=" | "
+                                      rendered="#{row.state!='COMPLETED'}"/>
 
-                      <h:outputText value=")"
-                                    rendered="#{row.state!='COMPLETED'}"/>
+                        <h:commandLink value="#{bundle['invitations.deliveries.table.status.edit']}"
+                                       action="#{invitationDeliveryController.fillDeliveryForEdit}"
+                                       rendered="#{row.state!='COMPLETED'}">
+                          <f:param name="modifiedDeliveryId" value="#{row.id}"/>
+                        </h:commandLink>
+
+                        <h:outputText value=")"
+                                      rendered="#{row.state!='COMPLETED'}"/>
+                      </span>
                     </eye:column>
 
                     <f:facet name="innerData">
@@ -365,7 +368,8 @@
 
                     <eye:column name="action"
                                 title="#{bundle['invitations.block.invitations.delivery.table.action']}">
-                      <h:commandLink value="#{bundle['invitations.block.invitations.delivery.table.action.delete']}"
+                      <h:commandLink styleClass="delInvitation"
+                                     value="#{bundle['invitations.block.invitations.delivery.table.action.delete']}"
                                      onclick="return page.onDeleteInvite(#{row.id})"/>
                     </eye:column>
 
@@ -418,7 +422,7 @@
 
              <div style="margin-bottom: 10px"></div>
           </div>
-          <h:panelGrid columns="2" cellpadding="5">
+          <h:panelGrid columns="2">
 
             <h:outputLabel for="deliveryReceivers"
                            value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>

@@ -28,7 +28,7 @@ public class DeliveryService {
     private final StateUpdateThread stateUpdateThread;
 
     private final LinkedBlockingQueue<DeliveryWrapper> toFetch = new LinkedBlockingQueue<>();
-    private final DelayQueue<DeliveryWrapper> toSend = new DelayQueue<>();
+    private final DelayQueue<DeliveryWrapper.DelayedDeliveryWrapper> toSend = new DelayQueue<>();
     private final BlockingQueue<DeliveryWrapper.Message> toMark = new LinkedBlockingQueue<>();
 
     private final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
@@ -113,12 +113,8 @@ public class DeliveryService {
     private void stop(Integer invitationDeliveryId) {
         final DeliveryWrapper delivery = deliveries.get(invitationDeliveryId);
         if (delivery == null) {
-            throw new IllegalStateException("Unknown delivery, id = " + invitationDeliveryId);
-        }
-
-        if (delivery.isStopped()) {
-            throw new IllegalStateException("Attempt to stop an already stopped delivery, " +
-                    "id = " + invitationDeliveryId);
+            // Attempt to stop an already stopped delivery
+            return;
         }
 
         delivery.setStopped();
@@ -140,8 +136,9 @@ public class DeliveryService {
 
         DeliveryWrapper wrapper = deliveries.get(delivery.getId());
         if (wrapper != null && !wrapper.isStopped()) {
-            throw new IllegalStateException("Attempt to start an already running delivery, " +
-                    "id = " + delivery.getId());
+            // Attempt to start an already running delivery.
+            return;
+
         } else {
             wrapper = new DeliveryWrapper(delivery, messagesQueueSize);
             deliveries.put(delivery.getId(), wrapper);
@@ -150,7 +147,7 @@ public class DeliveryService {
         delivery.setCurrentPosition(0);
         invitationDeliveryRepository.update(delivery);
 
-        toSend.put(wrapper);
+        toSend.put(DeliveryWrapper.DelayedDeliveryWrapper.forSent(wrapper));
     }
 
     /**

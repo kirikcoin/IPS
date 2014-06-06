@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
 
-class DeliveryWrapper implements Delayed {
+class DeliveryWrapper {
 
     private static final double LOAD_FACTOR = 0.5;
 
@@ -46,35 +46,8 @@ class DeliveryWrapper implements Delayed {
         this.proposedDelayMillis = (long) (1.0 / messagesPerSecond) * 1000;
     }
 
-    /**
-     * @return Required delay till the next proposed send, positive or zero millis.
-     */
-    private long getCurrentDelay() {
-        final long now = System.currentTimeMillis();
-
-        if (lastSentMillis == 0) {
-            return 0;
-
-        } else {
-            final long proposedNext = lastSentMillis + proposedDelayMillis;
-            return Math.max(0, proposedNext - now);
-        }
-    }
-
-    void setDelay(long delayMillis) {
-        lastSentMillis = System.currentTimeMillis() + delayMillis;
-    }
-
-    @Override
-    public long getDelay(TimeUnit unit) {
-        return unit.convert(getCurrentDelay(), TimeUnit.MILLISECONDS);
-    }
-
-    @Override
-    public int compareTo(Delayed o) {
-        return Long.compare(
-                this.getDelay(TimeUnit.MILLISECONDS),
-                o.getDelay(TimeUnit.MILLISECONDS));
+    public long getProposedDelayMillis() {
+        return proposedDelayMillis;
     }
 
     public Message poll() {
@@ -85,12 +58,12 @@ class DeliveryWrapper implements Delayed {
         messages.add(message);
     }
 
-    public boolean shouldBeFilled() {
-        return (messages.size() / messagesQueueSize) < LOAD_FACTOR;
+    public int size() {
+        return messages.size();
     }
 
-    public int getFreeSize() {
-        return Math.max(0, messagesQueueSize - messages.size());
+    public boolean shouldBeFilled() {
+        return (size() / messagesQueueSize) < LOAD_FACTOR;
     }
 
     public int getMessagesQueueSize() {
@@ -100,7 +73,7 @@ class DeliveryWrapper implements Delayed {
     /**
      * Updates the last sent timestamp.
      */
-    public DeliveryWrapper onMessageSent() {
+    DeliveryWrapper onMessageSent() {
         lastSentMillis = System.currentTimeMillis();
         return this;
     }
@@ -117,8 +90,8 @@ class DeliveryWrapper implements Delayed {
         return empty;
     }
 
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
+    public void setEmpty() {
+        this.empty = true;
     }
 
     @Override
@@ -165,6 +138,47 @@ class DeliveryWrapper implements Delayed {
                     "id=" + id +
                     ", msisdn='" + msisdn + '\'' +
                     '}';
+        }
+    }
+
+    public static class DelayedDeliveryWrapper implements Delayed {
+
+        private final DeliveryWrapper deliveryWrapper;
+
+        private final long from = System.currentTimeMillis();
+        private final long delayMillis;
+
+        private DelayedDeliveryWrapper(DeliveryWrapper deliveryWrapper,
+                                         long delayMillis) {
+            this.deliveryWrapper = deliveryWrapper;
+            this.delayMillis = delayMillis;
+        }
+
+        @Override
+        public long getDelay(@SuppressWarnings("NullableProblems") TimeUnit unit) {
+            return unit.convert(
+                    Math.max(from + delayMillis - System.currentTimeMillis(), 0),
+                    TimeUnit.MILLISECONDS);
+        }
+
+        @Override
+        public int compareTo(@SuppressWarnings("NullableProblems") Delayed o) {
+            return Long.compare(
+                    this.getDelay(TimeUnit.MILLISECONDS),
+                    o.getDelay(TimeUnit.MILLISECONDS));
+        }
+
+        public DeliveryWrapper getDeliveryWrapper() {
+            return deliveryWrapper;
+        }
+
+        public static DelayedDeliveryWrapper forSent(DeliveryWrapper wrapper) {
+            return new DelayedDeliveryWrapper(wrapper, wrapper.getProposedDelayMillis());
+        }
+
+        public static DelayedDeliveryWrapper forDelay(DeliveryWrapper wrapper,
+                                                      long millis) {
+            return new DelayedDeliveryWrapper(wrapper, millis);
         }
     }
 }

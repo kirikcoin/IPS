@@ -59,18 +59,18 @@
   </section>
 
   <section name="ui">
-    <param name="skin.default" type="string">mobak</param>
+    <param name="skin.default" type="string">araks</param>
   </section>
 
   <section name="deliveries">
     <!--<param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
     <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>-->
 
-    <param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
-    <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>
+    <!--<param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
+    <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>-->
 
-    <!--<param name="push.ussd.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-push</param>
-    <param name="push.nidialog.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-srvpush</param>-->
+    <param name="push.ussd.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-push</param>
+    <param name="push.nidialog.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-srvpush</param>
 
     <param name="push.threads.number" type="int">2</param>
     <param name="push.message.queue" type="int">100</param>
