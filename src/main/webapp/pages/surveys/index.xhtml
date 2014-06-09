@@ -41,7 +41,7 @@
               <h:outputLabel value="#{bundle['search.label']}"/>
               <eye:inputText id="search"
                              value="#{surveyListController.search}"
-                             maxlength="70"
+                             maxlength="20"
                              onkeydown="return page.filterKeyDown(event)"/>
             </h:panelGroup>
           </h:panelGrid>
@@ -117,7 +117,7 @@
           <h:panelGrid columns="2" id="newSurveyTable">
             <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>
             <eye:inputText id="newSurveyTitle"
-                           value="#{surveyListController.newSurveyTitle}" maxlength="70"/>
+                           value="#{surveyListController.newSurveyTitle}" maxlength="50"/>
 
             <h:outputLabel value="#{bundle['survey.properties.period']}" for="newSurveyStartDate"/>
 

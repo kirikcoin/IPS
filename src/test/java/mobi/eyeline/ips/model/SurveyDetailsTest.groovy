@@ -23,19 +23,19 @@ class SurveyDetailsTest extends ValidationTestCase {
 
     void test4() {
         def violations =
-                validate new SurveyDetails(title: 't'*71,endText: 'e'*71)
+                validate new SurveyDetails(title: 't'*51,endText: 'e'*71)
         assertThat violations, hasSize(2)
     }
 
     void test5() {
         def violations =
-                validate new SurveyDetails(title: 't'*71,endText: 'e'*69)
+                validate new SurveyDetails(title: 't'*51,endText: 'e'*69)
         assertThat violations, hasSize(1)
     }
 
     void test6() {
         def violations =
-                validate new SurveyDetails(title: 't'*69, endText: 'e'*69)
+                validate new SurveyDetails(title: 't'*49, endText: 'e'*69)
         assertThat violations, hasSize(0)
     }
 }
