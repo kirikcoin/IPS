@@ -2,12 +2,10 @@ package mobi.eyeline.ips.service
 
 import mobi.eyeline.ips.util.CsvParseService
 
-/**
- * Created by dizan on 09.06.14.
- */
+import static mobi.eyeline.ips.util.CsvParseService.*
+
 class CsvParseServiceTest extends GroovyTestCase {
     CsvParseService csvParseService
-    File file
 
     void setUp() {
         super.setUp()
@@ -31,45 +29,29 @@ class CsvParseServiceTest extends GroovyTestCase {
         def lines = getLines """+79130000001
                                 +79130000002"""
 
-        assertEquals(['79130000001','79130000002'],lines)
+        assertEquals(['79130000001', '79130000002'], lines)
     }
 
     void testInvalidFile() {
-
-        shouldFail(CsvParseService.InvalidMsisdnFormatException) {
-            getLines """79130000001
+        assertEquals new InvalidMsisdnFormatException(2, 'someString'),
+                groovy.test.GroovyAssert.shouldFail(InvalidMsisdnFormatException, {
+                    getLines """79130000001
                         someString"""
-        }
-
-        try {
-            getLines """79130000001
-                        someString"""
-        } catch (CsvParseService.InvalidMsisdnFormatException e) {
-            assertEquals('someString', e.lineContent)
-            assertEquals(2, e.lineNumber)
-        }
+                })
     }
 
     void testDuplicateNumbers() {
-        shouldFail(CsvParseService.DuplicateMsisdnException) {
-            getLines """79130000001
+        assertEquals new DuplicateMsisdnException(3, '79130000001'),
+                groovy.test.GroovyAssert.shouldFail(DuplicateMsisdnException, {
+                    getLines """79130000001
                         79130000002
                         79130000001"""
-        }
-
-        try {
-            getLines """79130000001
-                        79130000002
-                        79130000001"""
-        } catch (CsvParseService.DuplicateMsisdnException e) {
-            assertEquals('79130000001', e.lineContent)
-            assertEquals(3, e.lineNumber)
-        }
+                })
     }
 
     void testEmptyFile() {
         def lines = getLines """#someThing"""
 
-        assertEquals([],lines)
+        assertEquals([], lines)
     }
 }

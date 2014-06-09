@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.util
 
+import groovy.transform.EqualsAndHashCode
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.web.validators.PhoneValidator
 
@@ -39,6 +40,7 @@ class CsvParseService {
         return lines.asList()
     }
 
+    @EqualsAndHashCode
     static abstract class CsvLineException extends Exception {
         final int lineNumber
         final String lineContent
