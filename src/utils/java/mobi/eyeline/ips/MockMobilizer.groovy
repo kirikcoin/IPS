@@ -1,3 +1,4 @@
+#!/usr/bin/env /export/home/user/.groovy-2.2.1/bin/groovy
 package mobi.eyeline.ips
 
 import com.sun.net.httpserver.HttpExchange
@@ -19,6 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue
 @Grab(group = 'org.apache.httpcomponents', module = 'httpclient', version = '4.2.4')
 class Mock {
 
+    // private static final String SENDER_URL = 'http://192.168.3.209:8080/inform'
     private static final String SENDER_URL = 'http://localhost:8080/inform'
     private static final int N_REPORTING_THREADS = 8
 
@@ -68,22 +70,28 @@ class Mock {
         void run() {
             while (!interrupted) {
                 def msg = messages.take()
-                processMessage(msg, 'sms', true, ((msg.id % 2) + 1) as int)
+                try {
+                    processMessage(msg, 'sms', true, ((msg.id % 2) + 1) as int)
+                } catch (Exception e) {
+                    println "${msg.id.toString().padRight(8)}" +
+                            " ${System.currentTimeMillis()}" +
+                            " ERROR ${e.message}"
+                }
             }
         }
 
-        private void processMessage(Message message,
+        private void processMessage(Message msg,
                                     String protocol,
                                     boolean isFinal,
                                     int status) {
 
-            def url = "$SENDER_URL?resource_id=${message.id}&protocol=$protocol&status=$status"
+            def url = "$SENDER_URL?resource_id=${msg.id}&protocol=$protocol&status=$status"
             if (isFinal) {
                 url += '&final=true'
             }
 
             final HttpResponse response = new DefaultHttpClient().execute new HttpGet(url)
-            println "${message.id.toString().padRight(8)}" +
+            println "${msg.id.toString().padRight(8)}" +
                     " ${System.currentTimeMillis()}" +
                     " ${response.statusLine.statusCode}"
 
@@ -96,6 +104,7 @@ class Mock {
             Thread.start { srv.run() }
             srv.runReporters()
         }
+        println 'Started'
     }
 }
 
