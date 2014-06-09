@@ -32,6 +32,8 @@ public interface Config {
     public int getPushThreadsNumber();
     public int getMessageQueueBaseline();
     public int getStateUpdateBatchSize();
+    public int getRetryAttempts();
+    public long getExpirationDelaySeconds();
 
     public String getSkinDefault();
 
@@ -66,6 +68,8 @@ public interface Config {
         private final int pushThreadsNumber;
         private final int messageQueueBaseline;
         private final int stateUpdateBatchSize;
+        private final int retryAttempts;
+        private final long expirationDelaySeconds;
 
         private final boolean exposeJmxBeans;
 
@@ -112,6 +116,8 @@ public interface Config {
                 pushThreadsNumber = deliveries.getInt("push.threads.number");
                 messageQueueBaseline = deliveries.getInt("push.message.queue");
                 stateUpdateBatchSize = deliveries.getInt("push.update.batch.size");
+                retryAttempts = deliveries.getInt("retry.attempts");
+                expirationDelaySeconds = deliveries.getLong("expiration.delay.seconds");
             }
 
             final XmlConfigSection other = xmlConfig.getSection("other");
@@ -120,26 +126,32 @@ public interface Config {
             }
         }
 
+        @Override
         public String getSmtpHost() {
             return smtpHost;
         }
 
+        @Override
         public int getSmtpPort() {
             return smtpPort;
         }
 
+        @Override
         public String getSmtpUsername() {
             return smtpUsername;
         }
 
+        @Override
         public String getSmtpPassword() {
             return smtpPassword;
         }
 
+        @Override
         public String getMailFrom() {
             return mailFrom;
         }
 
+        @Override
         public String getLoginUrl() {
             return loginUrl;
         }
@@ -149,42 +161,52 @@ public interface Config {
             return databaseProperties;
         }
 
+        @Override
         public boolean isMadvUpdateEnabled() {
             return madvUpdateEnabled;
         }
 
+        @Override
         public int getMadvUpdateDelayMinutes() {
             return madvUpdateDelayMinutes;
         }
 
+        @Override
         public String getMadvUrl() {
             return madvUrl;
         }
 
+        @Override
         public String getMadvUserLogin() {
             return madvUserLogin;
         }
 
+        @Override
         public String getMadvUserPassword() {
             return madvUserPassword;
         }
 
+        @Override
         public String getSadsPushUrl() {
             return sadsPushUrl;
         }
 
+        @Override
         public String getDeliveryUssdPushUrl() {
             return deliveryUssdPushUrl;
         }
 
+        @Override
         public String getDeliveryNIPushUrl() {
             return deliveryNIPushUrl;
         }
 
+        @Override
         public int getSadsMaxSessions() {
             return sadsMaxSessions;
         }
 
+        @Override
         public String getSkinDefault() {
             return skinDefault;
         }
@@ -199,8 +221,19 @@ public interface Config {
             return messageQueueBaseline;
         }
 
+        @Override
         public int getStateUpdateBatchSize() {
             return stateUpdateBatchSize;
+        }
+
+        @Override
+        public int getRetryAttempts() {
+            return retryAttempts;
+        }
+
+        @Override
+        public long getExpirationDelaySeconds() {
+            return expirationDelaySeconds;
         }
 
         @Override

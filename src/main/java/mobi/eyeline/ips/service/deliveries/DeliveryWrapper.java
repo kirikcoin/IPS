@@ -95,10 +95,13 @@ class DeliveryWrapper {
                 '}';
     }
 
+    // Single thread access
     public static class Message {
         private final int id;
         private final String msisdn;
         private DeliverySubscriber.State state;
+
+        private int sendAttempts = 0;
 
         public Message(int id, String msisdn) {
             this.id = id;
@@ -126,11 +129,16 @@ class DeliveryWrapper {
             return setState(sent ? SENT : UNDELIVERED);
         }
 
+        public int incrementAndGet() {
+            return ++sendAttempts;
+        }
+
         @Override
         public String toString() {
             return "Message{" +
                     "id=" + id +
                     ", msisdn='" + msisdn + '\'' +
+                    ", sendAttempts=" + sendAttempts +
                     '}';
         }
     }

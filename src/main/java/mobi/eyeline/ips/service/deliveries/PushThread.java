@@ -21,6 +21,7 @@ class PushThread extends LoopThread {
 
     private static final long WAIT_TO_FILL = TimeUnit.SECONDS.toMillis(2);
 
+    private final int retryAttempts;
     private final DelayQueue<DelayedDeliveryWrapper> toSend;
     private final BlockingQueue<DeliveryWrapper> toFetch;
     private final BlockingQueue<DeliveryWrapper.Message> toMark;
@@ -31,6 +32,8 @@ class PushThread extends LoopThread {
 
     public PushThread(String name,
 
+                      int retryAttempts,
+
                       DelayQueue<DelayedDeliveryWrapper> toSend,
                       BlockingQueue<DeliveryWrapper> toFetch,
                       BlockingQueue<DeliveryWrapper.Message> toMark,
@@ -40,6 +43,8 @@ class PushThread extends LoopThread {
                       InvitationDeliveryRepository invitationDeliveryRepository) {
 
         super(name);
+
+        this.retryAttempts = retryAttempts;
 
         this.toSend = toSend;
         this.toFetch = toFetch;
@@ -118,11 +123,11 @@ class PushThread extends LoopThread {
                 toSend.put(DelayedDeliveryWrapper.forSent(delivery));
             }
 
-            doMark(message, true);
+            onSentAttempt(delivery, message, true);
 
         } catch (IOException e) {
             logger.warn("Message sending failed", e);
-            doMark(message, false);
+            onSentAttempt(delivery, message, false);
         }
     }
 
@@ -147,8 +152,21 @@ class PushThread extends LoopThread {
         }
     }
 
-    private void doMark(DeliveryWrapper.Message message,
-                        boolean success) throws InterruptedException {
-        toMark.put(message.setSent(success));
+    private void onSentAttempt(DeliveryWrapper deliveryWrapper,
+                               DeliveryWrapper.Message message,
+                               boolean success) throws InterruptedException {
+
+        if (message.incrementAndGet() >= retryAttempts | success) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Scheduling to mark [" + message + "]");
+            }
+            toMark.put(message.setSent(success));
+
+        } else {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Rescheduling on failure [" + message + "]");
+            }
+            deliveryWrapper.put(message);
+        }
     }
 }

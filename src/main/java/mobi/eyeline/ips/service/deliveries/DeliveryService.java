@@ -58,6 +58,7 @@ public class DeliveryService {
         final int pushThreadsNumber = config.getPushThreadsNumber();
         for (int i = 0; i < pushThreadsNumber; i++) {
             allThreads.add(new PushThread("push-" + i,
+                    config.getRetryAttempts(),
                     toSend,
                     toFetch,
                     toMark,
@@ -69,6 +70,10 @@ public class DeliveryService {
         allThreads.add(new FetchThread("push-fetch", invitationDeliveryRepository, toFetch));
         allThreads.add(stateUpdateThread = new StateUpdateThread(
                 "push-state", config, toMark, deliverySubscriberRepository));
+        allThreads.add(new ExpirationThread(
+                "push-expire",
+                config.getExpirationDelaySeconds(),
+                deliverySubscriberRepository));
     }
 
     // XXX:DEBUG

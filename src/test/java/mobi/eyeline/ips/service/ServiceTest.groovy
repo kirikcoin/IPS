@@ -22,7 +22,10 @@ class ServiceTest extends GroovyTestCase {
             configClass.demand.getDeliveryNIPushUrl() { '' }
             configClass.demand.getMessageQueueBaseline() { 10 }
             configClass.demand.getPushThreadsNumber() { 2 }
+            configClass.demand.getRetryAttempts() { 3 }
+            configClass.demand.getRetryAttempts() { 3 }
             configClass.demand.getStateUpdateBatchSize() { 10 }
+            configClass.demand.getExpirationDelaySeconds() { 600 }
 
             configClass.proxyDelegateInstance() as Config
         }
