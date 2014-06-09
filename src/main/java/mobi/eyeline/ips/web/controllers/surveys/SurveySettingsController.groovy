@@ -85,6 +85,7 @@ class SurveySettingsController extends BaseSurveyController {
         persistedSurvey.startDate = survey.startDate
         persistedSurvey.endDate = survey.endDate
         persistedSurvey.statistics.accessNumber = survey.statistics.accessNumber
+        persistedSurvey.client = survey.client
 
         surveyRepository.update(persistedSurvey)
         goToSurvey(surveyId)
