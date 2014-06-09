@@ -10,10 +10,10 @@ import mobi.eyeline.ips.web.controllers.BaseController
  * date: 20.01.2014
  */
 @CompileStatic
-public class UserSessionController extends BaseController {
+class UserSessionController extends BaseController {
     private final UserRepository userRepository = Services.instance().userRepository
 
-    public String logout() {
+    String logout() {
         getHttpSession(false)?.invalidate()
 
         return "LOGIN"
@@ -24,7 +24,7 @@ public class UserSessionController extends BaseController {
     //
 
 
-    public boolean isSurveyModificationAllowed() { !isClientRole() }
-    public boolean isSurveyViewAllowed() { isClientRole() || isManagerRole() }
-
+    boolean isSurveyModificationAllowed() { !isClientRole() }
+    boolean isSurveyViewAllowed() { isClientRole() || isManagerRole() }
+    boolean isInvitationDeliveryAllowed() { getCurrentUser().canSendInvitations }
 }

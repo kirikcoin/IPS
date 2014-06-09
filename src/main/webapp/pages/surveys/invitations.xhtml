@@ -280,7 +280,8 @@
                                 columnClass="actionColumn">
                       <h:outputText value="#{row.stateString}"/>
 
-                      <span class="deliveryActions">
+                      <h:panelGroup styleClass="deliveryActions"
+                                    rendered="#{userSession.invitationDeliveryAllowed}">
 
                         <h:outputText value=" ("
                                       rendered="#{row.state!='COMPLETED'}"/>
@@ -304,7 +305,7 @@
 
                         <h:outputText value=")"
                                       rendered="#{row.state!='COMPLETED'}"/>
-                      </span>
+                      </h:panelGroup>
                     </eye:column>
 
                     <f:facet name="innerData">
@@ -314,7 +315,7 @@
                 </eye:dataTable>
               </h:panelGroup>
 
-              <eye:buttons id="addDelivery">
+              <eye:buttons id="addDelivery" rendered="#{userSession.invitationDeliveryAllowed}">
                 <eye:button>
                   <h:commandLink value="#{bundle['invitations.deliveries.button.add']}"
                                  action="#{invitationDeliveryController.fillDeliveryForEdit}"
@@ -324,6 +325,11 @@
 
                 <eye:space/>
               </eye:buttons>
+
+              <h:panelGroup styleClass="invitationDeliveryPermMessage"
+                            rendered="#{not userSession.invitationDeliveryAllowed}">
+                <h:outputText value="#{bundle['invitations.deliveries.no.permission']}"/>
+              </h:panelGroup>
 
             </eye:collapsingGroup>
 
