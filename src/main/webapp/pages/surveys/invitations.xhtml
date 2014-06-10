@@ -411,7 +411,7 @@
                            value="#{bundle['invitations.deliveries.dialog.type']}"/>
             <h:selectOneMenu id="deliveryType"
                              value="#{invitationDeliveryController.invitationDelivery.type}"
-                             disabled="#{!invitationDeliveryController.invitationDelivery.state.editable}">
+                             disabled="#{invitationDeliveryController.modifiedDeliveryId and not invitationDeliveryController.invitationDelivery.state.editable}">
               <f:selectItems value="#{invitationDeliveryController.types}"/>
             </h:selectOneMenu>
           </h:panelGrid>
