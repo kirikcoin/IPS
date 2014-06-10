@@ -1,5 +1,24 @@
 @import "../../../styles/functions.less";
 
+// Custom fonts ---------------------------------------------------------------------------------------------------------
+
+@font-face {
+  font-family: 'Georgia';
+  font-style: normal;
+  src: url(../../../styles/georgia.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Georgia';
+  font-style: italic;
+  src: url(../../../styles/georgiai.woff) format('woff');
+}
+
+@font-face {
+  font-family: 'Georgia';
+  font-weight: bold;
+  src: url(../../../styles/georgiab.woff) format('woff');
+}
 
 // ОБЩИЕ СТИЛИ ---------------------------------------------------------------------------------------------------------
 
@@ -10,8 +29,6 @@ body {
 a {
   color: #78a0bb;
 }
-
-
 
 
 // ФОН СТРАНИЦЫ --------------------------------------------------------------------------------------------------------
@@ -194,6 +211,8 @@ div.menu-bar.button-green>a:first-child:hover {
 
 div.eyeline_inputDate {
   font-family: Georgia, serif;
+//  font-family: serif;
+//  font-family: Georgia, Times, "Times New Roman", serif;
 }
 
 input.hasDatepicker {
