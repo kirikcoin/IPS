@@ -10,9 +10,7 @@
     <param name="smtp.password" type="string">password</param>
 
     <param name="from" type="string">ips@ips.eyeline.mobi</param>
-    <!--<param name="login.url" type="string">http://localhost:8080</param>-->
     <param name="login.url" type="string">http://localhost:39932</param>
-
   </section>
 
   <section name="database">
@@ -56,10 +54,7 @@
   <section name="sads">
     <param name="push.url" type="string">http://localhost/demo/push?service=eyeline.rcsilv</param>
     <param name="max.sessions" type="int">4</param>
-  </section>
-
-  <section name="ui">
-    <param name="skin.default" type="string">araks</param>
+    <param name="base.survey.url" type="string">http://localhost:39932</param>
   </section>
 
   <section name="deliveries">
@@ -82,5 +77,18 @@
 
   <section name="other">
     <param name="expose.jmx.beans" type="boolean">true</param>
+  </section>
+
+  <section name="locations">
+    <section name="mobak">
+      <param name="order" type="int">0</param>
+      <param name="pattern" type="string">.*mobak.*</param>
+      <param name="skin" type="string">mobak</param>
+    </section>
+    <section name="default">
+      <param name="order" type="int">100</param>
+      <param name="pattern" type="string">.*</param>
+      <param name="skin" type="string">araks</param>
+    </section>
   </section>
 </config>
