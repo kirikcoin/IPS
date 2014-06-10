@@ -1,4 +1,4 @@
-package mobi.eyeline.ips.util
+package mobi.eyeline.ips.service
 
 import groovy.transform.EqualsAndHashCode
 import groovy.util.logging.Slf4j

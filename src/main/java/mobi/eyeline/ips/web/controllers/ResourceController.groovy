@@ -1,11 +1,13 @@
 package mobi.eyeline.ips.web.controllers
 
+import groovy.transform.CompileStatic
 import mobi.eyeline.ips.service.Services
 
 import javax.faces.context.FacesContext
 
 import static mobi.eyeline.ips.web.BuildVersion.BUILD_VERSION
 
+@CompileStatic
 class ResourceController implements Serializable {
 
     /**
@@ -26,5 +28,5 @@ class ResourceController implements Serializable {
      * @return Skin-specific stylesheet path part value.
      */
     @SuppressWarnings("GrMethodMayBeStatic")
-    String getSkin() { Services.instance().skinService.defaultSkin }
+    String getSkin() { Services.instance().locationService.skin }
 }

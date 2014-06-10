@@ -25,8 +25,8 @@ class UserServiceTest extends DbTestCase {
     @SuppressWarnings("GroovyMissingReturnStatement")
     static class StubTemplateService extends TemplateService {
 
-        StubTemplateService(Config properties) {
-            super(properties)
+        StubTemplateService(Config properties, LocationService locationService) {
+            super(properties, locationService)
         }
 
         String formatUserRegistration(User u, String s) { fail() }
@@ -48,10 +48,10 @@ class UserServiceTest extends DbTestCase {
         }
         userRepository = new UserRepository(db)
 
-        def templateService = new StubTemplateService(config) {
-            String formatPasswordRestore(User u, String s) { "" }
-            String formatUserDeactivation(User u) { "" }
-            String formatUserActivation(User u) { "" }
+        def templateService = new StubTemplateService(config, null) {
+            String formatPasswordRestore(User u, String s) { '' }
+            String formatUserDeactivation(User u) { '' }
+            String formatUserActivation(User u) { '' }
         }
         mailService = new MailService(templateService, senderProxy)
         userService = new UserService(userRepository, mailService)

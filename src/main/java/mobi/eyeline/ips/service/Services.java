@@ -1,7 +1,6 @@
 package mobi.eyeline.ips.service;
 
 
-import com.j256.simplejmx.server.JmxServer;
 import mobi.eyeline.ips.external.MadvSoapApi;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
@@ -18,9 +17,7 @@ import mobi.eyeline.ips.repository.UserRepository;
 import mobi.eyeline.ips.service.deliveries.DeliveryPushService;
 import mobi.eyeline.ips.service.deliveries.DeliveryService;
 import mobi.eyeline.ips.service.deliveries.NotificationService;
-import mobi.eyeline.ips.util.CsvParseService;
-
-import javax.management.JMException;
+import mobi.eyeline.ips.service.CsvParseService;
 
 /**
  * Service lookup.
@@ -44,6 +41,7 @@ public class Services {
     private final DeliverySubscriberRepository deliverySubscriberRepository;
 
     private final SurveyService surveyService;
+    private final LocationService locationService;
     private final TemplateService templateService;
     private final MailService mailService;
     private final UserService userService;
@@ -53,7 +51,6 @@ public class Services {
     private final PushService pushService;
     private final SegmentationService segmentationService;
     private final ResultsExportService resultsExportService;
-    private final SkinService skinService;
     private final DeliveryPushService deliveryPushService;
     private final DeliveryService deliveryService;
     private final NotificationService notificationService;
@@ -77,8 +74,11 @@ public class Services {
         surveyService = new SurveyService(
                 surveyRepository,
                 surveyInvitationRepository, invitationDeliveryRepository);
-        templateService = new TemplateService(config);
 
+        locationService =
+                new LocationService(config.getLocationProperties(), config.getLoginUrl());
+
+        templateService = new TemplateService(config, locationService);
         mailService = new MailService(templateService,
                 new SmtpSender(
                         config.getSmtpHost(),
@@ -106,7 +106,6 @@ public class Services {
         pushService = new PushService(config);
         segmentationService = new SegmentationService();
         resultsExportService = new ResultsExportService(answerRepository, 100);
-        skinService = new SkinService(config.getSkinDefault());
 
         deliveryPushService = new DeliveryPushService(config);
         deliveryService = new DeliveryService(
@@ -183,6 +182,10 @@ public class Services {
         return surveyService;
     }
 
+    public LocationService getLocationService() {
+        return locationService;
+    }
+
     public MailService getMailService() {
         return mailService;
     }
@@ -209,10 +212,6 @@ public class Services {
 
     public ResultsExportService getResultsExportService() {
         return resultsExportService;
-    }
-
-    public SkinService getSkinService() {
-        return skinService;
     }
 
     public DeliveryService getDeliveryService() {

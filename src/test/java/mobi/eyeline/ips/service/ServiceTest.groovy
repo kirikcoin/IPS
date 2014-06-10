@@ -9,14 +9,15 @@ class ServiceTest extends GroovyTestCase {
         def newConfig = {
             def configClass = new MockFor(Config)
             configClass.demand.getDatabaseProperties() { new Properties() }
+            configClass.demand.getLocationProperties() { null }
+            configClass.demand.getLoginUrl() { '' }
             configClass.demand.getSmtpHost() { '' }
             configClass.demand.getSmtpPort() { 0 }
             configClass.demand.getSmtpUsername() { '' }
             configClass.demand.getSmtpPassword() { '' }
             configClass.demand.getMailFrom() { '' }
-            configClass.demand.getLoginUrl() { '' }
+            configClass.demand.getBaseSurveyUrl() { '' }
             configClass.demand.getSadsMaxSessions() { 1 }
-            configClass.demand.getSkinDefault() { '' }
             configClass.demand.getSadsMaxSessions() { 1 }
             configClass.demand.getDeliveryUssdPushUrl() { '' }
             configClass.demand.getDeliveryNIPushUrl() { '' }

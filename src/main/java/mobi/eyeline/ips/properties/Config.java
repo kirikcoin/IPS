@@ -4,6 +4,10 @@ import com.eyeline.utils.config.ConfigException;
 import com.eyeline.utils.config.xml.XmlConfig;
 import com.eyeline.utils.config.xml.XmlConfigSection;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Properties;
 
 public interface Config {
@@ -25,6 +29,9 @@ public interface Config {
 
     public String getSadsPushUrl();
     public int getSadsMaxSessions();
+    public String getBaseSurveyUrl();
+
+    public List<LocationProperties> getLocationProperties();
 
     public String getDeliveryUssdPushUrl();
     public String getDeliveryNIPushUrl();
@@ -34,8 +41,6 @@ public interface Config {
     public int getStateUpdateBatchSize();
     public int getRetryAttempts();
     public long getExpirationDelaySeconds();
-
-    public String getSkinDefault();
 
     public boolean getExposeJmxBeans();
 
@@ -60,8 +65,9 @@ public interface Config {
 
         private final String sadsPushUrl;
         private final int sadsMaxSessions;
+        private final String baseSurveyUrl;
 
-        private final String skinDefault;
+        private final List<LocationProperties> locationProperties = new ArrayList<>();
 
         private final String deliveryUssdPushUrl;
         private final String deliveryNIPushUrl;
@@ -82,7 +88,6 @@ public interface Config {
                 smtpUsername = mail.getString("smtp.username");
                 smtpPassword = mail.getString("smtp.password");
                 mailFrom = mail.getString("from");
-
                 loginUrl = mail.getString("login.url");
             }
 
@@ -102,11 +107,33 @@ public interface Config {
             {
                 sadsPushUrl = sads.getString("push.url");
                 sadsMaxSessions = sads.getInt("max.sessions", 4);
+                baseSurveyUrl = sads.getString("base.survey.url");
             }
 
-            final XmlConfigSection ui = xmlConfig.getSection("ui");
+            final XmlConfigSection locations = xmlConfig.getSection("locations");
             {
-                skinDefault = ui.getString("skin.default");
+                // Sections are unsorted (due to HashMap usage in general_utils implementation),
+                // hence we sort them using this artificial `order' parameter.
+                // Consider making sections and properties ordered as declared.
+                final List<XmlConfigSection> sections =
+                        new ArrayList<>(locations.sections());
+                Collections.sort(sections, new Comparator<XmlConfigSection>() {
+                    @Override
+                    public int compare(XmlConfigSection o1, XmlConfigSection o2) {
+                        try {
+                            return Integer.compare(o1.getInt("order"), o2.getInt("order"));
+                        } catch (ConfigException e) {
+                            throw new RuntimeException(e.getMessage(), e);
+                        }
+                    }
+                });
+
+                for (XmlConfigSection section : sections) {
+                    final LocationProperties parsed = new LocationProperties(
+                            section.getString("pattern"),
+                            section.getString("skin"));
+                    locationProperties.add(parsed);
+                }
             }
 
             final XmlConfigSection deliveries = xmlConfig.getSection("deliveries");
@@ -192,6 +219,21 @@ public interface Config {
         }
 
         @Override
+        public int getSadsMaxSessions() {
+            return sadsMaxSessions;
+        }
+
+        @Override
+        public String getBaseSurveyUrl() {
+            return baseSurveyUrl;
+        }
+
+        @Override
+        public List<LocationProperties> getLocationProperties() {
+            return locationProperties;
+        }
+
+        @Override
         public String getDeliveryUssdPushUrl() {
             return deliveryUssdPushUrl;
         }
@@ -199,16 +241,6 @@ public interface Config {
         @Override
         public String getDeliveryNIPushUrl() {
             return deliveryNIPushUrl;
-        }
-
-        @Override
-        public int getSadsMaxSessions() {
-            return sadsMaxSessions;
-        }
-
-        @Override
-        public String getSkinDefault() {
-            return skinDefault;
         }
 
         @Override

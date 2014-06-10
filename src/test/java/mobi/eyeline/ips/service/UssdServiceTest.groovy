@@ -45,7 +45,7 @@ class UssdServiceTest extends DbTestCase {
 
         // Configuration
         configClass = new MockFor(Config)
-        configClass.demand.getLoginUrl() { 'http://localhost:39932' }
+        configClass.demand.getBaseSurveyUrl() { 'http://localhost:39932' }
         config = configClass.proxyDelegateInstance() as Config
 
         // Dependencies

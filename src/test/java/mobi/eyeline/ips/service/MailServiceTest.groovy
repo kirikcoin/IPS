@@ -20,8 +20,8 @@ class MailServiceTest extends GroovyTestCase {
     @SuppressWarnings("GroovyMissingReturnStatement")
     static class StubTemplateService extends TemplateService {
 
-        StubTemplateService(Config properties) {
-            super(properties)
+        StubTemplateService(Config properties, LocationService locationService) {
+            super(properties, locationService)
         }
 
         String formatUserRegistration(User user, String rawPassword) { fail() }
@@ -54,7 +54,7 @@ class MailServiceTest extends GroovyTestCase {
     }
 
     void testSendUserRegistration() {
-        def templateService = new StubTemplateService(config) {
+        def templateService = new StubTemplateService(config, null) {
             String formatUserRegistration(User u, String s) { "" }
         }
 
@@ -63,7 +63,7 @@ class MailServiceTest extends GroovyTestCase {
     }
 
     void testSendUserModified1() {
-        def templateService = new StubTemplateService(config) {
+        def templateService = new StubTemplateService(config, null) {
             String formatUserModified(User user) { "" }
         }
 
@@ -72,7 +72,7 @@ class MailServiceTest extends GroovyTestCase {
     }
 
     void testSendUserModified2() {
-        def templateService = new StubTemplateService(config) {
+        def templateService = new StubTemplateService(config, null) {
             String formatUserModified(User user) { "" }
         }
 
@@ -81,7 +81,7 @@ class MailServiceTest extends GroovyTestCase {
     }
 
     void testSendUserDeactivation() {
-        def templateService = new StubTemplateService(config) {
+        def templateService = new StubTemplateService(config, null) {
             String formatUserDeactivation(User u) { "" }
         }
 
@@ -90,7 +90,7 @@ class MailServiceTest extends GroovyTestCase {
     }
 
     void testSendUserActivation() {
-        def templateService = new StubTemplateService(config) {
+        def templateService = new StubTemplateService(config, null) {
             String formatUserActivation(User user) { "" }
         }
 
@@ -99,7 +99,7 @@ class MailServiceTest extends GroovyTestCase {
     }
 
     void testSendPasswordRestore() {
-        def templateService = new StubTemplateService(config) {
+        def templateService = new StubTemplateService(config, null) {
             String formatPasswordRestore(User u, String s) { "" }
         }
 

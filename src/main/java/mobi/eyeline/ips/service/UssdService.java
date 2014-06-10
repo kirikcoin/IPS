@@ -66,7 +66,7 @@ public class UssdService implements MessageHandler {
         this.questionRepository = questionRepository;
         this.questionOptionRepository = questionOptionRepository;
 
-        baseUrl = config.getLoginUrl();
+        baseUrl = config.getBaseSurveyUrl();
     }
 
     public UssdResponseModel handle(Map<String, String[]> parameters)

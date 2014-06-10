@@ -1,8 +1,6 @@
 package mobi.eyeline.ips.service
 
-import mobi.eyeline.ips.util.CsvParseService
-
-import static mobi.eyeline.ips.util.CsvParseService.*
+import static CsvParseService.*
 
 class CsvParseServiceTest extends GroovyTestCase {
     CsvParseService csvParseService
