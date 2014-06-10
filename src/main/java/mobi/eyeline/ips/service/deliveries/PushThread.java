@@ -145,7 +145,7 @@ class PushThread extends LoopThread {
                 deliveryPushService.niDialog(
                         message.getId(),
                         message.getMsisdn(),
-                        next.getModel().getId());
+                        next.getModel().getSurvey().getId());
                 break;
             default:
                 throw new AssertionError("Unknown delivery type: " + type);
