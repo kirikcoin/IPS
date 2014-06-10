@@ -10,6 +10,13 @@ class ResourceBundleConsistencyTest extends GroovyTestCase {
         shouldFail { this.disabledTestAll() }
     }
 
+    static def value(key) {
+        new Properties().with {
+            load(getClass().getResourceAsStream("/ips_en.properties"))
+            get(key) as String
+        }
+    }
+
     void disabledTestAll() {
         def bundles = locales.collectEntries { l ->
             [(l): new Properties().with {
@@ -44,7 +51,9 @@ class ResourceBundleConsistencyTest extends GroovyTestCase {
         def missing = []
 
         String toString() {
-            "Key: ${property.padRight(70)} missing: " + "$missing".padRight(10) + " present: $present"
+//            "${property.padRight(70)} missing: " + "$missing".padRight(10) + " present: $present"
+
+            "${property} = ${value(property)}".padRight(200) + "$missing".padRight(10) + " present: $present"
         }
     }
 }
