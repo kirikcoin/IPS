@@ -20,7 +20,7 @@ class InvitationDeliveryRepositoryTest extends DbTestCase {
     Survey survey1, survey2, survey3, survey4
     List<InvitationDelivery> deliveries
 
-    def msisdns
+    List msisdns
 
     void setUp() {
         db = new DB(new Properties())
