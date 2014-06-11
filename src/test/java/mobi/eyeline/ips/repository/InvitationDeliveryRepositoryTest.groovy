@@ -31,6 +31,11 @@ class InvitationDeliveryRepositoryTest extends DbTestCase {
         surveyRepository = new SurveyRepository(db)
     }
 
+    @Override
+    void tearDown() {
+        // Avoid committing transaction in super()
+        db.sessionFactory.close()
+    }
     def assertIds = { expected, deliveries -> assertEquals(expected, deliveries*.id) }
 
     private List<String> getLines(String input) {
@@ -122,12 +127,12 @@ class InvitationDeliveryRepositoryTest extends DbTestCase {
         assertEquals(3,invitationDeliveryRepository.count(survey3))
     }
 
-//    void testFetchNext(){
-//        fillTestData()
-//        deliveries.each {InvitationDelivery s-> invitationDeliveryRepository.saveWithSubscribers(s, msisdns)}
-//        ArrayList<DeliverySubscriber> list1 = invitationDeliveryRepository.fetchNext(deliveries[0], 5)
-//        assertEquals (msisdns[0..4], list1*.msisdn as String)
-//    }
+    void testFetchNext(){
+        fillTestData()
+        deliveries.each {InvitationDelivery s-> invitationDeliveryRepository.saveWithSubscribers(s, msisdns)}
+        ArrayList<DeliverySubscriber> list1 = invitationDeliveryRepository.fetchNext(deliveries[0], 5)
+        assertEquals (msisdns[0..4], list1*.msisdn)
+    }
 
 
 }
