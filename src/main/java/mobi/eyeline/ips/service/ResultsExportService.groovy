@@ -65,9 +65,9 @@ public class ResultsExportService {
             session.answers.each { Answer answer ->
                 csvWriter.writeNext([
                         session.respondent.msisdn,
-                        answer.question.activeIndex,
+                        answer.question.activeIndex + 1,
                         answer.question.title,
-                        answer.option.activeIndex,
+                        answer.option.activeIndex + 1,
                         answer.option.answer,
                         answer.date
                 ] as String[])

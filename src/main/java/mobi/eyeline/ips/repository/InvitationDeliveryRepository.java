@@ -63,7 +63,7 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         return ((Number) criteria.uniqueResult()).intValue();
     }
 
-    public void save(InvitationDelivery delivery, List<String> msisdns){
+    public void saveWithSubscribers(InvitationDelivery delivery, List<String> msisdns){
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {

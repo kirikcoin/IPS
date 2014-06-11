@@ -127,7 +127,7 @@ class InvitationDeliveryController extends BaseSurveyController {
             invitationDelivery.inputFile = inputFile?.filename
 
             if (validate(invitationDelivery) && validate(inputFile)) {
-                invitationDeliveryRepository.save(invitationDelivery, msisdnList)
+                invitationDeliveryRepository.saveWithSubscribers(invitationDelivery, msisdnList)
 
                 if (invitationDelivery.state == ACTIVE) {
                     deliveryService.start invitationDelivery
