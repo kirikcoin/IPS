@@ -24,13 +24,15 @@ var page = {
       });
 
 
-    jsfc('questionOptions').addListener(function (event) {
+      jsfc('questionOptions').addListener(function (event) {
         if (event.type == 'added') {
-            var $outer = $("#scrollableVariants");
-            var $inner = $outer.find('table');
-            $outer.scrollTop($inner.height() - $outer.height());
+          var $outer = $("#scrollableVariants");
+          var $inner = $outer.find('table');
+          $outer.scrollTop($inner.height() - $outer.height());
         }
-    }) ;
+      });
+
+      page.onEndSmsEnabledChange($('#endSmsEnabled')[0]);
     });
 
   },
@@ -67,7 +69,7 @@ var page = {
   },
 
   onEditEndMessageClick: function() {
-    $('span[id^=surveyEndText]').hide();
+    $('#endMessageView').hide();
     $('#endMessageDialog').show();
 
     page.disableEditables();
@@ -76,7 +78,7 @@ var page = {
   },
 
   onEditEndMessageCancel: function() {
-    $('span[id^=surveyEndText]').show();
+    $('#endMessageView').show();
     $('#endMessageDialog').hide();
 
     $('#endText').val($('#surveyEndText').text());
@@ -136,6 +138,11 @@ var page = {
         });
 
     return isFormValid;
+  },
+
+  onEndSmsEnabledChange: function (self) {
+    $('#endSmsDetails').toggle(self.checked);
+    return false;
   }
 
 };

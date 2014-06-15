@@ -351,20 +351,77 @@
                 </h:panelGroup>
               </f:facet>
               <h:panelGroup>
-                <h:outputText id="surveyEndText"
-                              value="#{surveySettingsController.persistedSurvey.details.endText}"/>
-                <h:outputText id="surveyEndTextPlaceholder"
-                              rendered="#{surveySettingsController.persistedSurvey.details.endText == null}"
-                              value="#{bundle['survey.settings.not.specified']}"
-                              styleClass="placeholder"/>
+
+                <h:panelGroup id="endMessageView">
+                  <h:panelGrid id="settingsDisplayEndMessage"
+                               columns="2"
+                               columnClasses="settings-left,settings-right">
+
+                    <h:outputText value="#{bundle['survey.settings.end.message.title.ussd']}"/>
+
+                    <h:panelGroup>
+                      <h:outputText id="surveyEndText"
+                                    rendered="#{surveySettingsController.persistedSurvey.details.endText != null}"
+                                    value="#{surveySettingsController.persistedSurvey.details.endText}"/>
+                      <h:outputText id="surveyEndTextPlaceholder"
+                                    rendered="#{surveySettingsController.persistedSurvey.details.endText == null}"
+                                    value="#{bundle['survey.settings.not.specified']}"
+                                    styleClass="placeholder"/>
+                    </h:panelGroup>
+
+                    <h:outputText value="#{bundle['survey.settings.end.message.title.sms']}"/>
+
+                    <h:panelGroup>
+                      <h:outputText value="#{surveySettingsController.persistedSurvey.details.endSmsText}"
+                                    rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
+
+                      <h:outputText rendered="#{not surveySettingsController.persistedSurvey.details.endSmsEnabled}"
+                                    value="#{bundle['survey.settings.not.specified']}"
+                                    styleClass="placeholder"/>
+                    </h:panelGroup>
+
+                    <h:outputText value="#{bundle['survey.settings.end.message.title.sms.number']}"
+                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
+
+                    <h:outputText value="#{surveySettingsController.persistedSurvey.details.endSmsFrom}"
+                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
+
+                  </h:panelGrid>
+                </h:panelGroup>
 
                 <h:panelGroup id="endMessageDialog" style="display: none">
-                  <h:panelGrid columns="1">
+                  <h:panelGrid columns="2" columnClasses="settings-left,none" >
+
+                    <h:outputLabel value="#{bundle['survey.settings.end.message.title.ussd']}"
+                                   for="endText"/>
                     <eye:inputText id="endText"
                                    maxlength="70"
-                                   value="#{surveySettingsController.survey.details.endText}"
-                                   styleClass="endTextInput"/>
+                                   value="#{surveySettingsController.survey.details.endText}"/>
+
+                    <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.enabled']}"
+                                   for="endText"/>
+
+                    <h:selectBooleanCheckbox id="endSmsEnabled"
+                                             value="#{surveySettingsController.survey.details.endSmsEnabled}"
+                                             onchange="page.onEndSmsEnabledChange(this);"/>
                   </h:panelGrid>
+
+                  <h:panelGrid id="endSmsDetails" columns="2" columnClasses="settings-left,none" >
+
+                    <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms']}"
+                                   for="endSmsText"/>
+                    <eye:inputText id="endSmsText"
+                                   maxlength="70"
+                                   rows="3"
+                                   value="#{surveySettingsController.survey.details.endSmsText}"/>
+
+                    <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.number']}"
+                                   for="endSmsFrom"/>
+                    <eye:inputText id="endSmsFrom"
+                                   maxlength="70"
+                                   value="#{surveySettingsController.survey.details.endSmsFrom}"/>
+                  </h:panelGrid>
+
                   <eye:buttons>
                     <eye:button>
                       <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"

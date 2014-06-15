@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.service
 
-import groovy.mock.interceptor.MockFor
 import mobi.eyeline.ips.messages.MissingParameterException
 import mobi.eyeline.ips.messages.UssdOption
 import mobi.eyeline.ips.messages.UssdResponseModel
@@ -9,6 +8,7 @@ import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.properties.Config
+import mobi.eyeline.ips.properties.FailingMockConfig
 import mobi.eyeline.ips.repository.*
 
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_ANSWER_ID
@@ -21,15 +21,16 @@ import static org.hamcrest.Matchers.instanceOf
 @SuppressWarnings("UnnecessaryQualifiedReference")
 class UssdServiceTest extends DbTestCase {
 
-    // Configuration
-    def configClass
     Config config
 
     // Dependencies
+
     SurveyRepository surveyRepository
     SurveyInvitationRepository surveyInvitationRepository
     InvitationDeliveryRepository invitationDeliveryRepository
     SurveyService surveyService
+    PushService pushService
+
     RespondentRepository respondentRepository
     AnswerRepository answerRepository
     QuestionRepository questionRepository
@@ -40,13 +41,15 @@ class UssdServiceTest extends DbTestCase {
     final String msisdn    = '123'
     final String sid       = '1'
 
-    void setUp(){
+    void setUp() {
         super.setUp()
 
         // Configuration
-        configClass = new MockFor(Config)
-        configClass.demand.getBaseSurveyUrl() { 'http://localhost:39932' }
-        config = configClass.proxyDelegateInstance() as Config
+        config = new FailingMockConfig() {
+            String getBaseSurveyUrl() { 'http://localhost:39932' }
+            String getSadsSmsPushUrl() { return 'http://sads?push' }
+            int getSadsMaxSessions() { 2 }
+        }
 
         // Dependencies
         surveyRepository = new SurveyRepository(db)
@@ -56,6 +59,8 @@ class UssdServiceTest extends DbTestCase {
                 surveyRepository,
                 surveyInvitationRepository,
                 invitationDeliveryRepository)
+        pushService = new PushService(config)
+
         respondentRepository = new RespondentRepository(db)
         answerRepository = new AnswerRepository(db)
         questionRepository = new QuestionRepository(db)
@@ -64,16 +69,12 @@ class UssdServiceTest extends DbTestCase {
         ussdService = new UssdService(
                 config,
                 surveyService,
+                pushService,
                 surveyRepository,
                 respondentRepository,
                 answerRepository,
                 questionRepository,
                 questionOptionRepository)
-    }
-
-    void tearDown() {
-        configClass.verify config
-        super.tearDown()
     }
 
     def survey = { surveyRepository.load(sid.toInteger()) }

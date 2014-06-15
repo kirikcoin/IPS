@@ -1,8 +1,10 @@
 package mobi.eyeline.ips.model;
 
 import mobi.eyeline.ips.validation.MaxSize;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.CascadeType;
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.AssertTrue;
 import java.io.Serializable;
 
 // TODO: Take localization into account.
@@ -35,6 +38,18 @@ public class SurveyDetails implements Serializable {
     @Column(name = "end_text", columnDefinition = "TEXT")
     @MaxSize(70)
     private String endText;
+
+    @Column(name = "end_sms_enabled", columnDefinition = "BIT", nullable = false)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean endSmsEnabled;
+
+    @Column(name = "end_sms_text", columnDefinition = "varchar(255)")
+    @MaxSize(255)
+    private String endSmsText;
+
+    @Column(name = "end_sms_from", columnDefinition = "varchar(255)")
+    @MaxSize(70)
+    private String endSmsFrom;
 
     @Id
     @JoinColumn(name = "survey_id")
@@ -65,6 +80,30 @@ public class SurveyDetails implements Serializable {
         this.endText = endText;
     }
 
+    public boolean isEndSmsEnabled() {
+        return endSmsEnabled;
+    }
+
+    public void setEndSmsEnabled(boolean endSmsEnabled) {
+        this.endSmsEnabled = endSmsEnabled;
+    }
+
+    public String getEndSmsText() {
+        return endSmsText;
+    }
+
+    public void setEndSmsText(String endSmsText) {
+        this.endSmsText = endSmsText;
+    }
+
+    public String getEndSmsFrom() {
+        return endSmsFrom;
+    }
+
+    public void setEndSmsFrom(String endSmsFrom) {
+        this.endSmsFrom = endSmsFrom;
+    }
+
     public Survey getSurvey() {
         return survey;
     }
@@ -79,5 +118,17 @@ public class SurveyDetails implements Serializable {
                 ", endText='" + endText + '\'' +
                 ", surveyId=" + survey.getId() +
                 '}';
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @AssertTrue(message = "{survey.settings.end.message.sms.required}")
+    private boolean isEndSmsTextSet() {
+        return !endSmsEnabled || StringUtils.isNotEmpty(endSmsText);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @AssertTrue(message = "{survey.settings.end.message.sms.number.required}")
+    private boolean isEndSmsFromSet() {
+        return !endSmsEnabled || StringUtils.isNotEmpty(endSmsFrom);
     }
 }

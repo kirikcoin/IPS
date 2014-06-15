@@ -6,20 +6,16 @@ class ResourceBundleConsistencyTest extends GroovyTestCase {
 
     private def locales = ['en', 'ru', 'sk']
 
-    void testAll() {
-        shouldFail { this.disabledTestAll() }
-    }
-
-    static def value(key) {
-        new Properties().with {
-            load(getClass().getResourceAsStream("/ips_en.properties"))
+    static def value(key, locale = 'en') {
+        new OrderedProperties().with {
+            load(getClass().getResourceAsStream("/ips_${locale}.properties"))
             get(key) as String
         }
     }
 
-    void disabledTestAll() {
+    void testConsistency() {
         def bundles = locales.collectEntries { l ->
-            [(l): new Properties().with {
+            [(l): new OrderedProperties().with {
                 load(getClass().getResourceAsStream("/ips_${l}.properties"))
                 keys().toList()
             }]
@@ -50,10 +46,37 @@ class ResourceBundleConsistencyTest extends GroovyTestCase {
         def present = []
         def missing = []
 
+        // Print keys, locale info and existing EN-values (good for retrieving texts for translation)
         String toString() {
-//            "${property.padRight(70)} missing: " + "$missing".padRight(10) + " present: $present"
-
             "${property} = ${value(property)}".padRight(200) + "$missing".padRight(10) + " present: $present"
+        }
+
+/*
+        // Print keys and locale info
+        String toString() {
+            "${property.padRight(70)} missing: " + "$missing".padRight(10) + " present: $present"
+        }
+*/
+
+    }
+
+    /**
+     * {@linkplain Properties} preserving key order.
+     */
+    @SuppressWarnings("GroovyUnsynchronizedMethodOverridesSynchronizedMethod")
+    static class OrderedProperties extends Properties {
+
+        private final LinkedHashSet keys = new LinkedHashSet()
+
+        @Override
+        Enumeration keys() {
+            Collections.enumeration(keys)
+        }
+
+        @Override
+        Object put(Object key, Object value) {
+            keys << key
+            super.put(key, value)
         }
     }
 }

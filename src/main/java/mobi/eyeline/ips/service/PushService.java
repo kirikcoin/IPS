@@ -44,13 +44,54 @@ public class PushService extends BasePushService {
                 " survey = [" + survey + "], msisdn = [" + msisdn + "]");
     }
 
+    public void scheduleSendSms(final Survey survey,
+                                final String msisdn) {
+
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    sendSms(survey, msisdn);
+                } catch (URISyntaxException | IOException e) {
+                    logger.error("Error sending SMS PUSH-request, " +
+                            "survey = [" + survey + "], msisdn = [" + msisdn + "]", e);
+                }
+            }
+        });
+
+        logger.debug("Scheduled SMS PUSH request:" +
+                " survey = [" + survey + "], msisdn = [" + msisdn + "]");
+    }
+
     protected void send(Survey survey,
                         String msisdn) throws URISyntaxException, IOException {
 
-        logger.debug("Sending PUSH request:" +
-                " survey = [" + survey + "], msisdn = [" + msisdn + "]");
+        if (logger.isDebugEnabled()) {
+            logger.debug("Sending PUSH request:" +
+                    " survey = [" + survey + "], msisdn = [" + msisdn + "]");
+        }
 
         final URI uri = buildUri(msisdn, survey.getId());
+        doRequest(uri);
+    }
+
+    protected void sendSms(Survey survey, String msisdn)
+            throws URISyntaxException, IOException {
+
+        assert survey.getDetails().isEndSmsEnabled();
+
+        final String oa = survey.getDetails().getEndSmsFrom();
+        final String message = survey.getDetails().getEndSmsText();
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Sending SMS PUSH request for:" +
+                    " survey = [" + survey + "]," +
+                    " msisdn = [" + msisdn + "]," +
+                    " message = [" + message + "]," +
+                    " oa = [" + oa + "]");
+        }
+
+        final URI uri = buildUri(msisdn, message, oa);
         doRequest(uri);
     }
 
@@ -67,4 +108,17 @@ public class PushService extends BasePushService {
         return builder.build();
     }
 
+    private URI buildUri(String msisdn,
+                         String message,
+                         String originatingAddress) throws URISyntaxException {
+
+        final String pushUrl = config.getSadsSmsPushUrl();
+
+        final URIBuilder builder = new URIBuilder(pushUrl);
+        builder.addParameter("subscriber", msisdn);
+        builder.addParameter("message", message);
+        builder.addParameter("address", originatingAddress);
+
+        return builder.build();
+    }
 }

@@ -51,7 +51,10 @@ class SurveySettingsController extends BaseSurveyController {
 
     void saveMessage() {
         boolean validationError =
-                renderViolationMessage(validator.validate(survey.details))
+                renderViolationMessage(validator.validate(survey.details), [
+                        'endSmsTextSet': 'endSmsText',
+                        'endSmsFromSet': 'endSmsFrom'
+                ])
         if (validationError) {
             this.errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
@@ -59,6 +62,16 @@ class SurveySettingsController extends BaseSurveyController {
         }
 
         persistedSurvey.details.endText = survey.details.endText
+
+        persistedSurvey.details.endSmsEnabled = survey.details.endSmsEnabled
+        if (persistedSurvey.details.endSmsEnabled) {
+            persistedSurvey.details.endSmsText = survey.details.endSmsText
+            persistedSurvey.details.endSmsFrom = survey.details.endSmsFrom
+        } else {
+            persistedSurvey.details.endSmsText = null
+            persistedSurvey.details.endSmsFrom = null
+        }
+
         surveyRepository.update(persistedSurvey)
         goToSurvey(surveyId)
     }

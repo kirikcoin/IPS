@@ -28,6 +28,7 @@ public interface Config {
     public String getMadvUserPassword();
 
     public String getSadsPushUrl();
+    public String getSadsSmsPushUrl();
     public int getSadsMaxSessions();
     public String getBaseSurveyUrl();
 
@@ -64,6 +65,7 @@ public interface Config {
         private final String madvUserPassword;
 
         private final String sadsPushUrl;
+        private final String sadsSmsPushUrl;
         private final int sadsMaxSessions;
         private final String baseSurveyUrl;
 
@@ -106,6 +108,7 @@ public interface Config {
             final XmlConfigSection sads = xmlConfig.getSection("sads");
             {
                 sadsPushUrl = sads.getString("push.url");
+                sadsSmsPushUrl = sads.getString("push.sms.url");
                 sadsMaxSessions = sads.getInt("max.sessions", 4);
                 baseSurveyUrl = sads.getString("base.survey.url");
             }
@@ -216,6 +219,10 @@ public interface Config {
         @Override
         public String getSadsPushUrl() {
             return sadsPushUrl;
+        }
+
+        public String getSadsSmsPushUrl() {
+            return sadsSmsPushUrl;
         }
 
         @Override

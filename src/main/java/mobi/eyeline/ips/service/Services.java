@@ -44,11 +44,11 @@ public class Services {
     private final LocationService locationService;
     private final TemplateService templateService;
     private final MailService mailService;
+    private final PushService pushService;
     private final UserService userService;
     private final UssdService ussdService;
     private final MadvSoapApi madvSoapApi;
     private final MadvUpdateService madvUpdateService;
-    private final PushService pushService;
     private final SegmentationService segmentationService;
     private final ResultsExportService resultsExportService;
     private final DeliveryPushService deliveryPushService;
@@ -87,10 +87,13 @@ public class Services {
                         config.getSmtpPassword(),
                         config.getMailFrom()));
 
+        pushService = new PushService(config);
+
         userService = new UserService(userRepository, mailService);
         ussdService = new UssdService(
                 config,
                 surveyService,
+                pushService,
                 surveyRepository,
                 respondentRepository,
                 answerRepository,
@@ -103,7 +106,6 @@ public class Services {
                 madvSoapApi,
                 surveyStatsRepository,
                 surveyRepository);
-        pushService = new PushService(config);
         segmentationService = new SegmentationService();
         resultsExportService = new ResultsExportService(answerRepository, 100);
 

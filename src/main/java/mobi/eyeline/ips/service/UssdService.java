@@ -42,6 +42,8 @@ public class UssdService implements MessageHandler {
     private static final Logger logger = LoggerFactory.getLogger(UssdService.class);
 
     private final SurveyService surveyService;
+    private final PushService pushService;
+
     private final SurveyRepository surveyRepository;
     private final RespondentRepository respondentRepository;
     private final AnswerRepository answerRepository;
@@ -52,7 +54,10 @@ public class UssdService implements MessageHandler {
 
 
     public UssdService(Config config,
+
                        SurveyService surveyService,
+                       PushService pushService,
+
                        SurveyRepository surveyRepository,
                        RespondentRepository respondentRepository,
                        AnswerRepository answerRepository,
@@ -60,6 +65,8 @@ public class UssdService implements MessageHandler {
                        QuestionOptionRepository questionOptionRepository) {
 
         this.surveyService = surveyService;
+        this.pushService = pushService;
+
         this.surveyRepository = surveyRepository;
         this.respondentRepository = respondentRepository;
         this.answerRepository = answerRepository;
@@ -206,6 +213,10 @@ public class UssdService implements MessageHandler {
     private UssdResponseModel surveyFinish(Respondent respondent, Survey survey) {
         respondent.setFinished(true);
         respondentRepository.update(respondent);
+
+        if (survey.getDetails().isEndSmsEnabled()) {
+            pushService.scheduleSendSms(survey, respondent.getMsisdn());
+        }
 
         final String endText = survey.getDetails().getEndText();
         return new UssdResponseModel.TextUssdResponseModel((endText == null) ?
