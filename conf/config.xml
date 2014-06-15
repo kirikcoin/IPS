@@ -10,7 +10,12 @@
     <param name="smtp.password" type="string">password</param>
 
     <param name="from" type="string">ips@ips.eyeline.mobi</param>
-    <param name="login.url" type="string">http://localhost:39932</param>
+
+    <!-- PROD -->
+    <!--<param name="login.url" type="string">http://ips.eyeline.mobi</param>-->
+
+    <!-- DEVEL -->
+    <param name="login.url" type="string">http://ips.eyeline.mobi</param>
   </section>
 
   <section name="database">
@@ -52,21 +57,38 @@
   </section>
 
   <section name="sads">
-    <param name="push.url" type="string">http://localhost/demo/push?service=eyeline.ips-survey</param>
-    <param name="push.sms.url" type="string">http://localhost/demo/push?service=eyeline.rcsilv-sms</param>
+
+    <!-- PROD -->
+    <!--<param name="push.url" type="string">http://localhost/push?service=eyeline.ipsprod-preview</param>
+    <param name="push.sms.url" type="string">http://localhost/push?service=eyeline.ipsprod-sms</param>-->
+
+    <!-- DEVEL -->
+    <param name="push.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.ipsdev-preview</param>
+    <param name="push.sms.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.ipsdev-sms</param>
+
     <param name="max.sessions" type="int">4</param>
-    <param name="base.survey.url" type="string">http://localhost:39932</param>
+
+    <!-- PROD -->
+    <!--<param name="base.survey.url" type="string">https://ips.eyeline.mobi</param>-->
+
+    <!-- DEVEL -->
+    <param name="base.survey.url" type="string">http://ips.eyeline.mobi</param>
   </section>
 
   <section name="deliveries">
     <!--<param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
     <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>-->
 
-    <param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
-    <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>
+    <!--<param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
+    <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>-->
 
-    <!--<param name="push.ussd.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-push</param>
-    <param name="push.nidialog.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.rcsilv-srvpush</param>-->
+    <!-- PROD -->
+    <!--<param name="push.ussd.url" type="string">http://localhost/push?service=eyeline.ipsprod-deliv-push</param>
+    <param name="push.nidialog.url" type="string">http://localhost/push?service=eyeline.ipsprod-deliv-ni</param>-->
+
+    <!-- DEVEL -->
+    <param name="push.ussd.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.ipsdev-deliv-push</param>
+    <param name="push.nidialog.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.ipsdev-deliv-ni</param>
 
     <param name="push.threads.number" type="int">2</param>
     <param name="push.message.queue" type="int">100</param>
