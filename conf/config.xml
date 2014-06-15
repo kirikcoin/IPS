@@ -63,8 +63,8 @@
     <param name="push.sms.url" type="string">http://localhost/push?service=eyeline.ipsprod-sms</param>-->
 
     <!-- DEVEL -->
-    <param name="push.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.ipsdev-preview</param>
-    <param name="push.sms.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.ipsdev-sms</param>
+    <param name="push.url" type="string">http://localhost/push?service=eyeline.ipsdev-preview</param>
+    <param name="push.sms.url" type="string">http://localhost/push?service=eyeline.ipsdev-sms</param>
 
     <param name="max.sessions" type="int">4</param>
 
@@ -87,8 +87,8 @@
     <param name="push.nidialog.url" type="string">http://localhost/push?service=eyeline.ipsprod-deliv-ni</param>-->
 
     <!-- DEVEL -->
-    <param name="push.ussd.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.ipsdev-deliv-push</param>
-    <param name="push.nidialog.url" type="string">http://devel.globalussd.mobi/push?service=eyeline.ipsdev-deliv-ni</param>
+    <param name="push.ussd.url" type="string">http://localhost/push?service=eyeline.ipsdev-deliv-push</param>
+    <param name="push.nidialog.url" type="string">http://localhost/push?service=eyeline.ipsdev-deliv-ni</param>
 
     <param name="push.threads.number" type="int">2</param>
     <param name="push.message.queue" type="int">100</param>

@@ -126,9 +126,4 @@ public class SurveyDetails implements Serializable {
         return !endSmsEnabled || StringUtils.isNotEmpty(endSmsText);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    @AssertTrue(message = "{survey.settings.end.message.sms.number.required}")
-    private boolean isEndSmsFromSet() {
-        return !endSmsEnabled || StringUtils.isNotEmpty(endSmsFrom);
-    }
 }
