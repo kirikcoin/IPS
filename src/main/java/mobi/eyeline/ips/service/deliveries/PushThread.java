@@ -5,6 +5,7 @@ import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.service.Services;
+import mobi.eyeline.ips.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,7 @@ class PushThread extends LoopThread {
     private static final long WAIT_TO_FILL = TimeUnit.SECONDS.toMillis(2);
 
     private final int retryAttempts;
+    private final TimeSource timeSource;
     private final DelayQueue<DelayedDeliveryWrapper> toSend;
     private final BlockingQueue<DeliveryWrapper> toFetch;
     private final BlockingQueue<DeliveryWrapper.Message> toMark;
@@ -34,6 +36,8 @@ class PushThread extends LoopThread {
 
                       int retryAttempts,
 
+                      TimeSource timeSource,
+
                       DelayQueue<DelayedDeliveryWrapper> toSend,
                       BlockingQueue<DeliveryWrapper> toFetch,
                       BlockingQueue<DeliveryWrapper.Message> toMark,
@@ -45,6 +49,7 @@ class PushThread extends LoopThread {
         super(name);
 
         this.retryAttempts = retryAttempts;
+        this.timeSource = timeSource;
 
         this.toSend = toSend;
         this.toFetch = toFetch;
@@ -95,7 +100,7 @@ class PushThread extends LoopThread {
             Services.instance().getDeliveryService().onDeliveryKick(delivery);
 
         } else {
-            toSend.put(DelayedDeliveryWrapper.forDelay(delivery, WAIT_TO_FILL));
+            toSend.put(DelayedDeliveryWrapper.forDelay(timeSource, delivery, WAIT_TO_FILL));
         }
     }
 
@@ -120,7 +125,7 @@ class PushThread extends LoopThread {
             try {
                 doPush(delivery, message);
             } finally {
-                toSend.put(DelayedDeliveryWrapper.forSent(delivery));
+                toSend.put(DelayedDeliveryWrapper.forSent(timeSource, delivery));
             }
 
             onSentAttempt(delivery, message, true);

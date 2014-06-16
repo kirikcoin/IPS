@@ -7,6 +7,7 @@ import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
+import mobi.eyeline.ips.util.TimeSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,8 @@ import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE;
 public class DeliveryService {
 
     private static final Logger logger = LoggerFactory.getLogger(DeliveryService.class);
+
+    private final TimeSource timeSource;
 
     private final InvitationDeliveryRepository invitationDeliveryRepository;
 
@@ -47,10 +50,13 @@ public class DeliveryService {
 
     private final List<Thread> allThreads = new ArrayList<>();
 
-    public DeliveryService(InvitationDeliveryRepository invitationDeliveryRepository,
+    public DeliveryService(TimeSource timeSource,
+                           InvitationDeliveryRepository invitationDeliveryRepository,
                            DeliverySubscriberRepository deliverySubscriberRepository,
                            DeliveryPushService deliveryPushService,
                            Config config) {
+        this.timeSource = timeSource;
+
         this.invitationDeliveryRepository = invitationDeliveryRepository;
 
         this.messagesQueueSize = config.getMessageQueueBaseline();
@@ -59,6 +65,7 @@ public class DeliveryService {
         for (int i = 0; i < pushThreadsNumber; i++) {
             allThreads.add(new PushThread("push-" + i,
                     config.getRetryAttempts(),
+                    timeSource,
                     toSend,
                     toFetch,
                     toMark,
@@ -186,7 +193,7 @@ public class DeliveryService {
         delivery.setCurrentPosition(0);
         invitationDeliveryRepository.update(delivery);
 
-        toSend.put(DeliveryWrapper.DelayedDeliveryWrapper.forSent(wrapper));
+        toSend.put(DeliveryWrapper.DelayedDeliveryWrapper.forSent(timeSource, wrapper));
     }
 
     /**

@@ -17,7 +17,7 @@ import mobi.eyeline.ips.repository.UserRepository;
 import mobi.eyeline.ips.service.deliveries.DeliveryPushService;
 import mobi.eyeline.ips.service.deliveries.DeliveryService;
 import mobi.eyeline.ips.service.deliveries.NotificationService;
-import mobi.eyeline.ips.service.CsvParseService;
+import mobi.eyeline.ips.util.TimeSource;
 
 /**
  * Service lookup.
@@ -28,6 +28,8 @@ public class Services {
     private static Services instance;
 
     private final DB db;
+
+    private final TimeSource timeSource;
 
     private final UserRepository userRepository;
     private final RespondentRepository respondentRepository;
@@ -59,6 +61,8 @@ public class Services {
 
     private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
+
+        timeSource = new TimeSource();
 
         userRepository = new UserRepository(db);
         respondentRepository = new RespondentRepository(db);
@@ -111,11 +115,11 @@ public class Services {
 
         deliveryPushService = new DeliveryPushService(config);
         deliveryService = new DeliveryService(
+                timeSource,
                 invitationDeliveryRepository,
                 deliverySubscriberRepository,
                 deliveryPushService,
-                config
-        );
+                config);
         notificationService = new NotificationService(deliverySubscriberRepository);
         csvParseService = new CsvParseService();
     }

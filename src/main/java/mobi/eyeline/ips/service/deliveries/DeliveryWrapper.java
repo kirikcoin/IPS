@@ -2,6 +2,7 @@ package mobi.eyeline.ips.service.deliveries;
 
 import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.model.InvitationDelivery;
+import mobi.eyeline.ips.util.TimeSource;
 
 import java.util.Date;
 import java.util.Queue;
@@ -145,21 +146,26 @@ class DeliveryWrapper {
 
     public static class DelayedDeliveryWrapper implements Delayed {
 
+        private final TimeSource timeSource;
+
         private final DeliveryWrapper deliveryWrapper;
 
-        private final long from = System.currentTimeMillis();
+        private final long from;
         private final long delayMillis;
 
-        private DelayedDeliveryWrapper(DeliveryWrapper deliveryWrapper,
+        private DelayedDeliveryWrapper(TimeSource timeSource,
+                                       DeliveryWrapper deliveryWrapper,
                                        long delayMillis) {
+            this.timeSource = timeSource;
             this.deliveryWrapper = deliveryWrapper;
+            this.from = timeSource.currentTimeMillis();
             this.delayMillis = delayMillis;
         }
 
         @Override
         public long getDelay(@SuppressWarnings("NullableProblems") TimeUnit unit) {
             return unit.convert(
-                    Math.max(from + delayMillis - System.currentTimeMillis(), 0),
+                    Math.max(from + delayMillis - timeSource.currentTimeMillis(), 0),
                     TimeUnit.MILLISECONDS);
         }
 
@@ -174,13 +180,16 @@ class DeliveryWrapper {
             return deliveryWrapper;
         }
 
-        public static DelayedDeliveryWrapper forSent(DeliveryWrapper wrapper) {
-            return new DelayedDeliveryWrapper(wrapper, wrapper.getProposedDelayMillis());
+        public static DelayedDeliveryWrapper forSent(TimeSource timeSource,
+                                                     DeliveryWrapper wrapper) {
+            return new DelayedDeliveryWrapper(
+                    timeSource, wrapper, wrapper.getProposedDelayMillis());
         }
 
-        public static DelayedDeliveryWrapper forDelay(DeliveryWrapper wrapper,
+        public static DelayedDeliveryWrapper forDelay(TimeSource timeSource,
+                                                      DeliveryWrapper wrapper,
                                                       long millis) {
-            return new DelayedDeliveryWrapper(wrapper, millis);
+            return new DelayedDeliveryWrapper(timeSource, wrapper, millis);
         }
     }
 }
