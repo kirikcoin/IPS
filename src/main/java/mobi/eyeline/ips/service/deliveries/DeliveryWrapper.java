@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
 
-class DeliveryWrapper {
+public class DeliveryWrapper {
 
     private static final double LOAD_FACTOR = 0.5;
 
