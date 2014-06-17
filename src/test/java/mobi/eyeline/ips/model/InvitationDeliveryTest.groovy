@@ -3,13 +3,12 @@ package mobi.eyeline.ips.model
 import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
 import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.hasSize
 
 class InvitationDeliveryTest extends ValidationTestCase {
 
     void test1() {
-        assertThat validate(new InvitationDelivery()), hasSize(3)
+        assertThat validate(new InvitationDelivery(state: null)), hasSize(4)
     }
 
     void test2() {
