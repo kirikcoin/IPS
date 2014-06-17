@@ -15,31 +15,31 @@ class InvitationDeliveryTest extends ValidationTestCase {
         def delivery = new InvitationDelivery(
                 type: NI_DIALOG,
                 state: ACTIVE,
-                inputFile: "txt.txt",
+                inputFile: 'txt.txt',
                 speed: 1,
-                text: "a" * 200,)
+                text: 'a' * 200)
         def violations = validate delivery
-        assertEquals "text", violations[0].propertyPath.first().name
+        assertEquals 'text', violations[0].propertyPath.first().name
     }
 
     void test3() {
         def delivery = new InvitationDelivery(
                 type: NI_DIALOG,
                 state: ACTIVE,
-                inputFile: "txt.txt",
+                inputFile: 'txt.txt',
                 speed: 200,
-                text: "a")
+                text: 'a')
         def violations = validate delivery
-        assertEquals "speed", violations[0].propertyPath.first().name
+        assertEquals 'speed', violations[0].propertyPath.first().name
 
         delivery = new InvitationDelivery(
                 type: NI_DIALOG,
                 state: ACTIVE,
-                inputFile: "txt.txt",
+                inputFile: 'txt.txt',
                 speed: -1,
-                text: "a")
+                text: 'a')
         violations = validate delivery
-        assertEquals "speed", violations[0].propertyPath.first().name
+        assertEquals 'speed', violations[0].propertyPath.first().name
     }
 
 }

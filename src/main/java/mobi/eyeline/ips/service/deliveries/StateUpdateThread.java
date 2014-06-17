@@ -1,11 +1,9 @@
 package mobi.eyeline.ips.service.deliveries;
 
 
-import com.google.common.base.Function;
 import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +22,6 @@ public class StateUpdateThread extends LoopThread {
     private final BlockingQueue<Message> toUpdate;
     private final DeliverySubscriberRepository deliverySubscriberRepository;
 
-    private final Function<Message, Pair<Integer, DeliverySubscriber.State>> asPair =
-            new Function<Message, Pair<Integer, DeliverySubscriber.State>>() {
-                @Override
-                public Pair<Integer, DeliverySubscriber.State> apply(Message input) {
-                    return Pair.of(input.getId(), input.getState());
-                }
-            };
 
     public StateUpdateThread(String name,
                              Config config,
@@ -87,7 +78,7 @@ public class StateUpdateThread extends LoopThread {
             // 2. Notification arrives, state is updated to either DELIVERED or UNDELIVERED
             // 3. Finally comes to updating to SENT after step 1.
             deliverySubscriberRepository.updateState(
-                    transform(chunk, asPair),
+                    transform(chunk, Message.AS_PAIR),
                     DeliverySubscriber.State.NEW);
         } else {
             logger.debug("Nothing to update");

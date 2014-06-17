@@ -1,8 +1,10 @@
 package mobi.eyeline.ips.service.deliveries;
 
+import com.google.common.base.Function;
 import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.model.InvitationDelivery;
 import mobi.eyeline.ips.util.TimeSource;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Date;
 import java.util.Queue;
@@ -142,6 +144,14 @@ public class DeliveryWrapper {
                     ", sendAttempts=" + sendAttempts +
                     '}';
         }
+
+        public static final Function<Message, Pair<Integer, DeliverySubscriber.State>> AS_PAIR =
+                new Function<Message, Pair<Integer, DeliverySubscriber.State>>() {
+                    @Override
+                    public Pair<Integer, DeliverySubscriber.State> apply(Message input) {
+                        return Pair.of(input.getId(), input.getState());
+                    }
+                };
     }
 
     public static class DelayedDeliveryWrapper implements Delayed {
