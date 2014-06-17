@@ -13,10 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Date;
 
 @Entity
 @Proxy(lazy = false)
@@ -41,6 +44,12 @@ public class DeliverySubscriber implements Serializable {
     @Column(name = "state")
     @Enumerated(EnumType.STRING)
     private State state = State.NEW;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_update",
+            updatable = false,
+            columnDefinition="datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    private Date lastUpdate;
 
     public DeliverySubscriber() {
     }
