@@ -45,12 +45,6 @@ public class DeliverySubscriber implements Serializable {
     @Enumerated(EnumType.STRING)
     private State state = State.NEW;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_update",
-            updatable = false,
-            columnDefinition="datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    private Date lastUpdate;
-
     public DeliverySubscriber() {
     }
 
@@ -84,14 +78,6 @@ public class DeliverySubscriber implements Serializable {
 
     public void setState(State status) {
         this.state = status;
-    }
-
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     @Override

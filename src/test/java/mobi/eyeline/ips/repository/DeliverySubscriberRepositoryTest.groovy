@@ -155,8 +155,5 @@ class DeliverySubscriberRepositoryTest extends DbTestCase {
         assertEquals(DELIVERED,deliverySubscriberRepository.get(2).state)
     }
 
-    void testExpire() {
-
-    }
 
 }
