@@ -86,6 +86,14 @@ public class DeliverySubscriber implements Serializable {
         this.state = status;
     }
 
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
     @Override
     public String toString() {
         return "DeliverySubscriber{" +
