@@ -76,6 +76,4 @@ class DeliverySubscriberRepositoryTest extends DbTestCase {
         assertEquals NEW, deliverySubscriberRepository.get(1).state
         assertEquals DELIVERED, deliverySubscriberRepository.get(2).state
     }
-
-
 }
