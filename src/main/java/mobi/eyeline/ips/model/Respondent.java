@@ -64,6 +64,9 @@ public class Respondent implements Serializable {
     @Column(name = "answer_count")
     private int answersCount;
 
+    @Column(name = "coupon")
+    private String coupon;
+
     public Integer getId() {
         return id;
     }
@@ -110,6 +113,14 @@ public class Respondent implements Serializable {
 
     public void setAnswersCount(int answersCount) {
         this.answersCount = answersCount;
+    }
+
+    public String getCoupon() {
+        return coupon;
+    }
+
+    public void setCoupon(String coupon) {
+        this.coupon = coupon;
     }
 
     public int getAnswersPercentage() {

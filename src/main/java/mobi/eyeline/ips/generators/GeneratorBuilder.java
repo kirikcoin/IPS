@@ -13,6 +13,14 @@ public class GeneratorBuilder {
         automaton = AutomatonUtils.toAutomaton(regex);
     }
 
+    public GeneratorBuilder(SequenceGenerator generator) {
+        try {
+            automaton = AutomatonUtils.toAutomaton(generator.getPattern().getPattern());
+        } catch (UnsupportedPatternException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public GeneratorBuilder exclude(String regex) throws UnsupportedPatternException {
         final Automaton excluded = AutomatonUtils.toAutomaton(regex);
         automaton = automaton.minus(excluded);
@@ -20,7 +28,7 @@ public class GeneratorBuilder {
         return this;
     }
 
-    public SequenceGenerator build(int startPosition)
+    public SequenceGenerator build(long startPosition)
             throws UnsupportedPatternException {
 
         final String[] positionOptions = AutomatonUtils.asStateSymbols(automaton);
@@ -30,5 +38,10 @@ public class GeneratorBuilder {
                 new PolynomialPermutation(pattern.getCapacity());
 
         return new SequenceGenerator(pattern, permutation, startPosition);
+    }
+
+    public SequenceGenerator build()
+            throws UnsupportedPatternException {
+        return build(0);
     }
 }

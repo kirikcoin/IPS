@@ -10,6 +10,7 @@ import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Respondent;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.model.SurveyDetails;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
@@ -43,6 +44,7 @@ public class UssdService implements MessageHandler {
 
     private final SurveyService surveyService;
     private final PushService pushService;
+    private final CouponService couponService;
 
     private final SurveyRepository surveyRepository;
     private final RespondentRepository respondentRepository;
@@ -57,6 +59,7 @@ public class UssdService implements MessageHandler {
 
                        SurveyService surveyService,
                        PushService pushService,
+                       CouponService couponService,
 
                        SurveyRepository surveyRepository,
                        RespondentRepository respondentRepository,
@@ -66,6 +69,7 @@ public class UssdService implements MessageHandler {
 
         this.surveyService = surveyService;
         this.pushService = pushService;
+        this.couponService = couponService;
 
         this.surveyRepository = surveyRepository;
         this.respondentRepository = respondentRepository;
@@ -138,6 +142,12 @@ public class UssdService implements MessageHandler {
             return surveyNotFound();
         }
 
+        if (couponService.shouldGenerateCoupon(survey)) {
+            if (couponService.getAvailable(survey) == 0) {
+                return surveyNotFound();
+            }
+        }
+
         // Ensure we've got an entry in `respondents' for this survey.
         final Respondent respondent =
                 respondentRepository.findOrCreate(msisdn, survey);
@@ -162,6 +172,12 @@ public class UssdService implements MessageHandler {
                 surveyService.findSurvey(request.getSurveyId(), request.isSkipValidation());
         if (survey == null) {
             return surveyNotFound();
+        }
+
+        if (couponService.shouldGenerateCoupon(survey)) {
+            if (couponService.getAvailable(survey) == 0) {
+                return surveyNotFound();
+            }
         }
 
         final Respondent respondent =
@@ -214,14 +230,43 @@ public class UssdService implements MessageHandler {
         respondent.setFinished(true);
         respondentRepository.update(respondent);
 
-        if (survey.getDetails().isEndSmsEnabled()) {
-            pushService.scheduleSendSms(survey, respondent.getMsisdn());
-        }
+        processEndSms(respondent, survey);
 
         final String endText = survey.getDetails().getEndText();
         return new UssdResponseModel.TextUssdResponseModel((endText == null) ?
                 USSD_BUNDLE.getString("ussd.end.text.default") :
                 endText);
+    }
+
+    private void processEndSms(Respondent respondent, Survey survey) {
+        final SurveyDetails details = survey.getDetails();
+        if (!details.isEndSmsEnabled()) {
+            return;
+        }
+
+        String message = details.getEndSmsText();
+        if (couponService.shouldGenerateCoupon(survey)) {
+
+            final CharSequence coupon;
+            if (respondent.getCoupon() != null) {
+                coupon = respondent.getCoupon();
+
+            } else {
+                coupon = couponService.genAndPersist(survey);
+
+                respondent.setCoupon(coupon.toString());
+                respondentRepository.update(respondent);
+            }
+
+            if (coupon == null) {
+                return;
+            }
+
+            message = message.replace(couponService.getCouponTag(), coupon);
+        }
+
+        pushService.scheduleSendSms(
+                survey, details.getEndSmsFrom(), message, respondent.getMsisdn());
     }
 
     private UssdResponseModel surveyStart(Survey survey,

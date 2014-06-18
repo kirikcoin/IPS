@@ -30,11 +30,13 @@ class UssdServiceTest extends DbTestCase {
     InvitationDeliveryRepository invitationDeliveryRepository
     SurveyService surveyService
     PushService pushService
+    CouponService couponService
 
     RespondentRepository respondentRepository
     AnswerRepository answerRepository
     QuestionRepository questionRepository
     QuestionOptionRepository questionOptionRepository
+    SurveyPatternRepository surveyPatternRepository
 
     UssdService ussdService
 
@@ -55,11 +57,13 @@ class UssdServiceTest extends DbTestCase {
         surveyRepository = new SurveyRepository(db)
         surveyInvitationRepository = new SurveyInvitationRepository(db)
         invitationDeliveryRepository = new InvitationDeliveryRepository(db)
+        surveyPatternRepository = new SurveyPatternRepository(db)
         surveyService = new SurveyService(
                 surveyRepository,
                 surveyInvitationRepository,
                 invitationDeliveryRepository)
         pushService = new PushService(config)
+        couponService = new CouponService(surveyPatternRepository)
 
         respondentRepository = new RespondentRepository(db)
         answerRepository = new AnswerRepository(db)
@@ -70,6 +74,7 @@ class UssdServiceTest extends DbTestCase {
                 config,
                 surveyService,
                 pushService,
+                couponService,
                 surveyRepository,
                 respondentRepository,
                 answerRepository,

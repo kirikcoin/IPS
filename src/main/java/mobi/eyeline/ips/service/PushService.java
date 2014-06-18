@@ -45,13 +45,15 @@ public class PushService extends BasePushService {
     }
 
     public void scheduleSendSms(final Survey survey,
+                                final String from,
+                                final String text,
                                 final String msisdn) {
 
         executor.submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    sendSms(survey, msisdn);
+                    sendSms(survey, from, text, msisdn);
                 } catch (URISyntaxException | IOException e) {
                     logger.error("Error sending SMS PUSH-request, " +
                             "survey = [" + survey + "], msisdn = [" + msisdn + "]", e);
@@ -75,23 +77,23 @@ public class PushService extends BasePushService {
         doRequest(uri);
     }
 
-    protected void sendSms(Survey survey, String msisdn)
+    protected void sendSms(Survey survey,
+                           String from,
+                           String text,
+                           String msisdn)
             throws URISyntaxException, IOException {
 
         assert survey.getDetails().isEndSmsEnabled();
-
-        final String oa = survey.getDetails().getEndSmsFrom();
-        final String message = survey.getDetails().getEndSmsText();
 
         if (logger.isDebugEnabled()) {
             logger.debug("Sending SMS PUSH request for:" +
                     " survey = [" + survey + "]," +
                     " msisdn = [" + msisdn + "]," +
-                    " message = [" + message + "]," +
-                    " oa = [" + oa + "]");
+                    " message = [" + text + "]," +
+                    " oa = [" + from + "]");
         }
 
-        final URI uri = buildUri(msisdn, message, oa);
+        final URI uri = buildUri(msisdn, text, from);
         doRequest(uri);
     }
 

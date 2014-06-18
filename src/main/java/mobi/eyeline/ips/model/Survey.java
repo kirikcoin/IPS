@@ -1,5 +1,8 @@
 package mobi.eyeline.ips.model;
 
+import com.beust.jcommander.internal.Lists;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -27,9 +30,11 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import static com.beust.jcommander.internal.Lists.newArrayList;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Iterables.tryFind;
@@ -113,6 +118,9 @@ public class Survey implements Serializable {
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     private User owner;
 
+    @OneToMany(mappedBy = "survey")
+    private List<SurveyPattern> patterns;
+
     public Survey() {
     }
 
@@ -177,7 +185,7 @@ public class Survey implements Serializable {
     }
 
     public List<Question> getActiveQuestions() {
-        return newArrayList(filter(getQuestions(), not(SKIP_INACTIVE)));
+        return com.google.common.collect.Lists.newArrayList(filter(getQuestions(), not(SKIP_INACTIVE)));
     }
 
     public void setQuestions(List<Question> questions) {
@@ -227,6 +235,32 @@ public class Survey implements Serializable {
     public boolean isRunningNow() {
         final Date now = new Date();
         return getStartDate().before(now) && getEndDate().after(now);
+    }
+
+    public List<SurveyPattern> getPatterns() {
+        return patterns;
+    }
+
+    public void setPatterns(List<SurveyPattern> patterns) {
+        this.patterns = patterns;
+    }
+
+    public SurveyPattern getActivePattern() {
+        for (SurveyPattern pattern : getPatterns()) {
+            if (pattern.isActive()) {
+                return pattern;
+            }
+        }
+        return null;
+    }
+
+    public List<SurveyPattern> getInactivePatterns() {
+        return newArrayList(filter(getPatterns(), new Predicate<SurveyPattern>() {
+            @Override
+            public boolean apply(SurveyPattern input) {
+                return !input.isActive();
+            }
+        }));
     }
 
     @Override

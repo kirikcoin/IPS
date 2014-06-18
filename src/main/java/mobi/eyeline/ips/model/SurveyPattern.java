@@ -30,7 +30,7 @@ public class SurveyPattern implements Serializable {
     private Survey survey;
 
     @Column(name = "position")
-    private Integer position;
+    private long position = 0;
 
     @Column(name = "length")
     private Integer length;
@@ -54,11 +54,11 @@ public class SurveyPattern implements Serializable {
         this.survey = survey;
     }
 
-    public Integer getPosition() {
+    public long getPosition() {
         return position;
     }
 
-    public void setPosition(Integer position) {
+    public void setPosition(long position) {
         this.position = position;
     }
 
@@ -99,6 +99,5 @@ public class SurveyPattern implements Serializable {
         NUMERICAL,
 
         LATIN_SYMBOLS
-
     }
 }

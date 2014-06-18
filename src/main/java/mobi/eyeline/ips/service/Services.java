@@ -11,6 +11,7 @@ import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
 import mobi.eyeline.ips.repository.SurveyInvitationRepository;
+import mobi.eyeline.ips.repository.SurveyPatternRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import mobi.eyeline.ips.repository.SurveyStatsRepository;
 import mobi.eyeline.ips.repository.UserRepository;
@@ -41,6 +42,7 @@ public class Services {
     private final SurveyInvitationRepository surveyInvitationRepository;
     private final InvitationDeliveryRepository invitationDeliveryRepository;
     private final DeliverySubscriberRepository deliverySubscriberRepository;
+    private final SurveyPatternRepository surveyPatternRepository;
 
     private final SurveyService surveyService;
     private final LocationService locationService;
@@ -48,6 +50,7 @@ public class Services {
     private final MailService mailService;
     private final PushService pushService;
     private final UserService userService;
+    private final CouponService couponService;
     private final UssdService ussdService;
     private final MadvSoapApi madvSoapApi;
     private final MadvUpdateService madvUpdateService;
@@ -74,6 +77,7 @@ public class Services {
         surveyInvitationRepository = new SurveyInvitationRepository(db);
         invitationDeliveryRepository = new InvitationDeliveryRepository(db);
         deliverySubscriberRepository = new DeliverySubscriberRepository(db);
+        surveyPatternRepository = new SurveyPatternRepository(db);
 
         surveyService = new SurveyService(
                 surveyRepository,
@@ -94,10 +98,12 @@ public class Services {
         pushService = new PushService(config);
 
         userService = new UserService(userRepository, mailService);
+        couponService = new CouponService(surveyPatternRepository);
         ussdService = new UssdService(
                 config,
                 surveyService,
                 pushService,
+                couponService,
                 surveyRepository,
                 respondentRepository,
                 answerRepository,
@@ -184,6 +190,10 @@ public class Services {
         return deliverySubscriberRepository;
     }
 
+    public SurveyPatternRepository getSurveyPatternRepository() {
+        return surveyPatternRepository;
+    }
+
     public SurveyService getSurveyService() {
         return surveyService;
     }
@@ -198,6 +208,10 @@ public class Services {
 
     public UserService getUserService() {
         return userService;
+    }
+
+    public CouponService getCouponService() {
+        return couponService;
     }
 
     public UssdService getUssdService() {

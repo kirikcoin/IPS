@@ -15,6 +15,7 @@ public class SimplePattern implements Pattern {
         this.capacity = CharUtils.permutations(options);
     }
 
+    @Override
     public CharSequence convert(long number) {
         assert (number >= 0) && (number < capacity) :
                 "Argument outside of input range: " + number;
@@ -34,12 +35,23 @@ public class SimplePattern implements Pattern {
         return builder.reverse().toString();
     }
 
+    @Override
     public long convert(CharSequence value) {
         throw new AssertionError();
     }
 
+    @Override
     public final long getCapacity() {
         return capacity;
+    }
+
+    @Override
+    public String getPattern() {
+        final StringBuilder builder = new StringBuilder();
+        for (CharSequence option : options) {
+            builder.append("[").append(option).append("]");
+        }
+        return builder.toString();
     }
 
     @SuppressWarnings("SimplifiableIfStatement")

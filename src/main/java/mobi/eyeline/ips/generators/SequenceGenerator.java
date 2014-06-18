@@ -20,6 +20,10 @@ public class SequenceGenerator {
         this(pattern, numberBijection, 0);
     }
 
+    public Pattern getPattern() {
+        return pattern;
+    }
+
     /**
      * @return Total number of combinations for this pattern.
      */
