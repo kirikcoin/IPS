@@ -232,6 +232,10 @@ public class Survey implements Serializable {
         return getQuestions().size();
     }
 
+    public int getActiveQuestionsCount() {
+        return getActiveQuestions().size();
+    }
+
     public boolean isRunningNow() {
         final Date now = new Date();
         return getStartDate().before(now) && getEndDate().after(now);

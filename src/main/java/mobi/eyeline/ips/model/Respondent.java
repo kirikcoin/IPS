@@ -124,7 +124,7 @@ public class Respondent implements Serializable {
     }
 
     public int getAnswersPercentage() {
-        final int questionsCount = getSurvey().getQuestionsCount();
+        final int questionsCount = getSurvey().getActiveQuestionsCount();
         return (questionsCount == 0) ? 0 : ((getAnswersCount() * 100) / questionsCount);
     }
 }
