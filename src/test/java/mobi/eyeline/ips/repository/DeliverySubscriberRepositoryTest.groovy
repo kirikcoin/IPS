@@ -1,32 +1,24 @@
 package mobi.eyeline.ips.repository
 
-import mobi.eyeline.ips.model.DeliverySubscriber
 import mobi.eyeline.ips.model.InvitationDelivery
 import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.service.CsvParseService
 import mobi.eyeline.ips.service.deliveries.DeliveryWrapper
 
 import static com.google.common.collect.Lists.transform
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.DELIVERED
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.NEW
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.*
 import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
 import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 import static mobi.eyeline.ips.service.deliveries.DeliveryWrapper.Message.AS_PAIR
 
+@Mixin(RepositoryMock)
 class DeliverySubscriberRepositoryTest extends DbTestCase {
-
-    InvitationDeliveryRepository invitationDeliveryRepository
-    DeliverySubscriberRepository deliverySubscriberRepository
-    SurveyRepository surveyRepository
 
     List messageList
 
     void setUp() {
         db = new DB(new Properties())
-        invitationDeliveryRepository = new InvitationDeliveryRepository(db)
-        deliverySubscriberRepository = new DeliverySubscriberRepository(db)
-        surveyRepository = new SurveyRepository(db)
+
+        initRepository(db)
     }
 
     void tearDown() {

@@ -7,20 +7,15 @@ import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
 
+@Mixin(RepositoryMock)
 class SurveyRepositoryTest extends DbTestCase {
-    private SurveyRepository surveyRepository
-    private QuestionRepository questionRepository
-    private QuestionOptionRepository questionOptionRepository
-    private UserRepository userRepository
 
     User user1, user2, user3, user4, user5, user6
 
     void setUp() {
         super.setUp()
-        surveyRepository = new SurveyRepository(db)
-        questionRepository = new QuestionRepository(db)
-        questionOptionRepository = new QuestionOptionRepository(db)
-        userRepository = new UserRepository(db)
+
+        initRepository(db)
     }
 
     void testSaveAndLoad() {

@@ -3,15 +3,16 @@ package mobi.eyeline.ips.repository
 import mobi.eyeline.ips.model.Respondent
 import mobi.eyeline.ips.model.Survey
 
+@Mixin(RepositoryMock)
 class RespondentRepositoryTest extends DbTestCase {
-    private RespondentRepository respondentRepository
-    private SurveyRepository surveyRepository
+
     def survey1, survey2, survey3
 
     void setUp() {
         super.setUp()
-        respondentRepository = new RespondentRepository(db)
-        surveyRepository = new SurveyRepository(db)
+
+        initRepository(db)
+
         fillTestData()
     }
 

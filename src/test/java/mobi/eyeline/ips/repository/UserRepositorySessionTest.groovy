@@ -3,14 +3,13 @@ package mobi.eyeline.ips.repository
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 
+@Mixin(RepositoryMock)
 class UserRepositorySessionTest extends DbTestCase {
-
-    private UserRepository userRepository
 
     void setUp() {
         super.setUp()
 
-        userRepository = new UserRepository(db)
+        initRepository(db)
     }
 
     void testListByRole() {

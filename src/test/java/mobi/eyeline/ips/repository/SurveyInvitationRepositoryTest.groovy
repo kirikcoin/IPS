@@ -5,16 +5,15 @@ import mobi.eyeline.ips.model.SurveyInvitation
 
 import static org.junit.Assert.assertEquals
 
+@Mixin(RepositoryMock)
 class SurveyInvitationRepositoryTest extends DbTestCase {
-    private SurveyRepository surveyRepository
-    private SurveyInvitationRepository surveyInvitationRepository
 
     Survey survey1, survey2, survey3, survey4
 
     void setUp() {
         super.setUp()
-        surveyRepository = new SurveyRepository(db)
-        surveyInvitationRepository = new SurveyInvitationRepository(db)
+
+        initRepository(db)
     }
 
     def assertIds =

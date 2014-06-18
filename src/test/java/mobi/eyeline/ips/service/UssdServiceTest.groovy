@@ -9,7 +9,8 @@ import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.properties.FailingMockConfig
-import mobi.eyeline.ips.repository.*
+import mobi.eyeline.ips.repository.DbTestCase
+import mobi.eyeline.ips.repository.RepositoryMock
 
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_ANSWER_ID
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_QUESTION_ID
@@ -19,24 +20,16 @@ import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.instanceOf
 
 @SuppressWarnings("UnnecessaryQualifiedReference")
+@Mixin(RepositoryMock)
 class UssdServiceTest extends DbTestCase {
 
     Config config
 
     // Dependencies
 
-    SurveyRepository surveyRepository
-    SurveyInvitationRepository surveyInvitationRepository
-    InvitationDeliveryRepository invitationDeliveryRepository
     SurveyService surveyService
     PushService pushService
     CouponService couponService
-
-    RespondentRepository respondentRepository
-    AnswerRepository answerRepository
-    QuestionRepository questionRepository
-    QuestionOptionRepository questionOptionRepository
-    SurveyPatternRepository surveyPatternRepository
 
     UssdService ussdService
 
@@ -53,22 +46,15 @@ class UssdServiceTest extends DbTestCase {
             int getSadsMaxSessions() { 2 }
         }
 
+        initRepository(db)
+
         // Dependencies
-        surveyRepository = new SurveyRepository(db)
-        surveyInvitationRepository = new SurveyInvitationRepository(db)
-        invitationDeliveryRepository = new InvitationDeliveryRepository(db)
-        surveyPatternRepository = new SurveyPatternRepository(db)
         surveyService = new SurveyService(
                 surveyRepository,
                 surveyInvitationRepository,
                 invitationDeliveryRepository)
         pushService = new PushService(config)
         couponService = new CouponService(surveyPatternRepository)
-
-        respondentRepository = new RespondentRepository(db)
-        answerRepository = new AnswerRepository(db)
-        questionRepository = new QuestionRepository(db)
-        questionOptionRepository = new QuestionOptionRepository(db)
 
         ussdService = new UssdService(
                 config,
