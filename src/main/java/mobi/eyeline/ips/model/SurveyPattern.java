@@ -78,6 +78,14 @@ public class SurveyPattern implements Serializable {
         this.mode = mode;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public boolean isActive() {
         return active;
     }
