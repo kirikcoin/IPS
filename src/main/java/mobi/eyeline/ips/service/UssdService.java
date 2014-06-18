@@ -302,16 +302,10 @@ public class UssdService implements MessageHandler {
         assert question.isActive() : "Sending inactive question";
 
         final List<AnswerOption> renderedOptions = new ArrayList<>();
-        {
-            List<QuestionOption> questionOptions = question.getOptions();
-            for (int i = 0; i < questionOptions.size(); i++) {
-                final QuestionOption option = questionOptions.get(i);
-                if (option.isActive()) {
-                    renderedOptions.add(
-                            new AnswerOption(i + 1, option, skipValidation)
-                    );
-                }
-            }
+        for (QuestionOption option : question.getActiveOptions()) {
+            renderedOptions.add(
+                    new AnswerOption(option.getActiveIndex() + 1, option, skipValidation)
+            );
         }
 
         question.setSentCount(question.getSentCount() + 1);
