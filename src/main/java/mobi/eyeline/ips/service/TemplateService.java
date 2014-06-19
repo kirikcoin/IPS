@@ -3,6 +3,7 @@ package mobi.eyeline.ips.service;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
 
@@ -32,7 +33,9 @@ public class TemplateService {
     private static final String[] TEMPLATE_NAMES = new String[]{
             "templates/mail-user-registration.ftl",
             "templates/mail-password-restore.ftl",
-            "templates/mail-user-deactivation.ftl"
+            "templates/mail-user-deactivation.ftl",
+            "templates/mail-survey-coupon-remaining.ftl",
+            "templates/mail-survey-coupon-none.ftl"
     };
 
     private final Configuration configuration;
@@ -169,24 +172,33 @@ public class TemplateService {
     }
 
     public String formatRemainingCouponNotification(final User user,
-                                           final int percent,
-                                           final int remainingNumber) {
+                                                    final Survey survey,
+                                                    final int percent,
+                                                    final int remainingNumber) {
         final Template template = loadTemplate("templates/mail-survey-coupon-remaining.ftl");
         final String message =
                 format(getBundle("email", user.getLocale().asLocale()).getString("email.user.coupon.remaining.text"),
+                        survey.getDetails().getTitle(),
                         percent,
                         remainingNumber);
         final Map<String, Object> data = new HashMap<String, Object>() {{
+            put("user", user);
             put("message", message);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 
-    public String formatNoneCouponNotification(final User user) {
+    public String formatNoneCouponNotification(final User user, final Survey survey) {
         final Template template = loadTemplate("templates/mail-survey-coupon-none.ftl");
-
-        return processEmailTemplate(user.getLocale().asLocale(), template, null);
+        final String message =
+                format(getBundle("email", user.getLocale().asLocale()).getString("email.user.coupon.empty.text"),
+                        survey.getDetails().getTitle());
+        final Map<String, Object> data = new HashMap<String, Object>() {{
+            put("user", user);
+            put("message", message);
+        }};
+        return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 
 

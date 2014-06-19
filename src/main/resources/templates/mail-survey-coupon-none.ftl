@@ -1,4 +1,5 @@
 <#-- @ftlvariable name="user" type="ussd.poll.backend.db.model.User" -->
+<#-- @ftlvariable name="message" type="java.lang.String" -->
 
 <#include "mail-base.ftl"/>
 
@@ -19,7 +20,7 @@
 
   <tr>
     <td>
-    ${bundle["email.user.coupon.empty.text"]}
+    ${message}
     </td>
   </tr>
 

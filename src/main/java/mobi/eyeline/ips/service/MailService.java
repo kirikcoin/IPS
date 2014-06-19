@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
@@ -85,19 +86,19 @@ public class MailService {
         ));
     }
 
-    public void sendRemainingCouponNotification(User user, int percent, int remainingNumber) {
+    public void sendRemainingCouponNotification(User user, Survey survey, int percent, int remainingNumber) {
         send(new Message(
                 user.getEmail(),
                 getSubject("email.subject.coupon.notification", user.getLocale().asLocale()),
-                templateService.formatRemainingCouponNotification(user,percent, remainingNumber)
+                templateService.formatRemainingCouponNotification(user, survey, percent, remainingNumber)
         ));
     }
 
-    public void sendNoneCouponNotification(User user) {
+    public void sendNoneCouponNotification(User user, Survey survey) {
         send(new Message(
                 user.getEmail(),
                 getSubject("email.subject.coupon.notification", user.getLocale().asLocale()),
-                templateService.formatNoneCouponNotification(user)
+                templateService.formatNoneCouponNotification(user, survey)
         ));
     }
 
@@ -113,7 +114,6 @@ public class MailService {
             Thread.currentThread().interrupt();
         }
     }
-
 
     //
     //
