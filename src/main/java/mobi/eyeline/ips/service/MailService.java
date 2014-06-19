@@ -85,6 +85,22 @@ public class MailService {
         ));
     }
 
+    public void sendRemainingCouponNotification(User user, int percent, int remainingNumber) {
+        send(new Message(
+                user.getEmail(),
+                getSubject("email.subject.coupon.notification", user.getLocale().asLocale()),
+                templateService.formatRemainingCouponNotification(user,percent, remainingNumber)
+        ));
+    }
+
+    public void sendNoneCouponNotification(User user) {
+        send(new Message(
+                user.getEmail(),
+                getSubject("email.subject.coupon.notification", user.getLocale().asLocale()),
+                templateService.formatNoneCouponNotification(user)
+        ));
+    }
+
     private String getSubject(String key, Locale locale) {
         final ResourceBundle bundle = ResourceBundle.getBundle("email", locale);
         return bundle.getString(key);

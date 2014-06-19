@@ -9,11 +9,15 @@ import mobi.eyeline.ips.properties.Config;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+
+import static java.text.MessageFormat.format;
+import static java.util.ResourceBundle.getBundle;
 
 /**
  * Thread-safe.
@@ -25,7 +29,7 @@ public class TemplateService {
 
     // All the known templates, used for eager loading
     // to provoke any validation errors on initialization.
-    private static final String[] TEMPLATE_NAMES = new String[] {
+    private static final String[] TEMPLATE_NAMES = new String[]{
             "templates/mail-user-registration.ftl",
             "templates/mail-password-restore.ftl",
             "templates/mail-user-deactivation.ftl"
@@ -96,7 +100,7 @@ public class TemplateService {
 
     protected String processEmailTemplate(Locale locale, Template template, Map<String, Object> data) {
         final Map<String, Object> newParams = new HashMap<>(data);
-        newParams.put("bundle", bundle2map(ResourceBundle.getBundle("email", locale)));
+        newParams.put("bundle", bundle2map(getBundle("email", locale)));
         return processTemplate(template, newParams);
     }
 
@@ -163,4 +167,27 @@ public class TemplateService {
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
+
+    public String formatRemainingCouponNotification(final User user,
+                                           final int percent,
+                                           final int remainingNumber) {
+        final Template template = loadTemplate("templates/mail-survey-coupon-remaining.ftl");
+        final String message =
+                format(getBundle("email", user.getLocale().asLocale()).getString("email.user.coupon.remaining.text"),
+                        percent,
+                        remainingNumber);
+        final Map<String, Object> data = new HashMap<String, Object>() {{
+            put("message", message);
+        }};
+
+        return processEmailTemplate(user.getLocale().asLocale(), template, data);
+    }
+
+    public String formatNoneCouponNotification(final User user) {
+        final Template template = loadTemplate("templates/mail-survey-coupon-none.ftl");
+
+        return processEmailTemplate(user.getLocale().asLocale(), template, null);
+    }
+
+
 }

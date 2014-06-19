@@ -2,7 +2,7 @@
 -- changeset nedenzel:8
 
 ALTER TABLE `respondents` ADD `coupon` VARCHAR(255) DEFAULT NULL;
-ALTER TABLE `respondents` ADD UNIQUE key (`survey_id`, `coupon`);
+ALTER TABLE `respondents` ADD UNIQUE KEY `survey_coupon_key` (`survey_id`, `coupon`);
 
 CREATE TABLE `survey_pattern` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

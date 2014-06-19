@@ -29,7 +29,7 @@ public class SurveyPattern implements Serializable {
     @ManyToOne(optional = false)
     private Survey survey;
 
-    @Column(name = "position")
+    @Column(name = "position" , columnDefinition = "INT")
     private long position = 0;
 
     @Column(name = "length")
@@ -39,7 +39,7 @@ public class SurveyPattern implements Serializable {
     @Enumerated(EnumType.STRING)
     private Mode mode;
 
-    @Column(name = "active", columnDefinition = "BIT", nullable = false)
+    @Column(name = "active", columnDefinition = "BIT")
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean active;
 
