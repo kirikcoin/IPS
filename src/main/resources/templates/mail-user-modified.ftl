@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="user" type="ussd.poll.backend.db.model.User" -->
+<#-- @ftlvariable name="user" type="mobi.eyeline.ips.model.User" -->
 <#-- @ftlvariable name="loginUrl" type="java.lang.String" -->
 
 <#include "mail-base.ftl"/>
