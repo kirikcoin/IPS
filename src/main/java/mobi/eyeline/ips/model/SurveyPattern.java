@@ -94,10 +94,23 @@ public class SurveyPattern implements Serializable {
         this.active = active;
     }
 
+    @Override
+    public String toString() {
+        return "SurveyPattern{" +
+                "id=" + id +
+                ", survey=" + survey +
+                ", position=" + position +
+                ", length=" + length +
+                ", mode=" + mode +
+                ", active=" + active +
+                '}';
+    }
+
+    /**
+     * @see mobi.eyeline.ips.util.PatternUtil Pattern mode to regular expression correspondence.
+     */
     public static enum Mode {
-
-        NUMERICAL,
-
-        LATIN_SYMBOLS
+        DIGITS,
+        DIGITS_AND_LATIN
     }
 }

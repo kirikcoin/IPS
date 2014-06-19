@@ -35,7 +35,7 @@ public class SequenceGenerator {
      * @return Available number of combinations for this pattern,
      * i.e. taking current position into account.
      */
-    public long getAvailable() {
+    public long getRemaining() {
         return getTotal() - getCurrentPosition();
     }
 
@@ -53,5 +53,14 @@ public class SequenceGenerator {
 
         final long index = numberBijection.apply(currentPosition++);
         return pattern.convert(index);
+    }
+
+    @Override
+    public String toString() {
+        return "SequenceGenerator{" +
+                "pattern=" + pattern +
+                ", currentPosition=" + currentPosition +
+                ", remaining=" + getRemaining() +
+                '}';
     }
 }

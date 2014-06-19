@@ -10,7 +10,6 @@ import mobi.eyeline.ips.properties.Config;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -30,7 +29,7 @@ public class TemplateService {
 
     // All the known templates, used for eager loading
     // to provoke any validation errors on initialization.
-    private static final String[] TEMPLATE_NAMES = new String[]{
+    private static final String[] TEMPLATE_NAMES = new String[] {
             "templates/mail-user-registration.ftl",
             "templates/mail-password-restore.ftl",
             "templates/mail-user-deactivation.ftl",
@@ -171,16 +170,19 @@ public class TemplateService {
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 
-    public String formatRemainingCouponNotification(final User user,
-                                                    final Survey survey,
-                                                    final int percent,
-                                                    final int remainingNumber) {
+    public String formatCouponRemaining(final User user,
+                                        final Survey survey,
+                                        final int percentRemaining,
+                                        final long remaining) {
         final Template template = loadTemplate("templates/mail-survey-coupon-remaining.ftl");
-        final String message =
-                format(getBundle("email", user.getLocale().asLocale()).getString("email.user.coupon.remaining.text"),
-                        survey.getDetails().getTitle(),
-                        percent,
-                        remainingNumber);
+
+        final String messageTemplate = getBundle("email", user.getLocale().asLocale())
+                .getString("email.user.coupon.remaining.text");
+        final String message = format(messageTemplate,
+                survey.getDetails().getTitle(),
+                percentRemaining,
+                remaining);
+
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
             put("message", message);
@@ -189,11 +191,13 @@ public class TemplateService {
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
     }
 
-    public String formatNoneCouponNotification(final User user, final Survey survey) {
+    public String formatCouponExhaustion(final User user, final Survey survey) {
         final Template template = loadTemplate("templates/mail-survey-coupon-none.ftl");
-        final String message =
-                format(getBundle("email", user.getLocale().asLocale()).getString("email.user.coupon.empty.text"),
-                        survey.getDetails().getTitle());
+
+        final String messageTemplate = getBundle("email", user.getLocale().asLocale())
+                .getString("email.user.coupon.empty.text");
+        final String message = format(messageTemplate, survey.getDetails().getTitle());
+
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
             put("message", message);

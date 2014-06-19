@@ -21,7 +21,7 @@ class SequenceGeneratorTest extends GroovyTestCase {
         def gen = new GeneratorBuilder('[01][01]').build(0)
 
         assertEquals 4, gen.total
-        assertEquals 4, gen.available
+        assertEquals 4, gen.remaining
         assertEquals 0, gen.currentPosition
 
         def results = produce(gen)
@@ -34,7 +34,7 @@ class SequenceGeneratorTest extends GroovyTestCase {
         def gen = new GeneratorBuilder('[0-9]{4}').build(0)
 
         assertEquals 10_000, gen.total
-        assertEquals 10_000, gen.available
+        assertEquals 10_000, gen.remaining
 
         def results = produce(gen)
         ensureUnique(results)

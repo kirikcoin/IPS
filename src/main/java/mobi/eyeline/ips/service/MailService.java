@@ -86,19 +86,28 @@ public class MailService {
         ));
     }
 
-    public void sendRemainingCouponNotification(User user, Survey survey, int percent, int remainingNumber) {
+    public void sendCouponRemaining(User user,
+                                    Survey survey,
+                                    int percent,
+                                    long remainingNumber) {
+        final String body = templateService.formatCouponRemaining(
+                user,
+                survey,
+                percent,
+                remainingNumber);
+
         send(new Message(
                 user.getEmail(),
                 getSubject("email.subject.coupon.notification", user.getLocale().asLocale()),
-                templateService.formatRemainingCouponNotification(user, survey, percent, remainingNumber)
+                body
         ));
     }
 
-    public void sendNoneCouponNotification(User user, Survey survey) {
+    public void sendCouponExhaustion(User user, Survey survey) {
         send(new Message(
                 user.getEmail(),
                 getSubject("email.subject.coupon.notification", user.getLocale().asLocale()),
-                templateService.formatNoneCouponNotification(user, survey)
+                templateService.formatCouponExhaustion(user, survey)
         ));
     }
 

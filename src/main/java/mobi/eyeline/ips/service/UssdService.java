@@ -252,7 +252,7 @@ public class UssdService implements MessageHandler {
                 coupon = respondent.getCoupon();
 
             } else {
-                coupon = couponService.genAndPersist(survey);
+                coupon = couponService.generate(survey);
 
                 respondent.setCoupon(coupon.toString());
                 respondentRepository.update(respondent);

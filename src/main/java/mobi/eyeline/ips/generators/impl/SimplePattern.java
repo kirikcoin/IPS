@@ -54,6 +54,11 @@ public class SimplePattern implements Pattern {
         return builder.toString();
     }
 
+    @Override
+    public String toString() {
+        return getPattern();
+    }
+
     @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object o) {

@@ -98,7 +98,7 @@ public class Services {
         pushService = new PushService(config);
 
         userService = new UserService(userRepository, mailService);
-        couponService = new CouponService(surveyPatternRepository);
+        couponService = new CouponService(surveyPatternRepository, mailService);
         ussdService = new UssdService(
                 config,
                 surveyService,

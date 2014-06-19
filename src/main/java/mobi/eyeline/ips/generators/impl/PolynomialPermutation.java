@@ -62,6 +62,11 @@ public class PolynomialPermutation implements NumberBijection {
         return expression.apply(from).mod(BigInteger.valueOf(maxValue)).longValue();
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s (mod %d)", expression, maxValue);
+    }
+
     /**
      * {@code a * x^2 + b * x + c} polynomial.
      */
@@ -82,6 +87,11 @@ public class PolynomialPermutation implements NumberBijection {
 
         BigInteger apply(BigInteger x) {
             return x.pow(2).multiply(a).add(b.multiply(x)).add(c);
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%d * x^2 + %d * x + %d", a, b, c);
         }
     }
 }

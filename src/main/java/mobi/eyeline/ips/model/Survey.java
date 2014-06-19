@@ -118,7 +118,8 @@ public class Survey implements Serializable {
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
     private User owner;
 
-    @OneToMany(mappedBy = "survey")
+    @OneToMany(mappedBy = "survey", cascade = ALL, orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<SurveyPattern> patterns;
 
     public Survey() {

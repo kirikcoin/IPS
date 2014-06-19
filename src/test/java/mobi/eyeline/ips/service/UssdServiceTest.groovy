@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.instanceOf
 
 @SuppressWarnings("UnnecessaryQualifiedReference")
-@Mixin(RepositoryMock)
+@Mixin([RepositoryMock, UssdServiceUtils])
 class UssdServiceTest extends DbTestCase {
 
     Config config
@@ -54,7 +54,7 @@ class UssdServiceTest extends DbTestCase {
                 surveyInvitationRepository,
                 invitationDeliveryRepository)
         pushService = new PushService(config)
-        couponService = new CouponService(surveyPatternRepository)
+        couponService = new CouponService(surveyPatternRepository, new MockMailService())
 
         ussdService = new UssdService(
                 config,
@@ -69,18 +69,12 @@ class UssdServiceTest extends DbTestCase {
     }
 
     def survey = { surveyRepository.load(sid.toInteger()) }
-    def request = { params -> ussdService.handle asMultimap(params) }
 
     def answer(option) {
         def props = [:]
         props.putAll option.properties
         props[UssdOption.PARAM_MSISDN] = msisdn
         request(props)
-    }
-
-    @SuppressWarnings("GrMethodMayBeStatic")
-    Map<String, String[]> asMultimap(Map map) {
-        map.collectEntries {k, v -> [(k.toString()): [v.toString()] as String[]]} as Map<String, String[]>
     }
 
     void testNullSurveyUrl() {
@@ -162,7 +156,7 @@ class UssdServiceTest extends DbTestCase {
 
     void createTestSurvey() {
         def survey =
-                new Survey(startDate: new Date().minus(2), endDate: new Date().plus(2))
+                new Survey(startDate: new Date() - 2, endDate: new Date() + 2)
         survey.details = new SurveyDetails(survey: survey, title: 'Foo', endText: 'End text')
         surveyRepository.save survey
 

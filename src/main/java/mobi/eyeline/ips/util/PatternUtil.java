@@ -10,10 +10,10 @@ public class PatternUtil {
         final StringBuilder builder = new StringBuilder();
 
         // Prohibit first symbol to be `0'.
-        if (mode == SurveyPattern.Mode.NUMERICAL) {
+        if (mode == SurveyPattern.Mode.DIGITS) {
             builder.append("[1-9]").append("[0-9]");
 
-        } else if (mode == SurveyPattern.Mode.LATIN_SYMBOLS) {
+        } else if (mode == SurveyPattern.Mode.DIGITS_AND_LATIN) {
             builder.append("[1-9A-Z]").append("[0-9A-Z]");
 
         } else {
