@@ -4,8 +4,10 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
+import mobi.eyeline.ips.model.SurveyPattern
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
+import mobi.eyeline.ips.service.CouponService
 import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UssdService
@@ -15,7 +17,9 @@ import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 
 import javax.faces.context.FacesContext
+import javax.faces.model.SelectItem
 
+@SuppressWarnings("UnnecessaryQualifiedReference")
 @CompileStatic
 @Slf4j('logger')
 class SurveySettingsController extends BaseSurveyController {
@@ -24,6 +28,7 @@ class SurveySettingsController extends BaseSurveyController {
     private final UserRepository userRepository = Services.instance().userRepository
     private final UssdService ussdService = Services.instance().ussdService
     private final PushService pushService = Services.instance().pushService
+    private final CouponService couponService = Services.instance().couponService
 
     String errorId
 
@@ -42,6 +47,27 @@ class SurveySettingsController extends BaseSurveyController {
 
     boolean previewSentOk
 
+    boolean couponEnabled = survey.activePattern != null
+    SurveyPattern.Mode currentPatternMode =
+            !couponEnabled ? SurveyPattern.Mode.DIGITS : survey.activePattern.mode
+    int currentPatternLength = survey.activePattern == null ? 0 : survey.activePattern.length
+
+    List<SelectItem> patternModes = SurveyPattern.Mode.values()
+            .collect { SurveyPattern.Mode mode ->
+        def key = "survey.settings.end.message.coupon.format.$mode".toString()
+
+        new SelectItem( mode, BaseController.strings[key] as String)
+    }.toList()
+
+    String generatorName = !couponEnabled ? null :
+            BaseController.strings["survey.settings.end.message.coupon.format.${survey.activePattern.mode}".toString()]
+
+    long couponsSent = survey.patterns.collect { SurveyPattern sp -> sp.position }.sum(0) as long
+    long couponsAvailable = !couponEnabled ? 0 : couponService.getAvailable(survey)
+
+    boolean showWarning = couponEnabled && (couponService.getPercentAvailable(survey) <= 10)
+    boolean showDisabled = couponEnabled && (couponsAvailable == 0)
+
     SurveySettingsController() {
         super()
         newSurveyClientId = survey.client.id
@@ -57,7 +83,7 @@ class SurveySettingsController extends BaseSurveyController {
                 ])
         if (validationError) {
             this.errorId =
-                    FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
+                    FacesContext.currentInstance.externalContext.requestParameterMap['errorId']
             return
         }
 
@@ -70,6 +96,36 @@ class SurveySettingsController extends BaseSurveyController {
         } else {
             persistedSurvey.details.endSmsText = null
             persistedSurvey.details.endSmsFrom = null
+        }
+
+        def activePattern = persistedSurvey.activePattern
+        if (persistedSurvey.details.endSmsEnabled && couponEnabled) {
+            if (activePattern != null &&
+                activePattern.mode == currentPatternMode &&
+                activePattern.length == currentPatternLength) {
+                // Do nothing as pattern is unchanged.
+
+            } else {
+                persistedSurvey.patterns.each { SurveyPattern p -> p.active = false }
+
+                final SurveyPattern existing = persistedSurvey.patterns.find { SurveyPattern p ->
+                    p.mode == currentPatternMode && p.length == currentPatternLength }
+                if (existing) {
+                    existing.active = true
+
+                } else {
+                    persistedSurvey.patterns << new SurveyPattern(
+                            survey: persistedSurvey,
+                            mode: currentPatternMode,
+                            length: currentPatternLength,
+                            active: true
+                    )
+                }
+            }
+        } else {
+            if (activePattern != null) {
+                persistedSurvey.patterns.each { SurveyPattern p -> p.active = false }
+            }
         }
 
         surveyRepository.update(persistedSurvey)
@@ -90,7 +146,7 @@ class SurveySettingsController extends BaseSurveyController {
 
         if (validationError) {
             this.errorId =
-                    FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
+                    FacesContext.currentInstance.externalContext.requestParameterMap['errorId']
             return
         }
 
@@ -110,11 +166,11 @@ class SurveySettingsController extends BaseSurveyController {
         survey.active = false
         surveyRepository.update(survey)
 
-        return "SURVEY_LIST"
+        return 'SURVEY_LIST'
     }
 
     void moveUp() {
-        int questionId = getParamValue("questionId").asInteger()
+        int questionId = getParamValue('questionId').asInteger()
         persistedSurvey.moveUp(questionRepository.load(questionId))
         surveyRepository.update(persistedSurvey)
 
@@ -122,7 +178,7 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     void moveDown() {
-        int questionId = getParamValue("questionId").asInteger()
+        int questionId = getParamValue('questionId').asInteger()
         persistedSurvey.moveDown(questionRepository.load(questionId))
         surveyRepository.update(persistedSurvey)
 
@@ -130,7 +186,7 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     void deleteQuestion() {
-        int questionId = getParamValue("questionId").asInteger()
+        int questionId = getParamValue('questionId').asInteger()
 
         def question = questionRepository.load(questionId)
         question.active = false
@@ -140,7 +196,7 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     String modifyQuestion() {
-        Integer questionId = getParamValue("questionId").asInteger()
+        Integer questionId = getParamValue('questionId').asInteger()
 
         if (questionId != null) {
             question = questionRepository.load(questionId)
@@ -150,9 +206,9 @@ class SurveySettingsController extends BaseSurveyController {
                     .findAll { QuestionOption it -> it.active }
                     .each { QuestionOption it ->
                 def row = new DynamicTableRow()
-                row.setValue("answer", it.answer)
-                row.setValue("terminal", it.terminal)
-                row.setValue("id", it.id)
+                row.setValue('answer', it.answer)
+                row.setValue('terminal', it.terminal)
+                row.setValue('id', it.id)
                 questionOptions.addRow(row)
             }
         } else {
@@ -190,6 +246,7 @@ class SurveySettingsController extends BaseSurveyController {
         goToSurvey(surveyId)
     }
 
+    @SuppressWarnings("GrMethodMayBeStatic")
     private Map<String, String> getPropertyMap(Question q) {
         def map = [:]
         (0..q.options.size()).each {
@@ -275,16 +332,14 @@ class SurveySettingsController extends BaseSurveyController {
         abstract boolean getValue()
         abstract String getLabel()
 
-        static final TerminalOption TRUE = new TerminalOption() {
-            boolean getValue() { true }
-            String getLabel() { BaseController.strings['question.option.terminal.yes'] }
-        }
+        static final TerminalOption TRUE = [
+                getValue: { true },
+                getLabel: { BaseController.strings['question.option.terminal.yes'] }
+        ] as TerminalOption
 
-        static final TerminalOption FALSE = new TerminalOption() {
-            boolean getValue() { false }
-            String getLabel() { BaseController.strings['question.option.terminal.no'] }
-        }
-
-        static TerminalOption forValue(boolean value) { value ? TRUE : FALSE }
+        static final TerminalOption FALSE = [
+                getValue: { false },
+                getLabel: { BaseController.strings['question.option.terminal.no'] }
+        ] as TerminalOption
     }
 }

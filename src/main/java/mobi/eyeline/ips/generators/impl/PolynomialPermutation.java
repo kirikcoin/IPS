@@ -21,6 +21,10 @@ public class PolynomialPermutation implements NumberBijection {
     private final Expression expression;
 
     public PolynomialPermutation(long maxValue) {
+        if (maxValue <= 0) {
+            throw new IllegalArgumentException();
+        }
+
         this.maxValue = maxValue;
         this.expression = createExpression();
     }
@@ -51,6 +55,7 @@ public class PolynomialPermutation implements NumberBijection {
         try {
             return Collections.max(multiprimes);
         } catch (NoSuchElementException e) {
+            // XXX: possibly need to extend an algorithm for arbitrary ranges.
             throw new AssertionError();
         }
     }

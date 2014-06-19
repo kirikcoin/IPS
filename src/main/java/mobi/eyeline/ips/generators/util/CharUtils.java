@@ -3,6 +3,10 @@ package mobi.eyeline.ips.generators.util;
 public class CharUtils {
 
     public static long permutations(CharSequence[] sequence) {
+        if (sequence.length == 0) {
+            return 0;
+        }
+
         long total = 1;
         for (CharSequence option : sequence) {
             total *= option.length();

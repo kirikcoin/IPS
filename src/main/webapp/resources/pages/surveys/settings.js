@@ -33,6 +33,7 @@ var page = {
       });
 
       page.onEndSmsEnabledChange($('#endSmsEnabled')[0]);
+      page.onCouponEnabledChange($('#couponEnabled')[0]);
     });
 
   },
@@ -89,7 +90,7 @@ var page = {
   },
 
   onEditSettingsClick: function() {
-    $('#settingsDisplay').hide();
+    $('.settingsDisplay').hide();
     $('#settingsDialog').show();
 
     page.disableEditables();
@@ -99,7 +100,7 @@ var page = {
 
   onEditSettingsCancel: function() {
     $('#settingsDialog').hide();
-    $('#settingsDisplay').show();
+    $('.settingsDisplay').show();
 
     page.enableEditables();
     ips.message.hideAll();
@@ -141,7 +142,12 @@ var page = {
   },
 
   onEndSmsEnabledChange: function (self) {
-    $('#endSmsDetails').toggle(self.checked);
+    $('#endSmsDetails, .endSmsDetails').toggle(self.checked);
+    return false;
+  },
+
+  onCouponEnabledChange: function (self) {
+    $('#couponDetails, #couponHint').toggle(self.checked);
     return false;
   }
 

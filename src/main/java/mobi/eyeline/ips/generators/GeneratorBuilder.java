@@ -1,8 +1,10 @@
 package mobi.eyeline.ips.generators;
 
 import dk.brics.automaton.Automaton;
+import mobi.eyeline.ips.generators.impl.EmptyGenerator;
 import mobi.eyeline.ips.generators.impl.PolynomialPermutation;
 import mobi.eyeline.ips.generators.impl.SimplePattern;
+import mobi.eyeline.ips.generators.impl.UnorderedSequenceGenerator;
 import mobi.eyeline.ips.generators.util.AutomatonUtils;
 
 public class GeneratorBuilder {
@@ -11,14 +13,6 @@ public class GeneratorBuilder {
 
     public GeneratorBuilder(String regex) throws UnsupportedPatternException {
         automaton = AutomatonUtils.toAutomaton(regex);
-    }
-
-    public GeneratorBuilder(SequenceGenerator generator) {
-        try {
-            automaton = AutomatonUtils.toAutomaton(generator.getPattern().getPattern());
-        } catch (UnsupportedPatternException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public GeneratorBuilder exclude(String regex) throws UnsupportedPatternException {
@@ -32,12 +26,15 @@ public class GeneratorBuilder {
             throws UnsupportedPatternException {
 
         final String[] positionOptions = AutomatonUtils.asStateSymbols(automaton);
-
         final SimplePattern pattern = new SimplePattern(positionOptions);
-        final PolynomialPermutation permutation =
-                new PolynomialPermutation(pattern.getCapacity());
 
-        return new SequenceGenerator(pattern, permutation, startPosition);
+        if (pattern.getCapacity() == 0) {
+            return new EmptyGenerator();
+
+        } else {
+            final NumberBijection permutation = new PolynomialPermutation(pattern.getCapacity());
+            return new UnorderedSequenceGenerator(pattern, permutation, startPosition);
+        }
     }
 
     public SequenceGenerator build()

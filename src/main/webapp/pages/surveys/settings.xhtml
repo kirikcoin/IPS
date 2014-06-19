@@ -117,6 +117,7 @@
               <h:panelGroup>
 
                 <h:panelGrid id="settingsDisplay"
+                             styleClass="settingsDisplay"
                              columns="2"
                              columnClasses="settings-left,settings-right">
                   <!-- Title -->
@@ -161,6 +162,12 @@
                                 value="#{surveySettingsController.surveyUrl}"
                                 rendered="#{userSession.managerRole}"/>
                 </h:panelGrid>
+
+                <h:panelGroup styleClass="settingsDisplay"
+                              rendered="#{surveySettingsController.showDisabled}">
+                  <h:outputText styleClass="noCouponsError"
+                                value="#{bundle['survey.settings.end.message.coupon.exhausted']}"/>
+                </h:panelGroup>
 
                 <h:panelGroup id="settingsDialog" style="display: none">
                   <h:panelGrid columns="2" columnClasses="settings-left,none" >
@@ -382,15 +389,43 @@
 
                     <h:outputText value="#{bundle['survey.settings.end.message.title.sms.number']}"
                                   rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
-
                     <h:outputText value="#{surveySettingsController.persistedSurvey.details.endSmsFrom}"
                                   rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
+
+                    <h:outputText value="#{bundle['survey.settings.end.message.coupon.format']}"
+                                  rendered="#{surveySettingsController.couponEnabled}"/>
+                    <h:outputText value="#{surveySettingsController.generatorName}"
+                                  rendered="#{surveySettingsController.couponEnabled}"/>
+
+                    <h:outputText value="#{bundle['survey.settings.end.message.coupon.length']}"
+                                  rendered="#{surveySettingsController.couponEnabled}"/>
+                    <h:outputText value="#{surveySettingsController.persistedSurvey.activePattern.length}"
+                                  rendered="#{surveySettingsController.couponEnabled}"/>
+
+                    <h:outputText value="#{bundle['survey.settings.end.message.coupon.sent']}"
+                                  rendered="#{surveySettingsController.couponEnabled}"/>
+                    <h:outputText value="#{surveySettingsController.couponsSent}"
+                                  rendered="#{surveySettingsController.couponEnabled}"/>
+
+                    <h:outputText value="#{bundle['survey.settings.end.message.coupon.available']}"
+                                  rendered="#{surveySettingsController.couponEnabled}"/>
+
+                    <h:panelGroup rendered="#{surveySettingsController.showWarning}">
+                      <h:outputText value="#{surveySettingsController.couponsAvailable}"
+                                    styleClass="noCouponsError"
+                                    rendered="#{surveySettingsController.couponEnabled}"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{not surveySettingsController.showWarning}">
+                      <h:outputText value="#{surveySettingsController.couponsAvailable}"
+                                    rendered="#{surveySettingsController.couponEnabled}"/>
+                    </h:panelGroup>
+
 
                   </h:panelGrid>
                 </h:panelGroup>
 
                 <h:panelGroup id="endMessageDialog" style="display: none">
-                  <h:panelGrid columns="2" columnClasses="settings-left,none" >
+                  <h:panelGrid columns="2" columnClasses="settings-left,none">
 
                     <h:outputLabel value="#{bundle['survey.settings.end.message.title.ussd']}"
                                    for="endText"/>
@@ -399,21 +434,62 @@
                                    value="#{surveySettingsController.survey.details.endText}"/>
 
                     <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.enabled']}"
-                                   for="endText"/>
-
+                                   for="endSmsEnabled"/>
                     <h:selectBooleanCheckbox id="endSmsEnabled"
                                              value="#{surveySettingsController.survey.details.endSmsEnabled}"
                                              onchange="page.onEndSmsEnabledChange(this);"/>
                   </h:panelGrid>
 
-                  <h:panelGrid id="endSmsDetails" columns="2" columnClasses="settings-left,none" >
+                  <h:panelGrid id="endSmsDetails"
+                               columns="2"
+                               columnClasses="settings-left,none"
+                               styleClass="endSmsDetails">
 
+                    <h:outputLabel value="#{bundle['survey.settings.end.message.coupon.enabled']}"
+                                   for="couponEnabled"/>
+                    <h:selectBooleanCheckbox id="couponEnabled"
+                                             value="#{surveySettingsController.couponEnabled}"
+                                             onchange="page.onCouponEnabledChange(this);"/>
+                  </h:panelGrid>
+
+                  <h:panelGrid id="couponDetails"
+                               columns="2"
+                               columnClasses="settings-left,none"
+                               styleClass="endSmsDetails">
+                    <h:outputLabel value="#{bundle['survey.settings.end.message.coupon.format']}"
+                                   for="couponFormat"/>
+                    <h:selectOneMenu id="couponFormat"
+                                     value="#{surveySettingsController.currentPatternMode}">
+                      <f:selectItems value="#{surveySettingsController.patternModes}"/>
+                    </h:selectOneMenu>
+
+                    <h:outputLabel value="#{bundle['survey.settings.end.message.coupon.length']}"
+                                   for="couponLength"/>
+                    <h:selectOneMenu id="couponLength"
+                                     value="#{surveySettingsController.currentPatternLength}">
+                      <f:selectItem itemValue="4" itemLabel="4"/>
+                      <f:selectItem itemValue="5" itemLabel="5"/>
+                      <f:selectItem itemValue="6" itemLabel="6"/>
+                      <f:selectItem itemValue="7" itemLabel="7"/>
+                      <f:selectItem itemValue="8" itemLabel="8"/>
+                    </h:selectOneMenu>
+
+                  </h:panelGrid>
+
+                  <h:panelGrid columns="2"
+                               columnClasses="settings-left,none"
+                               styleClass="endSmsDetails">
                     <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms']}"
                                    for="endSmsText"/>
-                    <eye:inputText id="endSmsText"
-                                   maxlength="70"
-                                   rows="3"
-                                   value="#{surveySettingsController.survey.details.endSmsText}"/>
+
+                    <h:panelGrid columns="1">
+                      <eye:inputText id="endSmsText"
+                                     maxlength="70"
+                                     rows="3"
+                                     value="#{surveySettingsController.survey.details.endSmsText}"/>
+                      <h:outputText id="couponHint"
+                                    value="#{bundle['survey.settings.end.message.coupon.hint']}"/>
+                    </h:panelGrid>
 
                     <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.number']}"
                                    for="endSmsFrom"/>
@@ -475,8 +551,6 @@
 
         <!--
             Question delete confirmation dialog
-
-
         -->
         <eye:dialog id="questionDeleteDialog"
                     title="#{bundle['survey.settings.questions.delete.title']}"

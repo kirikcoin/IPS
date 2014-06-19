@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.locks.Lock;
 
-import static mobi.eyeline.ips.model.SurveyPattern.Mode;
 import static mobi.eyeline.ips.util.PatternUtil.asRegex;
 
 public class CouponService {
@@ -61,41 +60,6 @@ public class CouponService {
         return createGenerator(survey);
     }
 
-    private SequenceGenerator createGenerator(Survey survey, Mode mode, int length) {
-        try {
-            final GeneratorBuilder builder = new GeneratorBuilder(asRegex(mode, length));
-
-            for (SurveyPattern prev : survey.getPatterns()) {
-                if (prev.getPosition() != 0) {
-                    builder.exclude(asRegex(prev.getMode(), prev.getLength()));
-                }
-            }
-
-            return builder.build();
-
-        } catch (UnsupportedPatternException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public boolean canSwitchTo(Survey survey, Mode mode, int length) {
-        final SequenceGenerator generator = createGenerator(survey);
-        if (generator == null) {
-            return true;
-        }
-
-        try {
-            final GeneratorBuilder builder = new GeneratorBuilder(generator);
-            builder.exclude(asRegex(mode, length));
-
-            final SequenceGenerator newGen = builder.build();
-            return newGen.getRemaining() > 0;
-
-        } catch (UnsupportedPatternException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public String getCouponTag() {
         return "[coupon]";
     }
@@ -110,14 +74,10 @@ public class CouponService {
         return createGenerator(survey).getRemaining();
     }
 
-    public long getTotal(Survey survey) {
-        assert hasCouponSupport(survey);
-
-        return createGenerator(survey).getTotal();
-    }
-
-    public long getTotal(Survey survey, Mode mode, int length) {
-        return createGenerator(survey, mode, length).getTotal();
+    public int getPercentAvailable(Survey survey) {
+        final SequenceGenerator generator = createGenerator(survey);
+        return (generator.getRemaining() == 0) ?
+                0 : ((int) (generator.getTotal() / generator.getRemaining()));
     }
 
     public boolean shouldGenerateCoupon(Survey survey) {
