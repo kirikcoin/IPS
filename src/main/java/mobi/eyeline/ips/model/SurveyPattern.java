@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -29,12 +31,16 @@ public class SurveyPattern implements Serializable {
     @ManyToOne(optional = false)
     private Survey survey;
 
+    @Min(0)
     @Column(name = "position" , columnDefinition = "INT")
     private long position = 0;
 
+    @Min(0)
+    @NotNull
     @Column(name = "length")
-    private Integer length;
+    private int length;
 
+    @NotNull
     @Column(name = "mode")
     @Enumerated(EnumType.STRING)
     private Mode mode;
@@ -62,11 +68,11 @@ public class SurveyPattern implements Serializable {
         this.position = position;
     }
 
-    public Integer getLength() {
+    public int getLength() {
         return length;
     }
 
-    public void setLength(Integer length) {
+    public void setLength(int length) {
         this.length = length;
     }
 

@@ -8,15 +8,15 @@ ALTER TABLE users ADD can_send_invitations BOOLEAN  DEFAULT FALSE;
 --
 
 CREATE TABLE `deliveries` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `survey_id` int(11) NOT NULL,
-  `date` datetime default NULL,
-  `type` varchar(255) NOT NULL,
-  `state` varchar(255) NOT NULL DEFAULT 'INACTIVE',
-  `current_position` int(11) NOT NULL DEFAULT 0,
-  `text`  text DEFAULT NULL,
-  `speed`  int(3) DEFAULT '1',
-  `input_file_name` varchar(255) NOT NULL,
+  `id`               INT(11)      NOT NULL AUTO_INCREMENT,
+  `survey_id`        INT(11)      NOT NULL,
+  `date`             DATETIME DEFAULT NULL,
+  `type`             VARCHAR(255) NOT NULL,
+  `state`            VARCHAR(255) NOT NULL DEFAULT 'INACTIVE',
+  `current_position` INT(11)      NOT NULL DEFAULT 0,
+  `text`             TEXT DEFAULT NULL,
+  `speed`            INT(3) DEFAULT '1',
+  `input_file_name`  VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_deliveries_surveys` (`survey_id`),
   CONSTRAINT `FK_deliveries_surveys` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`)
@@ -27,11 +27,11 @@ CREATE TABLE `deliveries` (
 --
 
 CREATE TABLE `delivery_subscribers` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `delivery_id` int(11) NOT NULL,
-  `msisdn` varchar(255) NOT NULL,
-  `status` varchar(255) NOT NULL DEFAULT 'NEW',
-  `last_update` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id`          INT(11)      NOT NULL AUTO_INCREMENT,
+  `delivery_id` INT(11)      NOT NULL,
+  `msisdn`      VARCHAR(255) NOT NULL,
+  `status`      VARCHAR(255) NOT NULL DEFAULT 'NEW',
+  `last_update` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `FK_delivery_subscribers_deliveries` (`delivery_id`),
   CONSTRAINT `FK_delivery_subscribers_deliveries` FOREIGN KEY (`delivery_id`) REFERENCES `deliveries` (`id`)
