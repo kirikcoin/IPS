@@ -123,4 +123,8 @@ public class PushService extends BasePushService {
 
         return builder.build();
     }
+
+    public void stop() {
+        executor.shutdown();
+    }
 }
