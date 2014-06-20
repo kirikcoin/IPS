@@ -13,6 +13,7 @@ public class JmxBeansService {
 
     private static JmxBeansService instance;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private JmxServer jmxServer;
 
 

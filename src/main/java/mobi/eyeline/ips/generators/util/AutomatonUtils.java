@@ -24,6 +24,13 @@ public class AutomatonUtils {
     }
 
     public static String[] asStateSymbols(Automaton a) throws UnsupportedPatternException {
+        if (!a.isFinite()) {
+            throw new UnsupportedPatternException("Infinite expression");
+        }
+
+        if (a.getAcceptStates().size() > 1) {
+            throw new UnsupportedPatternException("Non-fixed length");
+        }
 
         final List<String> options = new ArrayList<>(a.getNumberOfStates());
 

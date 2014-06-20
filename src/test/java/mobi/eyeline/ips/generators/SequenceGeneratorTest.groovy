@@ -87,4 +87,17 @@ class SequenceGeneratorTest extends GroovyTestCase {
                 '[399999, 401440, 405761, 412962, 423043, 436004, 451845, 470566, 492167, 516648, 544009]',
                 results[0..10].toString())
     }
+
+    void test7() {
+        def gen = new GeneratorBuilder('[0-4]').exclude('[0]').build()
+
+        assertEquals 4, gen.total
+        assertEquals 4, gen.remaining
+        assertEquals 0, gen.currentPosition
+
+        def results = produce(gen)
+        assertEquals gen.total, gen.currentPosition
+
+        assertEquals(['1', '4', '3', '2'], results)
+    }
 }

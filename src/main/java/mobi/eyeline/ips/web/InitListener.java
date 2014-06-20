@@ -93,6 +93,7 @@ public class InitListener implements ServletContextListener {
         try {
             Services.instance().getDeliveryService().stop();
             Services.instance().getNotificationService().stop();
+            Services.instance().getPushService().stop();
         } catch (InterruptedException ignored) {}
     }
 }

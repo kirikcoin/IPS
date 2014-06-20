@@ -40,4 +40,11 @@ class SimplePatternTest extends GroovyTestCase {
 
         assertEquals 1_000, pattern.capacity
     }
+
+    void test5() {
+        def options = ['123', '456']
+        def pattern = new SimplePattern(options as CharSequence[])
+
+        assertEquals '[123][456]', pattern.pattern
+    }
 }

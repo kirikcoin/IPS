@@ -87,6 +87,14 @@ class SurveySettingsController extends BaseSurveyController {
             return
         }
 
+        copyEndMessage()
+        copyCoupons()
+
+        surveyRepository.update(persistedSurvey)
+        goToSurvey(surveyId)
+    }
+
+    private void copyEndMessage() {
         persistedSurvey.details.endText = survey.details.endText
 
         persistedSurvey.details.endSmsEnabled = survey.details.endSmsEnabled
@@ -97,19 +105,22 @@ class SurveySettingsController extends BaseSurveyController {
             persistedSurvey.details.endSmsText = null
             persistedSurvey.details.endSmsFrom = null
         }
+    }
 
+    private void copyCoupons() {
         def activePattern = persistedSurvey.activePattern
         if (persistedSurvey.details.endSmsEnabled && couponEnabled) {
             if (activePattern != null &&
-                activePattern.mode == currentPatternMode &&
-                activePattern.length == currentPatternLength) {
+                    activePattern.mode == currentPatternMode &&
+                    activePattern.length == currentPatternLength) {
                 // Do nothing as pattern is unchanged.
 
             } else {
                 persistedSurvey.patterns.each { SurveyPattern p -> p.active = false }
 
                 final SurveyPattern existing = persistedSurvey.patterns.find { SurveyPattern p ->
-                    p.mode == currentPatternMode && p.length == currentPatternLength }
+                    p.mode == currentPatternMode && p.length == currentPatternLength
+                }
                 if (existing) {
                     existing.active = true
 
@@ -127,9 +138,6 @@ class SurveySettingsController extends BaseSurveyController {
                 persistedSurvey.patterns.each { SurveyPattern p -> p.active = false }
             }
         }
-
-        surveyRepository.update(persistedSurvey)
-        goToSurvey(surveyId)
     }
 
     void saveSettings() {
