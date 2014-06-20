@@ -21,6 +21,8 @@ public abstract class UssdOption {
 
     public static final String PARAM_MESSAGE_TYPE       = "type";
 
+    public static final String PARAM_BAD_COMMAND        = "bad_command";
+
     private final int key;
     private final String text;
     private final boolean skipValidation;
@@ -97,6 +99,10 @@ public abstract class UssdOption {
 
         if (options.get(PARAM_MESSAGE_TYPE) == null) {
             return null;
+        }
+
+        if(options.get(PARAM_BAD_COMMAND) != null) {
+            return BadCommandOption.parse(options);
         }
 
         final UssdOptionType type =

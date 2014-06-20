@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.service;
 
 import mobi.eyeline.ips.messages.AnswerOption;
+import mobi.eyeline.ips.messages.BadCommandOption;
 import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
 import mobi.eyeline.ips.messages.UssdOption;
@@ -202,6 +203,16 @@ public class UssdService implements MessageHandler {
             // All the questions are answered.
             return surveyFinish(respondent, option.getQuestion().getSurvey());
         }
+    }
+
+    @Override
+    public UssdResponseModel handle(String msisdn, BadCommandOption request) {
+        final QuestionOption option =
+                questionOptionRepository.load(request.getAnswerId());
+
+        final Question next = option.getQuestion().getNext();
+        assert next!=null;
+            return question(next, request.isSkipValidation());
     }
 
     @Override
