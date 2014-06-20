@@ -172,12 +172,6 @@
                     </f:facet>
                   </eye:column>
 
-                  <eye:column name="coupon"
-                              title="Coupon"
-                              sortable="true"
-                              visible="#{surveyResultsController.survey.activePattern!=null}">
-                    <h:outputText value="#{row.respondent.coupon}"/>
-                  </eye:column>
                   <eye:column name="questions"
                               title="#{bundle['results.list.questions']}"
                               sortable="true"
@@ -190,6 +184,12 @@
                         <h:outputText value="#{row.option.answer}"/>
                       </h:panelGrid>
                     </f:facet>
+                  </eye:column>
+
+                  <eye:column name="coupon"
+                              title="#{bundle['results.list.coupon']}"
+                              visible="#{surveyResultsController.survey.activePattern!=null}">
+                    <h:outputText value="#{row.respondent.coupon}"/>
                   </eye:column>
 
 
