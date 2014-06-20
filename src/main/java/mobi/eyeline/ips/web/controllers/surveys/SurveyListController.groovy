@@ -32,8 +32,8 @@ class SurveyListController extends BaseController {
 
     String newSurveyTitle
 
-    Date newSurveyStartDate = new Date().plus(1).clearTime()
-    Date newSurveyEndDate = newSurveyStartDate.plus(7)
+    Date newSurveyStartDate = (new Date() + 1).clearTime()
+    Date newSurveyEndDate = newSurveyStartDate + 7
 
     Integer newSurveyClientId
 
@@ -65,7 +65,7 @@ class SurveyListController extends BaseController {
                             client: it.client?.fullName,
                             startDate: it.startDate,
                             endDate: it.endDate,
-                            accessNumber: it.statistics.accessNumber)
+                            accessNumber: it.statistics.accessNumber?.number)
                 }
             }
 
@@ -139,7 +139,7 @@ class SurveyListController extends BaseController {
     }
 
     void surveyClickHandler() {
-        def surveyId = getParamValue("surveyId").asInteger()
+        def surveyId = getParamValue('surveyId').asInteger()
 
         SurveySettingsController.goToSurvey(surveyId)
     }

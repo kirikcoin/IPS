@@ -152,7 +152,7 @@
                   <h:outputLabel value="#{bundle['survey.list.table.access.number']}:"
                                  for="accessNumber"/>
                   <h:outputText id="accessNumber"
-                                value="#{surveySettingsController.persistedSurvey.statistics.accessNumber}"/>
+                                value="#{surveySettingsController.accessNumberNumber}"/>
 
                   <!-- Poll external URL -->
                   <h:outputLabel value="#{bundle['survey.external.url']}"
@@ -198,9 +198,11 @@
 
                     <h:outputLabel value="#{bundle['survey.list.table.access.number']}:"
                                    for="newAccessNumber"/>
-                    <eye:inputText id="newAccessNumber"
-                                   maxlength="70"
-                                   value="#{surveySettingsController.survey.statistics.accessNumber}"/>
+                    <h:selectOneMenu id="newAccessNumber"
+                                     value="#{surveySettingsController.accessNumberId}">
+                      <f:selectItems value="#{surveySettingsController.availableAccessNumbers}"/>
+                    </h:selectOneMenu>
+
                   </h:panelGrid>
 
                   <eye:buttons>

@@ -44,13 +44,11 @@ public class SurveyStats implements Serializable {
     private String campaign;
 
     /**
-     * C2S/USSD-номер опроса.
+     * Ссылка на C2S/USSD-номер опроса.
      */
-    @Column(name = "accessNumber")
-    @MaxSize(70)
-    @Pattern(regexp = "[0-9 \\-\\.\\+\\*#]*",
-            message = "{survey.validation.access.number.invalid}")
-    private String accessNumber;
+    @JoinColumn(name = "number_id")
+    @OneToOne(optional = true)
+    private AccessNumber accessNumber;
 
     /**
      * Дата последнего обновления количества показов (поля sent).
@@ -95,11 +93,11 @@ public class SurveyStats implements Serializable {
         this.campaign = campaign;
     }
 
-    public String getAccessNumber() {
+    public AccessNumber getAccessNumber() {
         return accessNumber;
     }
 
-    public void setAccessNumber(String accessNumber) {
+    public void setAccessNumber(AccessNumber accessNumber) {
         this.accessNumber = accessNumber;
     }
 

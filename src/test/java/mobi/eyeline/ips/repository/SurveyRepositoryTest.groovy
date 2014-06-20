@@ -214,6 +214,16 @@ class SurveyRepositoryTest extends DbTestCase {
             userRepository.save u
         }
 
+        def accessNumbers = [
+                new AccessNumber(number: '79130000005'),
+                new AccessNumber(number: '79130000006'),
+                new AccessNumber(number: '79130000007'),
+                new AccessNumber(number: '79130000008')
+        ].collect {
+            accessNumberRepository.save(it)
+            it
+        }
+
         userRepository.save user5 = new User(
                 login: 'user5', fullName: 'F C', email: 'mail5@mail.ru',
                 role: MANAGER, password: '123'.pw())
@@ -225,25 +235,25 @@ class SurveyRepositoryTest extends DbTestCase {
         [
             new Survey(id: 1, client: user1).with {
                 details = new SurveyDetails(survey: it, title: 'A A%\\')
-                statistics = new SurveyStats(survey: it, accessNumber: "79130000005")
+                statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[0])
                 it
             },
 
             new Survey(id: 2, client: user2, owner: user6).with {
                 details = new SurveyDetails(survey: it, title: 'B A_\\')
-                statistics = new SurveyStats(survey: it, accessNumber: "79130000006")
+                statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[1])
                 it
             },
 
             new Survey(id: 3, client: user3, owner: user5).with {
                 details = new SurveyDetails(survey: it, title: 'D C _')
-                statistics = new SurveyStats(survey: it, accessNumber: "79130000007")
+                statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[2])
                 it
             },
 
             new Survey(id: 4, client: user4, active: false).with {
                 details = new SurveyDetails(survey: it, title: 'A C%')
-                statistics = new SurveyStats(survey: it, accessNumber: "79130000008")
+                statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[3])
                 it
             }
         ].each { s ->

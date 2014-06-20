@@ -2,9 +2,11 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.SurveyPattern
+import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.CouponService
@@ -26,6 +28,8 @@ class SurveySettingsController extends BaseSurveyController {
 
     private final QuestionRepository questionRepository = Services.instance().questionRepository
     private final UserRepository userRepository = Services.instance().userRepository
+    private final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
+
     private final UssdService ussdService = Services.instance().ussdService
     private final PushService pushService = Services.instance().pushService
     private final CouponService couponService = Services.instance().couponService
@@ -67,6 +71,9 @@ class SurveySettingsController extends BaseSurveyController {
 
     boolean showWarning = couponEnabled && (couponService.getPercentAvailable(survey) <= 10)
     boolean showDisabled = couponEnabled && (couponsAvailable == 0)
+
+    String accessNumberNumber = survey.statistics.accessNumber?.number
+    Integer accessNumberId = survey.statistics.accessNumber?.id
 
     SurveySettingsController() {
         super()
@@ -161,7 +168,12 @@ class SurveySettingsController extends BaseSurveyController {
         persistedSurvey.details.title = survey.details.title
         persistedSurvey.startDate = survey.startDate
         persistedSurvey.endDate = survey.endDate
-        persistedSurvey.statistics.accessNumber = survey.statistics.accessNumber
+
+        if (accessNumberId == null) {
+            persistedSurvey.statistics.accessNumber = null
+        } else {
+            persistedSurvey.statistics.accessNumber = accessNumberRepository.load(accessNumberId)
+        }
         persistedSurvey.client = survey.client
 
         surveyRepository.update(persistedSurvey)
@@ -329,6 +341,21 @@ class SurveySettingsController extends BaseSurveyController {
         handleAdded()
         handleUpdated()
         print persistedQuestion
+    }
+
+    List<SelectItem> getAvailableAccessNumbers() {
+        final List<SelectItem> items = [
+                new SelectItem(null, BaseController.strings['no.access.number'] as String)
+        ]
+
+        def available = { AccessNumber number ->
+            (number.survey == null) || (number.id == survey.statistics.accessNumber.id) }
+
+        accessNumberRepository.list().each {AccessNumber number ->
+            items << new SelectItem(number.id, number.number, number.number, !available(number))
+        }
+
+        return items
     }
 
     static void goToSurvey(int surveyId) {

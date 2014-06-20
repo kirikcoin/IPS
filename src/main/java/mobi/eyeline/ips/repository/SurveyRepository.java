@@ -64,6 +64,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
         criteria.createAlias("statistics", "statistics");
         criteria.createAlias("client", "client");
         criteria.createAlias("owner", "owner", LEFT_OUTER_JOIN);
+        criteria.createAlias("statistics.accessNumber", "accessNumber", LEFT_OUTER_JOIN);
 
         if (active != null) {
             criteria.add(eq("active", active));
@@ -89,7 +90,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
                 filters.add(eq("id", Integer.parseInt(filter)));
             }
             filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("accessNumber.number", filter, MatchMode.ANYWHERE));
             if (user == null) {
                 filters.add(EscapedRestrictions.ilike("client.fullName", filter, MatchMode.ANYWHERE));
             }
@@ -136,6 +137,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
         criteria.createAlias("details", "details");
         criteria.createAlias("statistics", "statistics");
         criteria.createAlias("client", "client", LEFT_OUTER_JOIN);
+        criteria.createAlias("statistics.accessNumber", "accessNumber", LEFT_OUTER_JOIN);
 
         if (active != null) {
             criteria.add(eq("active", active));
@@ -162,7 +164,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
             }
 
             filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("statistics.accessNumber", filter, MatchMode.ANYWHERE));
+            filters.add(EscapedRestrictions.ilike("accessNumber.number", filter, MatchMode.ANYWHERE));
             if (user == null) {
                 filters.add(EscapedRestrictions.ilike("client.fullName", filter, MatchMode.ANYWHERE));
             }

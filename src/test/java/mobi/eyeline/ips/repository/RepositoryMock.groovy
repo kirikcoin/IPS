@@ -21,6 +21,7 @@ class RepositoryMock {
     InvitationDeliveryRepository invitationDeliveryRepository
     DeliverySubscriberRepository deliverySubscriberRepository
     SurveyPatternRepository surveyPatternRepository
+    AccessNumberRepository accessNumberRepository
 
     void initRepository(db) {
         userRepository = new UserRepository(db)
@@ -34,5 +35,6 @@ class RepositoryMock {
         invitationDeliveryRepository = new InvitationDeliveryRepository(db)
         deliverySubscriberRepository = new DeliverySubscriberRepository(db)
         surveyPatternRepository = new SurveyPatternRepository(db)
+        accessNumberRepository = new AccessNumberRepository(db)
     }
 }
