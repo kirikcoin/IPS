@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.service;
 
 
+import mobi.eyeline.ips.external.EsdpSoapApi;
 import mobi.eyeline.ips.external.MadvSoapApi;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AccessNumberRepository;
@@ -61,6 +62,7 @@ public class Services {
     private final DeliveryPushService deliveryPushService;
     private final DeliveryService deliveryService;
     private final NotificationService notificationService;
+    private final EsdpService esdpService;
 
     private final CsvParseService csvParseService;
 
@@ -130,6 +132,9 @@ public class Services {
                 deliveryPushService,
                 config);
         notificationService = new NotificationService(deliverySubscriberRepository);
+
+        esdpService = new EsdpService(new EsdpSoapApi(config).getServiceManager(), ussdService);
+
         csvParseService = new CsvParseService();
     }
 
@@ -251,5 +256,9 @@ public class Services {
 
     public NotificationService getNotificationService() {
         return notificationService;
+    }
+
+    public EsdpService getEsdpService() {
+        return esdpService;
     }
 }

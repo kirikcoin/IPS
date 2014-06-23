@@ -98,6 +98,12 @@
     <param name="expiration.delay.seconds" type="int">300</param>
   </section>
 
+  <section name="esdp">
+    <param name="endpoint.url" type="string">http://localhost/console2/service-api?wsdl</param>
+    <param name="login" type="string">ips</param>
+    <param name="password" type="string">password</param>
+  </section>
+
   <section name="other">
     <param name="expose.jmx.beans" type="boolean">true</param>
   </section>

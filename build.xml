@@ -15,6 +15,7 @@
   <property name="lib.dir"    location="${basedir}/lib"/>
 
   <property name="gen.dir"    location="${build.dir}/generated"/>
+  <property name="esdp.dir"   location="${build.dir}/generated-esdp"/>
   <property name="test.dir"   location="${build.dir}/test"
             description="Path to the generated test reports"/>
 
@@ -59,13 +60,14 @@
     <mkdir dir="${build.dir}/web"/>
   </target>
 
-  <target name="compile" depends="init, resolve">
+  <target name="compile" depends="init, resolve, gen-esdp-client">
     <taskdef name="groovyc"
              classname="org.codehaus.groovy.ant.Groovyc"
              classpathref="classpath"/>
 
     <groovyc destdir="${build.dir}/classes">
       <src path="${src.dir}"/>
+      <src path="${esdp.dir}"/>
       <classpath refid="classpath"/>
 
       <javac source="1.7" target="1.7"
@@ -251,6 +253,15 @@
     </jacoco:report>
 
     <fail if="junit.failure" message="Unit test(s) failed. See reports!"/>
+  </target>
+
+  <target name="gen-esdp-client">
+    <delete dir="${esdp.dir}" failonerror="false"/>
+    <mkdir dir="${esdp.dir}"/>
+    <exec executable="${java.home}/../bin/wsimport">
+      <arg line="-Xnocompile -keep -p mobi.eyeline.ips.external.esdp -s ${esdp.dir} "/>
+      <arg line="-wsdllocation http://localhost/console2/service-api?wsdl ${resources.dir}/wsdl/service-api.wsdl"/>
+    </exec>
   </target>
 
 </project>

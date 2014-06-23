@@ -35,5 +35,9 @@ class FailingMockConfig implements Config {
     int getRetryAttempts() { fail() }
     long getExpirationDelaySeconds() { fail() }
 
+    String getEsdpEndpointUrl() { fail() }
+    String getEsdpLogin() { fail() }
+    String getEsdpPassword() { fail() }
+
     boolean getExposeJmxBeans() { fail() }
 }

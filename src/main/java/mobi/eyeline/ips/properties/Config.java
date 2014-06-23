@@ -43,6 +43,10 @@ public interface Config {
     public int getRetryAttempts();
     public long getExpirationDelaySeconds();
 
+    public String getEsdpEndpointUrl();
+    public String getEsdpLogin();
+    public String getEsdpPassword();
+
     public boolean getExposeJmxBeans();
 
     public static class XmlConfigImpl implements Config {
@@ -78,6 +82,10 @@ public interface Config {
         private final int stateUpdateBatchSize;
         private final int retryAttempts;
         private final long expirationDelaySeconds;
+
+        private final String esdpEndpointUrl;
+        private final String esdpLogin;
+        private final String esdpPassword;
 
         private final boolean exposeJmxBeans;
 
@@ -148,6 +156,13 @@ public interface Config {
                 stateUpdateBatchSize = deliveries.getInt("push.update.batch.size");
                 retryAttempts = deliveries.getInt("retry.attempts");
                 expirationDelaySeconds = deliveries.getLong("expiration.delay.seconds");
+            }
+
+            final XmlConfigSection esdp = xmlConfig.getSection("esdp");
+            {
+                esdpEndpointUrl = esdp.getString("endpoint.url");
+                esdpLogin = esdp.getString("login");
+                esdpPassword = esdp.getString("password");
             }
 
             final XmlConfigSection other = xmlConfig.getSection("other");
@@ -273,6 +288,21 @@ public interface Config {
         @Override
         public long getExpirationDelaySeconds() {
             return expirationDelaySeconds;
+        }
+
+        @Override
+        public String getEsdpEndpointUrl() {
+            return esdpEndpointUrl;
+        }
+
+        @Override
+        public String getEsdpLogin() {
+            return esdpLogin;
+        }
+
+        @Override
+        public String getEsdpPassword() {
+            return esdpPassword;
         }
 
         @Override

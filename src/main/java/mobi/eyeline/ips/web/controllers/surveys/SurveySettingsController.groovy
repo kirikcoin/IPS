@@ -2,6 +2,7 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import mobi.eyeline.ips.external.esdp.EsdpServiceException
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
@@ -10,6 +11,7 @@ import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.CouponService
+import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UssdService
@@ -33,6 +35,7 @@ class SurveySettingsController extends BaseSurveyController {
     private final UssdService ussdService = Services.instance().ussdService
     private final PushService pushService = Services.instance().pushService
     private final CouponService couponService = Services.instance().couponService
+    private final EsdpService esdpService = Services.instance().esdpService
 
     String errorId
 
@@ -177,12 +180,32 @@ class SurveySettingsController extends BaseSurveyController {
         persistedSurvey.client = survey.client
 
         surveyRepository.update(persistedSurvey)
+
+        try {
+            esdpService.update(persistedSurvey)
+
+        } catch (EsdpServiceException e) {
+            logger.error(e.message, e)
+            addErrorMessage strings['esdp.error.survey.update']
+            return
+        }
+
         goToSurvey(surveyId)
     }
 
     String deleteSurvey() {
         // Feels safer to reload
         def survey = surveyRepository.load(surveyId)
+
+        try {
+            esdpService.delete(survey)
+        } catch (Exception e) {
+            logger.error(e.message, e)
+            addErrorMessage strings['esdp.error.survey.deletion']
+
+            return null
+        }
+
         survey.active = false
         surveyRepository.update(survey)
 
@@ -349,7 +372,7 @@ class SurveySettingsController extends BaseSurveyController {
         ]
 
         def available = { AccessNumber number ->
-            (number.survey == null) || (number.id == survey.statistics.accessNumber.id) }
+            (number.survey == null) || ((survey.statistics.accessNumber != null) && (number.id == survey.statistics.accessNumber.id)) }
 
         accessNumberRepository.list().each {AccessNumber number ->
             items << new SelectItem(number.id, number.number, number.number, !available(number))

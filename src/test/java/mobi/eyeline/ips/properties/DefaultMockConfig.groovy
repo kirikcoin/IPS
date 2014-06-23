@@ -32,5 +32,9 @@ class DefaultMockConfig extends FailingMockConfig {
     int getRetryAttempts() { 3 }
     long getExpirationDelaySeconds() { 600 }
 
+    String getEsdpEndpointUrl() { '' }
+    String getEsdpLogin() { '' }
+    String getEsdpPassword() { '' }
+
     boolean getExposeJmxBeans() { false }
 }
