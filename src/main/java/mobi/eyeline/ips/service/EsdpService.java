@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.service;
 
+import com.j256.simplejmx.common.JmxOperation;
 import mobi.eyeline.ips.external.EsdpSoapApi;
 import mobi.eyeline.ips.external.esdp.EsdpServiceException;
 import mobi.eyeline.ips.external.esdp.EsdpServiceManager;
@@ -10,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+
+import static com.j256.simplejmx.common.JmxOperationInfo.OperationAction.ACTION;
 
 public class EsdpService {
 
@@ -74,6 +77,42 @@ public class EsdpService {
         }
 
         getApi().updateService(service);
+    }
+
+    // TODO: for a one-time usage, should probably be removed
+    //       when migrated to the new service creation scheme.
+    @JmxOperation(operationAction = ACTION)
+    public void createMissingServices() {
+        logger.info("Creating missing services for all the surveys");
+
+        for (Survey survey : Services.instance().getSurveyRepository().list()) {
+            try {
+                logger.info("Survey ID: " + survey.getId());
+                if (!survey.isActive()) {
+                    logger.info("Survey is deleted");
+                    continue;
+                }
+
+                if (!hasService(survey)) {
+                    save(survey);
+
+                } else {
+                    logger.info("Survey already has a service, ID = " + survey.getId());
+                }
+
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private boolean hasService(Survey survey) {
+        try {
+            return getApi().getService(getKey(survey)) != null;
+        } catch (Exception e) {
+            logger.debug(e.getMessage(), e);
+            return false;
+        }
     }
 
 

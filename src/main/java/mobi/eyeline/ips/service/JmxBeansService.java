@@ -37,6 +37,7 @@ public class JmxBeansService {
         try {
             jmxServer.register(services.getDeliveryService());
             jmxServer.register(services.getNotificationService());
+            jmxServer.register(services.getEsdpService());
 
         } catch (JMException e) {
             logger.error("JMX initialization failed", e);
