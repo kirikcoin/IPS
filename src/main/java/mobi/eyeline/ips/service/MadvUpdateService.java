@@ -1,9 +1,7 @@
 package mobi.eyeline.ips.service;
 
 import mobi.eyeline.ips.external.MadvSoapApi;
-import mobi.eyeline.ips.external.madv.BannerInfo;
 import mobi.eyeline.ips.external.madv.CampaignsSoapImpl;
-import mobi.eyeline.ips.external.madv.DeliveryInfo;
 import mobi.eyeline.ips.model.InvitationUpdateStatus;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.SurveyStats;
@@ -14,10 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.rpc.ServiceException;
-import javax.xml.soap.SOAPException;
-import java.net.MalformedURLException;
-import java.rmi.RemoteException;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,7 +27,8 @@ public class MadvUpdateService {
     private static final Logger logger = LoggerFactory.getLogger(MadvUpdateService.class);
 
     private final Config config;
-    private final MadvSoapApi madvSoapApi;
+    private final MadvSoapApi soapApi;
+    private final MadvService madvService;
     private final SurveyStatsRepository surveyStatsRepository;
     private final SurveyRepository surveyRepository;
 
@@ -43,11 +38,13 @@ public class MadvUpdateService {
     private final Object startLock = new Object();
 
     public MadvUpdateService(Config config,
-                             MadvSoapApi madvSoapApi,
+                             MadvSoapApi soapApi,
+                             MadvService madvService,
                              SurveyStatsRepository surveyStatsRepository,
                              SurveyRepository surveyRepository) {
         this.config = config;
-        this.madvSoapApi = madvSoapApi;
+        this.soapApi = soapApi;
+        this.madvService = madvService;
         this.surveyStatsRepository = surveyStatsRepository;
         this.surveyRepository = surveyRepository;
 
@@ -69,7 +66,7 @@ public class MadvUpdateService {
 
         // Schedule the task for immediate execution.
         final UpdateAllTask task =
-                new UpdateAllTask(config, madvSoapApi, surveyStatsRepository, surveyRepository);
+                new UpdateAllTask(soapApi, madvService, surveyStatsRepository, surveyRepository);
         final long delayMillis =
                 TimeUnit.MINUTES.toMillis(config.getMadvUpdateDelayMinutes());
         timer.schedule(task, 0, delayMillis);
@@ -87,14 +84,14 @@ public class MadvUpdateService {
      */
     public void runNow() {
         final UpdateAllTask task =
-                new UpdateAllTask(config, madvSoapApi, surveyStatsRepository, surveyRepository);
+                new UpdateAllTask(soapApi, madvService, surveyStatsRepository, surveyRepository);
         timer.schedule(task, 0);
         logger.info("MADV update task scheduled");
     }
 
     public void runNow(int surveyId) {
-        final UpdateSingleTask task = new UpdateSingleTask(config,
-                madvSoapApi, surveyStatsRepository, surveyRepository, surveyId);
+        final UpdateSingleTask task = new UpdateSingleTask(soapApi,
+                madvService, surveyStatsRepository, surveyRepository, surveyId);
         timer.schedule(task, 0);
         logger.info("MADV update task scheduled");
     }
@@ -105,15 +102,15 @@ public class MadvUpdateService {
     //
 
     private static abstract class BaseUpdateTask extends TimerTask {
-        private final Config config;
         private final MadvSoapApi madvSoapApi;
+        private final MadvService madvService;
         private final SurveyStatsRepository surveyStatsRepository;
 
-        protected BaseUpdateTask(Config config,
-                                 MadvSoapApi madvSoapApi,
+        protected BaseUpdateTask(MadvSoapApi madvSoapApi,
+                                 MadvService madvService,
                                  SurveyStatsRepository surveyStatsRepository) {
-            this.config = config;
             this.madvSoapApi = madvSoapApi;
+            this.madvService = madvService;
             this.surveyStatsRepository = surveyStatsRepository;
         }
 
@@ -131,22 +128,23 @@ public class MadvUpdateService {
         }
 
         private void update(Survey survey, int campaignId) {
+
+            final CampaignsSoapImpl soapApi;
             try {
-                final CampaignsSoapImpl api = madvSoapApi.get(
-                        config.getMadvUrl(),
-                        config.getMadvUserLogin(),
-                        config.getMadvUserPassword());
-
-                final int count = countViews(campaignId, api);
-                updateStats(survey, SUCCESSFUL, count);
-
-            } catch (ServiceException | SOAPException | MalformedURLException e) {
+                soapApi = madvSoapApi.getSoapApi();
+            } catch (Exception e) {
                 logger.error("MADV update failed, " +
                         "survey = [" + survey + "], " +
                         "campaign ID = [" + survey.getStatistics().getCampaign() + "]", e);
                 updateStats(survey, SERVER_IS_NOT_AVAILABLE, 0);
+                return;
+            }
 
-            } catch (RemoteException e) {
+            try {
+                final int count = madvService.countViews(soapApi, campaignId);
+                updateStats(survey, SUCCESSFUL, count);
+
+            } catch (Exception e) {
                 logger.error("MADV update failed, " +
                         "survey = [" + survey + "], " +
                         "campaign ID = [" + survey.getStatistics().getCampaign() + "]", e);
@@ -166,25 +164,6 @@ public class MadvUpdateService {
             surveyStatsRepository.update(stats);
         }
 
-        private int countViews(int campaignId, CampaignsSoapImpl api)
-                throws RemoteException {
-            int count = 0;
-
-            final DeliveryInfo[] listDeliveries = api.listDeliveries(campaignId);
-            if (listDeliveries != null) {
-                for (DeliveryInfo delivery : listDeliveries) {
-                    count += delivery.getImpressionsCount();
-                }
-            }
-
-            final BannerInfo[] listBanners = api.listBanners(campaignId);
-            if (listBanners != null) {
-                for (BannerInfo banner : listBanners) {
-                    count += banner.getImpressionsCount();
-                }
-            }
-            return count;
-        }
     }
 
 
@@ -196,11 +175,11 @@ public class MadvUpdateService {
 
         private final SurveyRepository surveyRepository;
 
-        public UpdateAllTask(Config config,
-                             MadvSoapApi madvSoapApi,
+        public UpdateAllTask(MadvSoapApi soapApi,
+                             MadvService madvService,
                              SurveyStatsRepository surveyStatsRepository,
                              SurveyRepository surveyRepository) {
-            super(config, madvSoapApi, surveyStatsRepository);
+            super(soapApi, madvService, surveyStatsRepository);
             this.surveyRepository = surveyRepository;
         }
 
@@ -227,12 +206,12 @@ public class MadvUpdateService {
         private final SurveyRepository surveyRepository;
         private final int surveyId;
 
-        public UpdateSingleTask(Config config,
-                                MadvSoapApi madvSoapApi,
+        public UpdateSingleTask(MadvSoapApi soapApi,
+                                MadvService madvService,
                                 SurveyStatsRepository surveyStatsRepository,
                                 SurveyRepository surveyRepository,
                                 int surveyId) {
-            super(config, madvSoapApi, surveyStatsRepository);
+            super(soapApi, madvService, surveyStatsRepository);
             this.surveyRepository = surveyRepository;
             this.surveyId = surveyId;
         }

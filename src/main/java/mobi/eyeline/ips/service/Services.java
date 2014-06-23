@@ -1,7 +1,6 @@
 package mobi.eyeline.ips.service;
 
 
-import mobi.eyeline.ips.external.EsdpSoapApi;
 import mobi.eyeline.ips.external.MadvSoapApi;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AccessNumberRepository;
@@ -47,6 +46,8 @@ public class Services {
     private final SurveyPatternRepository surveyPatternRepository;
     private final AccessNumberRepository accessNumberRepository;
 
+    private final MadvSoapApi madvSoapApi;
+    private final MadvService madvService;
     private final SurveyService surveyService;
     private final LocationService locationService;
     private final TemplateService templateService;
@@ -55,14 +56,13 @@ public class Services {
     private final UserService userService;
     private final CouponService couponService;
     private final UssdService ussdService;
-    private final MadvSoapApi madvSoapApi;
+    private final EsdpService esdpService;
     private final MadvUpdateService madvUpdateService;
     private final SegmentationService segmentationService;
     private final ResultsExportService resultsExportService;
     private final DeliveryPushService deliveryPushService;
     private final DeliveryService deliveryService;
     private final NotificationService notificationService;
-    private final EsdpService esdpService;
 
     private final CsvParseService csvParseService;
 
@@ -83,6 +83,9 @@ public class Services {
         deliverySubscriberRepository = new DeliverySubscriberRepository(db);
         surveyPatternRepository = new SurveyPatternRepository(db);
         accessNumberRepository = new AccessNumberRepository(db);
+
+        madvSoapApi = new MadvSoapApi(config);
+        madvService = new MadvService();
 
         surveyService = new SurveyService(
                 surveyRepository,
@@ -114,11 +117,12 @@ public class Services {
                 answerRepository,
                 questionRepository,
                 questionOptionRepository);
-        madvSoapApi = new MadvSoapApi();
+        esdpService = new EsdpService(config, ussdService);
 
         madvUpdateService = new MadvUpdateService(
                 config,
                 madvSoapApi,
+                madvService,
                 surveyStatsRepository,
                 surveyRepository);
         segmentationService = new SegmentationService();
@@ -132,8 +136,6 @@ public class Services {
                 deliveryPushService,
                 config);
         notificationService = new NotificationService(deliverySubscriberRepository);
-
-        esdpService = new EsdpService(new EsdpSoapApi(config).getServiceManager(), ussdService);
 
         csvParseService = new CsvParseService();
     }
@@ -206,6 +208,14 @@ public class Services {
         return accessNumberRepository;
     }
 
+    public MadvSoapApi getMadvSoapApi() {
+        return madvSoapApi;
+    }
+
+    public MadvService getMadvService() {
+        return madvService;
+    }
+
     public SurveyService getSurveyService() {
         return surveyService;
     }
@@ -228,6 +238,10 @@ public class Services {
 
     public UssdService getUssdService() {
         return ussdService;
+    }
+
+    public EsdpService getEsdpService() {
+        return esdpService;
     }
 
     public MadvUpdateService getMadvUpdateService() {
@@ -258,7 +272,4 @@ public class Services {
         return notificationService;
     }
 
-    public EsdpService getEsdpService() {
-        return esdpService;
-    }
 }

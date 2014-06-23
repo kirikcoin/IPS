@@ -16,6 +16,7 @@
 
   <property name="gen.dir"    location="${build.dir}/generated"/>
   <property name="esdp.dir"   location="${build.dir}/generated-esdp"/>
+  <property name="madv.dir"   location="${build.dir}/generated-madv"/>
   <property name="test.dir"   location="${build.dir}/test"
             description="Path to the generated test reports"/>
 
@@ -60,7 +61,7 @@
     <mkdir dir="${build.dir}/web"/>
   </target>
 
-  <target name="compile" depends="init, resolve, gen-esdp-client">
+  <target name="compile" depends="init, resolve, generate">
     <taskdef name="groovyc"
              classname="org.codehaus.groovy.ant.Groovyc"
              classpathref="classpath"/>
@@ -68,6 +69,7 @@
     <groovyc destdir="${build.dir}/classes">
       <src path="${src.dir}"/>
       <src path="${esdp.dir}"/>
+      <src path="${madv.dir}"/>
       <classpath refid="classpath"/>
 
       <javac source="1.7" target="1.7"
@@ -108,6 +110,7 @@
       </filterset>
       <fileset dir="${resources.dir}">
         <include name="**/*.*"/>
+        <exclude name="wsdl/**"/>
       </fileset>
     </copy>
 
@@ -260,8 +263,23 @@
     <mkdir dir="${esdp.dir}"/>
     <exec executable="${java.home}/../bin/wsimport">
       <arg line="-Xnocompile -keep -p mobi.eyeline.ips.external.esdp -s ${esdp.dir} "/>
-      <arg line="-wsdllocation http://localhost/console2/service-api?wsdl ${resources.dir}/wsdl/service-api.wsdl"/>
+      <arg line="-wsdllocation http://localhost/console2/service-api?wsdl ${resources.dir}/wsdl/esdp/service-api.wsdl"/>
     </exec>
+  </target>
+
+  <target name="gen-madv-client">
+    <delete dir="${madv.dir}" failonerror="false"/>
+    <mkdir dir="${madv.dir}"/>
+    <exec executable="${java.home}/../bin/wsimport" failonerror="true">
+      <arg line="-Xnocompile -keep -p mobi.eyeline.ips.external.madv -s ${madv.dir} "/>
+      <!-- XXX: local URL (this is not actually used). -->
+      <arg line="-wsdllocation http://localhost:9080/services/campaigns?wsdl ${resources.dir}/wsdl/madv/campaigns-api.wsdl"/>
+    </exec>
+  </target>
+
+  <target name="generate"
+          depends="gen-esdp-client, gen-madv-client"
+          description="Produce generated sources">
   </target>
 
 </project>

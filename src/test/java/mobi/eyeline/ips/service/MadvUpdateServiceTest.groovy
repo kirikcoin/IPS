@@ -9,14 +9,10 @@ import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.properties.Config
-import mobi.eyeline.ips.repository.DbTestCase
-import mobi.eyeline.ips.repository.InvitationDeliveryRepository
-import mobi.eyeline.ips.repository.SurveyInvitationRepository
-import mobi.eyeline.ips.repository.SurveyRepository
-import mobi.eyeline.ips.repository.SurveyStatsRepository
+import mobi.eyeline.ips.properties.DefaultMockConfig
+import mobi.eyeline.ips.repository.*
 
-import javax.xml.rpc.ServiceException
-import java.rmi.RemoteException
+import javax.xml.ws.WebServiceException
 
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.*
 
@@ -52,16 +48,12 @@ class MadvUpdateServiceTest extends DbTestCase {
     }
 
     MadvUpdateService createService(Config config, MadvSoapApi api) {
-        new MadvUpdateService(config, api, surveyStatsRepository, surveyRepository) {
+        new MadvUpdateService(config, api, new MadvService(), surveyStatsRepository, surveyRepository) {
             protected Timer createTimer() { new Timer() {
                 void schedule(TimerTask task, long delay, long period) { task.run() }
                 void schedule(TimerTask task, long delay) { task.run() }
             } }
         }
-    }
-
-    void tearDown() {
-        super.tearDown()
     }
 
     void createSurvey(String campaign) {
@@ -73,10 +65,8 @@ class MadvUpdateServiceTest extends DbTestCase {
     }
 
     void test1() {
-        def api = new MadvSoapApi() {
-            CampaignsSoapImpl get(String url, String login, String password) {
-                throw new ServiceException()
-            }
+        def api = new MadvSoapApi(new DefaultMockConfig()) {
+            @Override CampaignsSoapImpl getSoapApi() { throw new WebServiceException() }
         }
         def madvUpdateService = createService(config, api)
 
@@ -87,24 +77,22 @@ class MadvUpdateServiceTest extends DbTestCase {
     }
 
     void test2() {
-        def api = new MadvSoapApi() {
-            CampaignsSoapImpl get(String url, String login, String password) {
-                throw new RemoteException()
-            }
+        def impl = { throw new WebServiceException() } as CampaignsSoapImpl
+        def api = new MadvSoapApi(new DefaultMockConfig()) {
+            @Override CampaignsSoapImpl getSoapApi() { impl }
         }
+
         def madvUpdateService = createService(config, api)
 
-        createSurvey('123')
+        createSurvey(42.toString())
 
         madvUpdateService.runNow()
         assertEquals CAMPAIGN_NOT_FOUND, surveyRepository.load(1).statistics.updateStatus
     }
 
     void test3() {
-        def api = new MadvSoapApi() {
-            CampaignsSoapImpl get(String url, String login, String password) {
-                throw new RemoteException()
-            }
+        def api = new MadvSoapApi(new DefaultMockConfig()) {
+            @Override CampaignsSoapImpl getSoapApi() { throw new WebServiceException() }
         }
         def madvUpdateService = createService(config, api)
 
@@ -115,8 +103,8 @@ class MadvUpdateServiceTest extends DbTestCase {
     }
 
     void testOk() {
-        def deliveries  = (0..3).collect {new DeliveryInfo(impressionsCount: it)} as DeliveryInfo[]
-        def banners     = (0..3).collect {new BannerInfo(impressionsCount: it)} as BannerInfo[]
+        def deliveries  = (0..3).collect { new DeliveryInfo(impressionsCount: it) }
+        def banners     = (0..3).collect { new BannerInfo(impressionsCount: it) }
 
         def implClass = new MockFor(CampaignsSoapImpl).with {
             demand.listDeliveries() { id -> assertEquals 42, id; deliveries }
@@ -125,8 +113,8 @@ class MadvUpdateServiceTest extends DbTestCase {
         }
         def impl = implClass.proxyDelegateInstance() as CampaignsSoapImpl
 
-        def api = new MadvSoapApi() {
-            CampaignsSoapImpl get(String url, String login, String password) { impl }
+        def api = new MadvSoapApi(new DefaultMockConfig()) {
+            @Override CampaignsSoapImpl getSoapApi() { impl }
         }
 
         def madvUpdateService = createService(config, api)

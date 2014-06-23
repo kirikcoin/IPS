@@ -1,9 +1,11 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.external.EsdpSoapApi;
 import mobi.eyeline.ips.external.esdp.EsdpServiceException;
 import mobi.eyeline.ips.external.esdp.EsdpServiceManager;
 import mobi.eyeline.ips.external.esdp.Service;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.properties.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,13 +15,12 @@ public class EsdpService {
 
     private static final Logger logger = LoggerFactory.getLogger(EsdpService.class);
 
-    private final EsdpServiceManager esdpServiceManager;
+    private final Config config;
     private final UssdService ussdService;
 
-    public EsdpService(EsdpServiceManager esdpServiceManager,
+    public EsdpService(Config config,
                        UssdService ussdService) {
-
-        this.esdpServiceManager = esdpServiceManager;
+        this.config = config;
         this.ussdService = ussdService;
     }
 
@@ -42,19 +43,19 @@ public class EsdpService {
         entries.add(entry("use-method-post", "false"));
         entries.add(entry("start-page", ussdService.getSurveyUrl(survey)));
 
-        esdpServiceManager.createService(service);
+        getApi().createService(service);
     }
 
     public void delete(Survey survey) throws EsdpServiceException {
         logger.debug("Deleting service, survey = [" + survey + "]");
 
-        esdpServiceManager.deleteService(getKey(survey));
+        getApi().deleteService(getKey(survey));
     }
 
     public void update(Survey survey) throws EsdpServiceException {
         logger.debug("Updating service, survey = [" + survey + "]");
 
-        final Service service = esdpServiceManager.getService(getKey(survey));
+        final Service service = getApi().getService(getKey(survey));
 
         // Title.
         service.setTitle(survey.getDetails().getTitle());
@@ -72,13 +73,17 @@ public class EsdpService {
             sip.setValue(number);
         }
 
-        esdpServiceManager.updateService(service);
+        getApi().updateService(service);
     }
 
 
     //
     //
     //
+
+    private EsdpServiceManager getApi() {
+        return new EsdpSoapApi(config).getSoapApi();
+    }
 
     private String getId(Survey survey) {
         return "ips" + String.format("%04d", survey.getId());

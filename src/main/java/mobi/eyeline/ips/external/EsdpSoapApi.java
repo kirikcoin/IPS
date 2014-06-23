@@ -23,16 +23,16 @@ public class EsdpSoapApi {
 
     private static final Logger logger = LoggerFactory.getLogger(EsdpSoapApi.class);
 
-    private final EsdpServiceManager serviceManager;
+    private final EsdpServiceManager soapApi;
 
     public EsdpSoapApi(Config config) {
         try {
-            serviceManager = initServiceManager(config);
+            soapApi = initServiceManager(config);
         } catch (MalformedURLException e) {
             throw new RuntimeException("Configuration error", e);
         }
 
-        setCredentials(serviceManager, config);
+        setCredentials(soapApi, config);
     }
 
     private EsdpServiceManager initServiceManager(Config config) throws MalformedURLException {
@@ -72,7 +72,7 @@ public class EsdpSoapApi {
         reqContext.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
     }
 
-    public EsdpServiceManager getServiceManager() {
-        return serviceManager;
+    public EsdpServiceManager getSoapApi() {
+        return soapApi;
     }
 }
