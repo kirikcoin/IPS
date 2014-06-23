@@ -1,0 +1,468 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is JAX-WS RI 2.1.5-b03-. --><xs:schema xmlns:tns="https://mts-madv.eyeline.mobi" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="https://mts-madv.eyeline.mobi">
+
+  <xs:element name="addCampaign" type="tns:addCampaign" />
+
+  <xs:element name="addCampaignResponse" type="tns:addCampaignResponse" />
+
+  <xs:element name="addTextBanner" type="tns:addTextBanner" />
+
+  <xs:element name="addTextBannerResponse" type="tns:addTextBannerResponse" />
+
+  <xs:element name="addTextDelivery" type="tns:addTextDelivery" />
+
+  <xs:element name="addTextDeliveryResponse" type="tns:addTextDeliveryResponse" />
+
+  <xs:element name="bannerInfo" type="tns:bannerInfo" />
+
+  <xs:element name="bannerParams" type="tns:bannerParams" />
+
+  <xs:element name="campaignInfo" type="tns:campaignInfo" />
+
+  <xs:element name="campaignParameters" type="tns:campaignParameters" />
+
+  <xs:element name="clickServiceInfo" type="tns:clickServiceInfo" />
+
+  <xs:element name="deliveryInfo" type="tns:deliveryInfo" />
+
+  <xs:element name="deliveryParams" type="tns:deliveryParams" />
+
+  <xs:element name="externalLinkInfo" type="tns:externalLinkInfo" />
+
+  <xs:element name="getCampaignStatus" type="tns:getCampaignStatus" />
+
+  <xs:element name="getCampaignStatusResponse" type="tns:getCampaignStatusResponse" />
+
+  <xs:element name="getDelivery" type="tns:getDelivery" />
+
+  <xs:element name="getDeliveryResponse" type="tns:getDeliveryResponse" />
+
+  <xs:element name="getFreeClickServiceShortcuts" type="tns:getFreeClickServiceShortcuts" />
+
+  <xs:element name="getFreeClickServiceShortcutsResponse" type="tns:getFreeClickServiceShortcutsResponse" />
+
+  <xs:element name="getLandingConversionCounterStat" type="tns:getLandingConversionCounterStat" />
+
+  <xs:element name="getLandingConversionCounterStatResponse" type="tns:getLandingConversionCounterStatResponse" />
+
+  <xs:element name="getLandingPageClickCounterStat" type="tns:getLandingPageClickCounterStat" />
+
+  <xs:element name="getLandingPageClickCounterStatResponse" type="tns:getLandingPageClickCounterStatResponse" />
+
+  <xs:element name="getMessageViewCounterStat" type="tns:getMessageViewCounterStat" />
+
+  <xs:element name="getMessageViewCounterStatResponse" type="tns:getMessageViewCounterStatResponse" />
+
+  <xs:element name="getTextBanner" type="tns:getTextBanner" />
+
+  <xs:element name="getTextBannerResponse" type="tns:getTextBannerResponse" />
+
+  <xs:element name="init" type="tns:init" />
+
+  <xs:element name="initResponse" type="tns:initResponse" />
+
+  <xs:element name="listBanners" type="tns:listBanners" />
+
+  <xs:element name="listBannersResponse" type="tns:listBannersResponse" />
+
+  <xs:element name="listCampaigns" type="tns:listCampaigns" />
+
+  <xs:element name="listCampaignsResponse" type="tns:listCampaignsResponse" />
+
+  <xs:element name="listDeliveries" type="tns:listDeliveries" />
+
+  <xs:element name="listDeliveriesResponse" type="tns:listDeliveriesResponse" />
+
+  <xs:element name="pauseCampaign" type="tns:pauseCampaign" />
+
+  <xs:element name="pauseCampaignResponse" type="tns:pauseCampaignResponse" />
+
+  <xs:element name="removeCampaign" type="tns:removeCampaign" />
+
+  <xs:element name="removeCampaignResponse" type="tns:removeCampaignResponse" />
+
+  <xs:element name="removeTextBanner" type="tns:removeTextBanner" />
+
+  <xs:element name="removeTextBannerResponse" type="tns:removeTextBannerResponse" />
+
+  <xs:element name="removeTextDelivery" type="tns:removeTextDelivery" />
+
+  <xs:element name="removeTextDeliveryResponse" type="tns:removeTextDeliveryResponse" />
+
+  <xs:element name="startCampaign" type="tns:startCampaign" />
+
+  <xs:element name="startCampaignResponse" type="tns:startCampaignResponse" />
+
+  <xs:element name="stopCampaign" type="tns:stopCampaign" />
+
+  <xs:element name="stopCampaignResponse" type="tns:stopCampaignResponse" />
+
+  <xs:element name="targetingFilterInfo" type="tns:targetingFilterInfo" />
+
+  <xs:element name="targetingParams" type="tns:targetingParams" />
+
+  <xs:element name="updateCampaign" type="tns:updateCampaign" />
+
+  <xs:element name="updateCampaignResponse" type="tns:updateCampaignResponse" />
+
+  <xs:complexType name="addCampaign">
+    <xs:sequence>
+      <xs:element name="campaignParams" type="tns:campaignParameters" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="campaignParameters">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="startDate" type="xs:string" />
+      <xs:element name="endDate" type="xs:string" />
+      <xs:element name="runAfterAgreement" type="xs:boolean" />
+      <xs:element name="description" type="xs:string" minOccurs="0" />
+      <xs:element name="targeting" type="tns:targetingParams" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="targetingParams">
+    <xs:sequence>
+      <xs:element name="fixedType" type="xs:string" />
+      <xs:element name="sex" type="xs:string" minOccurs="0" />
+      <xs:element name="minAge" type="xs:int" minOccurs="0" />
+      <xs:element name="maxAge" type="xs:int" minOccurs="0" />
+      <xs:element name="homeRegions" type="xs:int" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="addSubscribersSource" type="xs:string" minOccurs="0" />
+      <xs:element name="addSubscribers" type="tns:fileInfo" minOccurs="0" />
+      <xs:element name="subscriberSource" type="xs:string" minOccurs="0" />
+      <xs:element name="subscribers" type="tns:fileInfo" minOccurs="0" />
+      <xs:element name="targetingFilters" type="tns:targetingFilterInfo" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="fileInfo">
+    <xs:sequence>
+      <xs:element xmlns:ns1="http://www.w3.org/2005/05/xmlmime" name="file" ns1:expectedContentTypes="application/octet-stream" type="xs:base64Binary" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="targetingFilterInfo">
+    <xs:sequence>
+      <xs:element name="targetingFilterTypeId" type="xs:int" />
+      <xs:element name="stringFilterValues" type="xs:string" maxOccurs="unbounded" />
+      <xs:element name="tagFilterValuesIds" type="xs:int" maxOccurs="unbounded" />
+      <xs:element name="includeValues" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addCampaignResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:campaignInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="campaignInfo">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="0" />
+      <xs:element name="status" type="xs:string" minOccurs="0" />
+      <xs:element name="parameters" type="tns:campaignParameters" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="listCampaigns">
+    <xs:sequence />
+  </xs:complexType>
+
+  <xs:complexType name="listCampaignsResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:campaignInfo" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getDelivery">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+      <xs:element name="deliveryId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getDeliveryResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:deliveryInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="deliveryInfo">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="0" />
+      <xs:element name="status" type="xs:string" minOccurs="0" />
+      <xs:element name="impressionsCount" type="xs:long" />
+      <xs:element name="conversionsCount" type="xs:long" />
+      <xs:element name="params" type="tns:deliveryParams" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="deliveryParams">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="text" type="xs:string" />
+      <xs:element name="startDate" type="xs:string" minOccurs="0" />
+      <xs:element name="endDate" type="xs:string" minOccurs="0" />
+      <xs:element name="sourceAddress" type="xs:string" />
+      <xs:element name="maxImpressions" type="xs:long" />
+      <xs:element name="dailyImpressionsLimit" type="xs:long" minOccurs="0" />
+      <xs:element name="clickService" type="tns:clickServiceInfo" minOccurs="0" />
+      <xs:element name="externalLink" type="tns:externalLinkInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="clickServiceInfo">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="0" />
+      <xs:element name="additionalText" type="xs:string" minOccurs="0" />
+      <xs:element name="outShortcut" type="xs:string" minOccurs="0" />
+      <xs:element name="text" type="xs:string" minOccurs="0" />
+      <xs:element name="inShortcut" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="externalLinkInfo">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="0" />
+      <xs:element name="additionalText" type="xs:string" minOccurs="0" />
+      <xs:element name="externalUrl" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pauseCampaign">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="pauseCampaignResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:campaignInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="removeTextBanner">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+      <xs:element name="bannerId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="removeTextBannerResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateCampaign">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+      <xs:element name="campaignParams" type="tns:campaignParameters" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="updateCampaignResponse">
+    <xs:sequence />
+  </xs:complexType>
+
+  <xs:complexType name="listBanners">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="listBannersResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:bannerInfo" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="bannerInfo">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int" minOccurs="0" />
+      <xs:element name="status" type="xs:string" minOccurs="0" />
+      <xs:element name="impressionsCount" type="xs:long" />
+      <xs:element name="clicksCount" type="xs:long" />
+      <xs:element name="conversionsCount" type="xs:long" />
+      <xs:element name="params" type="tns:bannerParams" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="bannerParams">
+    <xs:sequence>
+      <xs:element name="maxImpressions" type="xs:long" />
+      <xs:element name="commChannel" type="xs:int" />
+      <xs:element name="text" type="xs:string" />
+      <xs:element name="dailyImpressionsLimit" type="xs:long" />
+      <xs:element name="clickService" type="tns:clickServiceInfo" minOccurs="0" />
+      <xs:element name="externalLink" type="tns:externalLinkInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getTextBanner">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+      <xs:element name="bannerId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getTextBannerResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:bannerInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getLandingConversionCounterStat">
+    <xs:sequence>
+      <xs:element name="fromId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getLandingConversionCounterStatResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:fileInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="removeCampaign">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="removeCampaignResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="listDeliveries">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="listDeliveriesResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:deliveryInfo" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getLandingPageClickCounterStat">
+    <xs:sequence>
+      <xs:element name="fromId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getLandingPageClickCounterStatResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:fileInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="init">
+    <xs:sequence />
+  </xs:complexType>
+
+  <xs:complexType name="initResponse">
+    <xs:sequence />
+  </xs:complexType>
+
+  <xs:complexType name="removeTextDelivery">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+      <xs:element name="deliveryId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="removeTextDeliveryResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addTextDelivery">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+      <xs:element name="deliveryParams" type="tns:deliveryParams" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addTextDeliveryResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:deliveryInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addTextBanner">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+      <xs:element name="bannerParams" type="tns:bannerParams" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="addTextBannerResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:bannerInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getFreeClickServiceShortcuts">
+    <xs:sequence />
+  </xs:complexType>
+
+  <xs:complexType name="getFreeClickServiceShortcutsResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="stopCampaign">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="stopCampaignResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:campaignInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getCampaignStatus">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getCampaignStatusResponse">
+    <xs:sequence>
+      <xs:element name="return" type="xs:string" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getMessageViewCounterStat">
+    <xs:sequence>
+      <xs:element name="fromId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="getMessageViewCounterStatResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:fileInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="startCampaign">
+    <xs:sequence>
+      <xs:element name="campaignId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="startCampaignResponse">
+    <xs:sequence>
+      <xs:element name="return" type="tns:campaignInfo" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
