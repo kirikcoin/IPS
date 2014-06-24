@@ -56,10 +56,6 @@ public class CouponService {
         }
     }
 
-    public SequenceGenerator getGenerator(Survey survey) {
-        return createGenerator(survey);
-    }
-
     public String getCouponTag() {
         return "[coupon]";
     }
@@ -101,7 +97,7 @@ public class CouponService {
     }
 
     private CharSequence generate0(Survey survey) {
-        final SequenceGenerator generator = getGenerator(survey);
+        final SequenceGenerator generator = createGenerator(survey);
         final CharSequence coupon = generator.next();
         if (coupon == null) {
             return null;
