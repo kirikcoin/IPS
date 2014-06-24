@@ -32,7 +32,7 @@
   <managed-bean>
     <managed-bean-name>userSession</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.login.UserSessionController</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
+    <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
   <managed-bean>
@@ -51,6 +51,18 @@
     <managed-bean-name>resources</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.ResourceController</managed-bean-class>
     <managed-bean-scope>application</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>baseSurveyController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.BaseSurveyController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>baseSurveyReadOnlyController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.BaseSurveyReadOnlyController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
   <managed-bean>

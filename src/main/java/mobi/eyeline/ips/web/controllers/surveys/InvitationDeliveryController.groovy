@@ -15,6 +15,7 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
+import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
 import java.util.regex.Pattern
@@ -24,7 +25,7 @@ import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
 
 @CompileStatic
 @Slf4j('logger')
-class InvitationDeliveryController extends BaseSurveyController {
+class InvitationDeliveryController /*extends BaseSurveyController */ extends BaseController {
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().invitationDeliveryRepository
     private final CsvParseService csvParseService = Services.instance().csvParseService
@@ -44,6 +45,10 @@ class InvitationDeliveryController extends BaseSurveyController {
     List<String> msisdnList
     UploadedFile inputFile
     String progress
+
+    @Delegate
+    BaseSurveyReadOnlyController surveys =
+            beanByName('baseSurveyReadOnlyController', BaseSurveyReadOnlyController)
 
     final List<SelectItem> types = InvitationDelivery.Type.values().collect {
         InvitationDelivery.Type t -> new SelectItem(t, nameOf(t))

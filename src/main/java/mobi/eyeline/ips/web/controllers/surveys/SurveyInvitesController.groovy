@@ -8,15 +8,19 @@ import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.service.MadvUpdateService
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
 
+import javax.faces.context.FacesContext
+
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
+import static mobi.eyeline.ips.web.controllers.BaseController.beanByName
 
 @CompileStatic
 @Slf4j('logger')
-class SurveyInvitesController extends BaseSurveyController {
+class SurveyInvitesController /*extends BaseSurveyController */ extends BaseController {
 
     private final SurveyInvitationRepository surveyInvitationRepository =
             Services.instance().surveyInvitationRepository
@@ -31,6 +35,10 @@ class SurveyInvitesController extends BaseSurveyController {
     Date inviteDate = new Date()
     String inviteValue
     boolean inviteError
+
+    @Delegate
+    BaseSurveyReadOnlyController surveys =
+            beanByName('baseSurveyReadOnlyController', BaseSurveyReadOnlyController)
 
     SurveyInvitesController() {
         madvId = survey.statistics.campaign

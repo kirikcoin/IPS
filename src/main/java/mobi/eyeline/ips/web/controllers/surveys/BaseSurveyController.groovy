@@ -7,21 +7,11 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 
 @CompileStatic
-class BaseSurveyController extends BaseController {
-    protected final SurveyRepository surveyRepository = Services.instance().surveyRepository
+class BaseSurveyController extends BaseSurveyReadOnlyController {
 
-    Survey survey
     Survey persistedSurvey
 
-    Integer surveyId
-
     BaseSurveyController() {
-        surveyId = getRequest().getParameter("id")?.toInteger()
-        survey = surveyRepository.load(surveyId)
         persistedSurvey = surveyRepository.load(surveyId)
-    }
-
-    Survey getSurvey() {
-        return survey
     }
 }

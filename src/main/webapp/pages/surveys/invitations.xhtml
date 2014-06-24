@@ -96,13 +96,13 @@
             <h:panelGrid columns="4"
                          columnClasses="tab,tab,tab,tab_active"
                          style="width:auto">
-              <h:outputLink value="settings.faces?id=#{surveyStatsController.surveyId}">
+              <h:outputLink value="settings.faces?id=#{surveyInvitesController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.settings']}"/>
               </h:outputLink>
-              <h:outputLink value="results.faces?id=#{surveyStatsController.surveyId}">
+              <h:outputLink value="results.faces?id=#{surveyInvitesController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.results']}"/>
               </h:outputLink>
-              <h:outputLink value="statistics.faces?id=#{surveyResultsController.surveyId}">
+              <h:outputLink value="statistics.faces?id=#{surveyInvitesController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.stats']}"/>
               </h:outputLink>
               <h:outputLink value="#">

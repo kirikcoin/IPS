@@ -190,4 +190,9 @@ public abstract class BaseController implements Serializable {
 
         String getAt(String key) { getString(key) }
     }
+
+    static <T> T beanByName(String name, Class<T> clazz) {
+        def context = FacesContext.currentInstance
+        (T) context.application.evaluateExpressionGet(context, '#{' + name + '}', clazz)
+    }
 }
