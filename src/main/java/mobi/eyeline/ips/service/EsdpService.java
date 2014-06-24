@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.service;
 
 import com.j256.simplejmx.common.JmxOperation;
+import com.j256.simplejmx.common.JmxResource;
 import mobi.eyeline.ips.external.EsdpSoapApi;
 import mobi.eyeline.ips.external.esdp.EsdpServiceException;
 import mobi.eyeline.ips.external.esdp.EsdpServiceManager;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import static com.j256.simplejmx.common.JmxOperationInfo.OperationAction.ACTION;
 
+@JmxResource(domainName = "mobi.eyeline.ips")
 public class EsdpService {
 
     private static final Logger logger = LoggerFactory.getLogger(EsdpService.class);

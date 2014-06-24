@@ -261,7 +261,7 @@
   <target name="gen-esdp-client">
     <delete dir="${esdp.dir}" failonerror="false"/>
     <mkdir dir="${esdp.dir}"/>
-    <exec executable="${java.home}/../bin/wsimport">
+    <exec executable="${java.home}/../bin/wsimport" failonerror="true">
       <arg line="-Xnocompile -keep -p mobi.eyeline.ips.external.esdp -s ${esdp.dir} "/>
       <arg line="-wsdllocation http://localhost/console2/service-api?wsdl ${resources.dir}/wsdl/esdp/service-api.wsdl"/>
     </exec>
