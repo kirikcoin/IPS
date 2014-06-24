@@ -13,14 +13,12 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
 
-import javax.faces.context.FacesContext
-
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
 import static mobi.eyeline.ips.web.controllers.BaseController.beanByName
 
 @CompileStatic
 @Slf4j('logger')
-class SurveyInvitesController /*extends BaseSurveyController */ extends BaseController {
+class SurveyInvitesController extends BaseController {
 
     private final SurveyInvitationRepository surveyInvitationRepository =
             Services.instance().surveyInvitationRepository

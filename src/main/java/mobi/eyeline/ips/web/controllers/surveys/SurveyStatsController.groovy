@@ -24,7 +24,7 @@ import javax.faces.component.html.HtmlPanelGroup
 
 @CompileStatic
 @Slf4j('logger')
-class SurveyStatsController extends BaseSurveyController {
+class SurveyStatsController extends BaseSurveyReadOnlyController {
 
     private final AnswerRepository answerRepository = Services.instance().answerRepository
     private final RespondentRepository respondentRepository = Services.instance().respondentRepository

@@ -25,7 +25,7 @@ import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
 
 @CompileStatic
 @Slf4j('logger')
-class InvitationDeliveryController /*extends BaseSurveyController */ extends BaseController {
+class InvitationDeliveryController extends BaseController {
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().invitationDeliveryRepository
     private final CsvParseService csvParseService = Services.instance().csvParseService

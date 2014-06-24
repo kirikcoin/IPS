@@ -12,7 +12,7 @@ import javax.faces.context.FacesContext
 
 @CompileStatic
 @Slf4j('logger')
-class SurveyResultsController extends BaseSurveyController {
+class SurveyResultsController extends BaseSurveyReadOnlyController {
 
     private final AnswerRepository answerRepository = Services.instance().answerRepository
     private final ResultsExportService resultsExportService = Services.instance().resultsExportService
