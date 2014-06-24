@@ -68,6 +68,10 @@ public class EsdpService {
         // C2S-number.
         final String number = survey.getStatistics().getAccessNumber() == null ?
                 "" : survey.getStatistics().getAccessNumber().getNumber();
+
+        if (service.getProperties() == null) {
+            service.setProperties(new Service.Properties());
+        }
         final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
 
         Service.Properties.Entry sip = find(entries, "sip-number");
@@ -83,6 +87,7 @@ public class EsdpService {
 
     // TODO: for a one-time usage, should probably be removed
     //       when migrated to the new service creation scheme.
+    @SuppressWarnings("UnusedDeclaration")
     @JmxOperation(operationAction = ACTION)
     public void createMissingServices() {
         logger.info("Creating missing services for all the surveys");
@@ -122,12 +127,12 @@ public class EsdpService {
     //
     //
 
-    private EsdpServiceManager getApi() {
+    protected EsdpServiceManager getApi() {
         return new EsdpSoapApi(config).getSoapApi();
     }
 
     private String getId(Survey survey) {
-        return "ips" + String.format("%04d", survey.getId());
+        return getTag(survey);
     }
 
     private String getTag(Survey survey) {
