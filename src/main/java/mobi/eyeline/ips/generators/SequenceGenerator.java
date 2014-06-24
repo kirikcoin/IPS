@@ -1,9 +1,7 @@
 package mobi.eyeline.ips.generators;
 
-/**
- * @author andy
- */
 public interface SequenceGenerator {
+
     Pattern getPattern();
 
     /**

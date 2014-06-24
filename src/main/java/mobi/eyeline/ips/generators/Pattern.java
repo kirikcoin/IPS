@@ -1,8 +1,16 @@
 package mobi.eyeline.ips.generators;
 
+/**
+ * Bijection from a finite range {@code [0..N-1]} to a predefined set of words {@code L}.
+ */
 public interface Pattern {
-    public CharSequence convert(long number);
-    public long convert(CharSequence value);
-    public long getCapacity();
-    public String getPattern();
+
+    CharSequence convert(long number);
+
+    long convert(CharSequence value);
+
+    /**
+     * @return Range upper threshold.
+     */
+    long getCapacity();
 }

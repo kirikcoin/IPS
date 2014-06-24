@@ -45,7 +45,6 @@ public class SimplePattern implements Pattern {
         return capacity;
     }
 
-    @Override
     public String getPattern() {
         final StringBuilder builder = new StringBuilder();
         for (CharSequence option : options) {

@@ -14,5 +14,5 @@ package mobi.eyeline.ips.generators;
  * For instance, {@code f(x) = x } is such a function.
  */
 public interface NumberBijection {
-    public long apply(long from);
+    long apply(long from);
 }
