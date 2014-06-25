@@ -33,7 +33,6 @@ var page = {
       });
 
       page.onEndSmsEnabledChange($('#endSmsEnabled')[0]);
-      page.onCouponEnabledChange($('#couponEnabled')[0]);
     });
 
   },
@@ -142,12 +141,8 @@ var page = {
   },
 
   onEndSmsEnabledChange: function (self) {
-    $('#endSmsDetails, .endSmsDetails').toggle(self.checked);
-    return false;
-  },
-
-  onCouponEnabledChange: function (self) {
-    $('#couponDetails, #couponHint').toggle(self.checked);
+    $('#endSmsDetails, .endSmsDetails').toggle(self.value == 'SMS' || self.value == 'COUPON');
+    $('#couponDetails, #couponHint').toggle(self.value == 'COUPON');
     return false;
   }
 

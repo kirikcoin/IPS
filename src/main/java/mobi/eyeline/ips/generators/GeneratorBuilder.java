@@ -16,8 +16,14 @@ public class GeneratorBuilder {
     }
 
     public GeneratorBuilder exclude(String regex) throws UnsupportedPatternException {
-        final Automaton excluded = AutomatonUtils.toAutomaton(regex);
-        automaton = automaton.minus(excluded);
+        final Automaton excludedAutomaton = AutomatonUtils.toAutomaton(regex);
+        final SimplePattern excludedPattern =
+                new SimplePattern(AutomatonUtils.asStateSymbols(excludedAutomaton));
+
+        final SimplePattern currentPattern =
+                new SimplePattern(AutomatonUtils.asStateSymbols(automaton));
+
+        automaton = AutomatonUtils.toAutomaton(currentPattern.minus(excludedPattern).getPattern());
 
         return this;
     }

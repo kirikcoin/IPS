@@ -437,21 +437,16 @@
 
                     <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.enabled']}"
                                    for="endSmsEnabled"/>
-                    <h:selectBooleanCheckbox id="endSmsEnabled"
-                                             value="#{surveySettingsController.survey.details.endSmsEnabled}"
-                                             onchange="page.onEndSmsEnabledChange(this);"/>
-                  </h:panelGrid>
-
-                  <h:panelGrid id="endSmsDetails"
-                               columns="2"
-                               columnClasses="settings-left,none"
-                               styleClass="endSmsDetails">
-
-                    <h:outputLabel value="#{bundle['survey.settings.end.message.coupon.enabled']}"
-                                   for="couponEnabled"/>
-                    <h:selectBooleanCheckbox id="couponEnabled"
-                                             value="#{surveySettingsController.couponEnabled}"
-                                             onchange="page.onCouponEnabledChange(this);"/>
+                    <h:selectOneMenu id="endSmsEnabled"
+                                     value="#{surveySettingsController.endSmsType}"
+                                     onchange="page.onEndSmsEnabledChange(this);">
+                      <f:selectItem itemValue="DISABLED"
+                                    itemLabel="#{bundle['survey.settings.end.message.title.sms.enabled.no']}"/>
+                      <f:selectItem itemValue="SMS"
+                                    itemLabel="#{bundle['survey.settings.end.message.title.sms.enabled.sms']}"/>
+                      <f:selectItem itemValue="COUPON"
+                                    itemLabel="#{bundle['survey.settings.end.message.title.sms.enabled.coupon']}"/>
+                    </h:selectOneMenu>
                   </h:panelGrid>
 
                   <h:panelGrid id="couponDetails"

@@ -1,5 +1,9 @@
 package mobi.eyeline.ips.generators.util;
 
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
 public class CharUtils {
 
     public static long permutations(CharSequence[] sequence) {
@@ -22,5 +26,18 @@ public class CharUtils {
         for (char c = from; c <= to; c++) {
             target.append(c);
         }
+    }
+
+    public static CharSequence exclude(CharSequence from, CharSequence what) {
+        final StringBuilder buf = new StringBuilder();
+
+        final List<Character> excluded = Lists.charactersOf(what);
+        for (Character c : Lists.charactersOf(from)) {
+            if (!excluded.contains(c)) {
+                buf.append(c);
+            }
+        }
+
+        return buf.toString();
     }
 }

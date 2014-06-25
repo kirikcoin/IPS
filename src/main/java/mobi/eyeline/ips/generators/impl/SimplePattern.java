@@ -3,7 +3,9 @@ package mobi.eyeline.ips.generators.impl;
 import mobi.eyeline.ips.generators.util.CharUtils;
 import mobi.eyeline.ips.generators.Pattern;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SimplePattern implements Pattern {
 
@@ -43,6 +45,23 @@ public class SimplePattern implements Pattern {
     @Override
     public final long getCapacity() {
         return capacity;
+    }
+
+    public SimplePattern minus(SimplePattern pattern) {
+        if (this.options.length != pattern.options.length) {
+            return this;
+        }
+
+        final List<CharSequence> results = new ArrayList<>();
+        for (int i = 0; i < options.length; i++) {
+            final CharSequence result = CharUtils.exclude(options[i], pattern.options[i]);
+            if (result.length() == 0) {
+                return new SimplePattern(new CharSequence[0]);
+            }
+            results.add(result);
+        }
+
+        return new SimplePattern(results.toArray(new CharSequence[results.size()]));
     }
 
     public String getPattern() {

@@ -73,7 +73,7 @@ public class CouponService {
     public int getPercentAvailable(Survey survey) {
         final SequenceGenerator generator = createGenerator(survey);
         return (generator.getRemaining() == 0) ?
-                0 : ((int) (generator.getTotal() / generator.getRemaining()) * 100);
+                0 : ((int) (generator.getRemaining() / generator.getTotal()) * 100);
     }
 
     public boolean shouldGenerateCoupon(Survey survey) {

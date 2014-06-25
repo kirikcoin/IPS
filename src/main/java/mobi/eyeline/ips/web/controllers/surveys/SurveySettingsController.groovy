@@ -14,7 +14,6 @@ import mobi.eyeline.ips.service.CouponService
 import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
-import mobi.eyeline.ips.service.UssdService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
@@ -22,6 +21,8 @@ import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
+
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.*
 
 @SuppressWarnings("UnnecessaryQualifiedReference")
 @CompileStatic
@@ -32,7 +33,6 @@ class SurveySettingsController extends BaseSurveyController {
     private final UserRepository userRepository = Services.instance().userRepository
     private final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
 
-    private final UssdService ussdService = Services.instance().ussdService
     private final PushService pushService = Services.instance().pushService
     private final CouponService couponService = Services.instance().couponService
     private final EsdpService esdpService = Services.instance().esdpService
@@ -54,10 +54,16 @@ class SurveySettingsController extends BaseSurveyController {
 
     boolean previewSentOk
 
-    boolean couponEnabled = survey.activePattern != null
+    EndSmsType endSmsType = determineEndSmsType()
+    EndSmsType determineEndSmsType() {
+        if (!survey.details.endSmsEnabled) return DISABLED
+        return survey.activePattern != null ? COUPON : SMS
+    }
+
+    boolean couponEnabled = endSmsType == COUPON
     SurveyPattern.Mode currentPatternMode =
             !couponEnabled ? SurveyPattern.Mode.DIGITS : survey.activePattern.mode
-    int currentPatternLength = survey.activePattern == null ? 0 : survey.activePattern.length
+    int currentPatternLength = survey.activePattern == null ? 4 : survey.activePattern.length
 
     List<SelectItem> patternModes = SurveyPattern.Mode.values()
             .collect { SurveyPattern.Mode mode ->
@@ -86,6 +92,8 @@ class SurveySettingsController extends BaseSurveyController {
     String getSurveyUrl() { esdpService.getSurveyUrl(persistedSurvey) }
 
     void saveMessage() {
+        survey.details.endSmsEnabled = endSmsType != DISABLED
+
         boolean validationError =
                 renderViolationMessage(validator.validate(survey.details), [
                         'endSmsTextSet': 'endSmsText',
@@ -111,6 +119,7 @@ class SurveySettingsController extends BaseSurveyController {
         if (persistedSurvey.details.endSmsEnabled) {
             persistedSurvey.details.endSmsText = survey.details.endSmsText
             persistedSurvey.details.endSmsFrom = survey.details.endSmsFrom
+
         } else {
             persistedSurvey.details.endSmsText = null
             persistedSurvey.details.endSmsFrom = null
@@ -119,7 +128,7 @@ class SurveySettingsController extends BaseSurveyController {
 
     private void copyCoupons() {
         def activePattern = persistedSurvey.activePattern
-        if (persistedSurvey.details.endSmsEnabled && couponEnabled) {
+        if (persistedSurvey.details.endSmsEnabled && endSmsType == COUPON) {
             if (activePattern != null &&
                     activePattern.mode == currentPatternMode &&
                     activePattern.length == currentPatternLength) {
@@ -131,6 +140,7 @@ class SurveySettingsController extends BaseSurveyController {
                 final SurveyPattern existing = persistedSurvey.patterns.find { SurveyPattern p ->
                     p.mode == currentPatternMode && p.length == currentPatternLength
                 }
+
                 if (existing) {
                     existing.active = true
 
@@ -399,5 +409,11 @@ class SurveySettingsController extends BaseSurveyController {
                 getValue: { false },
                 getLabel: { BaseController.strings['question.option.terminal.no'] }
         ] as TerminalOption
+    }
+
+    static enum EndSmsType {
+        DISABLED,
+        SMS,
+        COUPON
     }
 }
