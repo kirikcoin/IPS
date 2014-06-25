@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -16,8 +17,11 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
 @Entity
 @Table(name = "survey_invitations")
+@Cache(usage = READ_WRITE)
 public class SurveyInvitation implements Serializable {
 
     @Id

@@ -5,6 +5,7 @@ import mobi.eyeline.ips.service.SegmentationService;
 import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.util.ListUtils;
 import mobi.eyeline.ips.validation.MaxSize;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Proxy;
@@ -32,10 +33,12 @@ import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Lists.newArrayList;
 import static javax.persistence.CascadeType.ALL;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Entity
 @Table(name = "questions")
 @Proxy(lazy = false)
+@Cache(usage = READ_WRITE)
 public class Question implements Serializable {
 
     @Id
@@ -63,6 +66,7 @@ public class Question implements Serializable {
     @LazyCollection(LazyCollectionOption.FALSE)
     @NotEmpty(message = "{question.validation.options.empty}")
     @Valid
+    @Cache(usage = READ_WRITE)
     private List<QuestionOption> options = new ArrayList<>();
 
     /**

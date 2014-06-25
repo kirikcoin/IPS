@@ -2,6 +2,7 @@ package mobi.eyeline.ips.model;
 
 
 import mobi.eyeline.ips.validation.MaxSize;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Proxy;
 
@@ -21,9 +22,12 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
 @Entity
 @Proxy(lazy = false)
 @Table(name = "deliveries")
+@Cache(usage = READ_WRITE)
 public class InvitationDelivery implements Serializable {
 
     @Id

@@ -102,6 +102,8 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
 
             transaction.commit();
 
+            getSessionFactory().getCache().evictEntityRegion(DeliverySubscriber.class);
+
             return count;
 
         } catch (HibernateException e) {

@@ -3,6 +3,7 @@ package mobi.eyeline.ips.model;
 import mobi.eyeline.ips.validation.MaxSize;
 import mobi.eyeline.ips.web.validators.LoginPasswordValidator;
 import mobi.eyeline.ips.web.validators.PhoneValidator;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
@@ -25,10 +26,12 @@ import java.io.Serializable;
 import java.util.List;
 
 import static mobi.eyeline.ips.model.Locale.EN;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Entity
 @Table(name = "users")
 @Proxy(lazy = false)
+@Cache(usage = READ_WRITE)
 public class User implements Serializable {
 
     @Id

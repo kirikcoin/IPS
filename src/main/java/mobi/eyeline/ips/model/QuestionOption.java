@@ -3,6 +3,7 @@ package mobi.eyeline.ips.model;
 import com.google.common.base.Predicate;
 import mobi.eyeline.ips.util.ListUtils;
 import mobi.eyeline.ips.validation.MaxSize;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -17,12 +18,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
 /**
  * Вариант ответа на вопрос; для вопросов, предполагающих варианты ответов.
  */
 @Entity
 @Table(name = "question_options")
 @Proxy(lazy = false)
+@Cache(usage = READ_WRITE)
 public class QuestionOption implements Serializable {
 
     /**

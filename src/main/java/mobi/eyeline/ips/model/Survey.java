@@ -1,9 +1,8 @@
 package mobi.eyeline.ips.model;
 
-import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import mobi.eyeline.ips.util.ListUtils;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Proxy;
@@ -30,7 +29,6 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -38,9 +36,9 @@ import static com.beust.jcommander.internal.Lists.newArrayList;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Iterables.tryFind;
-import static com.google.common.collect.Lists.newArrayList;
 import static javax.persistence.CascadeType.ALL;
 import static mobi.eyeline.ips.model.Question.SKIP_INACTIVE;
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 /**
  * Опрос - это последовательность взаимосвязанных вопросов.
@@ -51,6 +49,7 @@ import static mobi.eyeline.ips.model.Question.SKIP_INACTIVE;
 @Entity
 @Table(name = "surveys")
 @Proxy(lazy = false)
+@Cache(usage = READ_WRITE)
 public class Survey implements Serializable {
 
     @Id
@@ -85,6 +84,7 @@ public class Survey implements Serializable {
      */
     @Valid
     @OneToOne(mappedBy = "survey", cascade = ALL)
+    @Cache(usage = READ_WRITE)
     private SurveyStats statistics;
 
     /**
@@ -92,11 +92,13 @@ public class Survey implements Serializable {
      */
     @Valid
     @OneToOne(mappedBy = "survey", cascade = ALL)
+    @Cache(usage = READ_WRITE)
     private SurveyDetails details;
 
     @OneToMany(mappedBy = "survey", cascade = ALL, orphanRemoval = true)
     @OrderColumn(name = "question_order")
     @LazyCollection(LazyCollectionOption.FALSE)
+    @Cache(usage = READ_WRITE)
     private List<Question> questions = new ArrayList<>();
 
     @Valid
@@ -120,6 +122,7 @@ public class Survey implements Serializable {
 
     @OneToMany(mappedBy = "survey", cascade = ALL, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
+    @Cache(usage = READ_WRITE)
     private List<SurveyPattern> patterns;
 
     public Survey() {

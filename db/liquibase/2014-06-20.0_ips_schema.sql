@@ -20,3 +20,6 @@ ALTER TABLE `users` ADD COLUMN `esdp_password` VARCHAR(255) NULL;
 
 UPDATE `users` SET `esdp_login` = 'ips' WHERE role = 'manager';
 UPDATE `users` SET `esdp_password` = 'password_hash' WHERE role = 'manager';
+
+
+ALTER TABLE `delivery_subscribers` ADD INDEX `state_idx` (`state`);
