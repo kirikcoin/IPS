@@ -141,7 +141,7 @@ class SurveyListController extends BaseController {
         def surveyId = surveyRepository.save(survey)
 
         try {
-            esdpService.save(survey)
+            esdpService.save(getCurrentUser(), survey)
         } catch (EsdpServiceException e) {
             logger.error(e.message, e)
             newSurveyValidationError = true

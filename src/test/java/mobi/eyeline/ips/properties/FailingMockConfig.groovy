@@ -36,8 +36,6 @@ class FailingMockConfig implements Config {
     long getExpirationDelaySeconds() { fail() }
 
     String getEsdpEndpointUrl() { fail() }
-    String getEsdpLogin() { fail() }
-    String getEsdpPassword() { fail() }
 
     boolean getExposeJmxBeans() { fail() }
 }

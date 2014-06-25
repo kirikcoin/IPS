@@ -83,7 +83,7 @@ class SurveySettingsController extends BaseSurveyController {
         newSurveyClientId = survey.client.id
     }
 
-    String getSurveyUrl() { ussdService.getSurveyUrl(persistedSurvey) }
+    String getSurveyUrl() { esdpService.getSurveyUrl(persistedSurvey) }
 
     void saveMessage() {
         boolean validationError =
@@ -182,7 +182,7 @@ class SurveySettingsController extends BaseSurveyController {
         surveyRepository.update(persistedSurvey)
 
         try {
-            esdpService.update(persistedSurvey)
+            esdpService.update(getCurrentUser(), persistedSurvey)
 
         } catch (EsdpServiceException e) {
             logger.error(e.message, e)
@@ -198,7 +198,7 @@ class SurveySettingsController extends BaseSurveyController {
         def survey = surveyRepository.load(surveyId)
 
         try {
-            esdpService.delete(survey)
+            esdpService.delete(getCurrentUser(), survey)
         } catch (Exception e) {
             logger.error(e.message, e)
             addErrorMessage strings['esdp.error.survey.deletion']

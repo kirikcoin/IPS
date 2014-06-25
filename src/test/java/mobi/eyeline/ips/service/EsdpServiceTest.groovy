@@ -17,13 +17,6 @@ class EsdpServiceTest extends GroovyTestCase {
 
     UssdService ussdService
 
-    def service = new EsdpService(new DefaultMockConfig(), ussdService) {
-        @Override
-        protected EsdpServiceManager getApi() {
-            return super.getApi()
-        }
-    }
-
     MockEsdpServiceManager serviceManager
     EsdpService esdpService
 
@@ -48,7 +41,7 @@ class EsdpServiceTest extends GroovyTestCase {
                 owner: new User(id: 53),
                 details: new SurveyDetails(title: 'Survey 1'))
 
-        esdpService.save(survey)
+        esdpService.save(new User(), survey)
 
         assertThat serviceManager.calledMethods, hasSize(1)
 
@@ -66,7 +59,7 @@ class EsdpServiceTest extends GroovyTestCase {
                 id: 42,
                 owner: new User(id: 53))
 
-        esdpService.delete(survey)
+        esdpService.delete(new User(), survey)
 
         assertThat serviceManager.calledMethods, hasSize(1)
         assertEquals 'ips.ips-0053-0042', serviceManager.calledMethods[0][1]
@@ -87,7 +80,7 @@ class EsdpServiceTest extends GroovyTestCase {
                 details: new SurveyDetails(title: 'Survey 1'),
                 statistics: new SurveyStats(accessNumber: null))
 
-        esdpService.update(survey)
+        esdpService.update(new User(), survey)
 
         assertThat serviceManager.calledMethods, hasSize(1)
         def service = serviceManager.calledMethods[0][1]
@@ -111,7 +104,7 @@ class EsdpServiceTest extends GroovyTestCase {
                 details: new SurveyDetails(title: 'Survey 1'),
                 statistics: new SurveyStats(accessNumber: new AccessNumber(number: '123')))
 
-        esdpService.update(survey)
+        esdpService.update(new User(), survey)
 
         assertThat serviceManager.calledMethods, hasSize(1)
         def service = serviceManager.calledMethods[0][1]
@@ -129,7 +122,7 @@ class EsdpServiceTest extends GroovyTestCase {
             this.api = api
         }
 
-        @Override EsdpServiceManager getApi() { api }
+        @Override EsdpServiceManager getApi(String login, String passwordHash) { api }
     }
 
     static class MockEsdpServiceManager implements EsdpServiceManager {

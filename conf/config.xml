@@ -100,8 +100,6 @@
 
   <section name="esdp">
     <param name="endpoint.url" type="string">http://localhost/console2/service-api?wsdl</param>
-    <param name="login" type="string">ips</param>
-    <param name="password" type="string">password</param>
   </section>
 
   <section name="other">

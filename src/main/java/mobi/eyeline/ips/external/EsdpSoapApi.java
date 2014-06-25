@@ -3,17 +3,14 @@ package mobi.eyeline.ips.external;
 import mobi.eyeline.ips.external.esdp.EsdpServiceManager;
 import mobi.eyeline.ips.external.esdp.EsdpServiceManagerService;
 import mobi.eyeline.ips.properties.Config;
-import mobi.eyeline.ips.util.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,14 +22,14 @@ public class EsdpSoapApi {
 
     private final EsdpServiceManager soapApi;
 
-    public EsdpSoapApi(Config config) {
+    public EsdpSoapApi(Config config, String login, String passwordHash) {
         try {
             soapApi = initServiceManager(config);
         } catch (MalformedURLException e) {
             throw new RuntimeException("Configuration error", e);
         }
 
-        setCredentials(soapApi, config);
+        setCredentials(soapApi, login, passwordHash);
     }
 
     private EsdpServiceManager initServiceManager(Config config) throws MalformedURLException {
@@ -49,18 +46,9 @@ public class EsdpSoapApi {
         return esdpServiceManagerService.getEsdpServiceManagerPort();
     }
 
-    private void setCredentials(EsdpServiceManager esdpServiceManager, Config config) {
-
-        final String login = config.getEsdpLogin();
-        final String password = config.getEsdpPassword();
-
-        final String pwHash;
-        try {
-            // Note: ESDP console generates hashes in lowercase and performs case-sensitive lookup.
-            pwHash = HashUtils.hash(password, "MD5", "UTF-8").toLowerCase();
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+    private void setCredentials(EsdpServiceManager esdpServiceManager,
+                                String login,
+                                String passwordHash) {
 
         final Map<String, Object> reqContext =
                 ((BindingProvider) esdpServiceManager).getRequestContext();
@@ -68,7 +56,7 @@ public class EsdpSoapApi {
         Map<String, List<String>> headers = new HashMap<>();
 
         headers.put("X-API-Login", Collections.singletonList(login));
-        headers.put("X-API-Password", Collections.singletonList(pwHash));
+        headers.put("X-API-Password", Collections.singletonList(passwordHash));
         reqContext.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
     }
 

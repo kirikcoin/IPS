@@ -7,10 +7,16 @@ import mobi.eyeline.ips.external.esdp.EsdpServiceException;
 import mobi.eyeline.ips.external.esdp.EsdpServiceManager;
 import mobi.eyeline.ips.external.esdp.Service;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
+import mobi.eyeline.ips.util.HashUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static com.j256.simplejmx.common.JmxOperationInfo.OperationAction.ACTION;
@@ -29,7 +35,7 @@ public class EsdpService {
         this.ussdService = ussdService;
     }
 
-    public void save(Survey survey) throws EsdpServiceException {
+    public void save(User user, Survey survey) throws EsdpServiceException {
         logger.debug("Saving service, survey = [" + survey + "]");
 
         final Service service = new Service();
@@ -48,19 +54,20 @@ public class EsdpService {
         entries.add(entry("use-method-post", "false"));
         entries.add(entry("start-page", ussdService.getSurveyUrl(survey)));
 
-        getApi().createService(service);
+        getApi(user.getEsdpLogin(), user.getEsdpPasswordHash()).createService(service);
     }
 
-    public void delete(Survey survey) throws EsdpServiceException {
+    public void delete(User user, Survey survey) throws EsdpServiceException {
         logger.debug("Deleting service, survey = [" + survey + "]");
 
-        getApi().deleteService(getKey(survey));
+        getApi(user.getEsdpLogin(), user.getEsdpPasswordHash()).deleteService(getKey(survey));
     }
 
-    public void update(Survey survey) throws EsdpServiceException {
+    public void update(User user, Survey survey) throws EsdpServiceException {
         logger.debug("Updating service, survey = [" + survey + "]");
 
-        final Service service = getApi().getService(getKey(survey));
+        final Service service = getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
+                .getService(getKey(survey));
 
         // Title.
         service.setTitle(survey.getDetails().getTitle());
@@ -82,7 +89,8 @@ public class EsdpService {
             sip.setValue(number);
         }
 
-        getApi().updateService(service);
+        getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
+                .updateService(service);
     }
 
     // TODO: for a one-time usage, should probably be removed
@@ -92,6 +100,15 @@ public class EsdpService {
     public void createMissingServices() {
         logger.info("Creating missing services for all the surveys");
 
+        final String login = "ips";
+        final String pwHash;
+        try {
+            // Note: ESDP console generates hashes in lowercase and performs case-sensitive lookup.
+            pwHash = HashUtils.hash("password", "MD5", "UTF-8").toLowerCase();
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
         for (Survey survey : Services.instance().getSurveyRepository().list()) {
             try {
                 logger.info("Survey ID: " + survey.getId());
@@ -100,8 +117,11 @@ public class EsdpService {
                     continue;
                 }
 
-                if (!hasService(survey)) {
-                    save(survey);
+                if (!hasService(login, pwHash, survey)) {
+                    save(new User() {{
+                        setEsdpLogin(login);
+                        setEsdpPasswordHash(pwHash);
+                    }}, survey);
 
                 } else {
                     logger.info("Survey already has a service, ID = " + survey.getId());
@@ -113,9 +133,20 @@ public class EsdpService {
         }
     }
 
-    private boolean hasService(Survey survey) {
+    public String getSurveyUrl(Survey survey) {
         try {
-            return getApi().getService(getKey(survey)) != null;
+            final URIBuilder builder = new URIBuilder(config.getEsdpEndpointUrl());
+            return builder.getScheme() + "://" + builder.getHost() +
+                    "/push?service=" + getKey(survey);
+
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean hasService(String login, String passwordHash, Survey survey) {
+        try {
+            return getApi(login, passwordHash).getService(getKey(survey)) != null;
         } catch (Exception e) {
             logger.debug(e.getMessage(), e);
             return false;
@@ -127,8 +158,8 @@ public class EsdpService {
     //
     //
 
-    protected EsdpServiceManager getApi() {
-        return new EsdpSoapApi(config).getSoapApi();
+    protected EsdpServiceManager getApi(String login, String passwordHash) {
+        return new EsdpSoapApi(config, login, passwordHash).getSoapApi();
     }
 
     private String getId(Survey survey) {

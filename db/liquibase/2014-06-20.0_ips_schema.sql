@@ -13,3 +13,10 @@ ALTER TABLE `survey_stats` ADD `number_id` INT(11) NULL;
 
 ALTER TABLE `survey_stats`
 ADD FOREIGN KEY `FK_survey_stats_number` (`number_id`) REFERENCES `access_numbers` (`id`);
+
+
+ALTER TABLE `users` ADD COLUMN `esdp_login` VARCHAR(255) NULL;
+ALTER TABLE `users` ADD COLUMN `esdp_password` VARCHAR(255) NULL;
+
+UPDATE `users` SET `esdp_login` = 'ips' WHERE role = 'manager';
+UPDATE `users` SET `esdp_password` = 'password_hash' WHERE role = 'manager';

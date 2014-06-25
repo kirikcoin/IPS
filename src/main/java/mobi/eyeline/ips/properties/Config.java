@@ -44,8 +44,6 @@ public interface Config {
     public long getExpirationDelaySeconds();
 
     public String getEsdpEndpointUrl();
-    public String getEsdpLogin();
-    public String getEsdpPassword();
 
     public boolean getExposeJmxBeans();
 
@@ -84,8 +82,6 @@ public interface Config {
         private final long expirationDelaySeconds;
 
         private final String esdpEndpointUrl;
-        private final String esdpLogin;
-        private final String esdpPassword;
 
         private final boolean exposeJmxBeans;
 
@@ -161,8 +157,6 @@ public interface Config {
             final XmlConfigSection esdp = xmlConfig.getSection("esdp");
             {
                 esdpEndpointUrl = esdp.getString("endpoint.url");
-                esdpLogin = esdp.getString("login");
-                esdpPassword = esdp.getString("password");
             }
 
             final XmlConfigSection other = xmlConfig.getSection("other");
@@ -293,16 +287,6 @@ public interface Config {
         @Override
         public String getEsdpEndpointUrl() {
             return esdpEndpointUrl;
-        }
-
-        @Override
-        public String getEsdpLogin() {
-            return esdpLogin;
-        }
-
-        @Override
-        public String getEsdpPassword() {
-            return esdpPassword;
         }
 
         @Override

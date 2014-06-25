@@ -120,6 +120,12 @@ public class User implements Serializable {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean canSendInvitations = false;
 
+    @Column(name = "esdp_login")
+    private String esdpLogin;
+
+    @Column(name = "esdp_password")
+    private String esdpPasswordHash;
+
     public User() {
     }
 
@@ -225,6 +231,22 @@ public class User implements Serializable {
 
     public void setCanSendInvitations(boolean canSendInvitations) {
         this.canSendInvitations = canSendInvitations;
+    }
+
+    public String getEsdpLogin() {
+        return esdpLogin;
+    }
+
+    public void setEsdpLogin(String esdpLogin) {
+        this.esdpLogin = esdpLogin;
+    }
+
+    public String getEsdpPasswordHash() {
+        return esdpPasswordHash;
+    }
+
+    public void setEsdpPasswordHash(String esdpPasswordHash) {
+        this.esdpPasswordHash = esdpPasswordHash;
     }
 
     @Override
