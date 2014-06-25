@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.service
 
+import mobi.eyeline.ips.messages.AnswerOption
 import mobi.eyeline.ips.messages.MissingParameterException
 import mobi.eyeline.ips.messages.UssdOption
 import mobi.eyeline.ips.messages.UssdResponseModel
@@ -15,6 +16,7 @@ import mobi.eyeline.ips.repository.RepositoryMock
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_ANSWER_ID
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_QUESTION_ID
 import static mobi.eyeline.ips.messages.UssdOption.*
+import static mobi.eyeline.ips.messages.UssdOption.UssdOptionType.ANSWER
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.instanceOf
@@ -112,7 +114,7 @@ class UssdServiceTest extends DbTestCase {
     void testQuestionPageUnknownRequest1() {
         request([
                 (PARAM_MSISDN):        '123',
-                (PARAM_MESSAGE_TYPE):  UssdOptionType.ANSWER,
+                (PARAM_MESSAGE_TYPE):  ANSWER,
                 (PARAM_QUESTION_ID):   1,
                 (PARAM_ANSWER_ID):     1,
                 (PARAM_SURVEY_ID):     1   // Missing
@@ -125,7 +127,7 @@ class UssdServiceTest extends DbTestCase {
         shouldFail(MissingParameterException) {
             request([
                     (PARAM_MSISDN):        '123',
-                    (PARAM_MESSAGE_TYPE):  UssdOptionType.ANSWER,
+                    (PARAM_MESSAGE_TYPE):  ANSWER,
                     (PARAM_QUESTION_ID):   1,
                     (PARAM_ANSWER_ID):     1,
             ])
@@ -136,7 +138,7 @@ class UssdServiceTest extends DbTestCase {
         shouldFail(MissingParameterException) {
             request([
                     (PARAM_MSISDN):        '123',
-                    (PARAM_MESSAGE_TYPE):  "$UssdOptionType.ANSWER",
+                    (PARAM_MESSAGE_TYPE):  "$ANSWER",
                     (PARAM_ANSWER_ID):     1,
                     (PARAM_SURVEY_ID):     1
             ])
@@ -147,7 +149,7 @@ class UssdServiceTest extends DbTestCase {
         shouldFail(MissingParameterException) {
             request([
                     (PARAM_MSISDN):        '123',
-                    (PARAM_MESSAGE_TYPE):  "$UssdOptionType.ANSWER",
+                    (PARAM_MESSAGE_TYPE):  "$ANSWER",
                     (PARAM_QUESTION_ID):   1,
                     (PARAM_SURVEY_ID):     1
             ])
@@ -385,5 +387,37 @@ class UssdServiceTest extends DbTestCase {
             assertEquals 0, it.answersCount
             assertFalse it.finished
         }
+    }
+
+    void testBadCommand() {
+        createTestSurvey()
+        def page1 = request([
+                (PARAM_SURVEY_ID):      1,
+                (PARAM_MSISDN):         '79131234567',
+        ]).with {
+            assertEquals "First one", it.text
+        }
+
+        request([
+                (PARAM_SURVEY_ID):      1,
+                (PARAM_MESSAGE_TYPE):   ANSWER,
+                (PARAM_QUESTION_ID):    1,
+                (PARAM_ANSWER_ID):      1,
+                (PARAM_MSISDN):         '79131234567',
+        ]).with {
+            assertEquals "Second one", it.text
+        }
+
+        request([
+                (PARAM_SURVEY_ID):      1,
+                (PARAM_MESSAGE_TYPE):   ANSWER,
+                (PARAM_QUESTION_ID):    1,
+                (PARAM_ANSWER_ID):      1,
+                (PARAM_MSISDN):         '79131234567',
+                (PARAM_BAD_COMMAND):    null
+        ]).with {
+            assertEquals "Second one", it.text
+        }
+
     }
 }
