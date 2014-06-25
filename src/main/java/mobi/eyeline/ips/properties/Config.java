@@ -119,23 +119,7 @@ public interface Config {
 
             final XmlConfigSection locations = xmlConfig.getSection("locations");
             {
-                // Sections are unsorted (due to HashMap usage in general_utils implementation),
-                // hence we sort them using this artificial `order' parameter.
-                // Consider making sections and properties ordered as declared.
-                final List<XmlConfigSection> sections =
-                        new ArrayList<>(locations.sections());
-                Collections.sort(sections, new Comparator<XmlConfigSection>() {
-                    @Override
-                    public int compare(XmlConfigSection o1, XmlConfigSection o2) {
-                        try {
-                            return Integer.compare(o1.getInt("order"), o2.getInt("order"));
-                        } catch (ConfigException e) {
-                            throw new RuntimeException(e.getMessage(), e);
-                        }
-                    }
-                });
-
-                for (XmlConfigSection section : sections) {
+                for (XmlConfigSection section : locations.sections()) {
                     final LocationProperties parsed = new LocationProperties(
                             section.getString("pattern"),
                             section.getString("skin"));

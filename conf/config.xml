@@ -107,13 +107,12 @@
   </section>
 
   <section name="locations">
+    <!-- Patterns are checked in section declaration order. Section naming is ignored. -->
     <section name="mobak">
-      <param name="order" type="int">0</param>
       <param name="pattern" type="string">.*mobak.*</param>
       <param name="skin" type="string">mobak</param>
     </section>
     <section name="default">
-      <param name="order" type="int">100</param>
       <param name="pattern" type="string">.*</param>
       <param name="skin" type="string">araks</param>
     </section>
