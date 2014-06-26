@@ -34,5 +34,6 @@ class DefaultMockConfig extends FailingMockConfig {
 
     String getEsdpEndpointUrl() { '' }
 
-    boolean getExposeJmxBeans() { false }
+    boolean isJmxEnabled() { false }
+    int getJmxPort() { 9090 }
 }

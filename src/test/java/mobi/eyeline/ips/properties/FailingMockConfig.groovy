@@ -37,5 +37,6 @@ class FailingMockConfig implements Config {
 
     String getEsdpEndpointUrl() { fail() }
 
-    boolean getExposeJmxBeans() { fail() }
+    boolean isJmxEnabled() { fail() }
+    int getJmxPort() { fail() }
 }
