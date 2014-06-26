@@ -39,7 +39,7 @@ class AccessNumbersController extends BaseController {
 
             @Override
             int getRowsCount() {
-                return 0
+                accessNumberRepository.count(search)
             }
         }
     }
