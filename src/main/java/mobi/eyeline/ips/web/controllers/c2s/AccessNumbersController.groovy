@@ -1,25 +1,32 @@
 package mobi.eyeline.ips.web.controllers.c2s
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
+import javax.faces.context.FacesContext
+
 @CompileStatic
+@Slf4j('logger')
 class AccessNumbersController extends BaseController {
+
     private final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
 
     String search
 
-    AccessNumbersController() {
+    Integer modifiedNumberId
+    String newNumber
+    Boolean numberAddError
 
-    }
 
-    public DataTableModel getTableModel() {
-        return new DataTableModel() {
+    DataTableModel getTableModel() {
+        new DataTableModel() {
             @Override
             List getRows(int offset, int limit, DataTableSortOrder sortOrder) {
                 def list = accessNumberRepository.list(
@@ -28,11 +35,13 @@ class AccessNumbersController extends BaseController {
                         sortOrder.asc,
                         limit,
                         offset)
-                return list.collect{AccessNumber it ->
+
+                return list.collect { AccessNumber it ->
                         new TableItem(
-                                id:it.id,
+                                id: it.id,
                                 number: it.number,
-                                survey: it.survey.survey as String
+                                surveyTitle: it.surveyStats?.survey?.details?.title,
+                                surveyId: it.surveyStats?.survey?.id
                         )
                 }
             }
@@ -44,9 +53,43 @@ class AccessNumbersController extends BaseController {
         }
     }
 
+    void goToSurvey() {
+        def surveyId = getParamValue('surveyId').asInteger()
+        SurveySettingsController.goToSurvey(surveyId)
+    }
+
+    void deleteNumber() {
+        def number = accessNumberRepository.load(modifiedNumberId)
+        accessNumberRepository.delete(number)
+    }
+
+    void addNumber() {
+        final AccessNumber number = new AccessNumber(number: newNumber)
+
+        numberAddError = renderViolationMessage(
+                validator.validate(number),
+                [
+                        'number': 'newNumberValue'
+                ])
+        if (numberAddError) {
+            return
+        }
+
+        numberAddError = (accessNumberRepository.find(newNumber) != null)
+        if (numberAddError) {
+            addErrorMessage(strings['accessnumbers.duplicate'], 'newNumberValue')
+        }
+
+        if (!numberAddError) {
+            accessNumberRepository.save number
+        }
+    }
+
     static class TableItem implements Serializable {
         int id
         String number
-        String survey
+
+        String surveyTitle
+        Integer surveyId
     }
 }

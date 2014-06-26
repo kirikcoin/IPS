@@ -10,10 +10,12 @@ import org.hibernate.criterion.Projections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.or;
+import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
 
 public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer> {
 
@@ -31,23 +33,27 @@ public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(AccessNumber.class);
 
+        criteria.createAlias("surveyStats", "surveyStats", LEFT_OUTER_JOIN);
+        criteria.createAlias("surveyStats.survey", "survey", LEFT_OUTER_JOIN);
+        criteria.createAlias("survey.details", "details", LEFT_OUTER_JOIN);
+
         if (isNotBlank(filter)) {
             filter = filter.trim();
-            final List<Criterion> filters = new ArrayList<>();
 
-            filters.add(EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("survey.survey.details.title", filter, MatchMode.ANYWHERE));
-
-            criteria.add(or(filters.toArray(new Criterion[filters.size()])));
+            final Criterion filters = or(
+                    EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE),
+                    EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE)
+            );
+            criteria.add(filters);
         }
 
         criteria.setFirstResult(offset).setMaxResults(limit);
 
-        if(orderColumn != null) {
+        if (orderColumn != null) {
             final String orderProperty;
             switch (orderColumn) {
                 case "number":      orderProperty = "number";        break;
-                case "survey":      orderProperty = "survey.title";  break;
+                case "survey":      orderProperty = "details.title";  break;
                 default:
                     throw new RuntimeException("Unexpected sort column " + orderColumn);
             }
@@ -55,6 +61,7 @@ public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer
             criteria.addOrder(orderAsc ? Order.asc(orderProperty) : Order.desc(orderProperty));
         }
 
+        //noinspection unchecked
         return (List<AccessNumber>) criteria.list();
     }
 
@@ -62,18 +69,29 @@ public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(AccessNumber.class);
 
+        criteria.createAlias("surveyStats", "surveyStats", LEFT_OUTER_JOIN);
+        criteria.createAlias("surveyStats.survey", "survey", LEFT_OUTER_JOIN);
+        criteria.createAlias("survey.details", "details", LEFT_OUTER_JOIN);
+
         if (isNotBlank(filter)) {
             filter = filter.trim();
-            final List<Criterion> filters = new ArrayList<>();
 
-            filters.add(EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("survey.survey.details.title", filter, MatchMode.ANYWHERE));
-
-            criteria.add(or(filters.toArray(new Criterion[filters.size()])));
+            final Criterion filters = or(
+                    EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE),
+                    EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE)
+            );
+            criteria.add(filters);
         }
 
         criteria.setProjection(Projections.rowCount());
 
         return ((Number) criteria.uniqueResult()).intValue();
+    }
+
+    public AccessNumber find(String number) {
+        final Session session = getSessionFactory().getCurrentSession();
+
+        final Criteria criteria = session.createCriteria(AccessNumber.class);
+        return (AccessNumber) criteria.add(eq("number", number)).uniqueResult();
     }
 }

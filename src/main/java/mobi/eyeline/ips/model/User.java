@@ -123,6 +123,10 @@ public class User implements Serializable {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean canSendInvitations = false;
 
+    @Column(name = "show_c2s", columnDefinition = "BIT", nullable = false)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean showC2s = false;
+
     @Column(name = "esdp_login")
     private String esdpLogin;
 
@@ -234,6 +238,14 @@ public class User implements Serializable {
 
     public void setCanSendInvitations(boolean canSendInvitations) {
         this.canSendInvitations = canSendInvitations;
+    }
+
+    public boolean isShowC2s() {
+        return showC2s;
+    }
+
+    public void setShowC2s(boolean showC2s) {
+        this.showC2s = showC2s;
     }
 
     public String getEsdpLogin() {

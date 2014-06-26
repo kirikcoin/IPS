@@ -273,10 +273,11 @@
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>C2S numbers</web-resource-name>
-      <url-pattern>/pages/c2s/*</url-pattern>
+      <url-pattern>/pages/admin/*</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>
+      <role-name>manager</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>

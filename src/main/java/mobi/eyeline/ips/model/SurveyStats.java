@@ -1,5 +1,8 @@
 package mobi.eyeline.ips.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
@@ -7,10 +10,13 @@ import org.hibernate.annotations.Type;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
@@ -21,12 +27,20 @@ import java.util.Date;
 @Entity
 @Table(name = "survey_stats")
 @Proxy(lazy = false)
-@IdClass(Survey.class)
+//@IdClass(Survey.class)
 public class SurveyStats implements Serializable {
 
     @Id
+    @Column(name = "survey_id")
+    @GeneratedValue(generator="SharedPrimaryKeyGenerator")
+    @GenericGenerator(name="SharedPrimaryKeyGenerator",strategy="foreign",parameters =  @Parameter(name="property", value="survey"))
+    private Integer id;
+
+    /*@Id
     @JoinColumn(name = "survey_id")
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(optional = false, cascade = CascadeType.ALL)*/
+    @OneToOne
+    @PrimaryKeyJoinColumn
     private Survey survey;
 
     /**
@@ -65,6 +79,14 @@ public class SurveyStats implements Serializable {
 
 
     public SurveyStats() {
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Survey getSurvey() {

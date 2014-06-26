@@ -49,7 +49,7 @@ import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 @Entity
 @Table(name = "surveys")
 @Proxy(lazy = false)
-//@Cache(usage = READ_WRITE)
+@Cache(usage = READ_WRITE)
 public class Survey implements Serializable {
 
     @Id
@@ -84,7 +84,7 @@ public class Survey implements Serializable {
      */
     @Valid
     @OneToOne(mappedBy = "survey", cascade = ALL)
-//    @Cache(usage = READ_WRITE)
+    @Cache(usage = READ_WRITE)
     private SurveyStats statistics;
 
     /**
@@ -92,13 +92,13 @@ public class Survey implements Serializable {
      */
     @Valid
     @OneToOne(mappedBy = "survey", cascade = ALL)
-//    @Cache(usage = READ_WRITE)
+    @Cache(usage = READ_WRITE)
     private SurveyDetails details;
 
     @OneToMany(mappedBy = "survey", cascade = ALL, orphanRemoval = true)
     @OrderColumn(name = "question_order")
     @LazyCollection(LazyCollectionOption.FALSE)
-//    @Cache(usage = READ_WRITE)
+    @Cache(usage = READ_WRITE)
     private List<Question> questions = new ArrayList<>();
 
     @Valid
@@ -122,7 +122,7 @@ public class Survey implements Serializable {
 
     @OneToMany(mappedBy = "survey", cascade = ALL, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
-//    @Cache(usage = READ_WRITE)
+    @Cache(usage = READ_WRITE)
     private List<SurveyPattern> patterns;
 
     public Survey() {

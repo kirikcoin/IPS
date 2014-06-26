@@ -2,7 +2,6 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import mobi.eyeline.ips.external.esdp.EsdpServiceException
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
@@ -142,7 +141,7 @@ class SurveyListController extends BaseController {
 
         try {
             esdpService.save(getCurrentUser(), survey)
-        } catch (EsdpServiceException e) {
+        } catch (Exception e) {
             logger.error(e.message, e)
             newSurveyValidationError = true
             addErrorMessage strings['esdp.error.survey.creation']

@@ -1,0 +1,138 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
+        >
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css"
+            href="#{resources.path}/resources/pages/admin/accessNumbers.less"/>
+
+      <script type="text/javascript"
+              src="#{resources.path}/resources/pages/admin/accessNumbers.js#{resources.version}">
+      </script>
+    </ui:define>
+
+    <ui:define name="scripts">
+      <script type="text/javascript">
+        $(function () {
+          page.init();
+
+          if ("#{accessNumberController.numberAddError}" == "true") {
+            jsfc('newAccessNumberDialog').show();
+          }
+        })
+      </script>
+    </ui:define>
+
+    <ui:define name="content">
+      <h:form enctype="multipart/form/data" id ="content">
+
+        <h:inputHidden id="numberId" value="#{accessNumberController.modifiedNumberId}"/>
+
+        <h:panelGroup layout="block" styleClass="border-shadow">
+
+          <h:panelGrid columns="2" styleClass="page-header">
+            <h:outputText value="#{bundle['main.menu.c2snumbers']}"/>
+            <h:panelGroup styleClass="page-header-input">
+              <h:outputLabel value="#{bundle['search.label']}"/>
+              <eye:inputText id="search"
+                             value="#{accessNumberController.search}"
+                             maxlength="70"
+                             onkeydown="return page.nameFilterKeyDown(event)"/>
+            </h:panelGroup>
+          </h:panelGrid>
+
+          <eye:dataTable id="table"
+                         value="#{accessNumberController.tableModel}"
+                         var="row"
+                         pageSize="50"
+                         tableClass="grid">
+            <f:facet name="ifEmpty">
+              <h:outputText value="#{bundle['accessnumbers.table.emty']}"/>
+            </f:facet>
+
+            <eye:row>
+              <eye:column name="number"
+                          title="#{bundle['accessnumbers.table.number']}"
+                          sortable="true"
+                          defaultSortOrder="asc">
+                <h:outputText value="#{row.number}"/>
+              </eye:column>
+
+              <eye:column name="survey"
+                          title="#{bundle['accessnumbers.table.survey']}"
+                          sortable="true">
+
+                <h:commandLink value="#{row.surveyTitle}"
+                               action="#{accessNumberController.goToSurvey}"
+                               rendered="#{row.surveyId != null}">
+                  <f:param name="surveyId" value="#{row.surveyId}"/>
+                </h:commandLink>
+              </eye:column>
+
+              <eye:column name="action"
+                          title="#{bundle['accessnumbers.table.action']}">
+                <h:commandLink value="#{bundle['accessnumbers.table.delete']}"
+                               onclick="return page.showDeleteDialog(
+                               '#{row.id}',
+                               '#{row.number}');"
+                               rendered="#{row.surveyId == null}"/>
+              </eye:column>
+            </eye:row>
+          </eye:dataTable>
+
+          <h:panelGroup layout="block" styleClass="page-footer"/>
+
+        </h:panelGroup>
+
+        <h:panelGroup layout="block" style="margin-top: 15px;">
+          <h:commandLink value="#{bundle['accessnumbers.add']}"
+                         styleClass="button-black"
+                         onclick="return page.onAddNumberClick();"/>
+        </h:panelGroup>
+
+
+        <eye:dialog id="newAccessNumberDialog"
+                    title="#{bundle['accessnumbers.add.title']}"
+                    width="300">
+
+          <h:panelGrid columns="2" id="newAccessNumberDialogTable">
+            <h:outputLabel value="#{bundle['accessnumbers.add.number.title']}" for="newNumberValue"/>
+            <eye:inputText id="newNumberValue"
+                           value="#{accessNumberController.newNumber}"
+                           maxlength="30"/>
+          </h:panelGrid>
+
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green" value="#{bundle['accessnumbers.add.save']}"
+                             action="#{accessNumberController.addNumber}"/>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green" value="#{bundle['accessnumbers.add.cancel']}"
+                             onclick="jsfc('newAccessNumberDialog').hide(); ips.message.hideAll(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
+
+
+        <ips:confirmDialog id="deleteNumberDialog"
+                           text="#{bundle['accessnumbers.delete.text']}"
+                           title="#{bundle['accessnumbers.delete.title']}"
+                           actionBean="#{accessNumberController}"
+                           actionName="deleteNumber"/>
+
+      </h:form>
+
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

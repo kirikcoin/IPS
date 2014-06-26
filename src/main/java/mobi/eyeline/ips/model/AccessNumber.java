@@ -1,7 +1,6 @@
 package mobi.eyeline.ips.model;
 
 import mobi.eyeline.ips.validation.MaxSize;
-import mobi.eyeline.ips.web.validators.PhoneValidator;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.Column;
@@ -26,12 +25,12 @@ public class AccessNumber {
 
     @Column(name = "number")
     @MaxSize(30)
-    @NotNull
+    @NotNull(message = "{survey.validation.access.number.invalid}")
     @Pattern(regexp = "[0-9 \\-\\.\\+\\*#]+", message = "{survey.validation.access.number.invalid}")
     private String number;
 
     @OneToOne(mappedBy = "accessNumber", optional = true)
-    private SurveyStats survey;
+    private SurveyStats surveyStats;
 
     public Integer getId() {
         return id;
@@ -49,11 +48,19 @@ public class AccessNumber {
         this.number = number;
     }
 
-    public SurveyStats getSurvey() {
-        return survey;
+    public SurveyStats getSurveyStats() {
+        return surveyStats;
     }
 
-    public void setSurvey(SurveyStats survey) {
-        this.survey = survey;
+    public void setSurveyStats(SurveyStats survey) {
+        this.surveyStats = survey;
+    }
+
+    @Override
+    public String toString() {
+        return "AccessNumber{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                '}';
     }
 }

@@ -200,7 +200,7 @@
     <description>Страница c2s номеров</description>
     <navigation-case>
       <from-outcome>ACCESS_NUMBERS</from-outcome>
-      <to-view-id>/pages/c2s/accessNumbers.xhtml</to-view-id>
+      <to-view-id>/pages/admin/accessNumbers.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

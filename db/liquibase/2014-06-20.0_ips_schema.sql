@@ -23,3 +23,5 @@ UPDATE `users` SET `esdp_password` = 'password_hash' WHERE role = 'manager';
 
 
 ALTER TABLE `delivery_subscribers` ADD INDEX `state_idx` (`state`);
+
+ALTER TABLE `users` ADD COLUMN `show_c2s` BOOLEAN DEFAULT FALSE;

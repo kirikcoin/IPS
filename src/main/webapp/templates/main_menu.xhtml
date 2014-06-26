@@ -26,7 +26,6 @@
                                  rendered="#{userSession.authenticated}"
                                  styleClass="exitButton"/>
 
-
                   <h:commandLink value="#{bundle['settings.exit.button']}"
                                  action="#{userSession.logout}"
                                  rendered="#{userSession.authenticated}"
@@ -64,8 +63,9 @@
             </div>
 
             <div class="menuButtons">
-              <c:set var="surveyList" value="${fn:contains(view.viewId, 'pages/surveys')}"/>
-              <c:set var="clientsList" value="${fn:contains(view.viewId, 'pages/clients')}"/>
+              <c:set var="surveyList"   value="${fn:contains(view.viewId, 'pages/surveys')}"/>
+              <c:set var="clientsList"  value="${fn:contains(view.viewId, 'pages/clients')}"/>
+              <c:set var="numbersList"  value="${fn:contains(view.viewId, 'pages/admin/accessNumbers')}"/>
 
               <h:panelGroup rendered="#{userSession.authenticated}">
                 <h:commandLink value="#{bundle['main.menu.surveys']}"
@@ -78,8 +78,8 @@
                                rendered="#{userSession.managerRole}"/>
                 <h:commandLink value="#{bundle['main.menu.c2snumbers']}"
                                action="ACCESS_NUMBERS"
-                               styleClass="#{clientsList ? 'menuButtonSelected' : 'menuButton'}"
-                               rendered="#{userSession.adminRole}"/>
+                               styleClass="#{numbersList ? 'menuButtonSelected' : 'menuButton'}"
+                               rendered="#{userSession.c2sAllowed}"/>
               </h:panelGroup>
             </div>
           </td>

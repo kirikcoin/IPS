@@ -2,7 +2,6 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import mobi.eyeline.ips.external.esdp.EsdpServiceException
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
@@ -194,7 +193,7 @@ class SurveySettingsController extends BaseSurveyController {
         try {
             esdpService.update(getCurrentUser(), persistedSurvey)
 
-        } catch (EsdpServiceException e) {
+        } catch (Exception e) {
             logger.error(e.message, e)
             addErrorMessage strings['esdp.error.survey.update']
             return
@@ -382,7 +381,7 @@ class SurveySettingsController extends BaseSurveyController {
         ]
 
         def available = { AccessNumber number ->
-            (number.survey == null) || ((survey.statistics.accessNumber != null) && (number.id == survey.statistics.accessNumber.id)) }
+            (number.surveyStats == null) || ((survey.statistics.accessNumber != null) && (number.id == survey.statistics.accessNumber.id)) }
 
         accessNumberRepository.list().each {AccessNumber number ->
             items << new SelectItem(number.id, number.number, number.number, !available(number))

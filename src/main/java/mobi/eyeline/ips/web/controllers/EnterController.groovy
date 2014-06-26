@@ -22,12 +22,17 @@ class EnterController extends BaseController {
         new LocaleController().changeLocale(user)
 
         if (request.isUserInRole('manager') || request.isUserInRole('client')) {
-            FacesContext.currentInstance.externalContext.redirect('/pages/surveys/index.faces')
+            redirect '/pages/surveys/index.faces'
 
         } else if (request.isUserInRole('admin')) {
-            FacesContext.currentInstance.externalContext.redirect('/pages/c2s/accessNumbers.faces')
+            redirect '/pages/admin/accessNumbers.faces'
+
         } else {
-            FacesContext.currentInstance.externalContext.redirect('/login.faces')
+            redirect '/login.faces'
         }
+    }
+
+    private void redirect(String target) {
+        FacesContext.currentInstance.externalContext.redirect target
     }
 }
