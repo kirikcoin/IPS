@@ -24,6 +24,8 @@ class EnterController extends BaseController {
         if (request.isUserInRole('manager') || request.isUserInRole('client')) {
             FacesContext.currentInstance.externalContext.redirect('/pages/surveys/index.faces')
 
+        } else if (request.isUserInRole('admin')) {
+            FacesContext.currentInstance.externalContext.redirect('/pages/c2s/accessNumbers.faces')
         } else {
             FacesContext.currentInstance.externalContext.redirect('/login.faces')
         }

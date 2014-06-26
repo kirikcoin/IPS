@@ -132,6 +132,12 @@
   </managed-bean>
 
   <managed-bean>
+    <managed-bean-name>accessNumberController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.c2s.AccessNumbersController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
     <managed-bean-name>enterController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.EnterController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
@@ -186,6 +192,15 @@
     <navigation-case>
       <from-outcome>PROFILE</from-outcome>
       <to-view-id>/profilepage.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Страница c2s номеров</description>
+    <navigation-case>
+      <from-outcome>ACCESS_NUMBERS</from-outcome>
+      <to-view-id>/pages/c2s/accessNumbers.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

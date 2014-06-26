@@ -76,6 +76,10 @@
                                action="CLIENT_LIST"
                                styleClass="#{clientsList ? 'menuButtonSelected' : 'menuButton'}"
                                rendered="#{userSession.managerRole}"/>
+                <h:commandLink value="#{bundle['main.menu.c2snumbers']}"
+                               action="ACCESS_NUMBERS"
+                               styleClass="#{clientsList ? 'menuButtonSelected' : 'menuButton'}"
+                               rendered="#{userSession.adminRole}"/>
               </h:panelGroup>
             </div>
           </td>
