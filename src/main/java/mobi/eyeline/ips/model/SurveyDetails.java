@@ -2,6 +2,7 @@ package mobi.eyeline.ips.model;
 
 import mobi.eyeline.ips.validation.MaxSize;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -18,10 +19,13 @@ import javax.persistence.Table;
 import javax.validation.constraints.AssertTrue;
 import java.io.Serializable;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
 // TODO: Take localization into account.
 //       For now we consider only one localization option for each survey.
 @Entity
 @Table(name = "surveys_text")
+@Cache(usage = READ_WRITE)
 public class SurveyDetails implements Serializable {
 
     /**

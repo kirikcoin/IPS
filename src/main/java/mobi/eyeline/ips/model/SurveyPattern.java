@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 
@@ -17,9 +18,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
+
 @Entity
 @Proxy(lazy = false)
 @Table(name = "survey_pattern")
+@Cache(usage = READ_WRITE)
 public class SurveyPattern implements Serializable {
 
     @Id
