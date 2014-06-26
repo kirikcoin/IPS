@@ -4,17 +4,24 @@
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-    <session-factory>
-        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
-        <property name="dialect">org.hibernate.dialect.HSQLDialect</property>
+  <session-factory>
+    <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+    <property name="dialect">org.hibernate.dialect.HSQLDialect</property>
 
-        <property name="hibernate.connection.url">jdbc:hsqldb:mem:testdb;shutdown=true;sql.syntax_mys=true;hsqldb.tx=mvcc</property>
-        <property name="hibernate.connection.username">sa</property>
-        <property name="hibernate.connection.password"/>
+    <property name="hibernate.connection.url">jdbc:hsqldb:mem:testdb;shutdown=true;sql.syntax_mys=true;hsqldb.tx=mvcc</property>
+    <property name="hibernate.connection.username">sa</property>
+    <property name="hibernate.connection.password"/>
 
-        <property name="hibernate.hbm2ddl.auto">create-drop</property>
-        <property name="show_sql">true</property>
+    <property name="hibernate.hbm2ddl.auto">create-drop</property>
+    <property name="show_sql">true</property>
 
-        <property name="hibernate.current_session_context_class">thread</property>
-    </session-factory>
+    <property name="hibernate.cache.region.factory_class">
+      org.hibernate.cache.ehcache.EhCacheRegionFactory
+    </property>
+    <property name="hibernate.generate_statistics">true</property>
+    <property name="hibernate.cache.use_second_level_cache">true</property>
+    <property name="hibernate.cache.use_query_cache">true</property>
+
+    <property name="hibernate.current_session_context_class">thread</property>
+  </session-factory>
 </hibernate-configuration>
