@@ -26,7 +26,6 @@ public class JmxBeansService {
 
     private static JmxBeansService instance;
 
-    @SuppressWarnings("FieldCanBeLocal")
     private JmxServer jmxServer;
 
 
@@ -39,15 +38,18 @@ public class JmxBeansService {
     }
 
     private JmxBeansService(Config config) {
-        if (!config.getExposeJmxBeans()) {
+        if (!config.isJmxEnabled()) {
             logger.info("JMX disabled");
             return;
         }
 
-        jmxServer = new JmxServer(true);
+        // This effectively uses the same port for RMI registry and RMI server.
+        jmxServer = new JmxServer(config.getJmxPort());
 
         final Services services = Services.instance();
         try {
+            // Start own MBean server bypassing the one (possibly) created by JVM.
+            jmxServer.start();
             jmxServer.register(services.getDeliveryService());
             jmxServer.register(services.getNotificationService());
             jmxServer.register(services.getEsdpService());
@@ -66,11 +68,17 @@ public class JmxBeansService {
         }
     }
 
-    @MXBean
-    public static interface StatisticsMXBean extends Statistics {
+    public static JmxBeansService getInstance() {
+        return instance;
     }
 
-    public void initStatistics(SessionFactory sessionFactory)
+    public void stop() {
+        if (jmxServer != null) {
+            jmxServer.stop();
+        }
+    }
+
+    private void initStatistics(SessionFactory sessionFactory)
             throws NotCompliantMBeanException, InstanceAlreadyExistsException,
             MBeanRegistrationException, MalformedObjectNameException {
 
@@ -94,4 +102,7 @@ public class JmxBeansService {
 
         mbeanServer.registerMBean(statisticsMBean, statsName);
     }
+
+    @MXBean
+    public static interface StatisticsMXBean extends Statistics {}
 }

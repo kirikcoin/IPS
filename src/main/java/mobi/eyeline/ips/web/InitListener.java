@@ -94,6 +94,7 @@ public class InitListener implements ServletContextListener {
             Services.instance().getDeliveryService().stop();
             Services.instance().getNotificationService().stop();
             Services.instance().getPushService().stop();
+            JmxBeansService.getInstance().stop();
         } catch (InterruptedException ignored) {}
     }
 }

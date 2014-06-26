@@ -5,8 +5,6 @@ import com.eyeline.utils.config.xml.XmlConfig;
 import com.eyeline.utils.config.xml.XmlConfigSection;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -45,7 +43,8 @@ public interface Config {
 
     public String getEsdpEndpointUrl();
 
-    public boolean getExposeJmxBeans();
+    public boolean isJmxEnabled();
+    public int getJmxPort();
 
     public static class XmlConfigImpl implements Config {
 
@@ -83,7 +82,8 @@ public interface Config {
 
         private final String esdpEndpointUrl;
 
-        private final boolean exposeJmxBeans;
+        private final boolean jmxEnabled;
+        private final int jmxPort;
 
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
 
@@ -143,9 +143,10 @@ public interface Config {
                 esdpEndpointUrl = esdp.getString("endpoint.url");
             }
 
-            final XmlConfigSection other = xmlConfig.getSection("other");
+            final XmlConfigSection jmx = xmlConfig.getSection("jmx");
             {
-                exposeJmxBeans = other.getBool("expose.jmx.beans");
+                jmxEnabled = jmx.getBool("enabled");
+                jmxPort = jmx.getInt("port");
             }
         }
 
@@ -274,8 +275,13 @@ public interface Config {
         }
 
         @Override
-        public boolean getExposeJmxBeans() {
-            return exposeJmxBeans;
+        public boolean isJmxEnabled() {
+            return jmxEnabled;
+        }
+
+        @Override
+        public int getJmxPort() {
+            return jmxPort;
         }
     }
 }

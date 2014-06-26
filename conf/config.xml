@@ -102,8 +102,9 @@
     <param name="endpoint.url" type="string">http://localhost/console2/service-api?wsdl</param>
   </section>
 
-  <section name="other">
-    <param name="expose.jmx.beans" type="boolean">true</param>
+  <section name="jmx">
+    <param name="enabled" type="boolean">true</param>
+    <param name="port" type="int">9090</param>
   </section>
 
   <section name="locations">
