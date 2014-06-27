@@ -20,10 +20,10 @@ class AccessNumberRepositoryTest extends DbTestCase {
         AccessNumber number1, number2, number3, number4
 
         [
-                number1 = new AccessNumber(number: "79130000011"),
-                number2 = new AccessNumber(number: "79130000112"),
-                number3 = new AccessNumber(number: "79130000013"),
-                number4 = new AccessNumber(number: "79130000014"),
+                number1 = new AccessNumber(number: '79130000011'),
+                number2 = new AccessNumber(number: '79130000112'),
+                number3 = new AccessNumber(number: '79130000013'),
+                number4 = new AccessNumber(number: '79130000014'),
         ].each { an ->
             accessNumberRepository.save(an)
         }
@@ -55,19 +55,19 @@ class AccessNumberRepositoryTest extends DbTestCase {
     void testFind() {
         fillTestData()
 
-        assertEquals(1, accessNumberRepository.find("79130000011").id)
+        assertEquals(1, accessNumberRepository.find('79130000011').id)
     }
 
     void testCount() {
         fillTestData()
 
-        assertEquals(2, accessNumberRepository.count("11"))
+        assertEquals(2, accessNumberRepository.count('11'))
     }
 
     void testList() {
         fillTestData()
 
-        assertIds([1,2], accessNumberRepository.list("11",null,true,Integer.MAX_VALUE,0))
-        assertIds([2,1], accessNumberRepository.list("11","number",false,Integer.MAX_VALUE,0))
+        assertIds([1, 2], accessNumberRepository.list('11', null, true, Integer.MAX_VALUE, 0))
+        assertIds([2, 1], accessNumberRepository.list('11', 'number', false, Integer.MAX_VALUE, 0))
     }
 }
