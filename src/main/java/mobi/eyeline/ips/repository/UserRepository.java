@@ -15,12 +15,10 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.ilike;
 import static org.hibernate.criterion.Restrictions.or;
 
 public class UserRepository extends BaseRepository<User, Integer> {
@@ -103,14 +101,15 @@ public class UserRepository extends BaseRepository<User, Integer> {
 
         if (isNotBlank(filter)) {
             filter = filter.trim();
-            final List<Criterion> filters = new ArrayList<>();
 
-            filters.add(EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE));
+            final Criterion filters = or(
+                    EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE),
+                    EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE),
+                    EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE),
+                    EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE)
+            );
 
-            criteria.add(or(filters.toArray(new Criterion[filters.size()])));
+            criteria.add(filters);
         }
 
         criteria.add(Restrictions.eq("role", Role.CLIENT));
@@ -142,16 +141,17 @@ public class UserRepository extends BaseRepository<User, Integer> {
 
         if (isNotBlank(filter)) {
             filter = filter.trim();
-            final List<Criterion> filters = new ArrayList<>();
 
-            filters.add(EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE));
-            filters.add(EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE));
+            final Criterion filters = or(
+                    EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE),
+                    EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE),
+                    EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE),
+                    EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE)
+            );
 
-            criteria.add(or(filters.toArray(new Criterion[filters.size()])));
-
+            criteria.add(filters);
         }
+
         criteria.add(Restrictions.eq("role", Role.CLIENT));
         criteria.setProjection(Projections.rowCount());
 
