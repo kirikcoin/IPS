@@ -21,4 +21,6 @@ public interface SequenceGenerator {
      * @return Next pattern, incrementing current position.
      */
     CharSequence next();
+
+    double getPercentAvailable();
 }

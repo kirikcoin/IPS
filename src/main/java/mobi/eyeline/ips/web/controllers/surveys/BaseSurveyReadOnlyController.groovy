@@ -6,6 +6,8 @@ import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 
+import javax.faces.context.FacesContext
+
 @CompileStatic
 class BaseSurveyReadOnlyController extends BaseController {
     protected final SurveyRepository surveyRepository = Services.instance().surveyRepository
@@ -16,6 +18,11 @@ class BaseSurveyReadOnlyController extends BaseController {
     BaseSurveyReadOnlyController() {
         surveyId = getRequest().getParameter("id")?.toInteger()
         survey = surveyRepository.load(surveyId)
+
+        if (!survey.active) {
+            // Prohibit display of deleted surveys.
+            FacesContext.currentInstance.externalContext.redirect '/error.faces?id=404'
+        }
     }
 
     Survey getSurvey() {

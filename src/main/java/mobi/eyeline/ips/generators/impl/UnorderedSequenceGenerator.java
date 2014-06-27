@@ -55,6 +55,14 @@ public class UnorderedSequenceGenerator implements SequenceGenerator {
     }
 
     @Override
+    public double getPercentAvailable() {
+        if (getRemaining() == 0) {
+            return 0;
+        }
+        return (((double) getRemaining()) / getTotal()) * 100;
+    }
+
+    @Override
     public String toString() {
         return "SequenceGenerator{" +
                 "pattern=" + pattern +

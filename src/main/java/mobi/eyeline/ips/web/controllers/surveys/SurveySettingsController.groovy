@@ -216,6 +216,9 @@ class SurveySettingsController extends BaseSurveyController {
         }
 
         survey.active = false
+        if (survey.statistics.accessNumber) {
+            survey.statistics.accessNumber = null
+        }
         surveyRepository.update(survey)
 
         return 'SURVEY_LIST'

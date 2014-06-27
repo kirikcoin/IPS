@@ -29,4 +29,9 @@ public class EmptyGenerator implements SequenceGenerator {
     public CharSequence next() {
         throw new AssertionError();
     }
+
+    @Override
+    public double getPercentAvailable() {
+        return 0;
+    }
 }

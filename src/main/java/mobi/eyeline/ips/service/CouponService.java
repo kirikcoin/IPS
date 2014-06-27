@@ -72,8 +72,7 @@ public class CouponService {
 
     public int getPercentAvailable(Survey survey) {
         final SequenceGenerator generator = createGenerator(survey);
-        return (generator.getRemaining() == 0) ?
-                0 : (int) Math.ceil((((double) generator.getRemaining()) / generator.getTotal()) * 100);
+        return (int) Math.ceil(generator.getPercentAvailable());
     }
 
     public boolean shouldGenerateCoupon(Survey survey) {
@@ -120,7 +119,7 @@ public class CouponService {
                                 SequenceGenerator generator) {
 
         final long remaining = generator.getRemaining();
-        final double percentAvailable = (double) generator.getTotal() / remaining;
+        final double percentAvailable = generator.getPercentAvailable();
 
         if ((percentAvailable <= 20) && (percentAvailable > 10)) {
             notifyOnRemaining(survey, 20, remaining);
