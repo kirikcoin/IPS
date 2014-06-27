@@ -26,7 +26,7 @@ public class AccessNumber {
     @Column(name = "number")
     @MaxSize(30)
     @NotNull(message = "{survey.validation.access.number.invalid}")
-    @Pattern(regexp = "[0-9 \\-\\.\\+\\*#]+", message = "{survey.validation.access.number.invalid}")
+    @Pattern(regexp = "[1-9\\.\\+\\*][0-9\\.\\+\\*#]+", message = "{survey.validation.access.number.invalid}")
     private String number;
 
     @OneToOne(mappedBy = "accessNumber", optional = true)
