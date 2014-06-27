@@ -196,13 +196,14 @@ div.eyeline_inputDate input {
 
 #endMessageDialog {
   .eyeline_inputText_component {
+    box-sizing: border-box;
     width: 400px
   }
 
   .eyeline_textarea_component {
-    // 2px for border
-    width: 398px;
-    max-width: 398px;
+    box-sizing: border-box;
+    width: 400px;
+    max-width: 400px;
   }
 
   #endSmsEnabled, #couponEnabled, #couponFormat, #couponLength {
@@ -215,6 +216,10 @@ div.eyeline_inputDate input {
 
   #couponHint {
     font-style: italic;
+  }
+
+  #endSmsEnabled, #couponFormat {
+    width: 220px;
   }
 }
 
