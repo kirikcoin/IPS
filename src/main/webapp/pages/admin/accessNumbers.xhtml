@@ -25,6 +25,10 @@
           if ("#{accessNumberController.numberAddError}" == "true") {
             jsfc('newAccessNumberDialog').show();
           }
+
+          if("#{accessNumberController.numberValidationError}" == "true") {
+            jsfc('newAccessNumberDialog').show();
+          }
         })
       </script>
     </ui:define>
@@ -125,6 +129,7 @@
 
         <ips:confirmDialog id="deleteNumberDialog"
                            text="#{bundle['accessnumbers.delete.text']}"
+                           width="400"
                            title="#{bundle['accessnumbers.delete.title']}"
                            actionBean="#{accessNumberController}"
                            actionName="deleteNumber"/>

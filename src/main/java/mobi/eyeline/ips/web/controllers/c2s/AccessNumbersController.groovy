@@ -7,6 +7,7 @@ import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController
+import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
@@ -23,6 +24,7 @@ class AccessNumbersController extends BaseController {
     Integer modifiedNumberId
     String newNumber
     Boolean numberAddError
+    Boolean numberValidationError
 
 
     DataTableModel getTableModel() {
@@ -66,23 +68,32 @@ class AccessNumbersController extends BaseController {
     void addNumber() {
         final AccessNumber number = new AccessNumber(number: newNumber)
 
-        numberAddError = renderViolationMessage(
-                validator.validate(number),
-                [
-                        'number': 'newNumberValue'
-                ])
-        if (numberAddError) {
-            return
-        }
+        if(!isPhoneValid()) {
+            addErrorMessage(strings['invalid.phone.number'], 'newNumberValue')
+            numberValidationError = true
+        } else {
+            numberAddError = renderViolationMessage(
+                    validator.validate(number),
+                    [
+                            'number': 'newNumberValue'
+                    ])
+            if (numberAddError) {
+                return
+            }
 
-        numberAddError = (accessNumberRepository.find(newNumber) != null)
-        if (numberAddError) {
-            addErrorMessage(strings['accessnumbers.duplicate'], 'newNumberValue')
-        }
+            numberAddError = (accessNumberRepository.find(newNumber) != null)
+            if (numberAddError) {
+                addErrorMessage(strings['accessnumbers.duplicate'], 'newNumberValue')
+            }
 
-        if (!numberAddError) {
-            accessNumberRepository.save number
+            if (!numberAddError) {
+                accessNumberRepository.save number
+            }
         }
+    }
+
+    private boolean isPhoneValid() {
+        new PhoneValidator().validate(newNumber)
     }
 
     static class TableItem implements Serializable {
