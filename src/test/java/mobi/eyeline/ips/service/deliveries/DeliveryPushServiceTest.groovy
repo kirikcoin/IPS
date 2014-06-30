@@ -46,7 +46,7 @@ class DeliveryPushServiceTest extends GroovyTestCase {
         deliveryPushService.with {
             pushUssd(10, new Survey(id: 42), '123', 'Ки рил ли ца')
             assertEquals \
-             'http://foo/push-ussd?subscriber=123&message=%D0%9A%D0%B8+%D1%80%D0%B8%D0%BB+%D0%BB%D0%B8+%D1%86%D0%B0&resource_id=10',
+             'http://foo/push?id=42&scenario=push-inform&protocol=ussd&subscriber=123&message=%D0%9A%D0%B8+%D1%80%D0%B8%D0%BB+%D0%BB%D0%B8+%D1%86%D0%B0&resource_id=10',
                     requested.toString()
         }
     }
