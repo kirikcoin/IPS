@@ -70,7 +70,6 @@ public class DeliveryService {
                     toFetch,
                     toMark,
                     deliveryPushService,
-                    deliverySubscriberRepository,
                     invitationDeliveryRepository));
         }
 

@@ -2,7 +2,6 @@ package mobi.eyeline.ips.service.deliveries;
 
 import com.google.common.base.Throwables;
 import mobi.eyeline.ips.model.InvitationDelivery;
-import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.util.TimeSource;
@@ -29,7 +28,6 @@ class PushThread extends LoopThread {
     private final BlockingQueue<DeliveryWrapper.Message> toMark;
 
     private final DeliveryPushService deliveryPushService;
-    private final DeliverySubscriberRepository deliverySubscriberRepository;
     private final InvitationDeliveryRepository invitationDeliveryRepository;
 
     public PushThread(String name,
@@ -43,7 +41,6 @@ class PushThread extends LoopThread {
                       BlockingQueue<DeliveryWrapper.Message> toMark,
 
                       DeliveryPushService deliveryPushService,
-                      DeliverySubscriberRepository deliverySubscriberRepository,
                       InvitationDeliveryRepository invitationDeliveryRepository) {
 
         super(name);
@@ -56,7 +53,6 @@ class PushThread extends LoopThread {
         this.toMark = toMark;
 
         this.deliveryPushService = deliveryPushService;
-        this.deliverySubscriberRepository = deliverySubscriberRepository;
         this.invitationDeliveryRepository = invitationDeliveryRepository;
     }
 
@@ -143,12 +139,14 @@ class PushThread extends LoopThread {
             case USSD_PUSH:
                 deliveryPushService.pushUssd(
                         message.getId(),
+                        next.getModel().getSurvey(),
                         message.getMsisdn(),
                         next.getModel().getText());
                 break;
             case NI_DIALOG:
                 deliveryPushService.niDialog(
                         message.getId(),
+                        next.getModel().getSurvey(),
                         message.getMsisdn(),
                         next.getModel().getSurvey().getId());
                 break;

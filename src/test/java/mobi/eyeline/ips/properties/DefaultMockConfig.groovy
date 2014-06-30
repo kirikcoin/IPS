@@ -16,15 +16,10 @@ class DefaultMockConfig extends FailingMockConfig {
     String getMadvUserLogin() { '' }
     String getMadvUserPassword() { '' }
 
-    String getSadsPushUrl() { '' }
-    String getSadsSmsPushUrl() { '' }
     int getSadsMaxSessions() { 1 }
     String getBaseSurveyUrl() { '' }
 
     List<LocationProperties> getLocationProperties() { null }
-
-    String getDeliveryUssdPushUrl() { '' }
-    String getDeliveryNIPushUrl() { '' }
 
     int getPushThreadsNumber() { 2 }
     int getMessageQueueBaseline() { 10 }
@@ -35,5 +30,6 @@ class DefaultMockConfig extends FailingMockConfig {
     String getEsdpEndpointUrl() { '' }
 
     boolean isJmxEnabled() { false }
+    String getJmxHost() { '' }
     int getJmxPort() { 9090 }
 }

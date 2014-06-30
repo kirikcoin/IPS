@@ -2,12 +2,7 @@ package mobi.eyeline.ips.service
 
 import groovy.mock.interceptor.MockFor
 import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.properties.Config
-
-import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.isEmptyString
-import static org.hamcrest.Matchers.not
 
 class PushServiceTest extends GroovyTestCase {
 
@@ -17,7 +12,6 @@ class PushServiceTest extends GroovyTestCase {
     void setUp() {
         configClass = new MockFor(Config).with {
             demand.getSadsMaxSessions() { 2 }
-            demand.getSadsPushUrl() { 'http://sads.com/push' }
             it
         }
 
@@ -32,8 +26,15 @@ class PushServiceTest extends GroovyTestCase {
         private final String expectedUri
 
         MockPushService(Config config, String expectedUri) {
-            super(config)
+            super(config, createMockEsdp())
             this.expectedUri = expectedUri
+        }
+
+        private static EsdpServiceSupport createMockEsdp() {
+            new EsdpServiceSupport(null) {
+                @Override
+                String getServiceUrl(Survey survey) { "http://sads.com/push?survey_id=$survey.id" }
+            }
         }
 
         // Run in the same thread
@@ -44,7 +45,7 @@ class PushServiceTest extends GroovyTestCase {
     void test1() {
         def pushService = new MockPushService(
                 config,
-                'http://sads.com/push?survey_id=1&subscriber=123&skip_validation=true');
+                'http://sads.com/push?survey_id=1&subscriber=123&skip_validation=true&scenario=default-noinform')
         pushService.scheduleSend new Survey(id: 1), '123'
     }
 }

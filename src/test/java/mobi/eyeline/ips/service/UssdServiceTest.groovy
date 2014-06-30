@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.service
 
-import mobi.eyeline.ips.messages.AnswerOption
 import mobi.eyeline.ips.messages.MissingParameterException
 import mobi.eyeline.ips.messages.UssdOption
 import mobi.eyeline.ips.messages.UssdResponseModel
@@ -44,7 +43,6 @@ class UssdServiceTest extends DbTestCase {
         // Configuration
         config = new FailingMockConfig() {
             String getBaseSurveyUrl() { 'http://localhost:39932' }
-            String getSadsSmsPushUrl() { return 'http://sads?push' }
             int getSadsMaxSessions() { 2 }
         }
 
@@ -55,7 +53,9 @@ class UssdServiceTest extends DbTestCase {
                 surveyRepository,
                 surveyInvitationRepository,
                 invitationDeliveryRepository)
-        pushService = new PushService(config)
+        pushService = new PushService(config, new EsdpServiceSupport(null) {
+            @Override String getServiceUrl(Survey survey) { "http://sads?push$survey.id" }
+        })
         couponService = new CouponService(surveyPatternRepository, new MockMailService())
 
         ussdService = new UssdService(

@@ -19,15 +19,10 @@ class FailingMockConfig implements Config {
     String getMadvUserLogin() { fail() }
     String getMadvUserPassword() { fail() }
 
-    String getSadsPushUrl() { fail() }
-    String getSadsSmsPushUrl() { fail() }
     int getSadsMaxSessions() { fail() }
     String getBaseSurveyUrl() { fail() }
 
     List<LocationProperties> getLocationProperties() { fail() }
-
-    String getDeliveryUssdPushUrl() { fail() }
-    String getDeliveryNIPushUrl() { fail() }
 
     int getPushThreadsNumber() { fail() }
     int getMessageQueueBaseline() { fail() }
@@ -38,5 +33,6 @@ class FailingMockConfig implements Config {
     String getEsdpEndpointUrl() { fail() }
 
     boolean isJmxEnabled() { fail() }
+    String getJmxHost() { fail() }
     int getJmxPort() { fail() }
 }

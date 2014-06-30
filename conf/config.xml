@@ -57,15 +57,6 @@
   </section>
 
   <section name="sads">
-
-    <!-- PROD -->
-    <!--<param name="push.url" type="string">http://localhost/push?service=eyeline.ipsprod-preview</param>
-    <param name="push.sms.url" type="string">http://localhost/push?service=eyeline.ipsprod-sms</param>-->
-
-    <!-- DEVEL -->
-    <param name="push.url" type="string">http://localhost/push?service=eyeline.ipsdev-preview</param>
-    <param name="push.sms.url" type="string">http://localhost/push?service=eyeline.ipsdev-sms</param>
-
     <param name="max.sessions" type="int">4</param>
 
     <!-- PROD -->
@@ -76,20 +67,8 @@
   </section>
 
   <section name="deliveries">
-    <!--<param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
-    <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>-->
-
-    <!--<param name="push.ussd.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-push</param>
-    <param name="push.nidialog.url" type="string">http://localhost:8888/push?service=eyeline.rcsilv-srvpush</param>-->
-
-    <!-- PROD -->
-    <!--<param name="push.ussd.url" type="string">http://localhost/push?service=eyeline.ipsprod-deliv-push</param>
-    <param name="push.nidialog.url" type="string">http://localhost/push?service=eyeline.ipsprod-deliv-ni</param>-->
 
     <!-- DEVEL -->
-    <param name="push.ussd.url" type="string">http://localhost/push?service=eyeline.ipsdev-deliv-push</param>
-    <param name="push.nidialog.url" type="string">http://localhost/push?service=eyeline.ipsdev-deliv-ni</param>
-
     <param name="push.threads.number" type="int">2</param>
     <param name="push.message.queue" type="int">100</param>
     <param name="push.update.batch.size" type="int">10</param>
@@ -104,6 +83,10 @@
 
   <section name="jmx">
     <param name="enabled" type="boolean">true</param>
+
+    <!-- PROD -->
+    <!--<param name="host" type="string">192.168.10.153</param>-->
+
     <param name="port" type="int">9090</param>
   </section>
 

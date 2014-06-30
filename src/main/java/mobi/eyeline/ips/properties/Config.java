@@ -25,15 +25,10 @@ public interface Config {
     public String getMadvUserLogin();
     public String getMadvUserPassword();
 
-    public String getSadsPushUrl();
-    public String getSadsSmsPushUrl();
     public int getSadsMaxSessions();
     public String getBaseSurveyUrl();
 
     public List<LocationProperties> getLocationProperties();
-
-    public String getDeliveryUssdPushUrl();
-    public String getDeliveryNIPushUrl();
 
     public int getPushThreadsNumber();
     public int getMessageQueueBaseline();
@@ -44,6 +39,7 @@ public interface Config {
     public String getEsdpEndpointUrl();
 
     public boolean isJmxEnabled();
+    public String getJmxHost();
     public int getJmxPort();
 
     public static class XmlConfigImpl implements Config {
@@ -65,15 +61,11 @@ public interface Config {
         private final String madvUserLogin;
         private final String madvUserPassword;
 
-        private final String sadsPushUrl;
-        private final String sadsSmsPushUrl;
         private final int sadsMaxSessions;
         private final String baseSurveyUrl;
 
         private final List<LocationProperties> locationProperties = new ArrayList<>();
 
-        private final String deliveryUssdPushUrl;
-        private final String deliveryNIPushUrl;
         private final int pushThreadsNumber;
         private final int messageQueueBaseline;
         private final int stateUpdateBatchSize;
@@ -83,6 +75,7 @@ public interface Config {
         private final String esdpEndpointUrl;
 
         private final boolean jmxEnabled;
+        private final String jmxHost;
         private final int jmxPort;
 
         public XmlConfigImpl(XmlConfig xmlConfig) throws ConfigException {
@@ -111,8 +104,6 @@ public interface Config {
 
             final XmlConfigSection sads = xmlConfig.getSection("sads");
             {
-                sadsPushUrl = sads.getString("push.url");
-                sadsSmsPushUrl = sads.getString("push.sms.url");
                 sadsMaxSessions = sads.getInt("max.sessions", 4);
                 baseSurveyUrl = sads.getString("base.survey.url");
             }
@@ -129,8 +120,6 @@ public interface Config {
 
             final XmlConfigSection deliveries = xmlConfig.getSection("deliveries");
             {
-                deliveryUssdPushUrl = deliveries.getString("push.ussd.url");
-                deliveryNIPushUrl = deliveries.getString("push.nidialog.url");
                 pushThreadsNumber = deliveries.getInt("push.threads.number");
                 messageQueueBaseline = deliveries.getInt("push.message.queue");
                 stateUpdateBatchSize = deliveries.getInt("push.update.batch.size");
@@ -146,6 +135,7 @@ public interface Config {
             final XmlConfigSection jmx = xmlConfig.getSection("jmx");
             {
                 jmxEnabled = jmx.getBool("enabled");
+                jmxHost = jmx.getString("host", null);
                 jmxPort = jmx.getInt("port");
             }
         }
@@ -211,15 +201,6 @@ public interface Config {
         }
 
         @Override
-        public String getSadsPushUrl() {
-            return sadsPushUrl;
-        }
-
-        public String getSadsSmsPushUrl() {
-            return sadsSmsPushUrl;
-        }
-
-        @Override
         public int getSadsMaxSessions() {
             return sadsMaxSessions;
         }
@@ -232,16 +213,6 @@ public interface Config {
         @Override
         public List<LocationProperties> getLocationProperties() {
             return locationProperties;
-        }
-
-        @Override
-        public String getDeliveryUssdPushUrl() {
-            return deliveryUssdPushUrl;
-        }
-
-        @Override
-        public String getDeliveryNIPushUrl() {
-            return deliveryNIPushUrl;
         }
 
         @Override
@@ -277,6 +248,11 @@ public interface Config {
         @Override
         public boolean isJmxEnabled() {
             return jmxEnabled;
+        }
+
+        @Override
+        public String getJmxHost() {
+            return jmxHost;
         }
 
         @Override

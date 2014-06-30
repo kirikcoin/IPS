@@ -7,24 +7,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION;
-import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID;
 
 public class PushService extends BasePushService {
 
     private static final Logger logger = LoggerFactory.getLogger(PushService.class);
 
+    private final EsdpServiceSupport esdpServiceSupport;
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public PushService(Config config) {
+    public PushService(Config config,
+                       EsdpServiceSupport esdpServiceSupport) {
         super(config);
+        this.esdpServiceSupport = esdpServiceSupport;
     }
 
+    /**
+     * Survey preview.
+     */
     public void scheduleSend(final Survey survey,
                              final String msisdn) {
 
@@ -44,6 +49,9 @@ public class PushService extends BasePushService {
                 " survey = [" + survey + "], msisdn = [" + msisdn + "]");
     }
 
+    /**
+     * Coupons / final SMS message.
+     */
     public void scheduleSendSms(final Survey survey,
                                 final String from,
                                 final String text,
@@ -73,8 +81,12 @@ public class PushService extends BasePushService {
                     " survey = [" + survey + "], msisdn = [" + msisdn + "]");
         }
 
-        final URI uri = buildUri(msisdn, survey.getId());
-        doRequest(uri);
+        final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey))
+                .addParameter("subscriber", msisdn)
+                .addParameter(PARAM_SKIP_VALIDATION, "true")
+                .addParameter("scenario", "default-noinform");
+
+        doRequest(builder.build());
     }
 
     protected void sendSms(Survey survey,
@@ -93,35 +105,14 @@ public class PushService extends BasePushService {
                     " oa = [" + from + "]");
         }
 
-        final URI uri = buildUri(msisdn, text, from);
-        doRequest(uri);
-    }
+        final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey))
+                .addParameter("scenario", "push-noinform")
+                .addParameter("protocol", "sms")
+                .addParameter("subscriber", msisdn)
+                .addParameter("message", text)
+                .addParameter("address", from);
 
-    private URI buildUri(String msisdn, int surveyId)
-            throws URISyntaxException {
-
-        final String pushUrl = config.getSadsPushUrl();
-
-        final URIBuilder builder = new URIBuilder(pushUrl);
-        builder.addParameter(PARAM_SURVEY_ID, String.valueOf(surveyId));
-        builder.addParameter("subscriber", msisdn);
-        builder.addParameter(PARAM_SKIP_VALIDATION, "true");
-
-        return builder.build();
-    }
-
-    private URI buildUri(String msisdn,
-                         String message,
-                         String originatingAddress) throws URISyntaxException {
-
-        final String pushUrl = config.getSadsSmsPushUrl();
-
-        final URIBuilder builder = new URIBuilder(pushUrl);
-        builder.addParameter("subscriber", msisdn);
-        builder.addParameter("message", message);
-        builder.addParameter("address", originatingAddress);
-
-        return builder.build();
+        doRequest(builder.build());
     }
 
     public void stop() {

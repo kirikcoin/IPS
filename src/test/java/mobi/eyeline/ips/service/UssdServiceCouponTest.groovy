@@ -47,7 +47,9 @@ class UssdServiceCouponTest extends DbTestCase {
                 surveyInvitationRepository,
                 invitationDeliveryRepository)
 
-        pushService = new PushService(config) {
+        pushService = new PushService(config, new EsdpServiceSupport(null) {
+            @Override String getServiceUrl(Survey survey) { "http://sads/push?id=$survey.id" }
+        }) {
             def textSent = []
 
             @Override

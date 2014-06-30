@@ -52,6 +52,7 @@ public class Services {
     private final LocationService locationService;
     private final TemplateService templateService;
     private final MailService mailService;
+    private final EsdpServiceSupport esdpServiceSupport;
     private final PushService pushService;
     private final UserService userService;
     private final CouponService couponService;
@@ -102,8 +103,9 @@ public class Services {
                         config.getSmtpUsername(),
                         config.getSmtpPassword(),
                         config.getMailFrom()));
+        esdpServiceSupport = new EsdpServiceSupport(config);
 
-        pushService = new PushService(config);
+        pushService = new PushService(config, esdpServiceSupport);
 
         userService = new UserService(userRepository, mailService);
         couponService = new CouponService(surveyPatternRepository, mailService);
@@ -117,7 +119,7 @@ public class Services {
                 answerRepository,
                 questionRepository,
                 questionOptionRepository);
-        esdpService = new EsdpService(config, ussdService);
+        esdpService = new EsdpService(config, ussdService, esdpServiceSupport);
 
         madvUpdateService = new MadvUpdateService(
                 config,
@@ -128,7 +130,7 @@ public class Services {
         segmentationService = new SegmentationService();
         resultsExportService = new ResultsExportService(answerRepository, 100);
 
-        deliveryPushService = new DeliveryPushService(config);
+        deliveryPushService = new DeliveryPushService(config, esdpServiceSupport);
         deliveryService = new DeliveryService(
                 timeSource,
                 invitationDeliveryRepository,
@@ -226,6 +228,10 @@ public class Services {
 
     public MailService getMailService() {
         return mailService;
+    }
+
+    public EsdpServiceSupport getEsdpServiceSupport() {
+        return esdpServiceSupport;
     }
 
     public UserService getUserService() {

@@ -1,7 +1,9 @@
 package mobi.eyeline.ips.service.deliveries;
 
+import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.service.BasePushService;
+import mobi.eyeline.ips.service.EsdpServiceSupport;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.io.IOException;
@@ -9,21 +11,23 @@ import java.net.URISyntaxException;
 
 public class DeliveryPushService extends BasePushService {
 
-    private final String ussdPushUrl;
-    private final String niDialogPushUrl;
+    private final EsdpServiceSupport esdpServiceSupport;
 
-    public DeliveryPushService(Config config) {
+    public DeliveryPushService(Config config,
+                               EsdpServiceSupport esdpServiceSupport) {
         super(config);
 
-        ussdPushUrl = config.getDeliveryUssdPushUrl();
-        niDialogPushUrl = config.getDeliveryNIPushUrl();
+        this.esdpServiceSupport = esdpServiceSupport;
     }
 
     public void pushUssd(final int id,
+                         Survey survey,
                          final String msisdn,
                          final String message) throws IOException {
         try {
-            final URIBuilder builder = new URIBuilder(ussdPushUrl) {{
+            final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey)) {{
+                addParameter("scenario", "push-inform");
+                addParameter("protocol", "ussd");
                 addParameter("subscriber", msisdn);
                 addParameter("message", message);
                 addParameter("resource_id", String.valueOf(id));
@@ -37,10 +41,12 @@ public class DeliveryPushService extends BasePushService {
     }
 
     public void niDialog(final int id,
+                         Survey survey,
                          final String msisdn,
                          final int surveyId) throws IOException {
         try {
-            final URIBuilder builder = new URIBuilder(niDialogPushUrl) {{
+            final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey)) {{
+                addParameter("scenario", "default-inform");
                 addParameter("subscriber", msisdn);
                 addParameter("survey_id", String.valueOf(surveyId));
                 addParameter("resource_id", String.valueOf(id));

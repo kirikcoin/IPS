@@ -11,6 +11,7 @@ import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.CouponService
 import mobi.eyeline.ips.service.EsdpService
+import mobi.eyeline.ips.service.EsdpServiceSupport
 import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
@@ -35,6 +36,7 @@ class SurveySettingsController extends BaseSurveyController {
     private final PushService pushService = Services.instance().pushService
     private final CouponService couponService = Services.instance().couponService
     private final EsdpService esdpService = Services.instance().esdpService
+    private final EsdpServiceSupport esdpServiceSupport = Services.instance().esdpServiceSupport
 
     String errorId
 
@@ -88,7 +90,7 @@ class SurveySettingsController extends BaseSurveyController {
         newSurveyClientId = survey.client.id
     }
 
-    String getSurveyUrl() { esdpService.getSurveyUrl(persistedSurvey) }
+    String getSurveyUrl() { esdpServiceSupport.getServiceUrl(persistedSurvey) }
 
     void saveMessage() {
         survey.details.endSmsEnabled = endSmsType != DISABLED

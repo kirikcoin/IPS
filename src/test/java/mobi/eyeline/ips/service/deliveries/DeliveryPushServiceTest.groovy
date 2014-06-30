@@ -1,7 +1,9 @@
 package mobi.eyeline.ips.service.deliveries
 
 import groovy.mock.interceptor.MockFor
+import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.properties.Config
+import mobi.eyeline.ips.service.EsdpServiceSupport
 
 class DeliveryPushServiceTest extends GroovyTestCase {
 
@@ -17,13 +19,13 @@ class DeliveryPushServiceTest extends GroovyTestCase {
         // Configuration
         configClass = new MockFor(Config).with {
             demand.getSadsMaxSessions() { 2 }
-            demand.getDeliveryUssdPushUrl() { 'http://foo/push-ussd' }
-            demand.getDeliveryNIPushUrl() { 'http://foo/push-srv' }
             it
         }
         config = configClass.proxyDelegateInstance() as Config
 
-        deliveryPushService = new DeliveryPushService(config) {
+        deliveryPushService = new DeliveryPushService(config, new EsdpServiceSupport(null) {
+            @Override String getServiceUrl(Survey survey) { "http://foo/push?id=$survey.id" }
+        }) {
             def requested
 
             @Override
@@ -35,14 +37,14 @@ class DeliveryPushServiceTest extends GroovyTestCase {
 
     void testPushUssd() {
         deliveryPushService.with {
-            pushUssd(1, '79131112233', 'Hello there')
+            pushUssd(1, new Survey(id: 42), '79131112233', 'Hello there')
             assertEquals \
-             'http://foo/push-ussd?subscriber=79131112233&message=Hello+there&resource_id=1',
+             'http://foo/push?id=42&scenario=push-inform&protocol=ussd&subscriber=79131112233&message=Hello+there&resource_id=1',
                     requested.toString()
         }
 
         deliveryPushService.with {
-            pushUssd(10, '123', 'Ки рил ли ца')
+            pushUssd(10, new Survey(id: 42), '123', 'Ки рил ли ца')
             assertEquals \
              'http://foo/push-ussd?subscriber=123&message=%D0%9A%D0%B8+%D1%80%D0%B8%D0%BB+%D0%BB%D0%B8+%D1%86%D0%B0&resource_id=10',
                     requested.toString()
@@ -51,9 +53,9 @@ class DeliveryPushServiceTest extends GroovyTestCase {
 
     void testPushNi() {
         deliveryPushService.with {
-            niDialog(1, '123', 12345)
+            niDialog(1, new Survey(id: 42), '123', 12345)
             assertEquals \
-             'http://foo/push-srv?subscriber=123&survey_id=12345&resource_id=1',
+             'http://foo/push?id=42&scenario=default-inform&subscriber=123&survey_id=12345&resource_id=1',
                     requested.toString()
         }
     }

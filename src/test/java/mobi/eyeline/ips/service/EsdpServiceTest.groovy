@@ -118,8 +118,14 @@ class EsdpServiceTest extends GroovyTestCase {
         final EsdpServiceManager api
 
         MockEsdpService(Config config, UssdService ussdService, EsdpServiceManager api) {
-            super(config, ussdService)
+            super(config, ussdService, createMockEsdp())
             this.api = api
+        }
+
+        private static EsdpServiceSupport createMockEsdp() {
+            new EsdpServiceSupport(null) {
+                @Override String getServiceUrl(Survey survey) { "http://surveys?id=$survey.id" }
+            }
         }
 
         @Override EsdpServiceManager getApi(String login, String passwordHash) { api }

@@ -10,12 +10,10 @@ import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.util.HashUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -28,11 +26,14 @@ public class EsdpService {
 
     private final Config config;
     private final UssdService ussdService;
+    private final EsdpServiceSupport esdpServiceSupport;
 
     public EsdpService(Config config,
-                       UssdService ussdService) {
+                       UssdService ussdService,
+                       EsdpServiceSupport esdpServiceSupport) {
         this.config = config;
         this.ussdService = ussdService;
+        this.esdpServiceSupport = esdpServiceSupport;
     }
 
     public void save(User user, Survey survey) throws EsdpServiceException {
@@ -40,9 +41,9 @@ public class EsdpService {
 
         final Service service = new Service();
 
-        service.setTag(getTag(survey));
+        service.setTag(esdpServiceSupport.getTag(survey));
         service.setProviderId("ips");
-        service.setId(getId(survey));
+        service.setId(esdpServiceSupport.getId(survey));
         service.setTitle(survey.getDetails().getTitle());
 
         service.setProperties(new Service.Properties());
@@ -53,6 +54,7 @@ public class EsdpService {
         entries.add(entry("description", survey.getDetails().getTitle()));
         entries.add(entry("use-method-post", "false"));
         entries.add(entry("start-page", ussdService.getSurveyUrl(survey)));
+        entries.add(entry("inform-url", config.getBaseSurveyUrl() + "/inform"));
 
         getApi(user.getEsdpLogin(), user.getEsdpPasswordHash()).createService(service);
     }
@@ -60,14 +62,14 @@ public class EsdpService {
     public void delete(User user, Survey survey) throws EsdpServiceException {
         logger.debug("Deleting service, survey = [" + survey + "]");
 
-        getApi(user.getEsdpLogin(), user.getEsdpPasswordHash()).deleteService(getKey(survey));
+        getApi(user.getEsdpLogin(), user.getEsdpPasswordHash()).deleteService(esdpServiceSupport.getKey(survey));
     }
 
     public void update(User user, Survey survey) throws EsdpServiceException {
         logger.debug("Updating service, survey = [" + survey + "]");
 
         final Service service = getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
-                .getService(getKey(survey));
+                .getService(esdpServiceSupport.getKey(survey));
 
         // Title.
         service.setTitle(survey.getDetails().getTitle());
@@ -133,20 +135,9 @@ public class EsdpService {
         }
     }
 
-    public String getSurveyUrl(Survey survey) {
-        try {
-            final URIBuilder builder = new URIBuilder(config.getEsdpEndpointUrl());
-            return builder.getScheme() + "://" + builder.getHost() +
-                    "/push?service=" + getKey(survey);
-
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private boolean hasService(String login, String passwordHash, Survey survey) {
         try {
-            return getApi(login, passwordHash).getService(getKey(survey)) != null;
+            return getApi(login, passwordHash).getService(esdpServiceSupport.getKey(survey)) != null;
         } catch (Exception e) {
             logger.debug(e.getMessage(), e);
             return false;
@@ -160,18 +151,6 @@ public class EsdpService {
 
     protected EsdpServiceManager getApi(String login, String passwordHash) {
         return new EsdpSoapApi(config, login, passwordHash).getSoapApi();
-    }
-
-    private String getId(Survey survey) {
-        return getTag(survey);
-    }
-
-    private String getTag(Survey survey) {
-        return String.format("ips-%04d-%04d", survey.getOwner().getId(), survey.getId());
-    }
-
-    private String getKey(Survey survey) {
-        return "ips." + getTag(survey);
     }
 
     private Service.Properties.Entry entry(String key, String value) {
