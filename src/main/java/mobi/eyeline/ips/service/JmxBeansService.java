@@ -19,6 +19,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 
 public class JmxBeansService {
 
@@ -45,6 +47,15 @@ public class JmxBeansService {
 
         // This effectively uses the same port for RMI registry and RMI server.
         jmxServer = new JmxServer(config.getJmxPort());
+
+        // Handle callbacks for NATs, host parameter is optional.
+        if (config.getJmxHost() != null) {
+            try {
+                jmxServer.setInetAddress(Inet4Address.getByName(config.getJmxHost()));
+            } catch (UnknownHostException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         final Services services = Services.instance();
         try {

@@ -135,11 +135,61 @@ public class EsdpService {
         }
     }
 
+/*
+    @SuppressWarnings("UnusedDeclaration")
+    @JmxOperation(operationAction = ACTION)
+    public void addInformUrls() {
+        logger.info("Updating inform URL for all the surveys");
+
+        final String login = "ips";
+        final String pwHash;
+        try {
+            // Note: ESDP console generates hashes in lowercase and performs case-sensitive lookup.
+            pwHash = HashUtils.hash("password", "MD5", "UTF-8").toLowerCase();
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+        for (Survey survey : Services.instance().getSurveyRepository().list()) {
+            try {
+                logger.info("Survey ID: " + survey.getId());
+                if (!survey.isActive()) {
+                    logger.info("Survey is deleted");
+                    continue;
+                }
+
+                if (hasService(login, pwHash, survey)) {
+                    final Service service = getApi(login, pwHash)
+                            .getService(esdpServiceSupport.getKey(survey));
+
+                    if (service.getProperties() == null) {
+                        service.setProperties(new Service.Properties());
+                    }
+                    final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
+
+                    Service.Properties.Entry inform = find(entries, "inform-url");
+                    if (inform == null) {
+                        inform = entry("inform-url", config.getBaseSurveyUrl() + "/inform");
+                        entries.add(inform);
+                    } else {
+                        inform.setValue(config.getBaseSurveyUrl() + "/inform");
+                    }
+
+                    getApi(login, pwHash).updateService(service);
+                }
+
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+*/
+
     private boolean hasService(String login, String passwordHash, Survey survey) {
         try {
             return getApi(login, passwordHash).getService(esdpServiceSupport.getKey(survey)) != null;
         } catch (Exception e) {
-            logger.debug(e.getMessage(), e);
+            logger.debug(e.getMessage());
             return false;
         }
     }
