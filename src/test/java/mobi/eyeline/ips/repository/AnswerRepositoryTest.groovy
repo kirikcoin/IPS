@@ -39,8 +39,8 @@ class AnswerRepositoryTest extends DbTestCase {
     void testCount3() {
         fillTestData()
 
-        assertEquals(1, answerRepository.count(survey(1), now, now + 1, ''))
-        assertEquals(1, answerRepository.count(survey(1), now, now + 2, '02'))
+        assertEquals(1, answerRepository.count(survey(1), now, now + 1, '', null))
+        assertEquals(1, answerRepository.count(survey(1), now, now + 2, '02', null))
     }
 
     void testList1() {
