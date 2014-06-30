@@ -33,7 +33,7 @@ class ResultsExportServiceTest extends DbTestCase {
                           List<String> header, Survey survey, Date from, Date to, String filter) {
 
         String actual = new ByteArrayOutputStream().with {
-            exportService.writeCsv it, header, survey, from, to, filter
+            exportService.writeResultsCsv it, header, survey, from, to, filter
             toString 'UTF-8'
         }
 

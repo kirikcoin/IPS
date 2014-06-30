@@ -21,6 +21,8 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
     Date periodEnd = survey.endDate
     String filter
 
+    final boolean hasCoupons = survey.activePattern != null
+
     DataTableModel getTableModel() {
         return new DataTableModel() {
 
@@ -46,14 +48,15 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
                         getSurvey(),
                         periodStart,
                         periodEnd,
-                        filter)
+                        filter,
+                        null)
             }
         }
     }
 
 
     @SuppressWarnings("GroovyUnusedDeclaration")
-    void download(FacesContext context, OutputStream os) {
+    void downloadResults(FacesContext context, OutputStream os) {
         def header = [
                 strings['results.list.csv.msisdn'],
                 strings['results.list.csv.question.number'],
@@ -63,7 +66,16 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
                 strings['results.list.csv.date']
         ]
 
-        resultsExportService.writeCsv(os, header, getSurvey(), periodStart, periodEnd, filter)
+        resultsExportService.writeResultsCsv(os, header, getSurvey(), periodStart, periodEnd, filter)
     }
 
+    @SuppressWarnings("GroovyUnusedDeclaration")
+    void downloadCoupons(FacesContext context, OutputStream os) {
+        def header = [
+                strings['results.list.csv.msisdn'],
+                strings['results.list.csv.coupon']
+        ]
+
+        resultsExportService.writeCouponsCsv(os, header, getSurvey(), periodStart, periodEnd, filter)
+    }
 }

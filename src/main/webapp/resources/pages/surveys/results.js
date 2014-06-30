@@ -12,7 +12,8 @@ var page = {
 
   init: function () {
     jsfc('table').bind('update', function () {
-      $('#downloadButton').toggle(jsfc('table').getRowsCount() != 0);
+      var hasResults = jsfc('table').getRowsCount() != 0;
+      $('#downloadButtonsPanel').toggle(hasResults);
     });
   }
 };

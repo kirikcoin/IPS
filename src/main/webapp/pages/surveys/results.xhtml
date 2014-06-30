@@ -116,19 +116,6 @@
                     <h:outputText value="#{bundle['results.button.search']}"/>
                   </h:outputLink>
                 </eye:button>
-
-                <eye:button id ="downloadButton">
-                  <!--<h:outputLink value="#"
-                                onclick=""
-                                styleClass="button-green">
-                    <h:outputText value="#{bundle['results.button.download']}"/>
-
-                 </h:outputLink>-->
-                  <h:commandLink styleClass="button-green" value="#{bundle['results.button.download']}">
-                    <eye:fileDownloadListener method="#{surveyResultsController.download}" contentType="text/csv" filename="survey_id#{surveyResultsController.surveyId}_results.csv"/>
-                  </h:commandLink>
-                </eye:button>
-                <eye:space/>
               </eye:buttons>
             </eye:collapsingGroup>
 
@@ -138,6 +125,27 @@
                   <h:outputText value="#{bundle['results.group.results']}"/>
                 </h:panelGroup>
               </f:facet>
+
+              <eye:buttons id="downloadButtonsPanel">
+                <eye:button id ="downloadButton">
+                  <h:commandLink styleClass="button-green"
+                                 value="#{bundle['results.button.download']}">
+                    <eye:fileDownloadListener method="#{surveyResultsController.downloadResults}"
+                                              contentType="text/csv"
+                                              filename="survey_#{surveyResultsController.surveyId}_results.csv"/>
+                  </h:commandLink>
+                </eye:button>
+
+                <eye:button id ="couponsDownloadButton" rendered="#{surveyResultsController.hasCoupons}">
+                  <h:commandLink styleClass="button-green"
+                                 value="#{bundle['results.button.download.coupons']}">
+                    <eye:fileDownloadListener method="#{surveyResultsController.downloadCoupons}"
+                                              contentType="text/csv"
+                                              filename="survey_#{surveyResultsController.surveyId}_coupons.csv"/>
+                  </h:commandLink>
+                </eye:button>
+
+              </eye:buttons>
 
               <eye:dataTable id="table"
                              value="#{surveyResultsController.tableModel}"
@@ -188,10 +196,9 @@
 
                   <eye:column name="coupon"
                               title="#{bundle['results.list.coupon']}"
-                              visible="#{surveyResultsController.survey.activePattern!=null}">
+                              visible="#{surveyResultsController.hasCoupons}">
                     <h:outputText value="#{row.respondent.coupon}"/>
                   </eye:column>
-
 
                 </eye:row>
               </eye:dataTable>

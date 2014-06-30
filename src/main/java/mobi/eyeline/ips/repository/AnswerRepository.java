@@ -24,6 +24,8 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.criterion.Restrictions.ilike;
+import static org.hibernate.criterion.Restrictions.isNotNull;
+import static org.hibernate.criterion.Restrictions.isNull;
 
 public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
@@ -137,7 +139,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = getCriteria(session, survey, from, to, filter);
+        final Criteria criteria = getCriteria(session, survey, from, to, null, filter);
         criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
 
         criteria.setFirstResult(offset).setMaxResults(limit);
@@ -178,12 +180,13 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                                     Date from,
                                     Date to,
                                     String filter,
+                                    Boolean hasCoupon,
                                     int limit,
                                     int offset) {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = getCriteria(session, survey, from, to, filter);
+        final Criteria criteria = getCriteria(session, survey, from, to, hasCoupon, filter);
         criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
 
         criteria.setFirstResult(offset).setMaxResults(limit);
@@ -204,11 +207,12 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
     public int count(Survey survey,
                      Date from,
                      Date to,
-                     String filter) {
+                     String filter,
+                     Boolean hasCoupon) {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = getCriteria(session, survey, from, to, filter);
+        final Criteria criteria = getCriteria(session, survey, from, to, hasCoupon, filter);
 
         criteria.setProjection(Projections.rowCount());
 
@@ -220,6 +224,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                                  Survey survey,
                                  Date from,
                                  Date to,
+                                 Boolean hasCoupon,
                                  String filter) {
         final Criteria criteria = session.createCriteria(Respondent.class);
 
@@ -227,6 +232,9 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         criteria.add(Restrictions.ge("startDate", from));
         criteria.add(Restrictions.le("startDate", to));
+        if (hasCoupon != null) {
+            criteria.add(hasCoupon ? isNotNull("coupon") : isNull("coupon"));
+        }
 
         if (isNotBlank(filter)) {
             filter = filter.trim();

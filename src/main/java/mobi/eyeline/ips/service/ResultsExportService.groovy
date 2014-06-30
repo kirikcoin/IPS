@@ -20,7 +20,7 @@ public class ResultsExportService {
         this.chunkSize = chunkSize
     }
 
-    void writeCsv(OutputStream os,
+    void writeResultsCsv(OutputStream os,
                   List<String> header,
                   Survey survey,
                   Date periodStart,
@@ -38,7 +38,8 @@ public class ResultsExportService {
                         survey,
                         periodStart,
                         periodEnd,
-                        filter)
+                        filter,
+                        null)
 
                 // Write in chunks.
                 (0..count / chunkSize).each { int i ->
@@ -47,9 +48,10 @@ public class ResultsExportService {
                             periodStart,
                             periodEnd,
                             filter,
+                            null,
                             chunkSize,
                             i * chunkSize)
-                    writeCSVData records, csvWriter
+                    writeResultsData records, csvWriter
                 }
 
             } finally {
@@ -59,8 +61,8 @@ public class ResultsExportService {
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
-    private void writeCSVData(List<SurveySession> sessions,
-                              CSVWriter csvWriter) {
+    private void writeResultsData(List<SurveySession> sessions,
+                                  CSVWriter csvWriter) {
         sessions.each { SurveySession session ->
             session.answers.each { Answer answer ->
                 csvWriter.writeNext([
@@ -70,6 +72,59 @@ public class ResultsExportService {
                         answer.option.activeIndex + 1,
                         answer.option.answer,
                         answer.date
+                ] as String[])
+            }
+        }
+    }
+
+    void writeCouponsCsv(OutputStream os,
+                         List<String> header,
+                         Survey survey,
+                         Date periodStart,
+                         Date periodEnd,
+                         String filter) {
+
+        os.withWriter('UTF-8') { Writer writer ->
+            final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
+
+            try {
+                // Add header line.
+                csvWriter.writeNext(header as String[])
+
+                final int count = answerRepository.count(
+                        survey,
+                        periodStart,
+                        periodEnd,
+                        filter,
+                        true)
+
+                // Write in chunks.
+                (0..count / chunkSize).each { int i ->
+                    def records = answerRepository.list(
+                            survey,
+                            periodStart,
+                            periodEnd,
+                            filter,
+                            true,
+                            chunkSize,
+                            i * chunkSize)
+                    writeCouponsData records, csvWriter
+                }
+
+            } finally {
+                csvWriter.close()
+            }
+        }
+    }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    private void writeCouponsData(List<SurveySession> sessions,
+                                  CSVWriter csvWriter) {
+        sessions.each { SurveySession session ->
+            session.answers.each { Answer answer ->
+                csvWriter.writeNext([
+                        session.respondent.msisdn,
+                        session.respondent.coupon
                 ] as String[])
             }
         }
