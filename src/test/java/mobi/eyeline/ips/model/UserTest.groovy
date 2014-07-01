@@ -210,4 +210,44 @@ class UserTest extends ValidationTestCase {
         assertThat violations, empty()
     }
 
+    void test18() {
+        def violations1 = validate new User(
+                login: "login1",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "symbols: '\"",
+                role: Role.CLIENT,
+        )
+        def violations2 = validate new User(
+                login: "login1",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "symbols: '\\'",
+                role: Role.CLIENT,
+        )
+        def violations3 = validate new User(
+                login: "login1",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "symbols: '\'",
+                role: Role.CLIENT,
+        )
+        def violations4 = validate new User(
+                login: "login1",
+                password:  "123".pw(),
+                email:  "username@example.com",
+                fullName: "symbols: '%",
+                role: Role.CLIENT,
+        )
+        assertThat violations1, hasSize(1)
+        assertThat violations2, hasSize(1)
+        assertThat violations3, hasSize(1)
+        assertThat violations4, hasSize(1)
+
+        assertEquals "fullName", violations1[0].propertyPath.first().name
+        assertEquals "fullName", violations2[0].propertyPath.first().name
+        assertEquals "fullName", violations3[0].propertyPath.first().name
+        assertEquals "fullName", violations4[0].propertyPath.first().name
+    }
+
 }
