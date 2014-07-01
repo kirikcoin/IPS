@@ -37,7 +37,7 @@ public class NotificationService {
     }
 
     @JmxAttributeMethod
-    private int getToUpdateSize() {
+    public int getToUpdateSize() {
         return toUpdate.size();
     }
 
