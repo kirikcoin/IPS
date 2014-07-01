@@ -155,6 +155,7 @@ class SurveyRepositoryTest extends DbTestCase {
         assertIds([1, 4, 2], list(null, null, 'A', null, 'title', true, Integer.MAX_VALUE, 0))
         assertIds([4, 2, 1], list(null, null, 'A', null, 'id', false, Integer.MAX_VALUE, 0))
         assertIds([3, 2, 1], list(null, null, '', true, 'accessNumber', false, Integer.MAX_VALUE, 0))
+        assertIds([4, 2, 3, 1], list(null, null, '', null, 'state', false, Integer.MAX_VALUE, 0))
 
         assertIds([1, 3], list(null, null, 'F', true, null, false, Integer.MAX_VALUE, 0))
         assertIds([1, 2, 3], list(null, null, '7', true, null, false, Integer.MAX_VALUE, 0))
@@ -236,30 +237,36 @@ class SurveyRepositoryTest extends DbTestCase {
             new Survey(id: 1, client: user1).with {
                 details = new SurveyDetails(survey: it, title: 'A A%\\')
                 statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[0])
+                startDate = new Date() + 2
+                endDate = new Date() + 4
                 it
             },
 
             new Survey(id: 2, client: user2, owner: user6).with {
                 details = new SurveyDetails(survey: it, title: 'B A_\\')
                 statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[1])
+                startDate = new Date() - 4
+                endDate = new Date() + 1
                 it
             },
 
             new Survey(id: 3, client: user3, owner: user5).with {
                 details = new SurveyDetails(survey: it, title: 'D C _')
                 statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[2])
+                startDate = new Date() - 4
+                endDate = new Date() + 2
                 it
             },
 
             new Survey(id: 4, client: user4, active: false).with {
                 details = new SurveyDetails(survey: it, title: 'A C%')
                 statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[3])
+                startDate = new Date() - 4
+                endDate = new Date() - 2
                 it
             }
         ].each { s ->
-            s.startDate = new Date()
-            s.endDate = new Date()
-            surveyRepository.save s 
+            surveyRepository.save s
         }
     }
 

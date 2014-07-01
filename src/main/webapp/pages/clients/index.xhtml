@@ -127,6 +127,7 @@
                 <h:outputText value=" ("/>
                 <h:commandLink value="#{bundle['client.list.table.status.active.block']}"
                                onclick="return page.showBlockDialog(
+                               'clientBlockDialog',
                                '#{row.id}',
                                '#{row.login}',
                                '#{row.fullName}');"
@@ -135,6 +136,7 @@
 
                 <h:commandLink value="#{bundle['client.list.table.status.blocked.unblock']}"
                                onclick="return page.showUnblockDialog(
+                               'clientUnblockDialog',
                                '#{row.id}',
                                '#{row.login}',
                                '#{row.fullName}');"
@@ -144,6 +146,7 @@
                               rendered="#{row.blocked == false}"/>
                 <h:commandLink value="#{bundle['client.list.table.status.resetpassword']}"
                                onclick="return page.showPasswordResetDialog(
+                               'clientPasswordResetDialog',
                                '#{row.id}',
                                '#{row.email}',
                                '#{row.login}',
@@ -222,19 +225,22 @@
                            text="#{bundle['client.dialog.block.text']}"
                            title="#{bundle['client.dialog.block.title']}"
                            actionBean="#{clientListController}"
-                           actionName="deActivateUser"/>
+                           actionName="deActivateUser"
+                           isHiddenInfo="true"/>
 
         <ips:confirmDialog id="clientUnblockDialog"
                            text="#{bundle['client.dialog.unblock.text']}"
                            title="#{bundle['client.dialog.unblock.title']}"
                            actionBean="#{clientListController}"
-                           actionName="activateUser"/>
+                           actionName="activateUser"
+                           isHiddenInfo="true"/>
 
         <ips:confirmDialog id="clientPasswordResetDialog"
                            text="#{bundle['client.dialog.passwordreset.text']}"
                            title="#{bundle['client.dialog.passwordreset.title']}"
                            actionBean="#{clientListController}"
-                           actionName="resetPassword"/>
+                           actionName="resetPassword"
+                           isHiddenInfo="true"/>
 
       </h:form>
 

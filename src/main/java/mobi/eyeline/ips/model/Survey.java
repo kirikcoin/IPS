@@ -3,6 +3,7 @@ package mobi.eyeline.ips.model;
 import com.google.common.base.Predicate;
 import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Proxy;
@@ -125,6 +126,9 @@ public class Survey implements Serializable {
     @Cache(usage = READ_WRITE)
     private List<SurveyPattern> patterns;
 
+    @Formula("(select case when (now() < s.startdate) then -1 when (now() > s.expires) then 1 else 0 end from surveys s where s.id = id)")
+    private String state;
+
     public Survey() {
     }
 
@@ -134,6 +138,14 @@ public class Survey implements Serializable {
         for (Question question : getQuestions()) {
             question.prepareIndex();
         }
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 
     public Integer getId() {

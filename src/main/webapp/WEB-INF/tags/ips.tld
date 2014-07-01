@@ -62,6 +62,14 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
+
+    <attribute>
+      <description>Флаг наличия скрытого дубликата текста</description>
+      <name>isHiddenInfo</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
   </tag>
 
   <tag>
