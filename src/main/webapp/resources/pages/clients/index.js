@@ -13,14 +13,14 @@ var page = {
     ips.$byId("search").focus();
   },
 
-  replaceName: function($element, dialogId, login, fullName) {
-    var $content = $element.find('.confirmDialog_content');
+  replaceName: function(dialogId, login, fullName) {
+    var $content = $('#'+dialogId+'_div').find('.confirmDialog_content');
     var text = ips.$byId(dialogId+'_hiddenText').text();
     $content.text(text.replace('{username}', login).replace('{fullName}', fullName));
   },
 
   showBlockDialog: function (dialogId, id, login, fullName) {
-    page.replaceName($('#clientBlockDialog_div'),dialogId, login, fullName);
+    page.replaceName(dialogId, login, fullName);
 
     ips.$byId('userId').val(id);
     jsfc('clientBlockDialog').show();
@@ -28,7 +28,7 @@ var page = {
   },
 
   showUnblockDialog: function (dialogId, id, login, fullName) {
-    page.replaceName($('#clientUnblockDialog_div'),dialogId, login, fullName);
+    page.replaceName(dialogId, login, fullName);
 
     ips.$byId('userId').val(id);
     jsfc('clientUnblockDialog').show();
@@ -47,7 +47,7 @@ var page = {
   },
 
   showPasswordResetDialog: function (dialogId, id, email, login, fullName) {
-    page.replaceName($('#clientPasswordResetDialog_div'), dialogId, login, fullName);
+    page.replaceName(dialogId, login, fullName);
 
     ips.$byId('userId').val(id);
     jsfc('clientPasswordResetDialog').show();

@@ -127,7 +127,7 @@ public class Survey implements Serializable {
     private List<SurveyPattern> patterns;
 
     @Formula("(select case when (now() < s.startdate) then -1 when (now() > s.expires) then 1 else 0 end from surveys s where s.id = id)")
-    private String state;
+    private int state;
 
     public Survey() {
     }
@@ -140,12 +140,8 @@ public class Survey implements Serializable {
         }
     }
 
-    public String getState() {
+    public int getState() {
         return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
     }
 
     public Integer getId() {

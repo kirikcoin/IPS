@@ -6,7 +6,7 @@
 
   <!--@elvariable id="id" type="java.lang.String"-->
   <!--@elvariable id="text" type="java.lang.String"-->
-  <!--@elvariable id="isHiddenInfo" type="java.lang.Boolean"-->
+  <!--@elvariable id="isDuplicateText" type="java.lang.Boolean"-->
   <!--@elvariable id="title" type="java.lang.String"-->
   <!--@elvariable id="width" type="java.lang.Integer"-->
   <!--@elvariable id="actionBean" type="java.lang.Object"-->
@@ -19,7 +19,7 @@
       <h:outputText value="${text}" escape="false"/>
 
     </h:panelGroup>
-    <h:panelGroup style="display: none" id="${id}_hiddenText" rendered="${isHiddenInfo}">${text}</h:panelGroup>
+    <h:panelGroup style="display: none" id="${id}_hiddenText" rendered="${isDuplicateText}">${text}</h:panelGroup>
     <h:panelGroup layout="block" style="margin:10px"> </h:panelGroup>
     <eye:buttons>
       <eye:button>

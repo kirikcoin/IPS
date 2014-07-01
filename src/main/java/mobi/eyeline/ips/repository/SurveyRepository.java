@@ -111,7 +111,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
                 case "id":              property = "id";                        break;
                 case "title":           property = "details.title";             break;
                 case "client":          property = "client.fullName";           break;
-                case "state":           property = "state";                   break;
+                case "state":           property = "state";                     break;
                 case "period":          property = "startDate";                 break;
                 case "accessNumber":    property = "statistics.accessNumber";   break;
                 default:
