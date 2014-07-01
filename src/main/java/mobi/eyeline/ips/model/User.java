@@ -59,6 +59,7 @@ public class User implements Serializable {
      */
     @Column(name = "full_name", nullable = false)
     @NotEmpty(message = "{profile.edit.message.validationErrorFullNameEmpty}")
+    @Pattern(regexp = "^[^'%\"\\\\]*$", message ="{client.validation.fullname}")
     @MaxSize(70)
     private String fullName;
 
