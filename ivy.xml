@@ -56,7 +56,7 @@
     <dependency org="javax.portlet" name="portlet-api" rev="1.0"
                 transitive="false" conf="site->default"/>
 
-    <dependency org="mobi.eyeline.util" name="jsfcomponents" rev="1.107" transitive="false"
+    <dependency org="mobi.eyeline.util" name="jsfcomponents" rev="1.108" transitive="false"
                 conf="site->components"/>
     <dependency org="mobi.eyeline.util.extutils" name="lessparser" rev="1.6.1" conf="site->prod"/>
     <dependency org="mobi.eyeline.util.extutils" name="generalutils" rev="1.38.0"
