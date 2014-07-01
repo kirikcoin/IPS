@@ -9,12 +9,9 @@ import mobi.eyeline.ips.external.esdp.Service;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
-import mobi.eyeline.ips.util.HashUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static com.j256.simplejmx.common.JmxOperationInfo.OperationAction.ACTION;
@@ -42,7 +39,7 @@ public class EsdpService {
         final Service service = new Service();
 
         service.setTag(esdpServiceSupport.getTag(survey));
-        service.setProviderId("ips");
+        service.setProviderId(user.getEsdpProvider());
         service.setId(esdpServiceSupport.getId(survey));
         service.setTitle(survey.getDetails().getTitle());
 
@@ -53,6 +50,7 @@ public class EsdpService {
         entries.add(entry("scenario.default", "default"));
         entries.add(entry("description", survey.getDetails().getTitle()));
         entries.add(entry("use-method-post", "false"));
+        entries.add(entry("force-transaction-mode", "true"));   // Note: transactional!
         entries.add(entry("start-page", ussdService.getSurveyUrl(survey)));
         entries.add(entry("inform-url", config.getBaseSurveyUrl() + "/inform"));
 
@@ -102,15 +100,6 @@ public class EsdpService {
     public void createMissingServices() {
         logger.info("Creating missing services for all the surveys");
 
-        final String login = "ips";
-        final String pwHash;
-        try {
-            // Note: ESDP console generates hashes in lowercase and performs case-sensitive lookup.
-            pwHash = HashUtils.hash("password", "MD5", "UTF-8").toLowerCase();
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-
         for (Survey survey : Services.instance().getSurveyRepository().list()) {
             try {
                 logger.info("Survey ID: " + survey.getId());
@@ -119,11 +108,9 @@ public class EsdpService {
                     continue;
                 }
 
-                if (!hasService(login, pwHash, survey)) {
-                    save(new User() {{
-                        setEsdpLogin(login);
-                        setEsdpPasswordHash(pwHash);
-                    }}, survey);
+                final User owner = survey.getOwner();
+                if (!hasService(owner.getEsdpLogin(), owner.getEsdpPasswordHash(), survey)) {
+                    save(owner, survey);
 
                 } else {
                     logger.info("Survey already has a service, ID = " + survey.getId());
@@ -134,56 +121,6 @@ public class EsdpService {
             }
         }
     }
-
-/*
-    @SuppressWarnings("UnusedDeclaration")
-    @JmxOperation(operationAction = ACTION)
-    public void addInformUrls() {
-        logger.info("Updating inform URL for all the surveys");
-
-        final String login = "ips";
-        final String pwHash;
-        try {
-            // Note: ESDP console generates hashes in lowercase and performs case-sensitive lookup.
-            pwHash = HashUtils.hash("password", "MD5", "UTF-8").toLowerCase();
-        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-
-        for (Survey survey : Services.instance().getSurveyRepository().list()) {
-            try {
-                logger.info("Survey ID: " + survey.getId());
-                if (!survey.isActive()) {
-                    logger.info("Survey is deleted");
-                    continue;
-                }
-
-                if (hasService(login, pwHash, survey)) {
-                    final Service service = getApi(login, pwHash)
-                            .getService(esdpServiceSupport.getKey(survey));
-
-                    if (service.getProperties() == null) {
-                        service.setProperties(new Service.Properties());
-                    }
-                    final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
-
-                    Service.Properties.Entry inform = find(entries, "inform-url");
-                    if (inform == null) {
-                        inform = entry("inform-url", config.getBaseSurveyUrl() + "/inform");
-                        entries.add(inform);
-                    } else {
-                        inform.setValue(config.getBaseSurveyUrl() + "/inform");
-                    }
-
-                    getApi(login, pwHash).updateService(service);
-                }
-
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-    }
-*/
 
     private boolean hasService(String login, String passwordHash, Survey survey) {
         try {

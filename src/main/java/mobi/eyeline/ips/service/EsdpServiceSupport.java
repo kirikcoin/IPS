@@ -25,7 +25,8 @@ public class EsdpServiceSupport {
     }
 
     String getKey(Survey survey) {
-        return "ips." + getTag(survey);
+        final String provider = survey.getOwner().getEsdpProvider();
+        return provider + "." + getTag(survey);
     }
 
     String getTag(Survey survey) {

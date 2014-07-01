@@ -87,7 +87,7 @@
     <!-- PROD -->
     <!--<param name="host" type="string">192.168.10.153</param>-->
 
-    <param name="port" type="int">9090</param>
+    <param name="port" type="int">10998</param>
   </section>
 
   <section name="locations">

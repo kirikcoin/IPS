@@ -57,7 +57,7 @@ class EsdpServiceTest extends GroovyTestCase {
     void testDelete() {
         def survey = new Survey(
                 id: 42,
-                owner: new User(id: 53))
+                owner: new User(id: 53, esdpProvider: 'ips'))
 
         esdpService.delete(new User(), survey)
 

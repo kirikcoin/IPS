@@ -18,14 +18,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
 
-import static mobi.eyeline.ips.model.Locale.EN;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Entity
@@ -126,6 +124,9 @@ public class User implements Serializable {
     @Column(name = "show_c2s", columnDefinition = "BIT", nullable = false)
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean showC2s = false;
+
+    @Column(name = "esdp_provider")
+    private String esdpProvider;
 
     @Column(name = "esdp_login")
     private String esdpLogin;
@@ -246,6 +247,14 @@ public class User implements Serializable {
 
     public void setShowC2s(boolean showC2s) {
         this.showC2s = showC2s;
+    }
+
+    public String getEsdpProvider() {
+        return esdpProvider;
+    }
+
+    public void setEsdpProvider(String esdpProvider) {
+        this.esdpProvider = esdpProvider;
     }
 
     public String getEsdpLogin() {
