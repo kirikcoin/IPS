@@ -2,6 +2,8 @@ package mobi.eyeline.ips.service;
 
 import com.j256.simplejmx.server.JmxServer;
 import mobi.eyeline.ips.properties.Config;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.management.ManagementService;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.slf4j.Logger;
@@ -70,13 +72,15 @@ public class JmxBeansService {
         }
 
         try {
-            initStatistics(Services.instance().getDb().getSessionFactory());
+            initHibernate(Services.instance().getDb().getSessionFactory());
         } catch (InstanceAlreadyExistsException |
                 MBeanRegistrationException |
                 MalformedObjectNameException |
                 NotCompliantMBeanException e) {
             logger.error("Hibernate JMX error", e);
         }
+
+        initEhcache();
     }
 
     public static JmxBeansService getInstance() {
@@ -89,7 +93,7 @@ public class JmxBeansService {
         }
     }
 
-    private void initStatistics(SessionFactory sessionFactory)
+    private void initHibernate(SessionFactory sessionFactory)
             throws NotCompliantMBeanException, InstanceAlreadyExistsException,
             MBeanRegistrationException, MalformedObjectNameException {
 
@@ -112,6 +116,13 @@ public class JmxBeansService {
                 handler);
 
         mbeanServer.registerMBean(statisticsMBean, statsName);
+    }
+
+    private void initEhcache() {
+        final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+
+        final CacheManager manager = CacheManager.getInstance();
+        ManagementService.registerMBeans(manager, mbeanServer, true, true, false, true);
     }
 
     @MXBean

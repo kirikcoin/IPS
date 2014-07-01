@@ -60,7 +60,8 @@ public class EsdpService {
     public void delete(User user, Survey survey) throws EsdpServiceException {
         logger.debug("Deleting service, survey = [" + survey + "]");
 
-        getApi(user.getEsdpLogin(), user.getEsdpPasswordHash()).deleteService(esdpServiceSupport.getKey(survey));
+        getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
+                .deleteService(esdpServiceSupport.getKey(survey));
     }
 
     public void update(User user, Survey survey) throws EsdpServiceException {
