@@ -37,8 +37,8 @@ class UserRepositorySessionTest extends DbTestCase {
         [
                 new User(login: 'a', email: 'b@a.com', fullName: 'A B_', company: 'D\\%'),
                 new User(login: 'b', email: 'c@a.com', fullName: 'D C', company: 'A%'),
-                new User(login: 'c', email: 'd@a.com', fullName: 'D A%', company: 'B_'),
-                new User(login: 'd', email: 'a@a.com', fullName: 'A C_\\', company: 'C', blocked: true)
+                new User(login: 'c', email: 'd@a.com', fullName: 'D A', company: 'B_'),
+                new User(login: 'd', email: 'a@a.com', fullName: 'A C_', company: 'C\\', blocked: true)
         ].each { user ->
             user.password = '12'.pw();
             user.role = Role.CLIENT;
@@ -66,7 +66,7 @@ class UserRepositorySessionTest extends DbTestCase {
         def list = userRepository.&list
 
         assertIds([1, 3, 4], list('_', null, true, Integer.MAX_VALUE, 0))
-        assertIds([1, 2, 3], list('%', null, true, Integer.MAX_VALUE, 0))
+        assertIds([1, 2], list('%', null, true, Integer.MAX_VALUE, 0))
         assertIds([1, 4], list('\\', null, true, Integer.MAX_VALUE, 0))
     }
 
