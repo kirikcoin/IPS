@@ -215,28 +215,28 @@ class UserTest extends ValidationTestCase {
                 login: "login1",
                 password:  "123".pw(),
                 email:  "username@example.com",
-                fullName: "symbols: '\"",
+                fullName: "symbols: %",
                 role: Role.CLIENT,
         )
         def violations2 = validate new User(
                 login: "login1",
                 password:  "123".pw(),
                 email:  "username@example.com",
-                fullName: "symbols: '\\'",
+                fullName: "symbols: '",
                 role: Role.CLIENT,
         )
         def violations3 = validate new User(
                 login: "login1",
                 password:  "123".pw(),
                 email:  "username@example.com",
-                fullName: "symbols: '\'",
+                fullName: "symbols: \"",
                 role: Role.CLIENT,
         )
         def violations4 = validate new User(
                 login: "login1",
                 password:  "123".pw(),
                 email:  "username@example.com",
-                fullName: "symbols: '%",
+                fullName: "symbols: \\",
                 role: Role.CLIENT,
         )
         assertThat violations1, hasSize(1)
