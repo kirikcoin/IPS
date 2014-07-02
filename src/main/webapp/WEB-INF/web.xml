@@ -322,9 +322,5 @@
     <location>/enter.faces</location>
   </error-page>
 
-  <error-page>
-    <error-code>400</error-code>
-    <location>/enter.faces</location>
-  </error-page>
 
 </web-app>
