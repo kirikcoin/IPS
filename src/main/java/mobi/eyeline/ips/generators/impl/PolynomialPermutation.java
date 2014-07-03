@@ -30,10 +30,12 @@ public class PolynomialPermutation implements NumberBijection {
     }
 
     private Expression createExpression() {
+        // Let maxValue = p1^k1 * p2^k2 * .. * pn^kn.
         final Multiset<Long> primes = PrimeUtils.factorize(maxValue);
 
         final long p1 = getMultiPrime(primes);
 
+        // a = p1 * p2^k2 * .. * pn^kn.
         long a = p1;
         for (Long prime : primes.elementSet()) {
             if (prime != p1) {
@@ -41,9 +43,19 @@ public class PolynomialPermutation implements NumberBijection {
             }
         }
 
+        // a * x^2 + x + (maxValue / 3 - 1)
+        // The latter coefficient is an arbitrary constant - the value doesn't really matter
+        // as all the computations are performed modulo maxValue.
         return new Expression(a, 1, maxValue / 3 - 1);
     }
 
+    /**
+     * Determines the maximal of prime factors {@literal P} of {@linkplain #maxValue set size}
+     * for which the set size is divisible by {@code P^2}.
+     * <br/>
+     * The maximal one is taken just to extend the variation whereas
+     * it's not a mandatory requirement for QPP.
+     */
     private long getMultiPrime(Multiset<Long> primes) {
         final List<Long> multiprimes = new ArrayList<>();
         for (Long prime : primes.elementSet()) {
@@ -55,8 +67,10 @@ public class PolynomialPermutation implements NumberBijection {
         try {
             return Collections.max(multiprimes);
         } catch (NoSuchElementException e) {
-            // XXX: possibly need to extend an algorithm for arbitrary ranges.
-            throw new AssertionError();
+            // Well, if there's no prime P (!= 1) for which the number N of elements in our set
+            // can be divided by P^2, QPP construction is impossible.
+            throw new IllegalArgumentException(
+                    "Invalid range for polynomial permutation: " + maxValue);
         }
     }
 
@@ -90,7 +104,7 @@ public class PolynomialPermutation implements NumberBijection {
             return apply(BigInteger.valueOf(x));
         }
 
-        BigInteger apply(BigInteger x) {
+        private BigInteger apply(BigInteger x) {
             return x.pow(2).multiply(a).add(b.multiply(x)).add(c);
         }
 

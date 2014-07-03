@@ -15,6 +15,12 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 public class AutomatonUtils {
 
+    /**
+     * Converts a small subset of Java regular expressions to DFA.
+     *
+     * @throws UnsupportedPatternException In case an expression is not supported
+     *                                     or it cannot be represented by an automaton.
+     */
     public static Automaton toAutomaton(String regex) throws UnsupportedPatternException {
         try {
             return new RegExp(regex).toAutomaton();
@@ -23,6 +29,12 @@ public class AutomatonUtils {
         }
     }
 
+    /**
+     * Converts a small subset of DFAs to an alternate representation consisting
+     * of a list of allowed symbols for each state.
+     *
+     * @throws UnsupportedPatternException In case an automaton cannot be represented in such way.
+     */
     public static String[] asStateSymbols(Automaton a) throws UnsupportedPatternException {
         if (!a.isFinite()) {
             throw new UnsupportedPatternException("Infinite expression");
