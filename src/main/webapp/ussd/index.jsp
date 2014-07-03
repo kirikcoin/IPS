@@ -5,7 +5,9 @@
 <%@ page import="mobi.eyeline.ips.service.Services" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="org.apache.http.HttpStatus" %>
-<%@page language="java" contentType="text/xml; charset=utf-8" %>
+<%@ page language="java"
+         trimDirectiveWhitespaces="true"
+         contentType="text/xml; charset=utf-8" %>
 
 <%
   final UssdResponseModel model;
