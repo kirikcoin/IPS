@@ -102,6 +102,11 @@ public class UssdService implements MessageHandler {
                     RequestParseUtils.toString(parameters), e);
             response = fatalError();
 
+        } catch (MissingParameterException e) {
+            logger.error("Bad USSD request, parameters: " +
+                    RequestParseUtils.toString(parameters), e);
+            throw e;
+
         } finally {
             if (timer != null) {
                 logger.trace("USSD request, millis: " + timer.getTime() +
