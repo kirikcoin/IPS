@@ -10,7 +10,7 @@
 }
 
 .eyeline_collapsingGroupBody {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif", sans-serif;
 }
 
 
@@ -18,7 +18,7 @@
 
 /* Данные */
 table.eyeline_list th {
-  font-family: Georgia;
+  font-family:'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 table.eyeline_list tr.eyeline_inner {
@@ -56,51 +56,51 @@ table.eyeline_list tbody a:hover {
 }
 
 .select_menu_content {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 .select_menu_content span {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 /* INPUT DATE ------------------------------------------------------------------------------------------------------- */
 
 div.eyeline_inputDate input {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 /*Стиль для компонента input text*/
 .eyeline_inputText_component {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 /*Стиль для компонента textarea*/
 .eyeline_textarea_component {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 .eyeline_progress_bar_precent_text {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 /* SELECT MANY SHUTTLE ---------------------------------------------------------------------------------------------- */
 
 /*Стиль внешнего div*/
 div.eyeline_selectManyShuttle {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 /* SELECT MANY CHECKLIST -------------------------------------------------------------------------------------------- */
 
 /*Стиль тела*/
 .eyeline_selectManyChecklist .lbody {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 /* TOOLTIP ---------------------------------------------------------------------------------------------------------- */
 
 .eyeline_tooltip {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 .eyeline_dialog {

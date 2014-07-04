@@ -14,10 +14,10 @@
   background-color: #78a0bb;
   background-image: none;
 
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 .exitButton {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
 }
 
 .menuButtons {
@@ -25,13 +25,13 @@
   border-bottom: 1px solid #999999;
 }
 .menuButton {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
   color: #78a0bb;
   font-weight: normal;
 }
 .menuButtonSelected {
   background-color: #eeeeee;
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
   color: #78a0bb;
   font-weight: normal;
 }

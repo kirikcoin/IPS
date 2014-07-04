@@ -97,7 +97,7 @@
       <param name="skin" type="string">mobak</param>
     </section>
     <section name="eyeline">
-      <param name="pattern" type="string">.*eyeline.*</param>
+      <param name="pattern" type="string">[^\.]*eyeline.*</param>
       <param name="skin" type="string">eyeline</param>
     </section>
     <section name="default">

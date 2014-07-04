@@ -1,29 +1,10 @@
 @import "../../../styles/functions.less";
 
-// Custom fonts ---------------------------------------------------------------------------------------------------------
-
-@font-face {
-  font-family: "Georgia";
-  font-style: normal;
-  src: url(../../../styles/georgia.woff) format('woff');
-}
-
-@font-face {
-  font-family: "Georgia";
-  font-style: italic;
-  src: url(../../../styles/georgiai.woff) format('woff');
-}
-
-@font-face {
-  font-family: "Georgia";
-  font-weight: bold;
-  src: url(../../../styles/georgiab.woff) format('woff');
-}
-
 // ОБЩИЕ СТИЛИ ---------------------------------------------------------------------------------------------------------
 
 body {
-  font-family: Georgia, serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+  color: #4F4F4F;
 }
 
 a {
@@ -63,7 +44,7 @@ a {
   #__f > .border-top-left-radius (0);
   #__f > .border-top-right-radius (0);
 
-  color: #dc555f;
+  color: #CC3535;
 }
 
 // СТИЛИ ТАБЛИЦ --------------------------------------------------------------------------------------------------------
@@ -88,8 +69,8 @@ table.grid>thead>tr>th {
 // ТАБИКИ --------------------------------------------------------------------------------------------------------------
 
 .tabs {
-  border-top: 1px solid #c0c0c0;
-  border-bottom: 1px solid #c0c0c0;
+  border-top: 1px solid #9A9A9A;
+  border-bottom: 1px solid #9A9A9A;
   background-color: inherit;
 
   .tab {
