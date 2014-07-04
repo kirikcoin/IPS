@@ -1,0 +1,224 @@
+@import "../../../styles/functions.less";
+
+// Custom fonts ---------------------------------------------------------------------------------------------------------
+
+@font-face {
+  font-family: "Georgia";
+  font-style: normal;
+  src: url(../../../styles/georgia.woff) format('woff');
+}
+
+@font-face {
+  font-family: "Georgia";
+  font-style: italic;
+  src: url(../../../styles/georgiai.woff) format('woff');
+}
+
+@font-face {
+  font-family: "Georgia";
+  font-weight: bold;
+  src: url(../../../styles/georgiab.woff) format('woff');
+}
+
+// ОБЩИЕ СТИЛИ ---------------------------------------------------------------------------------------------------------
+
+body {
+  font-family: Georgia, serif;
+}
+
+a {
+  color: #78a0bb;
+}
+
+
+// ФОН СТРАНИЦЫ --------------------------------------------------------------------------------------------------------
+
+#pageBackground {
+  #__f > .radial-eclipse-gradient-background(white, white);
+}
+
+// ВСПЛЫВАЮЩИЕ СООБЩЕНИЯ -----------------------------------------------------------------------------------------------
+
+#jsf_messages, #page_messages {
+  #__f > .border-radius(0);
+}
+
+// СТИЛЬ СТРАНИЦЫ ------------------------------------------------------------------------------------------------------
+
+.border-shadow {
+  border: none;
+  box-shadow: none;
+
+  #__f > .border-radius(0);
+}
+
+.page-header {
+  background-color: inherit;
+
+  padding-left: 0;
+  padding-right: 0;
+
+  #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
+
+  #__f > .border-top-left-radius (0);
+  #__f > .border-top-right-radius (0);
+
+  color: #dc555f;
+}
+
+// СТИЛИ ТАБЛИЦ --------------------------------------------------------------------------------------------------------
+
+
+table.grid>thead>tr>th {
+  background-color: #ffffff;
+//  border: none;
+  font-weight: normal;
+  height: initial;
+  padding: 0;
+
+  padding-bottom: 5px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 5px;
+
+  text-align: center;
+}
+
+
+// ТАБИКИ --------------------------------------------------------------------------------------------------------------
+
+.tabs {
+  border-top: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
+  background-color: inherit;
+
+  .tab {
+
+    a {
+      color: #78a0bb;
+    }
+  }
+
+  .tab_active {
+    background: none;
+    background-color: #eeeeee;
+
+    a {
+      color: #78a0bb !important;
+      text-shadow: none;
+    }
+  }
+
+}
+
+// КНОПКИ --------------------------------------------------------------------------------------------------------------
+
+#__buttons {
+  .button {
+    #__f > .border-radius(0);
+  }
+
+  .button-green {
+    background: none;
+    background-color: #78a0bb;
+    .button;
+  }
+
+  .button-green_disabled {
+    background: none;
+    background-color: #A8B3BB;
+  }
+
+  .button-green_hover {
+    background-color: #498BB8;
+  }
+
+  .button-black {
+    background-color: #78a0bb;
+    background-repeat: no-repeat;
+    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
+    .button;
+  }
+
+  .button-black_hover {
+    background: none;
+    background-color: #498BB8;
+  }
+
+  .button-heading {
+    border: none;
+
+    background-color: #78a0bb;
+
+    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
+    box-shadow: none;
+
+    .button;
+  }
+
+  .button-heading_hover {
+    background-color: #498BB8;
+  }
+}
+
+a.button-green {
+  #__buttons > .button-green;
+}
+
+a.button-green.disabled {
+  #__buttons > .button-green_disabled;
+}
+
+a.button-green:hover {
+  #__buttons > .button-green_hover;
+}
+
+a.button-green.disabled:hover {
+  #__buttons > .button-green_disabled;
+}
+
+a.button-black {
+  #__buttons > .button-black;
+}
+
+a.button-black:hover {
+  #__buttons > .button-black_hover;
+}
+
+a.button-heading {
+  #__buttons > .button-heading;
+}
+
+a.button-heading:hover {
+  #__buttons > .button-heading_hover;
+}
+
+div.menu-bar.button-green>a:first-child {
+  #__buttons > .button-green;
+}
+
+div.menu-bar.button-green>a:first-child:hover {
+  #__buttons > .button-green_hover;
+}
+
+div.menu-bar.button-green>a:first-child {
+  #__buttons > .button-green;
+}
+
+div.menu-bar.button-green>a:first-child:hover {
+  #__buttons > .button-green_hover;
+}
+
+div.eyeline_inputDate {
+  font-family: Georgia, serif;
+//  font-family: serif;
+//  font-family: Georgia, Times, "Times New Roman", serif;
+}
+
+input.hasDatepicker {
+  text-align: left !important;
+}
+
+#error .page-header {
+  text-align: center;
+}
