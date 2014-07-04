@@ -70,6 +70,22 @@
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>
+
+    <attribute>
+      <description>Ключ параметра для передачи при подтверждении</description>
+      <name>paramKey</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Значения параметра для передачи при подтверждении</description>
+      <name>paramValue</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+
   </tag>
 
   <tag>

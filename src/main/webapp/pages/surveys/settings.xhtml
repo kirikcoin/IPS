@@ -3,6 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
     >
 
   <ui:composition template="/templates/main.xhtml">
@@ -521,58 +522,30 @@
         <!--
             Survey delete confirmation dialog
         -->
-        <eye:dialog id="deleteDialog"
-                    title="#{bundle['survey.settings.delete.title']}"
-                    width="300">
+        <ips:confirmDialog id="deleteDialog"
+                           text="#{bundle['survey.settings.delete.prompt']}"
+                           title="#{bundle['survey.settings.delete.title']}"
+                           actionBean="#{surveySettingsController}"
+                           actionName="deleteSurvey"
+                           paramKey="errorID"
+                           paramValue="deleteDialog"
+                           width="450"/>
 
-          <h:outputText value="#{bundle['survey.settings.delete.prompt']}"/>
-
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['survey.settings.delete.prompt.yes']}"
-                             action="#{surveySettingsController.deleteSurvey}">
-                <f:param name="errorId" value="deleteDialog"/>
-              </h:commandLink>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['survey.settings.delete.prompt.no']}"
-                             onclick="return page.onDialogCancel('deleteDialog');"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-
-        </eye:dialog>
 
         <!--
             Question delete confirmation dialog
         -->
-        <eye:dialog id="questionDeleteDialog"
-                    title="#{bundle['survey.settings.questions.delete.title']}"
-                    width="300">
 
-          <h:outputText value="#{bundle['survey.settings.questions.delete.prompt']}"/>
+        <ips:confirmDialog id="questionDeleteDialog"
+                           text="#{bundle['survey.settings.questions.delete.prompt']}"
+                           title="#{bundle['survey.settings.questions.delete.title']}"
+                           actionBean="#{surveySettingsController}"
+                           actionName="deleteQuestion"
+                           paramKey="errorID"
+                           paramValue="questionDeleteDialog"
+                           width="300"/>
 
-          <eye:buttons>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['survey.settings.questions.delete.prompt.yes']}"
-                             action="#{surveySettingsController.deleteQuestion}">
-                <f:param name="errorId" value="questionDeleteDialog"/>
-              </h:commandLink>
-            </eye:button>
-            <eye:button>
-              <h:commandLink styleClass="button-green"
-                             value="#{bundle['survey.settings.questions.delete.prompt.no']}"
-                             onclick="return page.onDialogCancel('questionDeleteDialog');"/>
-            </eye:button>
-            <eye:space/>
-          </eye:buttons>
-
-        </eye:dialog>
-
-        <!--
+       <!--
             Question modification dialog
         -->
         <eye:dialog id="questionModificationDialog"
