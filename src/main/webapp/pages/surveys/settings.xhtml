@@ -31,7 +31,10 @@
             page.onQuestionModificationDialog();
           } else if ("#{surveySettingsController.errorId}" == 'surveyPreviewDialog') {
             page.onPreviewClick();
+          } else if ("#{surveySettingsController.errorId}" == 'deleteDialog') {
+            page.showSurveyDeleteDialog();
           }
+
 
           if (#{surveySettingsController.previewSentOk}) {
             ips.message.info("#{bundle['survey.settings.preview.success']}");
@@ -72,7 +75,7 @@
               <h:outputLink id="deleteButton"
                             value="#"
                             styleClass="button-heading"
-                            onclick="jsfc('deleteDialog').show(); return false;"
+                            onclick="page.showSurveyDeleteDialog()"
                             style="margin-left: 5px;"
                             rendered="#{userSession.surveyModificationAllowed}">
                 <h:outputText value="#{bundle['survey.details.delete']}"/>
@@ -527,7 +530,7 @@
                            title="#{bundle['survey.settings.delete.title']}"
                            actionBean="#{surveySettingsController}"
                            actionName="deleteSurvey"
-                           paramKey="errorID"
+                           paramKey="errorId"
                            paramValue="deleteDialog"
                            width="450"/>
 
@@ -541,11 +544,13 @@
                            title="#{bundle['survey.settings.questions.delete.title']}"
                            actionBean="#{surveySettingsController}"
                            actionName="deleteQuestion"
-                           paramKey="errorID"
+                           paramKey="errorId"
                            paramValue="questionDeleteDialog"
                            width="300"/>
 
-       <!--
+
+
+        <!--
             Question modification dialog
         -->
         <eye:dialog id="questionModificationDialog"

@@ -33,7 +33,7 @@
                        value="#{bundle['dialog.confirm']}"
                        action="#{actionBean[actionName]}">
 
-          <c:if test="${!empty paramKey and paramKey!=null and paramValue!=null}">
+          <c:if test="${!empty paramKey and paramValue!=null}">
             <f:param name="${paramKey}" value="${paramValue}"/>
           </c:if>
         </h:commandLink>

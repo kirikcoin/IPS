@@ -43,6 +43,11 @@ var page = {
     return false;
   },
 
+  showSurveyDeleteDialog: function (id) {
+    jsfc('deleteDialog').show();
+    return false;
+  },
+
   lookup: function(id) {
     var elem = jsfc(id);
     if (!elem) {

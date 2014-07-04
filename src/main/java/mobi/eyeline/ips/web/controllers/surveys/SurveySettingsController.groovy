@@ -210,9 +210,11 @@ class SurveySettingsController extends BaseSurveyController {
 
         try {
             esdpService.delete(getCurrentUser(), survey)
+
         } catch (Exception e) {
             logger.error(e.message, e)
             addErrorMessage strings['esdp.error.survey.deletion']
+            errorId = FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
 
             return null
         }
