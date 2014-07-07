@@ -4,7 +4,7 @@ import mobi.eyeline.ips.util.RequestParseUtils;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class UssdOption {
@@ -56,7 +56,7 @@ public abstract class UssdOption {
     }
 
     public Map<String, Object> getProperties() {
-        return new HashMap<String, Object>() {{
+        return new LinkedHashMap<String, Object>() {{
             put("type", type.name());
             put(PARAM_SURVEY_ID, surveyId);
             put(PARAM_SKIP_VALIDATION, skipValidation);

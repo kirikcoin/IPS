@@ -1,8 +1,10 @@
 package mobi.eyeline.ips.generators.util;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.charactersOf;
+import static com.google.common.collect.Lists.newArrayList;
 
 public class CharUtils {
 
@@ -48,6 +50,17 @@ public class CharUtils {
             }
         }
 
+        return buf.toString();
+    }
+
+    public static CharSequence sort(CharSequence source) {
+        final List<Character> characters = newArrayList(charactersOf(source));
+        Collections.sort(characters);
+
+        final StringBuilder buf = new StringBuilder(source.length());
+        for (Character c : characters) {
+            buf.append(c);
+        }
         return buf.toString();
     }
 }

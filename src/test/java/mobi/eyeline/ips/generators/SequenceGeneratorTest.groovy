@@ -73,7 +73,7 @@ class SequenceGeneratorTest extends GroovyTestCase {
         ensureUnique(results)
 
         assertEquals(
-                '[lx99999, lyajh4y, lyba5oz, lyck8yc, lyedrw1, lygoqk2, lyjh4yf, lymty04, lyqn8s5, lyu0yai, lyzv3g7]',
+                '[cnzzzzz, co097uo, co10vep, co2ayo2, co43hmr, co6egas, co97uo5, cocjoqu, cogdyiv, cokqo08, coplt6x]',
                 results[0..10].toString())
     }
 
