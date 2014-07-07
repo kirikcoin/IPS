@@ -91,6 +91,7 @@
       <firstmatchmapper>
         <mapper type="glob" from="resources/skins/mobak/styles/*.css" to="resources/skins/mobak/styles/*.css.${release.version}"/>
         <mapper type="glob" from="resources/skins/araks/styles/*.css" to="resources/skins/araks/styles/*.css.${release.version}"/>
+        <mapper type="glob" from="resources/skins/eyeline/styles/*.css" to="resources/skins/eyeline/styles/*.css.${release.version}"/>
         <mapper type="glob" from="*.js" to="*.js.${release.version}"/>
         <mapper type="identity"/>
       </firstmatchmapper>
