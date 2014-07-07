@@ -14,7 +14,11 @@ import mobi.eyeline.ips.repository.RepositoryMock
 
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_ANSWER_ID
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_QUESTION_ID
-import static mobi.eyeline.ips.messages.UssdOption.*
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_BAD_COMMAND
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_MESSAGE_TYPE
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID
 import static mobi.eyeline.ips.messages.UssdOption.UssdOptionType.ANSWER
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
@@ -348,7 +352,7 @@ class UssdServiceTest extends DbTestCase {
 
         page1Again.with {
             assertEquals 'Second one', text
-            assertEquals 'questionId=2&answerId=2&skip_validation=false&type=ANSWER&survey_id=1',
+            assertEquals 'type=ANSWER&survey_id=1&skip_validation=false&questionId=2&answerId=2',
                     options[0].uri
             assertEquals 'O2', options[0].text
         }

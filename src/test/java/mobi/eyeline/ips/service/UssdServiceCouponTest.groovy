@@ -1,7 +1,11 @@
 package mobi.eyeline.ips.service
 
 import mobi.eyeline.ips.messages.UssdResponseModel
-import mobi.eyeline.ips.model.*
+import mobi.eyeline.ips.model.Role
+import mobi.eyeline.ips.model.Survey
+import mobi.eyeline.ips.model.SurveyDetails
+import mobi.eyeline.ips.model.SurveyPattern
+import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.properties.DefaultMockConfig
 import mobi.eyeline.ips.repository.DbTestCase
@@ -103,14 +107,14 @@ class UssdServiceCouponTest extends DbTestCase {
 
             it
         }
-        assertEquals(['LNZZ'], pushService.textSent)
+        assertEquals(['CNZZ'], pushService.textSent)
 
         request([
                 (PARAM_MSISDN):    msisdn,
                 (PARAM_SURVEY_ID): sid
         ])
 
-        assertEquals(['LNZZ', 'LNZZ'], pushService.textSent)
+        assertEquals(['CNZZ', 'CNZZ'], pushService.textSent)
     }
 
     void test2() {
@@ -122,14 +126,14 @@ class UssdServiceCouponTest extends DbTestCase {
                 (PARAM_MSISDN):    '123',
                 (PARAM_SURVEY_ID): sid
         ])
-        assertEquals(['LNZZ'], pushService.textSent)
+        assertEquals(['CNZZ'], pushService.textSent)
 
         request([
                 (PARAM_MSISDN):    '456',
                 (PARAM_SURVEY_ID): sid
         ])
 
-        assertEquals(['LNZZ', 'LT6O'], pushService.textSent)
+        assertEquals(['CNZZ', 'CT6O'], pushService.textSent)
     }
 
     void test3() {
