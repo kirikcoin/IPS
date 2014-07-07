@@ -1,0 +1,10 @@
+.build
+lib
+.idea
+
+out
+*.iml
+
+ivy-report.css
+mobi.eyeline-ips-site.graphml
+mobi.eyeline-ips-site.html
