@@ -1,9 +1,8 @@
 .build
 lib
-.idea
+.idea/workspace.xml
 
 out
-*.iml
 
 ivy-report.css
 mobi.eyeline-ips-site.graphml
