@@ -1,0 +1,36 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets">
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css" href="#{resources.path}/resources/pages/graph-test.less"/>
+
+      <script type="text/javascript"
+              src="#{resources.path}/resources/pages/graph-test.js#{resources.version}"></script>
+    </ui:define>
+
+    <ui:define name="scripts">
+      <script type="text/javascript">
+        //    <![CDATA[
+        $(function () {
+          page.init();
+        });
+        //    ]]>
+      </script>
+    </ui:define>
+
+    <ui:define name="content">
+
+      <!--<div id="graph"></div>-->
+
+      <svg width="650" height="680">
+        <g transform="translate(20,20)"/>
+      </svg>
+
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

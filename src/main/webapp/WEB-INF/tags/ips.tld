@@ -151,4 +151,54 @@
     </attribute>
   </tag>
 
+  <tag>
+    <description>Дерево</description>
+    <name>tree</name>
+    <tag-class>mobi.eyeline.util.jsf.components.base.BaseTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>Идентификатор компонента</description>
+      <name>id</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Флаг, означающий отображать или нет объект</description>
+      <name>rendered</name>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>Атрибут, описывающий откуда брать модель для объекта</description>
+      <name>value</name>
+      <required>true</required>
+      <rtexprvalue>false</rtexprvalue>
+      <deferred-value>
+        <type>mobi.eyeline.ips.components.tree.TreeModel</type>
+      </deferred-value>
+    </attribute>
+    <attribute>
+      <description>Показывать или нет компонент на странице (по-умолчанию: true)</description>
+      <name>visible</name>
+      <rtexprvalue>false</rtexprvalue>
+      <deferred-value>
+        <type>java.lang.Boolean</type>
+      </deferred-value>
+    </attribute>
+    <attribute>
+      <description>Высота графика</description>
+      <name>height</name>
+      <required>true</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Integer</type>
+    </attribute>
+    <attribute>
+      <description>Ширина графика</description>
+      <name>width</name>
+      <required>true</required>
+      <rtexprvalue>false</rtexprvalue>
+      <type>java.lang.Integer</type>
+    </attribute>
+  </tag>
 </taglib>
