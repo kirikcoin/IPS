@@ -150,6 +150,12 @@
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
+  <managed-bean>
+    <managed-bean-name>treeTestController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.TreeTestController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
   <!-- VALIDATION ================================================================================================== -->
 
   <validator>

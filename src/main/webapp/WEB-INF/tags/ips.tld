@@ -175,7 +175,7 @@
       <required>true</required>
       <rtexprvalue>false</rtexprvalue>
       <deferred-value>
-        <type>mobi.eyeline.ips.components.tree.TreeModel</type>
+        <type>mobi.eyeline.ips.components.tree.TreeNode</type>
       </deferred-value>
     </attribute>
     <attribute>
