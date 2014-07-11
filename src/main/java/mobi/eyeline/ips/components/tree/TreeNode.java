@@ -3,8 +3,9 @@ package mobi.eyeline.ips.components.tree;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TreeNode {
+public class TreeNode implements Comparable<TreeNode> {
 
+    private final int id;
     private final String label;
     private final String description;
 
@@ -13,9 +14,14 @@ public class TreeNode {
      */
     private final List<TreeEdge> edges = new LinkedList<>();
 
-    public TreeNode(String label, String description) {
+    public TreeNode(int id, String label, String description) {
+        this.id = id;
         this.label = label;
         this.description = description;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getLabel() {
@@ -28,5 +34,10 @@ public class TreeNode {
 
     public List<TreeEdge> getEdges() {
         return edges;
+    }
+
+    @Override
+    public int compareTo(TreeNode that) {
+        return Integer.compare(this.getId(), that.getId());
     }
 }

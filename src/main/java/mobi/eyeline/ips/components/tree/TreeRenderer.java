@@ -6,11 +6,9 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.render.Renderer;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class TreeRenderer extends Renderer {
 
@@ -29,14 +27,14 @@ public class TreeRenderer extends Renderer {
                 " id='" + tree.getId() + "'" +
                 " style='" + (tree.isVisible() ? "" : "display: none") + "'" +
                 ">");
-
         w.a("\n<svg" +
                 " class='eyeline_tree'" +
                 " width='" + tree.getWidth() + "'" +
                 " height='" + tree.getHeight() + "'" +
                 ">");
 
-        w.a("\n<g transform='translate(20,20)'/>");
+        w.a("\n<g transform='translate(0, 0)'/>");
+
         w.a("\n</svg>");
         w.a("\n</div>");
 
@@ -48,6 +46,7 @@ public class TreeRenderer extends Renderer {
 
         w.a("var options = {};");
         w.a("options['graph']=").a(new JsonBuilder().toJson(tree.getValue())).a(";");
+        w.a("options['direction']='").a(tree.getDirection().name()).a("';");
 
         w.a("createTree('" + tree.getId() + "', options);");
 
@@ -75,13 +74,11 @@ public class TreeRenderer extends Renderer {
 
     private static class JsonBuilder {
 
-        private Map<TreeNode, Integer> nodeIds = new HashMap<>();
-
         public String toJson(TreeNode root) throws IOException {
             final StringBuilder w = new StringBuilder();
 
-            final HashSet<TreeNode> nodes = new HashSet<>();
-            final HashSet<OriginatingTreeEdge> edges = new HashSet<>();
+            final Set<TreeNode> nodes = new TreeSet<>();
+            final Set<OriginatingTreeEdge> edges = new TreeSet<>(OriginatingTreeEdge.COMPARATOR);
             collect(root, nodes, edges);
 
             w.append("{nodes: [");
@@ -109,19 +106,10 @@ public class TreeRenderer extends Renderer {
             }
         }
 
-        private String getId(TreeNode node) {
-            if (!nodeIds.containsKey(node)) {
-                final int id = nodeIds.isEmpty() ? 0 : Collections.max(nodeIds.values()) + 1;
-                nodeIds.put(node, id);
-            }
-
-            return String.valueOf(nodeIds.get(node));
-        }
-
         private void nodeToJson(Appendable w,
                                 TreeNode node) throws IOException {
             w.append("{");
-            w.append("id: '").append(getId(node)).append("'");
+            w.append("id: '").append(String.valueOf(node.getId())).append("'");
             w.append(", ");
             w.append("label: '").append(escapeJs(node.getLabel())).append("'");
             if (node.getDescription() != null) {
@@ -135,9 +123,9 @@ public class TreeRenderer extends Renderer {
                                 TreeNode from,
                                 TreeEdge edge) throws IOException {
             w.append("{");
-            w.append("from: '").append(getId(from)).append("'");
+            w.append("from: '").append(String.valueOf(from.getId())).append("'");
             w.append(", ");
-            w.append("to: '").append(getId(edge.getTarget())).append("'");
+            w.append("to: '").append(String.valueOf(edge.getTarget().getId())).append("'");
             w.append(", ");
             w.append("label: '").append(escapeJs(edge.getLabel())).append("'");
             if (edge.getDescription() != null) {
@@ -158,13 +146,22 @@ public class TreeRenderer extends Renderer {
             private final TreeNode node;
 
             private OriginatingTreeEdge(TreeNode node, TreeEdge edge) {
-                super(edge.getLabel(), edge.getDescription(), edge.getTarget());
+                super(edge.getId(), edge.getLabel(), edge.getDescription(), edge.getTarget());
                 this.node = node;
             }
 
             public TreeNode getNode() {
                 return node;
             }
+
+            public static final Comparator<OriginatingTreeEdge> COMPARATOR =
+                    new Comparator<OriginatingTreeEdge>() {
+                        @Override
+                        public int compare(OriginatingTreeEdge l, OriginatingTreeEdge r) {
+                            return (l.getNode().equals(r.getNode())) ?
+                                    l.compareTo(r) : l.getNode().compareTo(r.getNode());
+                        }
+                    };
         }
     }
 

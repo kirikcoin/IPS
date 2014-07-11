@@ -1,53 +1,73 @@
 package mobi.eyeline.ips.web.controllers
 
-import groovy.transform.CompileStatic
-import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
 
-@CompileStatic
+@SuppressWarnings(['GrMethodMayBeStatic', 'GroovyAssignabilityCheck', 'GrUnresolvedAccess'])
+@Mixin(TreeTestHelpers)
 class TreeTestController {
 
-    @SuppressWarnings("GrMethodMayBeStatic")
-    TreeNode getTree() {
+    def width = 1168
+    def height = 400
 
-        TreeNode q1 = new TreeNode('Вопрос 1', 'Текст первого вопроса, возможно очень длинный')
-        TreeNode q2 = new TreeNode('Вопрос 2', 'Текст второго вопроса, возможно очень длинный')
-        TreeNode q3 = new TreeNode('Вопрос 3', 'Текст третьего вопроса, возможно очень длинный')
-        TreeNode q4 = new TreeNode('Вопрос 4', 'Текст четвертого  вопроса, возможно очень длинный')
-        TreeNode q5 = new TreeNode('Вопрос 5', 'Текст пятого вопроса, возможно очень длинный')
-        TreeNode end = new TreeNode('Конец опроса', null)
+    def end = 0
 
-        q1.edges.with {
-            add new TreeEdge('1', 'Длинный текст варианта 1', q2)
-            add new TreeEdge('2', 'Длинный текст варианта 2', q3)
-            add new TreeEdge('3', 'Длинный текст варианта 3', end)
-        }
+    //
+    //  Note: this is a test code, made to be as compact as possible. 
+    //  Please, do not bring things like this (and TreeTestHelpers) to the main codebase!
+    //
 
-        q2.edges.with {
-            add new TreeEdge('1', 'Длинный текст варианта 1', q4)
-            add new TreeEdge('2', 'Длинный текст варианта 2', q4)
-            add new TreeEdge('3', 'Длинный текст варианта 3', q4)
-        }
-
-        q3.edges.with {
-            add new TreeEdge('1', 'Длинный текст варианта 1', q5)
-            add new TreeEdge('2', 'Длинный текст варианта 2', q5)
-            add new TreeEdge('3', 'Длинный текст варианта 3', q5)
-        }
-
-        q4.edges.with {
-            add new TreeEdge('1', 'Длинный текст варианта 1', end)
-            add new TreeEdge('2', 'Длинный текст варианта 2', end)
-            add new TreeEdge('3', 'Длинный текст варианта 3', end)
-        }
-
-        q5.edges.with {
-            add new TreeEdge('1', 'Длинный текст варианта 1', end)
-            add new TreeEdge('2', 'Длинный текст варианта 2', end)
-            add new TreeEdge('3', 'Длинный текст варианта 3', end)
-        }
-        
-        return q1
+    def smallNonlinear = [
+            end: new TreeNode(end, 'Конец опроса', null)
+    ].withDefault(this.&q).with { _ ->
+        link _[1], [_[2], _[3], _['end']]
+        link _[2], [_[4]]*3
+        link _[3], [_[5]]*3
+        link _[4], [_['end']]*3
+        link _[5], [_['end']]*3
+        _[1]
     }
-}    
+
+    def smallLinear = [
+            end: new TreeNode(end, 'Конец опроса', null)
+    ].withDefault(this.&q).with { _ ->
+        link _[1], [_[2]]*3
+        link _[2], [_[3]]*2
+        link _[3], [_[4]]*5
+        link _[4], [_['end'], _['end'], _['end']]
+        _[1]
+    }
+
+    def longLinear = [
+            end: new TreeNode(end, 'Конец опроса', null)
+    ].withDefault(this.&q).with { _ ->
+        link _[1], [_[2]]*3
+        link _[2], [_[3]]*2
+        link _[3], [_[4]]*2
+        link _[4], [_[5]]*2
+        link _[5], [_[6]]*2
+        link _[6], [_[7]]*2
+        link _[7], [_[8]]*2
+        link _[8], [_[9]]*2
+        link _[9], [_[10]]*2
+        link _[10], [_[11]]*2
+        link _[11], [_[12]]*2
+        link _[12], [_[13]]*2
+        link _[13], [_[14]]*2
+        link _[14], [_[15]]*2
+        link _[15], [_[16]]*2
+        link _[16], [_['end']]*3
+        _[1]
+    }
+
+    def wideLinear = [
+            end: new TreeNode(end, 'Конец опроса', null)
+    ].withDefault(this.&q).with { _ ->
+        link _[1], [_[2]]*7
+        link _[2], [_[3]]*10
+        link _[3], [_[4]]*5
+        link _[4], [_[5]]*12
+        link _[5], [_['end']]*3
+        _[1]
+    }
+}
 

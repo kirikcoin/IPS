@@ -11,6 +11,8 @@ public class Tree extends UIPanelImpl {
     private int height;
     private int width;
 
+    private TreeDirection direction = TreeDirection.LR;
+
     private TreeNode value;
 
 
@@ -48,6 +50,19 @@ public class Tree extends UIPanelImpl {
         this.width = width;
     }
 
+    public TreeDirection getDirection() {
+        final ValueExpression exp = getValueExpression("direction");
+        if (exp == null) {
+            return direction;
+        } else {
+            return (TreeDirection) exp.getValue(getFacesContext().getELContext());
+        }
+    }
+
+    public void setDirection(TreeDirection direction) {
+        this.direction = direction;
+    }
+
     public TreeNode getValue() {
         final ValueExpression exp = getValueExpression("value");
         if (exp == null) {
@@ -67,6 +82,7 @@ public class Tree extends UIPanelImpl {
                 super.saveState(context),
                 height,
                 width,
+                direction,
                 value
         };
     }
@@ -77,6 +93,7 @@ public class Tree extends UIPanelImpl {
         super.restoreState(context, values[0]);
         height = (Integer) values[1];
         width = (Integer) values[2];
-        value = (TreeNode) values[3];
+        direction = (TreeDirection) values[3];
+        value = (TreeNode) values[4];
     }
 }

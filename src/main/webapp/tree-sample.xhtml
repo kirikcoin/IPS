@@ -1,0 +1,48 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://ips.eyeline.mobi/jsf/facelets">
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="head">
+      <!-- Nothing here. -->
+      <style type="text/css">
+        div.eyeline_tree {
+          padding-bottom: 20px;
+        }
+      </style>
+    </ui:define>
+
+    <ui:define name="content">
+
+      <h1>Small non-linear</h1>
+      <eye:tree id="smallTree"
+                value="#{treeTestController.smallNonlinear}"
+                height="#{treeTestController.height}"
+                width="#{treeTestController.width}"
+                direction="TB"/>
+
+      <h1>Small linear</h1>
+      <eye:tree id="smallLinear"
+                value="#{treeTestController.smallLinear}"
+                height="#{treeTestController.height}"
+                width="#{treeTestController.width}"/>
+
+      <h1>Long linear</h1>
+      <eye:tree id="longLinear"
+                value="#{treeTestController.longLinear}"
+                height="#{treeTestController.height}"
+                width="#{treeTestController.width}"/>
+
+      <h1>Wide linear</h1>
+      <eye:tree id="wideLinear"
+                value="#{treeTestController.wideLinear}"
+                height="#{treeTestController.height}"
+                width="#{treeTestController.width}"/>
+
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>
