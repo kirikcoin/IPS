@@ -9,13 +9,13 @@ import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.repository.RespondentRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
-import mobi.eyeline.util.jsf.components.chart.bar.Bar
-import mobi.eyeline.util.jsf.components.chart.bar.BarChart
-import mobi.eyeline.util.jsf.components.chart.bar.BarModel
-import mobi.eyeline.util.jsf.components.chart.pie.Pie
-import mobi.eyeline.util.jsf.components.chart.pie.PieChart
-import mobi.eyeline.util.jsf.components.chart.pie.PieModel
-import mobi.eyeline.util.jsf.components.collapsing_group.CollapsingGroup
+import mobi.eyeline.jsfcomponents.chart.bar.Bar
+import mobi.eyeline.jsfcomponents.chart.bar.BarChart
+import mobi.eyeline.jsfcomponents.chart.bar.BarModel
+import mobi.eyeline.jsfcomponents.chart.pie.Pie
+import mobi.eyeline.jsfcomponents.chart.pie.PieChart
+import mobi.eyeline.jsfcomponents.chart.pie.PieModel
+import mobi.eyeline.jsfcomponents.collapsing_group.CollapsingGroup
 
 import javax.faces.component.UIComponent
 import javax.faces.component.html.HtmlOutputText

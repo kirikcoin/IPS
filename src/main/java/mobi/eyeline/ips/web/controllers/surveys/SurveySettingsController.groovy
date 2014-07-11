@@ -16,8 +16,8 @@ import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
-import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
-import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
+import mobi.eyeline.jsfcomponents.dynamic_table.model.DynamicTableModel
+import mobi.eyeline.jsfcomponents.dynamic_table.model.DynamicTableRow
 
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem

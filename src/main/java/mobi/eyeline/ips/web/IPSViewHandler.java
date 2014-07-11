@@ -1,9 +1,10 @@
 package mobi.eyeline.ips.web;
 
 
-import mobi.eyeline.util.jsf.components.TrinidadAlternateViewHandler;
+
 
 import javax.faces.application.ViewHandler;
+import javax.faces.application.ViewHandlerWrapper;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
@@ -12,14 +13,20 @@ import java.util.Locale;
  * author: Denis Enenko
  * date: 22.01.2014
  */
-public class IPSViewHandler extends TrinidadAlternateViewHandler
+public class IPSViewHandler extends ViewHandlerWrapper
 {
   public final static String LOCALE_PARAMETER = "ips_user_locale";
 
+    private ViewHandler wrappedViewHandler;
 
-  public IPSViewHandler(ViewHandler parent) {
-    super(parent);
-  }
+    public IPSViewHandler(ViewHandler wrappedViewHandler) {
+      this.wrappedViewHandler = wrappedViewHandler;
+    }
+
+    @Override
+    public ViewHandler getWrapped() {
+        return wrappedViewHandler;
+    }
 
   @Override
   public Locale calculateLocale(FacesContext context) {

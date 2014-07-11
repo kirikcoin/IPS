@@ -24,7 +24,6 @@
       <var>bundle</var>
     </resource-bundle>
 
-    <message-bundle>external</message-bundle>
   </application>
 
   <!-- BEANS ======================================================================================================= -->

@@ -11,10 +11,9 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
-import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import mobi.eyeline.jsfcomponents.data_table.model.DataTableModel
+import mobi.eyeline.jsfcomponents.data_table.model.DataTableSortOrder
+
 
 @CompileStatic
 @Slf4j('logger')

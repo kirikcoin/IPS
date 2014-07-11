@@ -41,23 +41,7 @@
     <dependency org="dk.brics.automaton" name="automaton" rev="1.11-8" transitive="false"
                 conf="site->default"/>
 
-    <dependency org="com.sun.facelets" name="jsf-facelets" rev="1.1.14" transitive="false"
-                conf="site->default"/>
-    <dependency org="org.apache.myfaces.core" name="myfaces-api" rev="1.2.9" transitive="false"
-                conf="site->default"/>
-    <dependency org="org.apache.myfaces.core" name="myfaces-impl" rev="1.2.9" transitive="false"
-                conf="site->default"/>
-    <dependency org="org.apache.myfaces.tomahawk" name="tomahawk" rev="1.1.9" transitive="false"
-                conf="site->default"/>
-    <dependency org="org.apache.myfaces.trinidad" name="trinidad-api" rev="1.2.13"
-                transitive="false" conf="site->default"/>
-    <dependency org="org.apache.myfaces.trinidad" name="trinidad-impl" rev="1.2.13"
-                transitive="false" conf="site->default"/>
-    <dependency org="javax.portlet" name="portlet-api" rev="1.0"
-                transitive="false" conf="site->default"/>
 
-    <dependency org="mobi.eyeline.util" name="jsfcomponents" rev="1.108" transitive="false"
-                conf="site->components"/>
     <dependency org="mobi.eyeline.util.extutils" name="lessparser" rev="1.6.1" conf="site->prod"/>
     <dependency org="mobi.eyeline.util.extutils" name="generalutils" rev="1.38.0"
                 transitive="false"/>
@@ -73,6 +57,11 @@
                 conf="site->default" transitive="true"/>
     <dependency org="org.hibernate" name="hibernate-ehcache" rev="4.2.8.Final" conf="site->default"/>
     <dependency org="mysql" name="mysql-connector-java" rev="5.1.13" conf="site->default"/>
+
+    <!-- JSF components -->
+    <dependency org="org.glassfish" name="javax.faces" rev="2.2.4" conf="site->default"/>
+    <dependency org="mobi.eyeline.util" name="jsf2components" rev="2.0-rc-201407041227" conf="site->components"
+            transitive="false"/>
 
     <!-- Utils -->
     <dependency org="com.google.guava" name="guava" rev="16.0.1" conf="site->default"/>

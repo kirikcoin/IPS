@@ -10,8 +10,12 @@ import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
-import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
+import mobi.eyeline.jsfcomponents.data_table.model.DataTableModel
+import mobi.eyeline.jsfcomponents.data_table.model.DataTableSortOrder
+
+import javax.faces.bean.ManagedBean
+import javax.faces.bean.RequestScoped;
+
 
 @CompileStatic
 @Slf4j('logger')

@@ -1,14 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
 
-<f:view xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://java.sun.com/jsf/core"
-        xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:h="http://java.sun.com/jsf/html">
+<f:view contentType="text/html">
 
-  <html xmlns="http://www.w3.org/1999/xhtml">
-
-  <head>
+  <h:head>
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE"/>
 
     <title>#{bundle['app.title']}</title>
@@ -42,7 +41,7 @@
     <link rel="STYLESHEET" type="text/css"
           href="#{resources.path}/resources/skins/#{resources.skin}/styles/pages.less"/>
 
-  </head>
+  </h:head>
 
   <body>
 
@@ -88,6 +87,6 @@
 
 
   </body>
+  </f:view>
   </html>
 
-</f:view>
