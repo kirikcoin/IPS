@@ -16,58 +16,71 @@ class TreeTestController {
     //  Please, do not bring things like this (and TreeTestHelpers) to the main codebase!
     //
 
-    def smallNonlinear = [
+    def smallNonlinear = tree([
             end: new TreeNode(end, 'Конец опроса', null)
-    ].withDefault(this.&q).with { _ ->
-        link _[1], [_[2], _[3], _['end']]
-        link _[2], [_[4]]*3
-        link _[3], [_[5]]*3
-        link _[4], [_['end']]*3
-        link _[5], [_['end']]*3
-        _[1]
+    ]) {
+        link it, 1, [2, 3, 0]
+        link it, 2, [4]*3
+        link it, 3, [5]*3
+        link it, 4, ['end']*3
+        link it, 5, ['end']*3
+        root it, 1
     }
 
-    def smallLinear = [
+    def biggerNonlinear1 = tree([
             end: new TreeNode(end, 'Конец опроса', null)
-    ].withDefault(this.&q).with { _ ->
-        link _[1], [_[2]]*3
-        link _[2], [_[3]]*2
-        link _[3], [_[4]]*5
-        link _[4], [_['end'], _['end'], _['end']]
-        _[1]
+    ]) {
+        link it, 1, [2, 3, 4]
+        link it, 2, [7, 4]
+        link it, 3, [5, 6]
+        link it, 4, [6, 'end']
+        link it, 5, [6, 'end']
+        link it, 6, ['end', 'end']
+        link it, 7, [5, 6]
+        root it, 1
     }
 
-    def longLinear = [
+    def smallLinear = tree([
             end: new TreeNode(end, 'Конец опроса', null)
-    ].withDefault(this.&q).with { _ ->
-        link _[1], [_[2]]*3
-        link _[2], [_[3]]*2
-        link _[3], [_[4]]*2
-        link _[4], [_[5]]*2
-        link _[5], [_[6]]*2
-        link _[6], [_[7]]*2
-        link _[7], [_[8]]*2
-        link _[8], [_[9]]*2
-        link _[9], [_[10]]*2
-        link _[10], [_[11]]*2
-        link _[11], [_[12]]*2
-        link _[12], [_[13]]*2
-        link _[13], [_[14]]*2
-        link _[14], [_[15]]*2
-        link _[15], [_[16]]*2
-        link _[16], [_['end']]*3
-        _[1]
+    ]) {
+        link it, 1, [2]*3
+        link it, 2, [3]*2
+        link it, 3, [4]*5
+        link it, 4, ['end']*3
+        root it, 1
     }
 
-    def wideLinear = [
+    def longLinear = tree([
             end: new TreeNode(end, 'Конец опроса', null)
-    ].withDefault(this.&q).with { _ ->
-        link _[1], [_[2]]*7
-        link _[2], [_[3]]*10
-        link _[3], [_[4]]*5
-        link _[4], [_[5]]*12
-        link _[5], [_['end']]*3
-        _[1]
+    ]) {
+        link it, 1, [2]*3
+        link it, 2, [3]*2
+        link it, 3, [4]*2
+        link it, 4, [5]*2
+        link it, 5, [6]*2
+        link it, 6, [7]*2
+        link it, 7, [8]*2
+        link it, 8, [9]*2
+        link it, 9, [10]*2
+        link it, 10, [11]*2
+        link it, 11, [12]*2
+        link it, 12, [13]*2
+        link it, 13, [14]*2
+        link it, 14, [15]*2
+        link it, 15, [16]*2
+        link it, 16, ['end']*3
+        root it, 1
+    }
+
+    def wideLinear = tree([
+            end: new TreeNode(end, 'Конец опроса', null)
+    ]) {
+        link it, 1, [2]*7
+        link it, 2, [3]*10
+        link it, 3, [4]*5
+        link it, 4, [5]*12
+        link it, 5, ['end']*3
+        root it, 1
     }
 }
 

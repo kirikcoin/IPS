@@ -15,6 +15,8 @@ function createTree(contentId, options) {
 function Tree(contentId, options) {
   var $divElement = $("#" + contentId);
 
+  var $events = $({});
+
   /**
    * If true, edges originating from and targeted to the same nodes
    * are collapsed into a single one.
@@ -32,8 +34,8 @@ function Tree(contentId, options) {
    * </ol>
    *
    * @type {boolean}
-   *//*
-  var hideLabelsOfLinearPath = true;*/
+   */
+  var hideLabelsOfLinearPath = true;
 
   this.setVisible = function (visible) {
     $divElement.show(visible);
@@ -49,25 +51,63 @@ function Tree(contentId, options) {
     _setVisible(false);
   };
 
-  function _addPopupsToNodes(renderer) {
+  /**
+   * Binds an event listener.
+   *
+   * @param event     Event type.
+   * @param listener  Listener instance.
+   */
+  this.bind = function (event, listener) {
+    $events.on(event, listener);
+  };
+
+  /**
+   * Removes event listener.
+   *
+   * @param event     Event type.
+   * @param listener  Event listener instance.
+   *                  If null, all the listeners for this event type are removed.
+   */
+  this.unbind = function (event, listener) {
+    if (listener)   $events.off(event, listener);
+    else            $events.off(event);
+  };
+
+  function _drawNodes(renderer) {
     var oldDrawNodes = renderer.drawNodes();
     renderer.drawNodes(function (graph, root) {
       var svgNodes = oldDrawNodes(graph, root);
+      svgNodes.attr('data-id', function (d) { return d; });
       svgNodes.append("svg:title").text(function (d) {
-        return graph._nodes[d].value['detail'];
+        return graph.node(d).detail;
       });
       return svgNodes;
     });
   }
 
-  function _addPopupsToLabels(renderer) {
+  function _drawEdgeLabels(renderer) {
     var oldDrawEdgeLabels = renderer.drawEdgeLabels();
     renderer.drawEdgeLabels(function (graph, root) {
       var svgEdges = oldDrawEdgeLabels(graph, root);
       svgEdges.append("svg:title").text(function (d) {
-        return graph._edges[d].value['detail'];
+        return graph.edge(d).detail;
       });
       return svgEdges;
+    });
+  }
+
+  function _drawEdgePaths(renderer) {
+    var oldDrawEdgePaths = renderer.drawEdgePaths();
+    renderer.drawEdgePaths(function (graph, root) {
+      var svgPaths = oldDrawEdgePaths(graph, root);
+      svgPaths.attr('data-id', function (d) { return d; });
+      svgPaths.append("svg:title").text(function (d) {
+        var edge = graph.edge(d);
+        if (edge.collapsedLinearPathIds) {
+          return edge.detail;
+        }
+      });
+      return svgPaths;
     });
   }
 
@@ -112,26 +152,120 @@ function Tree(contentId, options) {
       return false;
     })(graph)) {}
 
+    while (collapseEdges && hideLabelsOfLinearPath && (function (g) {
+      for (var i1 = 0; i1 < g.nodes.length; i1++) {
+        var from = g.nodes[i1];
+
+        for (var i2 = 0; i2 < g.nodes.length; i2++) {
+          var to = g.nodes[i2];
+
+          var nonConnecting = $.grep(g.edges, function (e) {
+            //noinspection JSReferencingMutableVariableFromClosure
+            return e.from == from.id && e.to != to.id;
+          });
+
+          var connecting = $.grep(g.edges, function (e) {
+            //noinspection JSReferencingMutableVariableFromClosure
+            return e.from == from.id && e.to == to.id;
+          });
+
+          if (!nonConnecting.length && ((connecting.length > 1) ||
+              ((connecting.length == 1) && !connecting[0].hiddenLabels))) {
+
+            var descs = $.map(connecting, function (e) { return e.description; });
+
+            // Replace collapsed edges with a new one.
+            g.edges = _diff(g.edges, connecting);
+            g.edges.push({
+              from: from.id,
+              to: to.id,
+              label: '',
+              description: descs.join('\n'),
+              collapsedLinearPathIds: $.map(connecting, function (e) { return e.id; }),
+              hiddenLabels: true
+            });
+
+            return true;
+          }
+        } // for i2
+      } // for i1
+      return false;
+    })(graph)) {}
   }
 
-  function _postRender() {
-    var canvasWidth = $divElement.width(),
-        canvasHeight = $divElement.height(),
-        $translateInner = $divElement.find('svg > g');
+  function _postRender(d3Graph) {
 
-    var bbox = $translateInner[0].getBBox();
+    // Center depending on orientation.
+    (function () {
+      var canvasWidth = $divElement.width(),
+          canvasHeight = $divElement.height(),
+          $translateInner = $divElement.find('svg > g');
 
-    var translateY = 20;
-    if (canvasHeight > bbox.height) {
-      translateY = (canvasHeight - bbox.height) / 2;
+      var bbox = $translateInner[0].getBBox();
+
+      var translateY = 20;
+      if (canvasHeight > bbox.height) {
+        translateY = (canvasHeight - bbox.height) / 2;
+      }
+
+      var translateX = 20;
+      if (canvasWidth > bbox.width) {
+        translateX = (canvasWidth - bbox.width) / 2;
+      }
+
+      $translateInner.attr('transform', 'translate(' + translateX + ', ' + translateY + ')');
+    })();
+
+    // Bind node click events.
+    (function () {
+      $divElement.find('g.node.enter')
+          .on('click',  function () {
+            $events.trigger('node-click', { id: $(this).attr('data-id') });
+          });
+    })();
+
+    _setupHighlight(d3Graph);
+  }
+
+  function _setupHighlight(graph) {
+    var g = graph;
+
+    function path(id) {
+      return $divElement.find('g.edgePath.enter[data-id="' + id + '"]');
     }
 
-    var translateX = 20;
-    if (canvasWidth > bbox.width) {
-      translateX = (canvasWidth - bbox.width) / 2;
+    function node(id) {
+      return $divElement.find('g.node.enter[data-id="' + id + '"]');
     }
 
-    $translateInner.attr('transform', 'translate(' + translateX + ', ' + translateY + ')');
+    function target(id) {
+      return g._edges[id].v;
+    }
+
+    function onHighlight($nodeElem, highlight) {
+      var nodeId = $nodeElem.attr('data-id');
+
+      if (highlight)  node(nodeId).attr('class', 'node enter hlSource');
+      else            node(nodeId).attr('class', 'node enter');
+
+      $.each(g.incidentEdges(nodeId), function (i, e) {
+        var targetNodeId = target(e);
+        if (highlight) {
+          // Note: those are SVG elements, so `addClass'/`removeClass' are of no help here.
+          if (targetNodeId == nodeId)   path(e).attr('class', 'edgePath enter hlEdgeTo');
+          else                          path(e).attr('class', 'edgePath enter hlEdgeFrom');
+        } else {
+          path(e).attr('class', 'edgePath enter');
+        }
+
+        if (highlight) node(targetNodeId).attr('class', 'node enter hlTarget');
+        else           node(targetNodeId).attr('class', 'node enter');
+      });
+    }
+
+    $divElement.find('g.node.enter')
+        .on('mouseover',  function () { onHighlight($(this), true); })
+        .on('mouseout',   function () { onHighlight($(this), false); });
   }
 
   var init = function () {
@@ -146,19 +280,24 @@ function Tree(contentId, options) {
     });
 
     $.each(graph.edges, function (i, edge) {
-      d3Graph.addEdge(null, edge.from, edge.to, { label: edge.label, detail: edge.description });
+      d3Graph.addEdge(null, edge.from, edge.to, {
+        label: edge.label,
+        detail: edge.description,
+        collapsedLinearPathIds: edge.collapsedLinearPathIds
+      });
     });
 
     var layout = dagreD3.layout().rankDir(options.direction);
     var renderer = new dagreD3.Renderer();
 
-    _addPopupsToNodes(renderer);
-    _addPopupsToLabels(renderer);
+    _drawNodes(renderer);
+    _drawEdgeLabels(renderer);
+    _drawEdgePaths(renderer);
 
     renderer = renderer.layout(layout);
     renderer.run(d3Graph, d3.select("#" + contentId + " svg g"));
 
-    _postRender();
+    _postRender(d3Graph);
   };
 
   $(function () {

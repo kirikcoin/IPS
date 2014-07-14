@@ -14,11 +14,31 @@
       </style>
     </ui:define>
 
+    <ui:define name="scripts">
+      <script type="text/javascript">
+        //    <![CDATA[
+        $(function(){
+          jsfc('smallTree').bind('node-click', function (event, data) {
+            console.log('Node clicked: ' + data.id);
+          })
+        });
+        //    ]]>
+      </script>
+    </ui:define>
+
+
     <ui:define name="content">
 
       <h1>Small non-linear</h1>
       <eye:tree id="smallTree"
                 value="#{treeTestController.smallNonlinear}"
+                height="#{treeTestController.height}"
+                width="#{treeTestController.width}"
+                direction="TB"/>
+
+      <h1>Bigger non-linear</h1>
+      <eye:tree id="biggerNonlinear1"
+                value="#{treeTestController.biggerNonlinear1}"
                 height="#{treeTestController.height}"
                 width="#{treeTestController.width}"
                 direction="TB"/>

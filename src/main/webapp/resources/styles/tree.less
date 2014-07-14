@@ -3,19 +3,53 @@ svg.eyeline_tree {
   background-color: white;
   cursor: pointer;
 
-  .node rect {
-    stroke: #cacaca;
-    stroke-width: 1px;
-    fill: #fff;
+
+  //
+  //  Nodes.
+  //
+  .node {
+    rect {
+      stroke: #cacaca;
+      stroke-width: 1px;
+      fill: #fff;
+    }
   }
 
-  .edgeLabel rect {
-    fill: #fff;
+  .node.hlSource {
+    rect {
+      stroke: black;
+    }
   }
+
+  .node.hlTarget {
+    rect {
+      stroke: #3F3F3F;
+    }
+  }
+
+
+  //
+  //  Edge labels.
+  //
+
+  .edgeLabel {
+    rect {
+      fill: #fff;
+    }
+  }
+
+
+  //
+  //  Edges.
+  //
 
   .edgePath {
     stroke: #cacaca;
     stroke-width: 1px;
     fill: none;
+  }
+
+  .edgePath.hlEdgeFrom {
+    stroke: black;
   }
 }
