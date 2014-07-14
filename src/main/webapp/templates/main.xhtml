@@ -30,8 +30,6 @@
     <script type="text/javascript" language="javascript"
             src="#{resources.path}/resources/js/jquery.tablednd.js#{resources.version}"></script>
     <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/jsf-components.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
                 src="#{resources.path}/resources/js/ui.datepicker-ru.js#{resources.version}"></script>
     <script type="text/javascript" language="javascript"
             src="#{resources.path}/resources/js/ips.js#{resources.version}"></script>
@@ -65,7 +63,9 @@
                   <tr>
                     <td width="49%"></td>
                     <td>
-                      <h:messages id="jsf_messages" errorClass="error-message" infoClass="info-message"/>
+                      <h:panelGroup style="#{empty facesContext.messageList ? 'display:none' : 'display:block'}">
+                      <h:messages id="jsf_messages" errorClass="error-message" infoClass="info-message" />
+                      </h:panelGroup>
                       <ul id="page_messages" style="display:none"></ul>
                     </td>
                     <td width="49%"></td>
