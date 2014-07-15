@@ -40,4 +40,12 @@ public class TreeNode implements Comparable<TreeNode> {
     public int compareTo(TreeNode that) {
         return Integer.compare(this.getId(), that.getId());
     }
+
+    @Override
+    public String toString() {
+        return "TreeNode{" +
+                "id=" + id +
+                ", label='" + label + '\'' +
+                '}';
+    }
 }

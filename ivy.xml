@@ -40,6 +40,7 @@
 
     <dependency org="dk.brics.automaton" name="automaton" rev="1.11-8" transitive="false"
                 conf="site->default"/>
+    <dependency org="org.jgrapht" name="jgrapht-core" rev="0.9.0" conf="site->default"/>
 
     <dependency org="com.sun.facelets" name="jsf-facelets" rev="1.1.14" transitive="false"
                 conf="site->default"/>

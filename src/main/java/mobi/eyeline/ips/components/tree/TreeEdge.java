@@ -35,4 +35,14 @@ public class TreeEdge implements Comparable<TreeEdge> {
     public int compareTo(TreeEdge that) {
         return Integer.compare(this.getId(), that.getId());
     }
+
+    @Override
+    public String toString() {
+        return "TreeEdge{" +
+                "id=" + id +
+                ", label='" + label + '\'' +
+                ", target=" + target +
+                '}';
+    }
+
 }
