@@ -18,6 +18,11 @@
   <!-- ===================================== CONTEXT INITIALIZATION ======================================== -->
 
   <context-param>
+    <param-name>javax.faces.PROJECT_STAGE</param-name>
+    <param-value>Development</param-value>
+  </context-param>
+
+  <context-param>
     <param-name>facelets.DEVELOPMENT</param-name>
     <param-value>${ips.force.resource.reload}</param-value>
   </context-param>
