@@ -245,7 +245,7 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     void deleteQuestion() {
-        int questionId = getParamValue('questionId').asInteger()
+        int questionId = getParamValue('questionId2delete').asInteger()
 
         def question = questionRepository.load(questionId)
         question.active = false

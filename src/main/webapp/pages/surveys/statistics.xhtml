@@ -30,7 +30,7 @@
     </ui:define>
 
     <ui:define name="content">
-      <h:form enctype="multipart/form-data" id="content" prependId="false">
+      <h:form id="content" prependId="false">
 
         <h:inputHidden id="id" value="#{surveyStatsController.surveyId}"/>
 
@@ -113,9 +113,9 @@
                 </eye:barChart>
               </h:panelGrid>
             </eye:collapsingGroup>
-
-            <h:panelGroup binding="#{surveyStatsController.questionGroup}"/>
-
+            <div id ="lala">
+             <h:panelGroup binding="#{surveyStatsController.questionGroup}"/>
+            </div>
           </h:panelGroup>
 
           <h:panelGroup layout="block" styleClass="page-footer"/>

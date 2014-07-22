@@ -38,7 +38,7 @@ var page = {
   },
 
   showQuestionDeleteDialog: function (id) {
-    ips.$byId('questionId').val(id);
+    ips.$byId('questionId2delete').val(id);
     jsfc('questionDeleteDialog').show();
     return false;
   },

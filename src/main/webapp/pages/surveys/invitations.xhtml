@@ -158,18 +158,20 @@
                   <!-- Last update time -->
                   <h:outputLabel value="#{bundle['invitations.block.advertising.company.lastupdate']}"
                                  for="lastUpdate"/>
+                  <c:if test="${surveyInvitesController.survey.statistics.lastUpdate != null}">
                   <h:outputText
                       id="lastUpdate"
                       value="#{surveyInvitesController.survey.statistics.lastUpdate}"
-                      rendered="#{surveyInvitesController.survey.statistics.lastUpdate != null}">
+                      >
                     <f:convertDateTime type="both" dateStyle="short"/>
                   </h:outputText>
-
+                  </c:if>
+                  <c:if test="${surveyInvitesController.survey.statistics.lastUpdate == null}">
                   <h:outputText
                       id="lastUpdate"
                       value="#{bundle['invitations.block.advertising.company.lastupdate.never']}"
-                      rendered="#{surveyInvitesController.survey.statistics.lastUpdate == null}"/>
-
+                     />
+                  </c:if>
                   <!-- Update status -->
                   <h:outputLabel
                       value="#{bundle['invitations.block.advertising.company.status']}"
@@ -432,14 +434,16 @@
 
             <h:outputLabel for="deliveryReceivers"
                            value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
+            <c:if test="${invitationDeliveryController.modifiedDeliveryId==null}">
             <eye:inputFile id="deliveryReceivers"
                            value="#{invitationDeliveryController.inputFile}"
                            rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"/>
-
+            </c:if>
+            <c:if test="${invitationDeliveryController.modifiedDeliveryId!=null}">
             <h:outputText id ="deliveryReceivers"
                           value="#{invitationDeliveryController.modifiedDeliveryFilename}"
                           rendered="#{invitationDeliveryController.modifiedDeliveryId!=null}"/>
-
+            </c:if>
             <h:outputLabel for="deliverySpeed"
                            value="#{bundle['invitations.deliveries.dialog.speed']}"/>
             <eye:inputText id="deliverySpeed" maxlength="3" size="9"
