@@ -7,6 +7,7 @@ import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
+import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.SurveyPattern
 import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.repository.QuestionRepository
@@ -56,6 +57,7 @@ class SurveySettingsController extends BaseSurveyController {
     DynamicTableModel questionOptions = new DynamicTableModel()
 
     List<TerminalOption> terminalValues = [TerminalOption.FALSE, TerminalOption.TRUE]
+    def optionValue
 
     // Phone number for survey preview.
     String phoneNumber = currentUser.phoneNumber
@@ -102,6 +104,14 @@ class SurveySettingsController extends BaseSurveyController {
         newSurveyClientId = survey.client.id
 
         questionsGraph = generateQuestionsGraph()
+
+    }
+
+    List<SelectItem> getQuestionNumbers() {
+        def items = survey.getQuestions()
+                .collect{Question q -> new SelectItem(q.order as Integer, q.order as String)}
+        items.add(new SelectItem(-1 as Integer, "next" ))
+        return items
 
     }
 
@@ -331,6 +341,7 @@ class SurveySettingsController extends BaseSurveyController {
                     .each { QuestionOption it ->
                 def row = new DynamicTableRow()
                 row.setValue('answer', it.answer)
+                row.setValue('nextQuestion', it.nextQuestion?.id)
                 row.setValue('terminal', it.terminal)
                 row.setValue('id', it.id)
                 questionOptions.addRow(row)

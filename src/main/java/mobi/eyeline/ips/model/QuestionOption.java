@@ -14,7 +14,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -50,6 +53,10 @@ public class QuestionOption implements Serializable {
      */
     @Column(name = "option_order")
     private int order;
+
+    @JoinColumn(name = "next_question")
+    @OneToOne(optional = true)
+    private Question nextQuestion = null;
 
     /**
      * Индикатор прекращения опроса. <br/>
@@ -131,6 +138,14 @@ public class QuestionOption implements Serializable {
 
     public void moveTo(int idx) {
         ListUtils.moveTo(getQuestion().getOptions(), this, idx, SKIP_INACTIVE);
+    }
+
+    public Question getNextQuestion() {
+        return nextQuestion;
+    }
+
+    public void setNextQuestion(Question nextQuestion) {
+        this.nextQuestion = nextQuestion;
     }
 
     @Override

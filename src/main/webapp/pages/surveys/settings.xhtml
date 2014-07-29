@@ -3,8 +3,8 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-    >
+        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets" xmlns:ete="http://java.sun.com/jsf/html"
+        >
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -267,18 +267,18 @@
                                              styleClass="modify">
                                 <f:param name="questionId" value="${question.id}"/>
                               </h:commandLink>
-                              <h:commandLink value="#{bundle['survey.settings.question.move.down']}"
-                                             styleClass="modify"
-                                             rendered="#{not question.last}"
-                                             action="#{surveySettingsController.moveUp}">
-                                <f:param name="questionId" value="#{question.id}"/>
-                              </h:commandLink>
-                              <h:commandLink value="#{bundle['survey.settings.question.move.up']}"
-                                             styleClass="modify"
-                                             rendered="#{not question.first}"
-                                             action="#{surveySettingsController.moveDown}">
-                                <f:param name="questionId" value="#{question.id}"/>
-                              </h:commandLink>
+                              <!--<h:commandLink value="#{bundle['survey.settings.question.move.down']}"-->
+                                             <!--styleClass="modify"-->
+                                             <!--rendered="#{not question.last}"-->
+                                             <!--action="#{surveySettingsController.moveUp}">-->
+                                <!--<f:param name="questionId" value="#{question.id}"/>-->
+                              <!--</h:commandLink>-->
+                              <!--<h:commandLink value="#{bundle['survey.settings.question.move.up']}"-->
+                                             <!--styleClass="modify"-->
+                                             <!--rendered="#{not question.first}"-->
+                                             <!--action="#{surveySettingsController.moveDown}">-->
+                                <!--<f:param name="questionId" value="#{question.id}"/>-->
+                              <!--</h:commandLink>-->
                             </h:panelGroup>
                           </h:panelGrid>
                         </f:facet>
@@ -578,11 +578,12 @@
           <br/>
 
           <h:panelGroup id="headerBlock" layout="block">
-            <h:panelGrid columns="4" columnClasses="colTerminal">
+            <h:panelGrid columns="5" columnClasses="colTerminal">
               <h:outputText  value=" "/>
 
               <h:outputText  value="#{bundle['question.option.label']}"/>
               <h:outputText  value=" #{bundle['question.option.terminal.label']}"/>
+              <h:outputText  value=" questionOrder"/>
               <h:outputText  value=" "/>
             </h:panelGrid>
           </h:panelGroup>
@@ -605,6 +606,13 @@
                                 var="t" itemLabel="#{t.label}" itemValue="#{t.value}"
                                 allowEditAfterAdd="true"
                                 columnClass="colTerminal"/>
+
+              <eye:selectColumn name="nextQuestion"
+                                values="#{surveySettingsController.questionNumbers}"
+                                var="t2" itemLabel="#{t2.label}" itemValue="#{t2.value}"
+                                allowEditAfterAdd="true"
+                                columnClass="colTerminal"/>
+
             </eye:dynamicTable>
           </h:panelGroup>
           <eye:buttons>
