@@ -113,9 +113,65 @@
                 </eye:barChart>
               </h:panelGrid>
             </eye:collapsingGroup>
-            <div id ="lala">
-             <h:panelGroup binding="#{surveyStatsController.questionGroup}"/>
-            </div>
+
+            <h:panelGroup>
+              <c:forEach items="#{surveyStatsController.survey.activeQuestions}" var="question">
+                <eye:collapsingGroup id="question_#{question.id}">
+                  <f:facet name="header">
+                    <h:outputText value="#{question.title}"/>
+                  </f:facet>
+
+                  <h:outputText value="#{bundle['survey.stats.question.no.data']}"
+                                styleClass="placeholder"
+                                rendered="#{question.sentCount eq 0}"/>
+
+                  <h:panelGrid columns="2"
+                               styleClass="question_details"
+                               rendered="#{question.sentCount ne 0}">
+                    <eye:pieChart id="optionsRatio_#{question.id}"
+                                  pie="#{surveyStatsHelpers.getOptionsRatioModel(question)}"
+                                  height="500"
+                                  width="490">
+                      <c:forEach items="#{question.activeOptions}" var="opt">
+                        <eye:pie name="#{opt.answer}"
+                                 color="#{surveyStatsHelpers.colorLoop(opt)}"/>
+                      </c:forEach>
+                    </eye:pieChart>
+                    <h:panelGrid>
+                      <eye:barChart id="responseRatio_${question.id}"
+                                    height="200"
+                                    width="490"
+                                    bars="#{surveyStatsHelpers.getResponseRatioModel(question)}"
+                                    intValues="true"
+                                    stackMode="false"
+                                    horizontal="true">
+                        <eye:bar name="#{bundle['survey.stats.response.ratio.sent']}" color="blue"/>
+                        <eye:bar name="#{bundle['survey.stats.response.ratio.answered']}" color="green"/>
+                      </eye:barChart>
+                      <h:panelGrid columns="3"
+                                   styleClass="resultsTable eyeline_list grid"
+                                   columnClasses="col1,col2,col3">
+                        <h:outputText/>
+                        <h:outputText value="#{bundle['survey.stats.answer']}"/>
+                        <h:outputText value="#{bundle['survey.stats.count']}"/>
+
+                        <c:forEach items="#{question.activeOptions}" var="opt">
+                          <h:panelGroup style="background-color: #{surveyStatsHelpers.colorLoop(opt)}"
+                                        styleClass="legend-color"
+                                        layout="block"/>
+                          <h:outputText value="#{opt.answer}"/>
+                          <h:outputText value="#{surveyStatsHelpers.count(opt)}"/>
+                        </c:forEach>
+                      </h:panelGrid>
+                    </h:panelGrid>
+                  </h:panelGrid>
+
+                </eye:collapsingGroup>
+
+
+              </c:forEach>
+            </h:panelGroup>
+
           </h:panelGroup>
 
           <h:panelGroup layout="block" styleClass="page-footer"/>
