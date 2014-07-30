@@ -19,13 +19,15 @@
         $(function () {
           var error = #{login.error};
 
-          if("#{param['recovery']}".length!=0) {
-                ips.message.info("#{bundle['passwrecovery.form.sentmessage']}");
+          if ("#{param['recovery']}".length != 0) {
+            ips.message.info("#{bundle['passwrecovery.form.sentmessage']}");
           }
-          if (error)
-            ips.message.error("#{bundle['login.form.errormessage']}");
 
-          page.init();
+          if (error) {
+            ips.message.error("#{bundle['login.form.errormessage']}");
+          }
+
+          page.init('#{resources.path}/j_security_check');
         });
         //    ]]>
       </script>
@@ -38,8 +40,7 @@
         </div>
 
         <div id="loginFormBody">
-          <form name="opForm" id="opForm" action="#{resources.path}/j_security_check" method="post"
-                enctype="application/x-www-form-urlencoded">
+          <h:form>
 
             <table cellspacing="0" cellpadding="0" border="0">
               <tr>
@@ -51,16 +52,20 @@
                 <td align="right"><eye:inputText secret="true" id="j_password" value="" maxlength="50"/></td>
               </tr>
             </table>
-          </form>
 
-          <h:form>
             <table>
               <tr>
                 <td align="left" valign="middle">
-                  <h:commandLink  immediate="true" value="#{bundle['login.form.recovery.password']}" action="RECOVERY_PASSWORD"/>
+                  <h:commandLink immediate="true"
+                                 value="#{bundle['login.form.recovery.password']}"
+                                 action="RECOVERY_PASSWORD"/>
                 </td>
                 <td align="right">
-                  <h:commandLink id="logbutton" styleClass="button-green" onclick="page.login(); return false;" value="#{bundle['login.form.login.btn']}"/>
+                  <h:outputLink id="logbutton"
+                                styleClass="button-green"
+                                onclick="page.login('#{resources.path}/j_security_check'); return false;">
+                    <h:outputText value="#{bundle['login.form.login.btn']}"/>
+                  </h:outputLink>
                 </td>
               </tr>
             </table>
