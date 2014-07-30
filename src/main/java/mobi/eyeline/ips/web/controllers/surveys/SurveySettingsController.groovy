@@ -107,10 +107,10 @@ class SurveySettingsController extends BaseSurveyController {
 
     }
 
-    List<SelectItem> getQuestionNumbers() {
+    List<SelectItem> getQuestions() {
         def items = survey.getQuestions()
-                .collect{Question q -> new SelectItem(q.order as Integer, q.order as String)}
-        items.add(new SelectItem(-1 as Integer, "next" ))
+                .collect{Question q -> new SelectItem(q.id, q.order as String)}
+        items.add(new SelectItem(new Question(id: -1, title: "final").id, "final" as String ))
         return items
 
     }
@@ -143,7 +143,7 @@ class SurveySettingsController extends BaseSurveyController {
             def prevOptions = questions.get(i - 1).options
 
             prevOptions.each { QuestionOption option ->
-                if (option.terminal) {
+                if (option.nextQuestion == null) {
                     prevNode.edges.add(
                             new TreeEdge(option.id, option.answer, option.answer, surveyEnd)
                     )
@@ -341,8 +341,12 @@ class SurveySettingsController extends BaseSurveyController {
                     .each { QuestionOption it ->
                 def row = new DynamicTableRow()
                 row.setValue('answer', it.answer)
-                row.setValue('nextQuestion', it.nextQuestion?.id)
-                row.setValue('terminal', it.terminal)
+                if(it.nextQuestion == null) {
+                    row.setValue('nextQuestion', new Question(id: -1, title: 'final').id as String)
+                } else {
+                    row.setValue('nextQuestion', it.nextQuestion.id as String)
+                }
+
                 row.setValue('id', it.id)
                 questionOptions.addRow(row)
             }
@@ -413,6 +417,7 @@ class SurveySettingsController extends BaseSurveyController {
         def getId = { DynamicTableRow row -> row.getValue('id') as String }
         def getAnswer = { DynamicTableRow row -> row.getValue('answer') as String }
         def getTerminal = { DynamicTableRow row -> (row.getValue('terminal') as String).toBoolean() }
+        def getNextQuestion = { DynamicTableRow row -> questionRepository.get(row.getValue('nextQuestion') as Integer) as Question }
         def index = { DynamicTableRow row -> questionOptions.rows.indexOf(row) }
 
         persistedQuestion.title = question.title
@@ -435,7 +440,7 @@ class SurveySettingsController extends BaseSurveyController {
                         .find { DynamicTableRow row -> getId(row).toInteger() == option.id }
                         .each { DynamicTableRow row ->
                     option.answer = getAnswer(row)
-                    option.terminal = getTerminal(row)
+                    option.nextQuestion = getNextQuestion(row)
                     option.moveTo index(row)
                 }
             }

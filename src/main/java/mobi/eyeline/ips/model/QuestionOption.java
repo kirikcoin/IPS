@@ -58,15 +58,6 @@ public class QuestionOption implements Serializable {
     @OneToOne(optional = true)
     private Question nextQuestion = null;
 
-    /**
-     * Индикатор прекращения опроса. <br/>
-     * В случае, если (1) флаг выставлен и (2) выбирается именно эта опция,
-     * опрос завершается.
-     */
-    @Column(name = "terminal", columnDefinition = "BIT", nullable = false)
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean terminal;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "question_id")
     private Question question;
@@ -110,14 +101,6 @@ public class QuestionOption implements Serializable {
 
     public int getActiveIndex() {
         return getQuestion().getActiveOptions().indexOf(this);
-    }
-
-    public boolean isTerminal() {
-        return terminal;
-    }
-
-    public void setTerminal(boolean terminal) {
-        this.terminal = terminal;
     }
 
     public Question getQuestion() {

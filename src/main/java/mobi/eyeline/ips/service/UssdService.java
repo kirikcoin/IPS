@@ -196,7 +196,7 @@ public class UssdService implements MessageHandler {
                 questionOptionRepository.load(request.getAnswerId());
         answerRepository.save(respondent, option);
 
-        if (option.isTerminal()) {
+        if (option.getNextQuestion()==null) {
             return surveyFinish(respondent, survey);
         }
 
