@@ -56,9 +56,6 @@ class SurveySettingsController extends BaseSurveyController {
     Question question = new Question()
     DynamicTableModel questionOptions = new DynamicTableModel()
 
-    List<TerminalOption> terminalValues = [TerminalOption.FALSE, TerminalOption.TRUE]
-    def optionValue
-
     // Phone number for survey preview.
     String phoneNumber = currentUser.phoneNumber
 
@@ -143,7 +140,7 @@ class SurveySettingsController extends BaseSurveyController {
             def prevOptions = questions.get(i - 1).options
 
             prevOptions.each { QuestionOption option ->
-                if (option.nextQuestion == null) {
+                if (option.nextQuestion. == null) {
                     prevNode.edges.add(
                             new TreeEdge(option.id, option.answer, option.answer, surveyEnd)
                     )
@@ -416,7 +413,6 @@ class SurveySettingsController extends BaseSurveyController {
     private void updateQuestionModel(Question persistedQuestion) {
         def getId = { DynamicTableRow row -> row.getValue('id') as String }
         def getAnswer = { DynamicTableRow row -> row.getValue('answer') as String }
-        def getTerminal = { DynamicTableRow row -> (row.getValue('terminal') as String).toBoolean() }
         def getNextQuestion = { DynamicTableRow row -> questionRepository.get(row.getValue('nextQuestion') as Integer) as Question }
         def index = { DynamicTableRow row -> questionOptions.rows.indexOf(row) }
 
@@ -482,22 +478,6 @@ class SurveySettingsController extends BaseSurveyController {
     static void goToSurvey(int surveyId) {
         FacesContext.currentInstance.externalContext
                 .redirect("/pages/surveys/settings.faces?id=${surveyId}")
-    }
-
-    static abstract class TerminalOption {
-        abstract boolean getValue()
-
-        abstract String getLabel()
-
-        static final TerminalOption TRUE = [
-                getValue: { true },
-                getLabel: { BaseController.strings['question.option.terminal.yes'] }
-        ] as TerminalOption
-
-        static final TerminalOption FALSE = [
-                getValue: { false },
-                getLabel: { BaseController.strings['question.option.terminal.no'] }
-        ] as TerminalOption
     }
 
     static enum EndSmsType {

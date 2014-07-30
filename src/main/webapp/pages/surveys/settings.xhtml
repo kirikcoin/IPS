@@ -301,6 +301,9 @@
                               <h:outputText value="#{bundle['question.option.terminal.list.label']}"
                                             rendered="#{option.nextQuestion == null}"
                                             styleClass="terminal-label"/>
+                              <h:outputText value="(#{bundle['question.option.number']}№#{option.nextQuestion.activeIndex})"
+                                            rendered="#{option.nextQuestion != null}"
+                                            styleClass="terminal-label"/>
                             </h:column>
                           </h:dataTable>
 
