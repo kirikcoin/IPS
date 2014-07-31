@@ -236,11 +236,11 @@
                 </h:panelGroup>
               </f:facet>
               <h:panelGroup>
-                <h:outputText rendered="#{empty surveySettingsController.persistedSurvey.questions}"
+                <h:outputText rendered="#{empty surveySettingsController.survey.activeQuestions}"
                               value="#{bundle['survey.settings.no.questions']}"
                               styleClass="placeholder"/>
               </h:panelGroup>
-              <eye:tabs id="tabs" rendered="#{!empty surveySettingsController.persistedSurvey.questions}">
+              <eye:tabs id="tabs" rendered="#{!empty surveySettingsController.survey.activeQuestions}">
                 <eye:tab label="#{bundle['survey.settings.questions.tabs.questions']}">
                   <h:panelGroup>
 
