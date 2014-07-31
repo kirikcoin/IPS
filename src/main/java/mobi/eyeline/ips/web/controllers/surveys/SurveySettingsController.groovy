@@ -10,6 +10,7 @@ import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.SurveyPattern
 import mobi.eyeline.ips.repository.AccessNumberRepository
+import mobi.eyeline.ips.repository.QuestionOptionRepository
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.CouponService
@@ -35,6 +36,7 @@ import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.
 class SurveySettingsController extends BaseSurveyController {
 
     private final QuestionRepository questionRepository = Services.instance().questionRepository
+    private final QuestionOptionRepository questionOptionRepository = Services.instance().questionOptionRepository
     private final UserRepository userRepository = Services.instance().userRepository
     private
     final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
@@ -105,8 +107,8 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     List<SelectItem> getQuestions() {
-        def items = survey.getQuestions()
-                .collect{Question q -> new SelectItem(q.id, q.order as String)}
+        def items = survey.getActiveQuestions()
+                .collect{Question q -> new SelectItem(q.id, q.activeIndex + 1 as String)}
         items.add(new SelectItem(new Question(id: -1, title: "final").id, "final" as String ))
         return items
 
@@ -117,48 +119,83 @@ class SurveySettingsController extends BaseSurveyController {
                 strings['survey.settings.questions.tabs.graphs.end.label'],
                 strings['survey.settings.questions.tabs.graphs.end.description'])
         def questions = survey.activeQuestions
-        def nodes = new ArrayList<TreeNode>()
         if (questions.empty) return null
-
+        def firstQuestionId = survey.firstQuestion.id
+        def nodes = new HashMap<Integer,TreeNode>()
         TreeNode currentNode = null
         for (int i = 0; i < questions.size(); i++) {
             def currentQuestion = questions.get(i)
+            currentNode = new TreeNode(currentQuestion.id, currentQuestion.title, currentQuestion.title)
+            nodes.put(currentQuestion.id,currentNode)
+          //  nodes.add(currentQuestion.id,currentNode)
+        }
 
-            currentNode = new TreeNode(i, currentQuestion.title, currentQuestion.title)
-            nodes.add(currentNode)
-
-            if (questions.size() == 1) {
+        for (int i = 0; i < questions.size(); i++) {
+            def currentQuestion = questions.get(i)
+            currentNode = nodes.get(currentQuestion.id)
+                if (questions.size() == 1) {
                 currentNode.edges.add(
                         new TreeEdge(1000, '', '', surveyEnd)
                 )
                 return currentNode
             }
 
-            if (i == 0) continue
-
-            def prevNode = nodes.get(i - 1);
-            def prevOptions = questions.get(i - 1).options
-
-            prevOptions.each { QuestionOption option ->
-                if (option.nextQuestion. == null) {
-                    prevNode.edges.add(
+            def currentOptions = currentQuestion.options
+            currentOptions.each { QuestionOption option ->
+                if (option.nextQuestion == null) {
+                    currentNode.edges.add(
                             new TreeEdge(option.id, option.answer, option.answer, surveyEnd)
                     )
                 } else {
-                    prevNode.edges.add(
-                            new TreeEdge(option.id, option.answer, option.answer, currentNode)
+                    currentNode.edges.add(
+                            new TreeEdge(option.id, option.answer, option.answer, nodes.get(option.nextQuestion.id))
                     )
                 }
             }
-
-            if (i == questions.size() - 1) {
-                currentNode.edges.add(
-                        new TreeEdge(1000, '', '', surveyEnd)
-                )
-            }
         }
 
-        return nodes.get(0)
+
+
+//
+//        TreeNode currentNode = null
+//        for (int i = 0; i < questions.size(); i++) {
+//            def currentQuestion = questions.get(i)
+//
+//            currentNode = new TreeNode(i, currentQuestion.title, currentQuestion.title)
+//            nodes.add(currentNode)
+//
+//            if (questions.size() == 1) {
+//                currentNode.edges.add(
+//                        new TreeEdge(1000, '', '', surveyEnd)
+//                )
+//                return currentNode
+//            }
+//
+//            if (i == 0) continue
+//
+//            def prevNode = nodes.get(i - 1);
+//            def prevOptions = questions.get(i - 1).options
+//
+//            prevOptions.each { QuestionOption option ->
+//                if (option.nextQuestion == null) {
+//                    prevNode.edges.add(
+//                            new TreeEdge(option.id, option.answer, option.answer, surveyEnd)
+//                    )
+//                } else {
+//                    prevNode.edges.add(
+//                            new TreeEdge(option.id, option.answer, option.answer, currentNode)
+//                    )
+//                }
+//            }
+//
+//            if (i == questions.size() - 1) {
+//                currentNode.edges.add(
+//                        new TreeEdge(1000, '', '', surveyEnd)
+//                )
+//            }
+//        }
+//
+        return nodes.get(firstQuestionId)
     }
 
 
@@ -320,6 +357,20 @@ class SurveySettingsController extends BaseSurveyController {
         int questionId = getParamValue('questionId').asInteger()
 
         def question = questionRepository.load(questionId)
+
+        def questions = survey.activeQuestions
+        for (int i = 0; i < questions.size(); i++) {
+            def currentQuestion = questions.get(i)
+            def currentOptions = currentQuestion.options
+            currentOptions.each {QuestionOption option ->
+                if(option.nextQuestion.equals(question)) {
+                    option.nextQuestion = null
+                    questionOptionRepository.update(option)
+
+                }
+            }
+        }
+
         question.active = false
         questionRepository.update(question)
 
