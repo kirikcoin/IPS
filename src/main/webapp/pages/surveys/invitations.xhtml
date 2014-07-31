@@ -2,7 +2,7 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi" xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
         xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
     >
 
@@ -156,22 +156,17 @@
                   <h:outputText id="number" value="#{surveyInvitesController.survey.statistics.sentCount}"/>
 
                   <!-- Last update time -->
-                  <h:outputLabel value="#{bundle['invitations.block.advertising.company.lastupdate']}"
-                                 for="lastUpdate"/>
-                  <c:if test="${surveyInvitesController.survey.statistics.lastUpdate != null}">
+                  <h:outputLabel
+                      value="#{bundle['invitations.block.advertising.company.lastupdate']}"/>
                   <h:outputText
-                      id="lastUpdate"
                       value="#{surveyInvitesController.survey.statistics.lastUpdate}"
-                      >
+                      rendered="#{surveyInvitesController.survey.statistics.lastUpdate != null}">
                     <f:convertDateTime type="both" dateStyle="short"/>
                   </h:outputText>
-                  </c:if>
-                  <c:if test="${surveyInvitesController.survey.statistics.lastUpdate == null}">
                   <h:outputText
-                      id="lastUpdate"
                       value="#{bundle['invitations.block.advertising.company.lastupdate.never']}"
-                     />
-                  </c:if>
+                      rendered="#{surveyInvitesController.survey.statistics.lastUpdate == null}"/>
+
                   <!-- Update status -->
                   <h:outputLabel
                       value="#{bundle['invitations.block.advertising.company.status']}"
@@ -432,18 +427,13 @@
           </div>
           <h:panelGrid columns="2">
 
-            <h:outputLabel for="deliveryReceivers"
-                           value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
-            <c:if test="${invitationDeliveryController.modifiedDeliveryId==null}">
+            <h:outputLabel value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
             <eye:inputFile id="deliveryReceivers"
                            value="#{invitationDeliveryController.inputFile}"
                            rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"/>
-            </c:if>
-            <c:if test="${invitationDeliveryController.modifiedDeliveryId!=null}">
-            <h:outputText id ="deliveryReceivers"
-                          value="#{invitationDeliveryController.modifiedDeliveryFilename}"
+            <h:outputText value="#{invitationDeliveryController.modifiedDeliveryFilename}"
                           rendered="#{invitationDeliveryController.modifiedDeliveryId!=null}"/>
-            </c:if>
+
             <h:outputLabel for="deliverySpeed"
                            value="#{bundle['invitations.deliveries.dialog.speed']}"/>
             <eye:inputText id="deliverySpeed" maxlength="3" size="9"
