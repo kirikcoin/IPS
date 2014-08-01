@@ -32,7 +32,6 @@ import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
 @Slf4j('logger')
-
 class SurveySettingsController extends BaseSurveyController {
 
     private final QuestionRepository questionRepository = Services.instance().questionRepository
@@ -51,8 +50,6 @@ class SurveySettingsController extends BaseSurveyController {
     int newSurveyClientId
 
     Integer questionId
-
-    def end = 0
 
     // Question modification
     Question question = new Question()
@@ -95,8 +92,6 @@ class SurveySettingsController extends BaseSurveyController {
     Integer accessNumberId = survey.statistics.accessNumber?.id
 
     TreeNode questionsGraph
-    def width = 1168
-    def height = 400
 
     SurveySettingsController() {
         super()
@@ -109,19 +104,17 @@ class SurveySettingsController extends BaseSurveyController {
     List<SelectItem> getQuestions() {
         def items = survey.getActiveQuestions()
                 .collect{Question q -> new SelectItem(q.id, q.activeIndex + 1 as String)}
-        items.add(0,new SelectItem(new Question(id: -1, title: "final").id, "final" as String ))
+        items.add(0,new SelectItem(-1, strings["question.option.terminal.inlist"] as String))
         return items
 
     }
 
     TreeNode generateQuestionsGraph() {
-        TreeNode surveyEnd = new TreeNode(1000,
+        TreeNode surveyEnd = new TreeNode(-1,
                 strings['survey.settings.questions.tabs.graphs.end.label'],
                 strings['survey.settings.questions.tabs.graphs.end.description'])
         def questions = survey.activeQuestions
         if (questions.empty) return null
-
-        def firstQuestionId = survey.firstQuestion.id
         def nodes = new HashMap<Integer,TreeNode>()
 
         TreeNode currentNode = null
@@ -133,29 +126,24 @@ class SurveySettingsController extends BaseSurveyController {
 
         for (int i = 0; i < questions.size(); i++) {
             def currentQuestion = questions.get(i)
-            currentNode = nodes.get(currentQuestion.id)
+            currentNode = nodes[currentQuestion.id]
                 if (questions.size() == 1) {
-                currentNode.edges.add(
-                        new TreeEdge(1000, '', '', surveyEnd)
-                )
+                currentNode.edges << new TreeEdge(-1, '', '', surveyEnd)
                 return currentNode
             }
 
             def currentOptions = currentQuestion.options
             currentOptions.each { QuestionOption option ->
                 if (option.nextQuestion == null) {
-                    currentNode.edges.add(
-                            new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, surveyEnd)
+                    currentNode.edges << new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, surveyEnd
                     )
                 } else {
-                    currentNode.edges.add(
-                            new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, nodes.get(option.nextQuestion.id))
-                    )
+                    currentNode.edges << new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, nodes[option.nextQuestion.id])
                 }
             }
         }
 
-        return nodes.get(firstQuestionId)
+        return nodes[survey.firstQuestion.id]
     }
 
 

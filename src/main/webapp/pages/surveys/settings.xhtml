@@ -3,7 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets" xmlns:ete="http://java.sun.com/jsf/html"
+        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
         >
 
   <ui:composition template="/templates/main.xhtml">
@@ -300,10 +300,10 @@
                               <h:outputText value="#{option.answer}"/>
                               <h:outputText value="#{bundle['question.option.terminal.list.label']}"
                                             rendered="#{option.nextQuestion == null}"
-                                            styleClass="terminal-label"/>
+                                            styleClass="option-label"/>
                               <h:outputText value="(#{bundle['question.option.number']}№#{option.nextQuestion.activeIndex+1})"
                                             rendered="#{option.nextQuestion != null}"
-                                            styleClass="terminal-label"/>
+                                            styleClass="option-label"/>
                             </h:column>
                           </h:dataTable>
 
@@ -333,10 +333,10 @@
                   </h:panelGroup>
                 </eye:tab>
                 <eye:tab label="#{bundle['survey.settings.questions.tabs.graphs']}">
-                  <ips:tree id="smallTree"
+                  <ips:tree id="questionsTree"
                             value="#{surveySettingsController.questionsGraph}"
-                            height="#{surveySettingsController.height}"
-                            width="#{surveySettingsController.width}"
+                            height="400"
+                            width="1168"
                             direction="TB"/>
                 </eye:tab>
               </eye:tabs>
@@ -581,7 +581,7 @@
           <br/>
 
           <h:panelGroup id="headerBlock" layout="block">
-            <h:panelGrid columns="5" columnClasses="colTerminal">
+            <h:panelGrid columns="5" columnClasses="questionDialogCol">
               <h:outputText  value=" "/>
 
               <h:outputText  value="#{bundle['question.option.label']}"/>
@@ -614,7 +614,7 @@
                                 values="#{surveySettingsController.questions}"
                                 var="t2" itemLabel="#{t2.label}" itemValue="#{t2.value}"
                                 allowEditAfterAdd="true"
-                                columnClass="colTerminal"/>
+                                columnClass="questionDialogCol"/>
 
             </eye:dynamicTable>
           </h:panelGroup>
