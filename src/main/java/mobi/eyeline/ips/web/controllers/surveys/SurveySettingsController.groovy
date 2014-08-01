@@ -7,19 +7,13 @@ import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
-import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.SurveyPattern
 import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.repository.QuestionOptionRepository
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.CouponService
-import mobi.eyeline.ips.service.EsdpService
-import mobi.eyeline.ips.service.EsdpServiceSupport
-import mobi.eyeline.ips.service.PushService
-import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.*
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.ips.web.controllers.TreeTestHelpers
 import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
@@ -102,11 +96,10 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     List<SelectItem> getQuestions() {
-        def items = survey.getActiveQuestions()
-                .collect{Question q -> new SelectItem(q.id, q.activeIndex + 1 as String)}
-        items.add(0,new SelectItem(-1, strings["question.option.terminal.inlist"] as String))
-        return items
-
+        [
+                new SelectItem(-1, strings['question.option.terminal.inlist'] as String),
+                * survey.activeQuestions.collect { Question q -> new SelectItem(q.id, q.activeIndex + 1 as String) }
+        ]  as List<SelectItem>
     }
 
     TreeNode generateQuestionsGraph() {
@@ -127,16 +120,11 @@ class SurveySettingsController extends BaseSurveyController {
         for (int i = 0; i < questions.size(); i++) {
             def currentQuestion = questions.get(i)
             currentNode = nodes[currentQuestion.id]
-                if (questions.size() == 1) {
-                currentNode.edges << new TreeEdge(-1, '', '', surveyEnd)
-                return currentNode
-            }
 
             def currentOptions = currentQuestion.options
             currentOptions.each { QuestionOption option ->
                 if (option.nextQuestion == null) {
-                    currentNode.edges << new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, surveyEnd
-                    )
+                    currentNode.edges << new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, surveyEnd)
                 } else {
                     currentNode.edges << new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, nodes[option.nextQuestion.id])
                 }

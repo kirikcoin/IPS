@@ -236,11 +236,11 @@
                 </h:panelGroup>
               </f:facet>
               <h:panelGroup>
-                <h:outputText rendered="#{empty surveySettingsController.survey.activeQuestions}"
+                <h:outputText rendered="#{empty surveySettingsController.persistedSurvey.activeQuestions}"
                               value="#{bundle['survey.settings.no.questions']}"
                               styleClass="placeholder"/>
               </h:panelGroup>
-              <eye:tabs id="tabs" rendered="#{!empty surveySettingsController.survey.activeQuestions}">
+              <eye:tabs id="tabs" rendered="#{!empty surveySettingsController.persistedSurvey.activeQuestions}">
                 <eye:tab label="#{bundle['survey.settings.questions.tabs.questions']}">
                   <h:panelGroup>
 
@@ -336,7 +336,7 @@
                   <ips:tree id="questionsTree"
                             value="#{surveySettingsController.questionsGraph}"
                             height="400"
-                            width="1168"
+                            width="1100"
                             direction="TB"/>
                 </eye:tab>
               </eye:tabs>
