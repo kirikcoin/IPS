@@ -1,4 +1,5 @@
-<ivy-module version="2.0">
+<ivy-module version="2.0"
+            xmlns:m="http://ant.apache.org/ivy/maven.xsd">
   <info organisation="mobi.eyeline" module="ips"/>
 
   <configurations>
@@ -99,7 +100,9 @@
     <dependency org="junit" name="junit" rev="4.7"/>
     <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.0.201403182114"/>
     <dependency org="org.hsqldb" name="hsqldb" rev="2.3.1"/>
-    <dependency org="org.codehaus.groovy" name="groovy-all" rev="2.2.1"/>
+    <dependency org="org.codehaus.groovy" name="groovy-all" rev="2.2.1">
+      <artifact name="groovy-all" type="jar" ext="jar" m:classifier="indy"/>
+    </dependency>
     <dependency org="org.hamcrest" name="hamcrest-all" rev="1.3"/>
 
   </dependencies>
