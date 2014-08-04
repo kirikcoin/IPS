@@ -34,12 +34,12 @@
 
 
   <context-param>
-    <param-name>facelets.REFRESH_PERIOD</param-name>
+    <param-name>javax.faces.REFRESH_PERIOD</param-name>
     <param-value>0</param-value>
   </context-param>
 
   <context-param>
-    <param-name>facelets.LIBRARIES</param-name>
+    <param-name>javax.faces.LIBRARIES</param-name>
     <param-value>/WEB-INF/ips.taglib.xml</param-value>
   </context-param>
 
@@ -50,7 +50,7 @@
   </context-param>
 
   <context-param>
-    <param-name>facelets.VIEW_MAPPINGS</param-name>
+    <param-name>javax.faces.VIEW_MAPPINGS</param-name>
     <param-value>*.xhtml</param-value>
   </context-param>
 
@@ -71,12 +71,17 @@
   </context-param>
 
   <context-param>
-    <param-name>facelets.SKIP_COMMENTS</param-name>
+    <param-name>javax.faces.SKIP_COMMENTS</param-name>
     <param-value>true</param-value>
   </context-param>
 
   <context-param>
     <param-name>javax.faces.VALIDATE_EMPTY_FIELDS</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
     <param-value>false</param-value>
   </context-param>
 
