@@ -56,7 +56,7 @@
       <h:form enctype="multipart/form-data" id="content" prependId="false">
 
         <h:inputHidden id="id" value="#{surveySettingsController.surveyId}"/>
-        <h:inputHidden id="questionId2delete" value="#{surveySettingsController.questionId}"/>
+        <h:inputHidden id="questionId" value="#{surveySettingsController.questionId}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -261,22 +261,16 @@
                             <h:outputText value="#{bundle['survey.details.delete']}"/>
                           </h:outputLink>
                           <h:commandLink value="#{bundle['survey.settings.modify']}"
-                                         action="#{surveySettingsController.modifyQuestion}"
-                                         styleClass="modify">
-                            <f:param name="questionId" value="${question.id}"/>
-                          </h:commandLink>
+                                         action="#{surveySettingsController.modifyQuestion(question.id)}"
+                                         styleClass="modify"/>
                           <h:commandLink value="#{bundle['survey.settings.question.move.down']}"
                                          styleClass="modify"
                                          rendered="#{not question.last}"
-                                         action="#{surveySettingsController.moveUp}">
-                            <f:param name="questionId" value="#{question.id}"/>
-                          </h:commandLink>
+                                         action="#{surveySettingsController.moveUp(question.id)}"/>
                           <h:commandLink value="#{bundle['survey.settings.question.move.up']}"
                                          styleClass="modify"
                                          rendered="#{not question.first}"
-                                         action="#{surveySettingsController.moveDown}">
-                            <f:param name="questionId" value="#{question.id}"/>
-                          </h:commandLink>
+                                         action="#{surveySettingsController.moveDown(question.id)}"/>
                         </h:panelGroup>
                       </h:panelGrid>
                     </f:facet>
@@ -331,11 +325,9 @@
                 <eye:buttons>
                   <eye:button>
                     <h:commandLink value="#{bundle['survey.settings.question.add']}"
-                                   action="#{surveySettingsController.modifyQuestion}"
+                                   action="#{surveySettingsController.modifyQuestion(null)}"
                                    styleClass="button-green"
-                                   rendered="#{userSession.surveyModificationAllowed}">
-                      <f:param name="questionId" value=""/>
-                    </h:commandLink>
+                                   rendered="#{userSession.surveyModificationAllowed}"/>
                   </eye:button>
                   <eye:space/>
                 </eye:buttons>
@@ -568,11 +560,11 @@
 
           <h:panelGroup id="headerBlock" layout="block">
             <h:panelGrid columns="4" columnClasses="colTerminal">
-              <h:outputText  value=" "/>
+              <h:outputText value=" "/>
 
-              <h:outputText  value="#{bundle['question.option.label']}"/>
-              <h:outputText  value=" #{bundle['question.option.terminal.label']}"/>
-              <h:outputText  value=" "/>
+              <h:outputText value="#{bundle['question.option.label']}"/>
+              <h:outputText value=" #{bundle['question.option.terminal.label']}"/>
+              <h:outputText value=" "/>
             </h:panelGrid>
           </h:panelGroup>
 

@@ -22,7 +22,9 @@ import mobi.eyeline.jsfcomponents.dynamic_table.model.DynamicTableRow
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.*
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.COUPON
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.DISABLED
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.SMS
 
 @SuppressWarnings("UnnecessaryQualifiedReference")
 @CompileStatic
@@ -228,16 +230,14 @@ class SurveySettingsController extends BaseSurveyController {
         return 'SURVEY_LIST'
     }
 
-    void moveUp() {
-        int questionId = getParamValue('questionId').asInteger()
+    void moveUp(int questionId) {
         persistedSurvey.moveUp(questionRepository.load(questionId))
         surveyRepository.update(persistedSurvey)
 
         persistedSurvey = surveyRepository.load(surveyId)
     }
 
-    void moveDown() {
-        int questionId = getParamValue('questionId').asInteger()
+    void moveDown(int questionId) {
         persistedSurvey.moveDown(questionRepository.load(questionId))
         surveyRepository.update(persistedSurvey)
 
@@ -245,8 +245,6 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     void deleteQuestion() {
-        int questionId = getParamValue('questionId2delete').asInteger()
-
         def question = questionRepository.load(questionId)
         question.active = false
         questionRepository.update(question)
@@ -254,10 +252,10 @@ class SurveySettingsController extends BaseSurveyController {
         persistedSurvey = surveyRepository.load(surveyId)
     }
 
-    String modifyQuestion() {
-        Integer questionId = getParamValue('questionId').asInteger()
+    String modifyQuestion(Integer questionId) {
+        this.questionId = questionId
 
-        if (questionId != null) {
+        if (questionId) {
             question = questionRepository.load(questionId)
 
             questionOptions = new DynamicTableModel()
@@ -281,7 +279,7 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     void saveQuestion() {
-        def persistedQuestion = (questionId != null) ?
+        def persistedQuestion = questionId ?
                 questionRepository.load(questionId) : new Question(survey: persistedSurvey)
 
         updateQuestionModel(persistedQuestion)
@@ -294,7 +292,7 @@ class SurveySettingsController extends BaseSurveyController {
             return
         }
 
-        if (questionId == null) {
+        if (!questionId) {
             persistedSurvey.questions.add(persistedQuestion)
             surveyRepository.update(persistedSurvey)
 
