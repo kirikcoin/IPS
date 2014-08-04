@@ -64,7 +64,6 @@ public class Question implements Serializable {
     @OneToMany(mappedBy = "question", cascade = ALL, orphanRemoval = true)
     @OrderColumn(name = "option_order")
     @LazyCollection(LazyCollectionOption.FALSE)
-    @NotEmpty(message = "{question.validation.options.empty}")
     @Valid
     @Cache(usage = READ_WRITE)
     private List<QuestionOption> options = new ArrayList<>();
@@ -132,6 +131,7 @@ public class Question implements Serializable {
         return options;
     }
 
+    @NotEmpty(message = "{question.validation.options.empty}")
     public List<QuestionOption> getActiveOptions() {
         return newArrayList(filter(getOptions(), not(QuestionOption.SKIP_INACTIVE)));
     }
