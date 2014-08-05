@@ -52,8 +52,8 @@ class AccessNumbersController extends BaseController {
         }
     }
 
-    void goToSurvey() {
-        def surveyId = getParamValue('surveyId').asInteger()
+    @SuppressWarnings("GrMethodMayBeStatic")
+    void goToSurvey(int surveyId) {
         SurveySettingsController.goToSurvey(surveyId)
     }
 

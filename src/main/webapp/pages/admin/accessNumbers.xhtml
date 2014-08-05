@@ -69,10 +69,7 @@
                           sortable="true">
 
                 <h:commandLink value="#{row.surveyTitle}"
-                               action="#{accessNumberController.goToSurvey}"
-                               rendered="#{row.surveyId != null}">
-                  <f:param name="surveyId" value="#{row.surveyId}"/>
-                </h:commandLink>
+                               action="#{accessNumberController.goToSurvey(row.surveyId)}"/>
               </eye:column>
 
               <eye:column name="action"
