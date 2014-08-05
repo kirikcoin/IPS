@@ -67,12 +67,13 @@
       <root url="jar://$PROJECT_DIR$/lib/jboss-transaction-api_1.1_spec-1.0.1.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/hibernate-c3p0-4.2.8.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/javax.faces-2.2.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/jsf2components-2.0-rc-201407041227.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsf2components.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
       <root url="file://$PROJECT_DIR$/../smsc/webapps/jsf2Components/components/java" />
       <root url="jar://$USER_HOME$/.ideaLibSources/javax.faces-2.2.4-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/guava-16.0.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

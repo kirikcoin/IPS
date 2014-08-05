@@ -191,6 +191,7 @@
       <column name="esdp_login" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
       <column name="esdp_password" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
       <column name="show_c2s" sqlType="TINYINT" length="3" precision="0" nullable="true" jdbcType="-6" def="MA=="/>
+      <column name="esdp_provider" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <exported-key name="surveys_ibfk_1" table="surveys" schema="" catalog="ips" columns="owner_id"/>
       <exported-key name="FK_surveys_users_users" table="surveys_users" schema="" catalog="ips" columns="user_id"/>
