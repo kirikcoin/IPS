@@ -103,11 +103,23 @@ function Tree(contentId, options) {
       svgPaths.attr('data-id', function (d) { return d; });
       svgPaths.append("svg:title").text(function (d) {
         var edge = graph.edge(d);
-        if (edge.collapsedLinearPathIds) {
-          return edge.detail;
-        }
+        return edge.collapsedLinearPathIds ? edge.detail : undefined;
       });
       return svgPaths;
+    });
+  }
+
+  function _zoom(renderer) {
+    var marginX = 10; // px
+    renderer.zoom(function (graph, root) {
+      return d3.behavior.zoom().on('zoom', function() {
+        root.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+        $(root[0]).find('.nodes rect').each(function (i, rect) {
+          var $rect = $(rect),
+              $text = $rect.siblings('g');
+          $rect.attr('width', $text[0].getBBox().width + 2 * marginX);
+        });
+      });
     });
   }
 
@@ -228,8 +240,6 @@ function Tree(contentId, options) {
   }
 
   function _setupHighlight(graph) {
-    var g = graph;
-
     function path(id) {
       return $divElement.find('g.edgePath.enter[data-id="' + id + '"]');
     }
@@ -239,7 +249,7 @@ function Tree(contentId, options) {
     }
 
     function target(id) {
-      return g._edges[id].v;
+      return graph._edges[id].v;
     }
 
     function onHighlight($nodeElem, highlight) {
@@ -248,7 +258,7 @@ function Tree(contentId, options) {
       if (highlight)  node(nodeId).attr('class', 'node enter hlSource');
       else            node(nodeId).attr('class', 'node enter');
 
-      $.each(g.incidentEdges(nodeId), function (i, e) {
+      $.each(graph.incidentEdges(nodeId), function (i, e) {
         var targetNodeId = target(e);
         if (highlight) {
           // Note: those are SVG elements, so `addClass'/`removeClass' are of no help here.
@@ -293,6 +303,7 @@ function Tree(contentId, options) {
     _drawNodes(renderer);
     _drawEdgeLabels(renderer);
     _drawEdgePaths(renderer);
+    _zoom(renderer);
 
     renderer = renderer.layout(layout);
     renderer.run(d3Graph, d3.select("#" + contentId + " svg g"));
