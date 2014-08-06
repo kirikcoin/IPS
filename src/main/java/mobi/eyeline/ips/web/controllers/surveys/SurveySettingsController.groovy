@@ -2,17 +2,21 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.SurveyPattern
 import mobi.eyeline.ips.repository.AccessNumberRepository
-import mobi.eyeline.ips.repository.QuestionOptionRepository
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.*
+import mobi.eyeline.ips.service.CouponService
+import mobi.eyeline.ips.service.EsdpService
+import mobi.eyeline.ips.service.EsdpServiceSupport
+import mobi.eyeline.ips.service.PushService
+import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.SurveyService
+import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
@@ -21,7 +25,9 @@ import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.*
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.COUPON
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.DISABLED
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.SMS
 
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
@@ -29,13 +35,12 @@ import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.
 class SurveySettingsController extends BaseSurveyController {
 
     private final QuestionRepository questionRepository = Services.instance().questionRepository
-    private final QuestionOptionRepository questionOptionRepository = Services.instance().questionOptionRepository
     private final UserRepository userRepository = Services.instance().userRepository
-    private
-    final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
+    private final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
 
     private final PushService pushService = Services.instance().pushService
     private final CouponService couponService = Services.instance().couponService
+    private final SurveyService surveyService = Services.instance().surveyService
     private final EsdpService esdpService = Services.instance().esdpService
     private final EsdpServiceSupport esdpServiceSupport = Services.instance().esdpServiceSupport
 
@@ -91,8 +96,7 @@ class SurveySettingsController extends BaseSurveyController {
         super()
         newSurveyClientId = survey.client.id
 
-        questionsGraph = generateQuestionsGraph()
-
+        generateQuestionsGraph()
     }
 
     List<SelectItem> getQuestions() {
@@ -102,38 +106,12 @@ class SurveySettingsController extends BaseSurveyController {
         ]  as List<SelectItem>
     }
 
-    TreeNode generateQuestionsGraph() {
-        TreeNode surveyEnd = new TreeNode(-1,
+    private void generateQuestionsGraph() {
+        questionsGraph = SurveyTreeUtil.asTree(
+                survey,
                 strings['survey.settings.questions.tabs.graphs.end.label'],
                 strings['survey.settings.questions.tabs.graphs.end.description'])
-        def questions = survey.activeQuestions
-        if (questions.empty) return null
-        def nodes = new HashMap<Integer,TreeNode>()
-
-        TreeNode currentNode = null
-        for (int i = 0; i < questions.size(); i++) {
-            def currentQuestion = questions.get(i)
-            currentNode = new TreeNode(currentQuestion.id, currentQuestion.title, currentQuestion.title)
-            nodes.put(currentQuestion.id,currentNode)
-        }
-
-        for (int i = 0; i < questions.size(); i++) {
-            def currentQuestion = questions.get(i)
-            currentNode = nodes[currentQuestion.id]
-
-            def currentOptions = currentQuestion.options
-            currentOptions.each { QuestionOption option ->
-                if (option.nextQuestion == null) {
-                    currentNode.edges << new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, surveyEnd)
-                } else {
-                    currentNode.edges << new TreeEdge(option.id, option.activeIndex+1 as String, option.answer, nodes[option.nextQuestion.id])
-                }
-            }
-        }
-
-        return nodes[survey.firstQuestion.id]
     }
-
 
     String getSurveyUrl() { esdpServiceSupport.getServiceUrl(persistedSurvey) }
 
@@ -292,51 +270,30 @@ class SurveySettingsController extends BaseSurveyController {
     void deleteQuestion() {
         int questionId = getParamValue('questionId').asInteger()
 
-        def question = questionRepository.load(questionId)
-
-        def questions = survey.activeQuestions
-        if(!questions.empty) {
-            for (int i = 0; i < questions.size(); i++) {
-                def currentQuestion = questions.get(i)
-                if(currentQuestion==question) continue
-                def currentOptions = currentQuestion.options
-                currentOptions.each {QuestionOption option ->
-                    if(option.nextQuestion==question) {
-                        option.nextQuestion = null
-                        questionOptionRepository.update(option)
-
-                    }
-                }
-            }
-        }
-
-        question.active = false
-        questionRepository.update(question)
-
+        surveyService.deleteQuestion(survey, questionRepository.load(questionId))
         persistedSurvey = surveyRepository.load(surveyId)
+        generateQuestionsGraph()
     }
 
     String modifyQuestion() {
         Integer questionId = getParamValue('questionId').asInteger()
 
-        if (questionId != null) {
+        if (questionId) {
             question = questionRepository.load(questionId)
 
             questionOptions = new DynamicTableModel()
             question.options
                     .findAll { QuestionOption it -> it.active }
                     .each { QuestionOption it ->
-                def row = new DynamicTableRow()
-                row.setValue('answer', it.answer)
-                if(it.nextQuestion == null) {
-                    row.setValue('nextQuestion', new Question(id: -1, title: 'final').id as String)
-                } else {
-                    row.setValue('nextQuestion', it.nextQuestion.id as String)
-                }
-
-                row.setValue('id', it.id)
+                def row = new DynamicTableRow() {{
+                    setValue('answer', it.answer)
+                    setValue('nextQuestion',
+                            (it.nextQuestion == null ? -1 : it.nextQuestion.id) as String)
+                    setValue('id', it.id)
+                }}
                 questionOptions.addRow(row)
             }
+
         } else {
             question = new Question()
             questionOptions = new DynamicTableModel()
@@ -369,6 +326,7 @@ class SurveySettingsController extends BaseSurveyController {
             questionRepository.saveOrUpdate(persistedQuestion)
         }
 
+        generateQuestionsGraph()
         goToSurvey(surveyId)
     }
 
@@ -446,7 +404,6 @@ class SurveySettingsController extends BaseSurveyController {
         handleRemoved()
         handleAdded()
         handleUpdated()
-        print persistedQuestion
     }
 
     List<SelectItem> getAvailableAccessNumbers() {
@@ -455,7 +412,7 @@ class SurveySettingsController extends BaseSurveyController {
         ]
 
         def available = { AccessNumber number ->
-            (number.surveyStats == null) || ((survey.statistics.accessNumber != null) && (number.id == survey.statistics.accessNumber.id))
+            !number.surveyStats || (survey.statistics.accessNumber && (number.id == survey.statistics.accessNumber.id))
         }
 
         accessNumberRepository.list().each { AccessNumber number ->

@@ -298,10 +298,10 @@
                               <h:outputText value="#{option.activeIndex + 1}. "
                                             styleClass="option-number"/>
                               <h:outputText value="#{option.answer}"/>
-                              <h:outputText value="#{bundle['question.option.terminal.list.label']}"
+                              <h:outputText value="&#8594; #{bundle['question.option.terminal.list.label']}"
                                             rendered="#{option.nextQuestion == null}"
                                             styleClass="option-label"/>
-                              <h:outputText value="(#{bundle['question.option.number']}№#{option.nextQuestion.activeIndex+1})"
+                              <h:outputText value="&#8594; #{option.nextQuestion.activeIndex+1}"
                                             rendered="#{option.nextQuestion != null}"
                                             styleClass="option-label"/>
                             </h:column>
@@ -335,7 +335,7 @@
                 <eye:tab label="#{bundle['survey.settings.questions.tabs.graphs']}">
                   <ips:tree id="questionsTree"
                             value="#{surveySettingsController.questionsGraph}"
-                            height="400"
+                            height="600"
                             width="1100"
                             direction="TB"/>
                 </eye:tab>
@@ -585,8 +585,7 @@
               <h:outputText  value=" "/>
 
               <h:outputText  value="#{bundle['question.option.label']}"/>
-              <!--<h:outputText  value=" #{bundle['question.option.terminal.label']}"/>-->
-              <h:outputText  value=" Next question"/>
+              <h:outputText  value="#{bundle['question.option.next']}"/>
               <h:outputText  value=" "/>
             </h:panelGrid>
           </h:panelGroup>
@@ -604,11 +603,6 @@
                               allowEditAfterAdd="true"
                               allowEmpty="false"
                               maxLength="70"/>
-              <!--<eye:selectColumn name="terminal"-->
-                                <!--values="#{surveySettingsController.terminalValues}"-->
-                                <!--var="t" itemLabel="#{t.label}" itemValue="#{t.value}"-->
-                                <!--allowEditAfterAdd="true"-->
-                                <!--columnClass="colTerminal"/>-->
 
               <eye:selectColumn name="nextQuestion"
                                 values="#{surveySettingsController.questions}"

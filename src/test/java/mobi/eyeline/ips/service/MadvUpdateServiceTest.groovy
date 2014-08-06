@@ -16,20 +16,19 @@ import javax.xml.ws.WebServiceException
 
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.*
 
+@Mixin(RepositoryMock)
 class MadvUpdateServiceTest extends DbTestCase {
 
     // Configuration
     def configClass
     Config config
 
-    SurveyRepository surveyRepository
-    SurveyStatsRepository surveyStatsRepository
-    SurveyInvitationRepository surveyInvitationRepository
-    InvitationDeliveryRepository invitationDeliveryRepository
     SurveyService surveyService
 
     void setUp() {
         super.setUp()
+
+        initRepository(db)
 
         // Configuration
         configClass = new MockFor(Config).with {
@@ -40,11 +39,12 @@ class MadvUpdateServiceTest extends DbTestCase {
         }
         config = configClass.proxyDelegateInstance() as Config
 
-        surveyRepository = new SurveyRepository(db)
-        surveyStatsRepository = new SurveyStatsRepository(db)
-        surveyInvitationRepository = new SurveyInvitationRepository(db)
-        invitationDeliveryRepository = new InvitationDeliveryRepository(db)
-        surveyService = new SurveyService(surveyRepository, surveyInvitationRepository, invitationDeliveryRepository)
+        surveyService = new SurveyService(
+                surveyRepository,
+                questionRepository,
+                questionOptionRepository,
+                surveyInvitationRepository,
+                invitationDeliveryRepository)
     }
 
     MadvUpdateService createService(Config config, MadvSoapApi api) {

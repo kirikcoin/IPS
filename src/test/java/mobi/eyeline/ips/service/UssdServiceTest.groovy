@@ -54,7 +54,7 @@ class UssdServiceTest extends DbTestCase {
 
         // Dependencies
         surveyService = new SurveyService(
-                surveyRepository,
+                surveyRepository, questionRepository, questionOptionRepository,
                 surveyInvitationRepository,
                 invitationDeliveryRepository)
         pushService = new PushService(config, new EsdpServiceSupport(null) {
@@ -167,12 +167,11 @@ class UssdServiceTest extends DbTestCase {
         surveyRepository.save survey
 
         def q1 = new Question(survey: survey, title: 'First one')
-        q1.options << new QuestionOption(answer: 'O1', question: q1)
-
         def q2 = new Question(survey: survey, title: 'Second one')
-        q2.options << new QuestionOption(answer: 'O2', question: q2)
-
         def q3 = new Question(survey: survey, title: 'With options')
+
+        q1.options << new QuestionOption(answer: 'O1', question: q1, nextQuestion: q2)
+        q2.options << new QuestionOption(answer: 'O2', question: q2, nextQuestion: q3)
         q3.options << new QuestionOption(answer: 'O3', question: q3)
 
         survey.questions.addAll([q1, q2, q3])
@@ -318,7 +317,7 @@ class UssdServiceTest extends DbTestCase {
     void testTerminal() {
         createTestSurvey()
         survey().questions[0].options[0].with {
-            terminal = true
+            nextQuestion = null
             questionOptionRepository.update it
         }
 
@@ -399,7 +398,7 @@ class UssdServiceTest extends DbTestCase {
                 (PARAM_SURVEY_ID):      1,
                 (PARAM_MSISDN):         '79131234567',
         ]).with {
-            assertEquals "First one", it.text
+            assertEquals 'First one', it.text
         }
 
         request([
@@ -409,7 +408,7 @@ class UssdServiceTest extends DbTestCase {
                 (PARAM_ANSWER_ID):      1,
                 (PARAM_MSISDN):         '79131234567',
         ]).with {
-            assertEquals "Second one", it.text
+            assertEquals 'Second one', it.text
         }
 
         request([
@@ -420,7 +419,7 @@ class UssdServiceTest extends DbTestCase {
                 (PARAM_MSISDN):         '79131234567',
                 (PARAM_BAD_COMMAND):    null
         ]).with {
-            assertEquals "Second one", it.text
+            assertEquals 'Second one', it.text
         }
 
     }

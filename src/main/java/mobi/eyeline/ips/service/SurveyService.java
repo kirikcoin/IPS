@@ -1,24 +1,36 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.model.Question;
+import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
+import mobi.eyeline.ips.repository.QuestionOptionRepository;
+import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class SurveyService {
 
     private static final Logger logger = LoggerFactory.getLogger(SurveyService.class);
 
     private final SurveyRepository surveyRepository;
+    private final QuestionRepository questionRepository;
+    private final QuestionOptionRepository questionOptionRepository;
     private final SurveyInvitationRepository surveyInvitationRepository;
     private final InvitationDeliveryRepository invitationDeliveryRepository;
 
     public SurveyService(SurveyRepository surveyRepository,
+                         QuestionRepository questionRepository,
+                         QuestionOptionRepository questionOptionRepository,
                          SurveyInvitationRepository surveyInvitationRepository,
                          InvitationDeliveryRepository invitationDeliveryRepository) {
         this.surveyRepository = surveyRepository;
+        this.questionRepository = questionRepository;
+        this.questionOptionRepository = questionOptionRepository;
         this.surveyInvitationRepository = surveyInvitationRepository;
         this.invitationDeliveryRepository = invitationDeliveryRepository;
     }
@@ -67,5 +79,24 @@ public class SurveyService {
         return survey.getStatistics().getSentCount() +
                 invitationDeliveryRepository.countSent(survey) +
                 surveyInvitationRepository.count(survey);
+    }
+
+    /**
+     * Marks question as inactive and performs DB update.
+     * Nullifies referencing option links.
+     */
+    public void deleteQuestion(Survey survey, Question question) {
+        for (Question currentQuestion : survey.getActiveQuestions()) {
+            for (QuestionOption option : currentQuestion.getOptions()) {
+                if (question.equals(option.getNextQuestion())) {
+                    // TODO: should we null references or set them to the `next' available question?
+                    option.setNextQuestion(null);
+                    questionOptionRepository.update(option);
+                }
+            }
+        }
+
+        question.setActive(false);
+        questionRepository.update(question);
     }
 }
