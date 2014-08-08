@@ -1,0 +1,66 @@
+svg.eyeline_tree {
+  overflow: hidden;
+  background-color: white;
+  cursor: pointer;
+
+
+  //
+  //  Nodes.
+  //
+  .node {
+    rect {
+      stroke: #cacaca;
+      stroke-width: 1px;
+      fill: #fff;
+    }
+  }
+
+  .node.hlSource {
+    rect {
+      stroke: black;
+    }
+  }
+
+  .node.hlTarget {
+    rect {
+      stroke: #3F3F3F;
+    }
+  }
+
+  .node[data-id="-1"] {
+    rect {
+      stroke-width: 2px;
+    }
+  }
+
+  .node[data-id="-2"] {
+    rect {
+      stroke-width: 2px;
+    }
+  }
+
+  //
+  //  Edge labels.
+  //
+
+  .edgeLabel {
+    rect {
+      fill: #fff;
+    }
+  }
+
+
+  //
+  //  Edges.
+  //
+
+  .edgePath {
+    stroke: #cacaca;
+    stroke-width: 1px;
+    fill: none;
+  }
+
+  .edgePath.hlEdgeFrom {
+    stroke: black;
+  }
+}

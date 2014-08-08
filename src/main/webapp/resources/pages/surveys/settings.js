@@ -116,6 +116,10 @@ var page = {
     jsfc('questionModificationDialog').show();
   },
 
+  onQuestionDeleteDialog: function() {
+    jsfc('questionDeleteDialog').show();
+  },
+
   onPreviewClick: function() {
     jsfc('surveyPreviewDialog').show();
 

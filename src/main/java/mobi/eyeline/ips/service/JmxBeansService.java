@@ -2,6 +2,7 @@ package mobi.eyeline.ips.service;
 
 import com.j256.simplejmx.server.JmxServer;
 import mobi.eyeline.ips.properties.Config;
+import mobi.eyeline.ips.util.SurveyTreeUtil;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.management.ManagementService;
 import org.hibernate.SessionFactory;
@@ -66,6 +67,7 @@ public class JmxBeansService {
             jmxServer.register(services.getDeliveryService());
             jmxServer.register(services.getNotificationService());
             jmxServer.register(services.getEsdpService());
+            jmxServer.register(new SurveyTreeUtil());
 
         } catch (JMException e) {
             logger.error("JMX initialization failed", e);

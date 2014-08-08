@@ -90,7 +90,10 @@ public class Services {
 
         surveyService = new SurveyService(
                 surveyRepository,
-                surveyInvitationRepository, invitationDeliveryRepository);
+                questionRepository,
+                questionOptionRepository,
+                surveyInvitationRepository,
+                invitationDeliveryRepository);
 
         locationService =
                 new LocationService(config.getLocationProperties(), config.getLoginUrl());

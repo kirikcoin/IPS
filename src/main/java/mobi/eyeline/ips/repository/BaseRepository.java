@@ -18,15 +18,19 @@ public abstract class BaseRepository<E, K extends Serializable> {
     private static final Logger logger = LoggerFactory.getLogger(BaseRepository.class);
 
     private final DB db;
-    protected final Class<E> entityClass;
+    protected Class<E> entityClass;
 
     @SuppressWarnings("unchecked")
     public BaseRepository(DB db) {
         this.db = db;
+        this.entityClass = getEntityClass();
+    }
 
+    protected Class<E> getEntityClass() {
         final ParameterizedType genericSuperclass =
                 (ParameterizedType) getClass().getGenericSuperclass();
-        this.entityClass = (Class<E>) genericSuperclass.getActualTypeArguments()[0];
+        //noinspection unchecked
+        return (Class<E>) genericSuperclass.getActualTypeArguments()[0];
     }
 
     protected SessionFactory getSessionFactory() {

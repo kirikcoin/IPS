@@ -94,7 +94,7 @@ table#questionOptions th {
   font-weight: inherit;
 }
 
-.terminal-label {
+.option-label {
   font-style: italic;
   padding-left: 5px;
 }
@@ -137,15 +137,48 @@ tr#questionOptions_newrow > td + td + td + td + td {
   width: 5%;
 }
 
-td.colTerminal {
-  width: 17%;
+//td.questionDialogCol {
+//  width: 17%;
+//}
+
+#headerBlock {
+  .questionColDrag {
+    width: 23px
+  }
+
+  .questionColId {
+    display: none;
+  }
+
+  .questionColTitle {
+    width: 427px;
+  }
+
+  .questionColNext {
+    width: 178px;
+    text-align: center;
+  }
 }
 
-th.colTerminal {
+#scrollableVariants {
+  .answerColumn {
+    width: 370px;
+  }
+
+  .nextColumn {
+    width: 150px;
+
+    select {
+      width: 100%;
+    }
+  }
+}
+
+th.questionDialogCol {
   padding-left: 9px !important;
 }
 
-td.colTerminal > select {
+td.questionDialogCol > select {
   width: 100%;
   margin-left: 5px;
 }
@@ -226,4 +259,20 @@ div.eyeline_inputDate input {
 
 .noCouponsError {
   color: RED;
+}
+
+#tabs {
+  div.ui-tabs-panel {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  li.ui-state-default {
+    border: 0;
+    position: inherit;
+
+    a {
+      margin-right: 0;
+    }
+  }
 }

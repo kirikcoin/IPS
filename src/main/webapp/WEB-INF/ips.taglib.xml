@@ -18,4 +18,12 @@
     <source>../WEB-INF/tags/dateRange.xhtml</source>
   </tag>
 
+  <tag>
+    <tag-name>tree</tag-name>
+    <component>
+      <component-type>mobi.eyeline.ips.components.tree</component-type>
+      <handler-class>com.sun.facelets.tag.jsf.ComponentHandler</handler-class>
+    </component>
+  </tag>
+
 </facelet-taglib>
