@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.util
 
 import com.j256.simplejmx.common.JmxOperation
+import com.j256.simplejmx.common.JmxOperationInfo
 import com.j256.simplejmx.common.JmxResource
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -11,7 +12,6 @@ import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.service.Services
 
-import static com.j256.simplejmx.common.JmxOperationInfo.OperationAction.ACTION
 
 @CompileStatic
 @Slf4j('logger')
@@ -45,7 +45,7 @@ class SurveyTreeUtil {
 
     // TODO: delete after migration.
     @SuppressWarnings(["GrMethodMayBeStatic", "GroovyUnusedDeclaration"])
-    @JmxOperation(operationAction = ACTION)
+    @JmxOperation(operationAction = JmxOperationInfo.OperationAction.ACTION)
     void migrateToTreeStructure() {
         logger.info 'Migrating to tree survey structure'
 

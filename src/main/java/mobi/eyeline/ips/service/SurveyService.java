@@ -106,7 +106,7 @@ public class SurveyService {
         for (Question currentQuestion : question.getSurvey().getActiveQuestions()) {
             for (QuestionOption option : currentQuestion.getActiveOptions()) {
                 if (question.equals(option.getNextQuestion())) {
-                    refs.add(question);
+                    refs.add(currentQuestion);
                     break;
                 }
             }

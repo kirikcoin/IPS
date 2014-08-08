@@ -66,7 +66,7 @@ class SurveyServiceTest extends DbTestCase {
             s
         }
 
-        surveyService.deleteQuestion(survey, questions[1])
+        surveyService.deleteQuestion(questions[1])
 
         def tree = SurveyTreeUtil.asTree(survey, '', '')
         assertThat tree.describe(), equalToIgnoringWhiteSpace('''
