@@ -29,6 +29,8 @@
             page.onEditEndMessageClick();
           } else if ("#{surveySettingsController.errorId}" == 'questionModificationDialog') {
             page.onQuestionModificationDialog();
+          } else if ("#{surveySettingsController.errorId}" == 'questionDeleteDialog') {
+            page.onQuestionDeleteDialog();
           } else if ("#{surveySettingsController.errorId}" == 'surveyPreviewDialog') {
             page.onPreviewClick();
           } else if ("#{surveySettingsController.errorId}" == 'deleteDialog') {
@@ -257,11 +259,11 @@
                               <h:outputText value="#{question.title}"/>
                             </h:panelGroup>
                             <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
-                              <h:outputLink value="#"
-                                            styleClass="modify"
-                                            onclick="return page.showQuestionDeleteDialog(#{question.id});">
-                                <h:outputText value="#{bundle['survey.details.delete']}"/>
-                              </h:outputLink>
+                              <h:commandLink value="#{bundle['survey.details.delete']}"
+                                             styleClass="modify"
+                                             action="#{surveySettingsController.beforeDeleteQuestion}">
+                                <f:param name="questionId" value="${question.id}"/>
+                              </h:commandLink>
                               <h:commandLink value="#{bundle['survey.settings.modify']}"
                                              action="#{surveySettingsController.modifyQuestion}"
                                              styleClass="modify">
@@ -552,24 +554,45 @@
         <!--
             Question delete confirmation dialog
         -->
+        <eye:dialog id="questionDeleteDialog"
+                    title="#{bundle['survey.settings.questions.delete.title']}"
+                    width="400">
 
-        <ips:confirmDialog id="questionDeleteDialog"
-                           text="#{bundle['survey.settings.questions.delete.prompt']}"
-                           title="#{bundle['survey.settings.questions.delete.title']}"
-                           actionBean="#{surveySettingsController}"
-                           actionName="deleteQuestion"
-                           paramKey="errorId"
-                           paramValue="questionDeleteDialog"
-                           width="300"/>
+          <h:panelGroup styleClass="confirmDialog_content"
+                        layout="block">
+            <h:outputText value="#{surveySettingsController.questionDeletePrompt}"
+                          escape="false"/>
+          </h:panelGroup>
 
+          <h:panelGroup layout="block" style="margin:10px"/>
 
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink id="questionDeleteDialog_confirmButton"
+                             styleClass="button-green"
+                             value="#{bundle['dialog.confirm']}"
+                             action="#{surveySettingsController.deleteQuestion}">
+                <f:param name="errorId" value="questionDeleteDialog"/>
+              </h:commandLink>
+            </eye:button>
+
+            <eye:button>
+              <h:commandLink id="questionDeleteDialog_cancelButton"
+                             styleClass="button-green"
+                             value="#{bundle['dialog.cancel']}"
+                             onclick="jsfc('questionDeleteDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
 
         <!--
             Question modification dialog
         -->
         <eye:dialog id="questionModificationDialog"
                     title="#{bundle['survey.settings.question.modify.title']}"
-                    width="500">
+                    width="700">
 
           <h:outputLabel value="#{bundle['survey.settings.question.modify.text']}:"
                          for="title"/>
@@ -581,12 +604,14 @@
           <br/>
 
           <h:panelGroup id="headerBlock" layout="block">
-            <h:panelGrid columns="5" columnClasses="questionDialogCol">
-              <h:outputText  value=" "/>
+            <h:panelGrid columns="5"
+                         columnClasses="questionColDrag, questionColId, questionColTitle, questionColNext, questionColAdd">
+              <h:outputText value=" "/>
+              <h:outputText value=" "/>
 
-              <h:outputText  value="#{bundle['question.option.label']}"/>
-              <h:outputText  value="#{bundle['question.option.next']}"/>
-              <h:outputText  value=" "/>
+              <h:outputText value="#{bundle['question.option.label']}"/>
+              <h:outputText value="#{bundle['question.option.next']}"/>
+              <h:outputText value=" "/>
             </h:panelGrid>
           </h:panelGroup>
 
@@ -602,13 +627,14 @@
               <eye:textColumn name="answer"
                               allowEditAfterAdd="true"
                               allowEmpty="false"
+                              columnClass="answerColumn"
                               maxLength="70"/>
 
               <eye:selectColumn name="nextQuestion"
                                 values="#{surveySettingsController.questions}"
                                 var="t2" itemLabel="#{t2.label}" itemValue="#{t2.value}"
                                 allowEditAfterAdd="true"
-                                columnClass="questionDialogCol"/>
+                                columnClass="nextColumn"/>
 
             </eye:dynamicTable>
           </h:panelGroup>

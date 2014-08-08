@@ -2,6 +2,7 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Question
@@ -24,6 +25,7 @@ import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
+import java.text.MessageFormat
 
 import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.COUPON
 import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.DISABLED
@@ -92,25 +94,44 @@ class SurveySettingsController extends BaseSurveyController {
 
     TreeNode questionsGraph
 
+    String questionDeletePrompt
+
     SurveySettingsController() {
         super()
         newSurveyClientId = survey.client.id
 
-        generateQuestionsGraph()
+        updateQuestionsGraph()
     }
 
     List<SelectItem> getQuestions() {
         [
                 new SelectItem(-1, strings['question.option.terminal.inlist'] as String),
-                * survey.activeQuestions.collect { Question q -> new SelectItem(q.id, q.activeIndex + 1 as String) }
+                * survey.activeQuestions.collect { Question q ->
+                    def idx = q.activeIndex + 1
+                    def maxLabel = 20
+                    new SelectItem(
+                            q.id,
+                            "$idx. ${q.title.length() <= maxLabel ? q.title : q.title[0..<maxLabel-3] + '...'}",
+                            "$idx. $q.title")
+                }
         ]  as List<SelectItem>
     }
 
-    private void generateQuestionsGraph() {
-        questionsGraph = SurveyTreeUtil.asTree(
+    private void updateQuestionsGraph() {
+        def tree = SurveyTreeUtil.asTree(
                 survey,
                 strings['survey.settings.questions.tabs.graphs.end.label'],
                 strings['survey.settings.questions.tabs.graphs.end.description'])
+
+        def start = new TreeNode(-2,
+                strings['survey.settings.questions.tabs.graphs.start.label'],
+                strings['survey.settings.questions.tabs.graphs.start.label'])
+        start.edges << new TreeEdge(-1,
+                strings['survey.settings.questions.tabs.graphs.start.label'],
+                strings['survey.settings.questions.tabs.graphs.start.label'],
+                tree)
+
+        questionsGraph = start
     }
 
     String getSurveyUrl() { esdpServiceSupport.getServiceUrl(persistedSurvey) }
@@ -267,12 +288,33 @@ class SurveySettingsController extends BaseSurveyController {
         persistedSurvey = surveyRepository.load(surveyId)
     }
 
+    void beforeDeleteQuestion() {
+        int questionId = getParamValue('questionId').asInteger()
+        def question = questionRepository.load(questionId)
+
+        def refs = surveyService.getReferencesTo(question)
+        if (refs.empty) {
+            questionDeletePrompt = strings['survey.settings.questions.delete.prompt']
+
+        } else if (refs.size() == 1) {
+            questionDeletePrompt = MessageFormat.format(
+                    strings['survey.settings.questions.delete.prompt.with.references.single'] as String,
+                    refs.first().activeIndex + 1 as String)
+        } else {
+            questionDeletePrompt = MessageFormat.format(
+                    strings['survey.settings.questions.delete.prompt.with.references.plural'] as String,
+                    refs.collect { Question q -> q.activeIndex + 1 }.join(', '))
+        }
+
+        errorId = 'questionDeleteDialog'
+    }
+
     void deleteQuestion() {
         int questionId = getParamValue('questionId').asInteger()
 
-        surveyService.deleteQuestion(survey, questionRepository.load(questionId))
+        surveyService.deleteQuestion(questionRepository.load(questionId))
         persistedSurvey = surveyRepository.load(surveyId)
-        generateQuestionsGraph()
+        updateQuestionsGraph()
     }
 
     String modifyQuestion() {
@@ -286,10 +328,9 @@ class SurveySettingsController extends BaseSurveyController {
                     .findAll { QuestionOption it -> it.active }
                     .each { QuestionOption it ->
                 def row = new DynamicTableRow() {{
-                    setValue('answer', it.answer)
-                    setValue('nextQuestion',
-                            (it.nextQuestion == null ? -1 : it.nextQuestion.id) as String)
-                    setValue('id', it.id)
+                    setValue 'answer', it.answer
+                    setValue 'nextQuestion', it.nextQuestion ? it.nextQuestion.id : -1 as String
+                    setValue 'id', it.id
                 }}
                 questionOptions.addRow(row)
             }
@@ -326,7 +367,7 @@ class SurveySettingsController extends BaseSurveyController {
             questionRepository.saveOrUpdate(persistedQuestion)
         }
 
-        generateQuestionsGraph()
+        updateQuestionsGraph()
         goToSurvey(surveyId)
     }
 

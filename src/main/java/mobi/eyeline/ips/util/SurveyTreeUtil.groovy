@@ -21,7 +21,7 @@ class SurveyTreeUtil {
     private static TreeNode addQuestion(Map<Integer, TreeNode> target,
                                         Question q,
                                         TreeNode terminal) {
-        new TreeNode(q.id, "$q.activeIndex. $q.title" as String, q.title).with { TreeNode n ->
+        new TreeNode(q.id, "${q.activeIndex + 1}. $q.title" as String, q.title).with { TreeNode n ->
             if (!target.put(q.id, n)) {
                 n.edges.addAll(q.activeOptions.collect { QuestionOption opt -> new TreeEdge(
                         opt.id,

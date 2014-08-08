@@ -11,6 +11,7 @@ import mobi.eyeline.ips.repository.SurveyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SurveyService {
@@ -85,11 +86,10 @@ public class SurveyService {
      * Marks question as inactive and performs DB update.
      * Nullifies referencing option links.
      */
-    public void deleteQuestion(Survey survey, Question question) {
-        for (Question currentQuestion : survey.getActiveQuestions()) {
-            for (QuestionOption option : currentQuestion.getOptions()) {
+    public void deleteQuestion(Question question) {
+        for (Question ref : getReferencesTo(question)) {
+            for (QuestionOption option : ref.getActiveOptions()) {
                 if (question.equals(option.getNextQuestion())) {
-                    // TODO: should we null references or set them to the `next' available question?
                     option.setNextQuestion(null);
                     questionOptionRepository.update(option);
                 }
@@ -98,5 +98,20 @@ public class SurveyService {
 
         question.setActive(false);
         questionRepository.update(question);
+    }
+
+    public List<Question> getReferencesTo(Question question) {
+        final List<Question> refs = new ArrayList<>();
+
+        for (Question currentQuestion : question.getSurvey().getActiveQuestions()) {
+            for (QuestionOption option : currentQuestion.getActiveOptions()) {
+                if (question.equals(option.getNextQuestion())) {
+                    refs.add(question);
+                    break;
+                }
+            }
+        }
+
+        return refs;
     }
 }

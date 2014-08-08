@@ -79,6 +79,14 @@
     <JAVADOC />
     <SOURCES>
       <root url="jar://$USER_HOME$/.ideaLibSources/groovy-all-2.2.1-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/hamcrest-all-1.3-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/myfaces-impl-1.2.9-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/commons-logging-1.1.1-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/commons-fileupload-1.2.2-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/freemarker-2.3.20-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/trinidad-impl-1.2.13-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/ehcache-core-2.4.3-sources.jar!/" />
+      <root url="file://$PROJECT_DIR$/../smsc/webapps/jsfComponents/components/java" />
     </SOURCES>
   </library>
 </component>

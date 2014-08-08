@@ -1,3 +1,5 @@
+"use strict";
+
 //noinspection JSUnusedGlobalSymbols
 function createTree(contentId, options) {
   var c = new Tree(contentId, options);
@@ -79,7 +81,7 @@ function Tree(contentId, options) {
       var svgNodes = oldDrawNodes(graph, root);
       svgNodes.attr('data-id', function (d) { return d; });
       svgNodes.append("svg:title").text(function (d) {
-        return graph.node(d).detail;
+        return graph.node(d).detail.replace('\\n', ' ');
       });
       return svgNodes;
     });

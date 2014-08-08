@@ -136,7 +136,7 @@ public class TreeRenderer extends Renderer {
         }
 
         private String escapeJs(String value) {
-            value = value.replaceAll("\n", "\\\\n'");
+            value = value.replaceAll("\n", "\\\\n");
             value = value.replaceAll("\\\\", "\\\\\\\\");
             value = value.replaceAll("'", "\\\\'");
             return value;
