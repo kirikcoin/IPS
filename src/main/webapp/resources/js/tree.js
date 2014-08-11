@@ -250,8 +250,20 @@ function Tree(contentId, options) {
       return $divElement.find('g.node.enter[data-id="' + id + '"]');
     }
 
-    function target(id) {
-      return graph._edges[id].v;
+    function target(id) { return graph._edges[id].v; }
+    function source(id) { return graph._edges[id].u; }
+
+    function getEdgeClass(e, highlight, nodeId) {
+      var dstId = target(e);
+      var srcId = source(e);
+      if (highlight) {
+        if      (nodeId == dstId && nodeId == srcId)  return 'hlEdgeFrom hlEdgeTo';
+        else if (nodeId == dstId)                     return 'hlEdgeTo';
+        else                                          return 'hlEdgeFrom';
+
+      } else {
+        return '';
+      }
     }
 
     function onHighlight($nodeElem, highlight) {
@@ -261,17 +273,13 @@ function Tree(contentId, options) {
       else            node(nodeId).attr('class', 'node enter');
 
       $.each(graph.incidentEdges(nodeId), function (i, e) {
-        var targetNodeId = target(e);
-        if (highlight) {
-          // Note: those are SVG elements, so `addClass'/`removeClass' are of no help here.
-          if (targetNodeId == nodeId)   path(e).attr('class', 'edgePath enter hlEdgeTo');
-          else                          path(e).attr('class', 'edgePath enter hlEdgeFrom');
-        } else {
-          path(e).attr('class', 'edgePath enter');
-        }
+        // Note: those are SVG elements, so `addClass'/`removeClass' are of no help here.
+        var clazz = getEdgeClass(e, highlight, nodeId);
+        path(e).attr('class', 'edgePath enter ' + clazz);
 
-        if (highlight) node(targetNodeId).attr('class', 'node enter hlTarget');
-        else           node(targetNodeId).attr('class', 'node enter');
+        var dstId = target(e);
+        if (highlight) node(dstId).attr('class', 'node enter hlTarget');
+        else           node(dstId).attr('class', 'node enter');
       });
     }
 
