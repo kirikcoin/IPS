@@ -144,11 +144,13 @@
 
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.save']}"
+              <h:commandLink styleClass="button-green btnSubmit"
+                             value="#{bundle['survey.create.button.save']}"
                              action="#{surveyListController.createSurvey}"/>
             </eye:button>
             <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['survey.create.button.cancel']}"
                              onclick="jsfc('newSurveyDialog').hide(); ips.message.hideAll(); return false;"/>
             </eye:button>
             <eye:space/>

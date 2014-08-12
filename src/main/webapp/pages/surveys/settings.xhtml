@@ -213,7 +213,7 @@
 
                   <eye:buttons>
                     <eye:button>
-                      <h:commandLink styleClass="button-green"
+                      <h:commandLink styleClass="button-green btnSubmit"
                                      value="#{bundle['survey.settings.save']}"
                                      action="#{surveySettingsController.saveSettings}">
                         <f:param name="errorId" value="settingsDialog"/>
@@ -516,13 +516,15 @@
 
                   <eye:buttons>
                     <eye:button>
-                      <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"
+                      <h:commandLink styleClass="button-green btnSubmit"
+                                     value="#{bundle['survey.settings.save']}"
                                      action="#{surveySettingsController.saveMessage}">
                         <f:param name="errorId" value="endMessageDialog"/>
                       </h:commandLink>
                     </eye:button>
                     <eye:button>
-                      <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['survey.create.button.cancel']}"
                                      action="#{surveySettingsController.onCancel}"/>
                     </eye:button>
                     <eye:space/>

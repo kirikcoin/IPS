@@ -165,7 +165,6 @@
         <h:panelGroup layout="block" style="margin-top: 15px;">
           <h:commandLink value="#{bundle['client.list.button.createclient']}"
                          styleClass="button-black"
-
                          action="#{clientListController.fillUserForEdit}"/>
         </h:panelGroup>
 
@@ -207,7 +206,7 @@
 
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['client.dialog.settings.button.save']}"
                              action="#{clientListController.saveModifiedUser}"/>
             </eye:button>
