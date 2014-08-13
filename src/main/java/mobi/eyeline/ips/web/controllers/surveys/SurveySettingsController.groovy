@@ -121,7 +121,8 @@ class SurveySettingsController extends BaseSurveyController {
         def tree = SurveyTreeUtil.asTree(
                 survey,
                 strings['survey.settings.questions.tabs.graphs.end.label'],
-                strings['survey.settings.questions.tabs.graphs.end.description'])
+                strings['survey.settings.questions.tabs.graphs.end.description'],
+                strings['survey.settings.questions.option.unused'])
 
         def start = new TreeNode(-2,
                 strings['survey.settings.questions.tabs.graphs.start.label'],

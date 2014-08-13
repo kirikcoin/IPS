@@ -83,6 +83,10 @@ function Tree(contentId, options) {
       svgNodes.append("svg:title").text(function (d) {
         return graph.node(d).detail.replace('\\n', ' ');
       });
+      svgNodes.attr('class', function (d) {
+        var styleClass = graph.node(d).styleClass ? graph.node(d).styleClass : '';
+        return 'node enter ' + styleClass;
+      });
       return svgNodes;
     });
   }
@@ -106,6 +110,10 @@ function Tree(contentId, options) {
       svgPaths.append("svg:title").text(function (d) {
         var edge = graph.edge(d);
         return edge.collapsedLinearPathIds ? edge.detail : undefined;
+      });
+      svgPaths.attr('class', function (d) {
+        var styleClass = graph.edge(d).styleClass ? graph.edge(d).styleClass : '';
+        return 'edgePath enter ' + styleClass;
       });
       return svgPaths;
     });
@@ -147,7 +155,8 @@ function Tree(contentId, options) {
 
           if (collapsible.length > 1) {
             var labels = $.map(collapsible, function (e) { return e.label; }),
-                descs = $.map(collapsible, function (e) { return e.description; });
+                descs = $.map(collapsible, function (e) { return e.description; }),
+                styles = $.map(collapsible, function (e) { return e.styleClass ? e.styleClass : ''; });
 
             // Replace collapsed edges with a new one.
             g.edges = _diff(g.edges, collapsible);
@@ -155,6 +164,7 @@ function Tree(contentId, options) {
               from: from.id,
               to: to.id,
               label: labels.join(', '),
+              styleClass: styles.join(' '),
               description: descs.join('\n'),
               collapsedIds: $.map(collapsible, function (e) { return e.id; })
             });
@@ -186,7 +196,8 @@ function Tree(contentId, options) {
           if (!nonConnecting.length && ((connecting.length > 1) ||
               ((connecting.length == 1) && !connecting[0].hiddenLabels))) {
 
-            var descs = $.map(connecting, function (e) { return e.description; });
+            var descs = $.map(connecting, function (e) { return e.description; }),
+                styles = $.map(connecting, function (e) { return e.styleClass ? e.styleClass : ''; });;
 
             // Replace collapsed edges with a new one.
             g.edges = _diff(g.edges, connecting);
@@ -195,6 +206,7 @@ function Tree(contentId, options) {
               to: to.id,
               label: '',
               description: descs.join('\n'),
+              styleClass: styles.join(' '),
               collapsedLinearPathIds: $.map(connecting, function (e) { return e.id; }),
               hiddenLabels: true
             });
@@ -274,12 +286,14 @@ function Tree(contentId, options) {
 
       $.each(graph.incidentEdges(nodeId), function (i, e) {
         // Note: those are SVG elements, so `addClass'/`removeClass' are of no help here.
-        var clazz = getEdgeClass(e, highlight, nodeId);
-        path(e).attr('class', 'edgePath enter ' + clazz);
+        var edgeHlClass = getEdgeClass(e, highlight, nodeId);
+        var edgeStyleClass = graph.edge(e).styleClass ? graph.edge(e).styleClass : '';
+        path(e).attr('class', 'edgePath enter ' + edgeStyleClass + ' ' + edgeHlClass);
 
         var dstId = target(e);
-        if (highlight) node(dstId).attr('class', 'node enter hlTarget');
-        else           node(dstId).attr('class', 'node enter');
+        var nodeStyleClass = graph.node(dstId).styleClass ? graph.node(dstId).styleClass : '';
+        if (highlight) node(dstId).attr('class', 'node enter ' + nodeStyleClass + ' hlTarget');
+        else           node(dstId).attr('class', 'node enter ' + nodeStyleClass);
       });
     }
 
@@ -296,15 +310,19 @@ function Tree(contentId, options) {
     var d3Graph = new dagreD3.Digraph();
 
     $.each(graph.nodes, function (i, node) {
-      d3Graph.addNode(node.id, { label: node.label, detail: node.description });
+      var attrs = { label: node.label, detail: node.description };
+      if (node.styleClass)  attrs['styleClass'] = node.styleClass;
+      d3Graph.addNode(node.id, attrs);
     });
 
     $.each(graph.edges, function (i, edge) {
-      d3Graph.addEdge(null, edge.from, edge.to, {
-        label: edge.label,
-        detail: edge.description,
+      var attrs = {
         collapsedLinearPathIds: edge.collapsedLinearPathIds
-      });
+      };
+      if (edge.label)       attrs['label']       = edge.label;
+      if (edge.description) attrs['detail']      = edge.description;
+      if (edge.styleClass)  attrs['styleClass']  = edge.styleClass;
+      d3Graph.addEdge(null, edge.from, edge.to, attrs);
     });
 
     var layout = dagreD3.layout().rankDir(options.direction);

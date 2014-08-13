@@ -59,13 +59,13 @@ public class TreeRenderer extends Renderer {
     //  graph = {
     //      nodes: [
     //          {
-    //              id: '', label: '', description: ''
+    //              id: '', label: '', description: '', styleClass: ''
     //          },
     //          ...
     //      ],
     //      edges: [
     //          {
-    //              from: '', to: '', label: '', description: ''
+    //              from: '', to: '', label: '', description: '', styleClass: ''
     //          }
     //          ...
     //      ]
@@ -116,6 +116,10 @@ public class TreeRenderer extends Renderer {
                 w.append(", ");
                 w.append("description: '").append(escapeJs(node.getDescription())).append("'");
             }
+            if (node.getStyleClass() != null) {
+                w.append(", ");
+                w.append("styleClass: '").append(escapeJs(node.getStyleClass())).append("'");
+            }
             w.append("}");
         }
 
@@ -126,11 +130,17 @@ public class TreeRenderer extends Renderer {
             w.append("from: '").append(String.valueOf(from.getId())).append("'");
             w.append(", ");
             w.append("to: '").append(String.valueOf(edge.getTarget().getId())).append("'");
-            w.append(", ");
-            w.append("label: '").append(escapeJs(edge.getLabel())).append("'");
+            if (edge.getLabel() != null) {
+                w.append(", ");
+                w.append("label: '").append(escapeJs(edge.getLabel())).append("'");
+            }
             if (edge.getDescription() != null) {
                 w.append(", ");
                 w.append("description: '").append(escapeJs(edge.getDescription())).append("'");
+            }
+            if (edge.getStyleClass() != null) {
+                w.append(", ");
+                w.append("styleClass: '").append(escapeJs(edge.getStyleClass())).append("'");
             }
             w.append("}");
         }
@@ -146,7 +156,7 @@ public class TreeRenderer extends Renderer {
             private final TreeNode node;
 
             private OriginatingTreeEdge(TreeNode node, TreeEdge edge) {
-                super(edge.getId(), edge.getLabel(), edge.getDescription(), edge.getTarget());
+                super(edge.getId(), edge.getLabel(), edge.getDescription(), edge.getStyleClass(), edge.getTarget());
                 this.node = node;
             }
 

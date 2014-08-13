@@ -68,12 +68,15 @@ class SurveyServiceTest extends DbTestCase {
 
         surveyService.deleteQuestion(questions[1])
 
-        def tree = SurveyTreeUtil.asTree(survey, '', '')
+        def tree = SurveyTreeUtil.asTree(survey, '', '', '')
         assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
             [0] --0--> [-1]
             [0] --1--> [-1]
+
+            [-1] ---2--> [2]
+            [-1] ---3--> [3]
             ''')
     }
 }

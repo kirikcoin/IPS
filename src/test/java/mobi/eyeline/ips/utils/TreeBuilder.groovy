@@ -2,7 +2,6 @@ package mobi.eyeline.ips.utils
 
 import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
-import mobi.eyeline.ips.web.controllers.TreeTestHelpers
 
 class TreeBuilder {
     static TreeNode q(int id) {
@@ -17,7 +16,7 @@ class TreeBuilder {
     static void linkNodes(TreeNode self, List<TreeNode> targets) \
        { self.edges.addAll edges(self, targets) }
 
-    static TreeNode tree(Map map, @DelegatesTo(TreeTestHelpers.MapDelegate) Closure closure) \
+    static TreeNode tree(Map map, @DelegatesTo(MapDelegate) Closure closure) \
       { new MapDelegate(map.withDefault(TreeBuilder.&q)).with closure }
     static private List<TreeEdge> edges(TreeNode from, Collection<TreeNode> targets) \
        { def idx = 0; targets.collect { TreeNode to -> a(++idx, from, to) } }

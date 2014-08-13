@@ -18,9 +18,9 @@ import mobi.eyeline.ips.service.Services
 @JmxResource(domainName = "mobi.eyeline.ips")
 class SurveyTreeUtil {
 
-    private static TreeNode addQuestion(Map<Integer, TreeNode> target,
-                                        Question q,
-                                        TreeNode terminal) {
+    private static TreeNode addQuestion(Question q,
+                                        TreeNode terminal,
+                                        Map<Integer, TreeNode> target = new LinkedHashMap<>()) {
         new TreeNode(q.id, "${q.activeIndex + 1}. $q.title" as String, q.title).with { TreeNode n ->
             if (!target.put(q.id, n)) {
                 n.edges.addAll(q.activeOptions.collect { QuestionOption opt -> new TreeEdge(
@@ -28,7 +28,7 @@ class SurveyTreeUtil {
                         opt.activeIndex + 1 as String,
                         opt.answer,
                         opt.nextQuestion ?
-                                addQuestion(target, opt.nextQuestion, terminal) :
+                                addQuestion(opt.nextQuestion, terminal, target) :
                                 terminal)
                 })
             }
@@ -36,11 +36,37 @@ class SurveyTreeUtil {
         }
     }
 
+    private static Collection<TreeNode> listNodes(TreeNode from,
+                                                  Map<Integer, TreeNode> target = new LinkedHashMap<>()) {
+        if (!target.put(from.id, from)) from.edges.each { TreeEdge e -> listNodes(e.target, target) }
+        target.values()
+    }
+
     static TreeNode asTree(Survey survey,
                            String terminalLabel,
-                           String terminalDescription) {
-        survey.firstQuestion ? addQuestion(
-                [:], survey.firstQuestion, new TreeNode(-1, terminalLabel, terminalDescription)) : null
+                           String terminalDescription,
+                           String unusedLabel) {
+
+        if (survey.firstQuestion) {
+            def terminal = new TreeNode(-1, terminalLabel, terminalDescription)
+            TreeNode tree = addQuestion(survey.firstQuestion, terminal)
+
+            // Add nodes for unreachable questions by linking from the `terminal'
+            listNodes(tree).with { Collection<TreeNode> nodes ->
+                terminal.edges.addAll \
+             survey.activeQuestions
+                        .grep { Question q -> !nodes.any { TreeNode n -> n.id == q.id } }
+                        .collect { Question q ->
+                    def title = "${q.activeIndex + 1}. $q.title ($unusedLabel)"
+                    new TreeEdge(-q.id, null, null, 'treeInvisible',
+                            new TreeNode(q.id, title as String, q.title, 'treeUnused')) }
+            }
+
+            return tree
+
+        } else {
+            return null
+        }
     }
 
     // TODO: delete after migration.

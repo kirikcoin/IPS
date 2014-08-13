@@ -9,15 +9,22 @@ public class TreeNode implements Comparable<TreeNode> {
     private final String label;
     private final String description;
 
+    private final String styleClass;
+
     /**
      * Edges originating from this node.
      */
     private final List<TreeEdge> edges = new LinkedList<>();
 
-    public TreeNode(int id, String label, String description) {
+    public TreeNode(int id, String label, String description, String styleClass) {
         this.id = id;
         this.label = label;
         this.description = description;
+        this.styleClass = styleClass;
+    }
+
+    public TreeNode(int id, String label, String description) {
+        this(id, label, description, null);
     }
 
     public int getId() {
@@ -34,6 +41,10 @@ public class TreeNode implements Comparable<TreeNode> {
 
     public List<TreeEdge> getEdges() {
         return edges;
+    }
+
+    public String getStyleClass() {
+        return styleClass;
     }
 
     @Override

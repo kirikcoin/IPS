@@ -39,6 +39,14 @@ svg.eyeline_tree {
     }
   }
 
+  .node.treeUnused {
+    rect {
+      stroke-dasharray: 9, 5;
+      stroke: #cacaca !important;
+    }
+  }
+
+
   //
   //  Edge labels.
   //
@@ -62,5 +70,9 @@ svg.eyeline_tree {
 
   .edgePath.hlEdgeFrom {
     stroke: black;
+  }
+
+  .edgePath.treeInvisible {
+    display: none !important;
   }
 }

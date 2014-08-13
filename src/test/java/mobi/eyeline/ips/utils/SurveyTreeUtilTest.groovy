@@ -45,7 +45,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
             s
         }
 
-        def tree = SurveyTreeUtil.asTree(survey, '', '')
+        def tree = SurveyTreeUtil.asTree(survey, '', '', '')
         assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
@@ -70,7 +70,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
                 [newO(0, questions[1]), newO(1, questions[1]), newO(2, null), newO(3, questions[0])]
         questions[1].options = [newO(0, questions[0]), newO(1, questions[1]), newO(2, null)]
 
-        def tree = SurveyTreeUtil.asTree(newSurvey(questions), '', '')
+        def tree = SurveyTreeUtil.asTree(newSurvey(questions), '', '', '')
         assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
