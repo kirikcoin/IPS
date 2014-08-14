@@ -42,6 +42,10 @@ class SurveyTreeUtil {
         target.values()
     }
 
+    private static Collection<TreeEdge> listEdges(TreeNode from) {
+        listNodes(from).collect { TreeNode n -> n.edges}.flatten()
+    }
+
     static TreeNode asTree(Survey survey,
                            String terminalLabel,
                            String terminalDescription,
@@ -51,6 +55,8 @@ class SurveyTreeUtil {
             def terminal = new TreeNode(-1, terminalLabel, terminalDescription)
             TreeNode tree = addQuestion(survey.firstQuestion, terminal)
 
+            int maxEdgeId = listEdges(tree).max { TreeEdge e -> e.id }.id
+
             // Add nodes for unreachable questions by linking from the `terminal'
             listNodes(tree).with { Collection<TreeNode> nodes ->
                 terminal.edges.addAll \
@@ -58,7 +64,7 @@ class SurveyTreeUtil {
                         .grep { Question q -> !nodes.any { TreeNode n -> n.id == q.id } }
                         .collect { Question q ->
                     def title = "${q.activeIndex + 1}. $q.title ($unusedLabel)"
-                    new TreeEdge(-q.id, null, null, 'treeInvisible',
+                    new TreeEdge(++maxEdgeId, null, null, 'treeInvisible',
                             new TreeNode(q.id, title as String, q.title, 'treeUnused')) }
             }
 

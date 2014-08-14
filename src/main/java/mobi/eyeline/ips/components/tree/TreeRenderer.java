@@ -127,7 +127,7 @@ public class TreeRenderer extends Renderer {
             }
             w.append("], edges: [");
             for (OriginatingTreeEdge edge : edges) {
-                edgeToJson(w, edge.getNode(), edge);
+                edgeToJson(w, edge.getOrigin(), edge);
                 w.append(",");
             }
             w.append("]}");
@@ -192,23 +192,23 @@ public class TreeRenderer extends Renderer {
         }
 
         private static class OriginatingTreeEdge extends TreeEdge {
-            private final TreeNode node;
+            private final TreeNode origin;
 
-            private OriginatingTreeEdge(TreeNode node, TreeEdge edge) {
-                super(edge.getId(), edge.getLabel(), edge.getDescription(), edge.getStyleClass(), edge.getTarget());
-                this.node = node;
+            private OriginatingTreeEdge(TreeNode origin, TreeEdge edge) {
+                super(edge);
+                this.origin = origin;
             }
 
-            public TreeNode getNode() {
-                return node;
+            public TreeNode getOrigin() {
+                return origin;
             }
 
             public static final Comparator<OriginatingTreeEdge> COMPARATOR =
                     new Comparator<OriginatingTreeEdge>() {
                         @Override
                         public int compare(OriginatingTreeEdge l, OriginatingTreeEdge r) {
-                            return (l.getNode().equals(r.getNode())) ?
-                                    l.compareTo(r) : l.getNode().compareTo(r.getNode());
+                            return (l.getOrigin().equals(r.getOrigin())) ?
+                                    l.compareTo(r) : l.getOrigin().compareTo(r.getOrigin());
                         }
                     };
         }

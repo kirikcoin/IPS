@@ -28,6 +28,15 @@ public class TreeEdge implements Comparable<TreeEdge> {
         this(id, label, description, null, target);
     }
 
+    TreeEdge(TreeEdge other) {
+        this(
+                other.getId(),
+                other.getLabel(),
+                other.getDescription(),
+                other.getStyleClass(),
+                other.getTarget());
+    }
+
     public int getId() {
         return id;
     }

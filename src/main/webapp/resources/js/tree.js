@@ -142,13 +142,12 @@ function Tree(contentId, options) {
             transform.translate[0] += d3.event.dx;
             transform.translate[1] += d3.event.dy;
           });
-          _resizeText($(root[0]));
         });
 
       } else {
         return d3.behavior.zoom().on('zoom', function() {
           root.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
-          _resizeText($(root[0]));
+          _resizeText($divElement);
         });
       }
     });
@@ -240,44 +239,10 @@ function Tree(contentId, options) {
     })(graph)) {}
   }
 
-  function _center() {
-    function centerIfFits() {
-      var canvasWidth = $divElement.width(),
-          canvasHeight = $divElement.height(),
-          $translateInner = $divElement.find('.zoom');
-
-      var bbox = $translateInner[0].getBoundingClientRect();
-
-      var translateY = 20;
-      if (canvasHeight > bbox.height) {
-        translateY = (canvasHeight - bbox.height) / 2;
-      } else {
-        return false;
-      }
-
-      var translateX = 20;
-      if (canvasWidth > bbox.width) {
-        translateX = (canvasWidth - bbox.width) / 2;
-      } else {
-        return false;
-      }
-
-      _updateTransform(function (transform) {
-        transform.translate = [translateX, translateY];
-      });
-
-      return true;
-    }
-
-    while (!centerIfFits()) {
-      _zoomOut();
-    }
-  }
-
   function _postRender(d3Graph) {
 
     // Center depending on orientation.
-    _center();
+    _zoomReset();
 
     // Bind node click events.
     (function () {
@@ -344,6 +309,8 @@ function Tree(contentId, options) {
     var transform = d3.transform(zoomCanvas.attr('transform'));
     callback(transform);
     zoomCanvas.attr('transform', transform);
+
+    _resizeText($divElement);
   }
 
   function _zoomIn() {
@@ -351,7 +318,6 @@ function Tree(contentId, options) {
       transform.scale[0] *= 1.1;
       transform.scale[1] *= 1.1;
     });
-    _resizeText($divElement);
   }
 
   function _zoomOut() {
@@ -359,58 +325,83 @@ function Tree(contentId, options) {
       transform.scale[0] *= 0.9;
       transform.scale[1] *= 0.9;
     });
-    _resizeText($divElement);
   }
 
-  function _bindToolbar(d3Graph, renderer) {
+  function _zoomReset() {
+    function centerIfFits() {
+      var canvasWidth = $divElement.width(),
+          canvasHeight = $divElement.height(),
+          $translateInner = $divElement.find('.zoom');
+
+      var bbox = $translateInner[0].getBoundingClientRect();
+
+      var translateY = (canvasHeight - bbox.height) / 2;
+      var translateX = (canvasWidth - bbox.width) / 2;
+
+      if (translateX > 0 && translateY > 0) {
+        _updateTransform(function (transform) { transform.translate = [translateX, translateY]; });
+        return true;
+
+      } else {
+        return false;
+      }
+    }
+
+    _updateTransform(function (transform) {
+      transform.scale = [1, 1];
+    });
+
+    while (!centerIfFits()) {
+      _zoomOut();
+    }
+  }
+
+  function _bindToolbar() {
     var $toolbar = $divElement.find('.eyeline_tree_toolbar');
 
     $toolbar.find('.zoom_in').on('click', function () { _zoomIn(); });
     $toolbar.find('.zoom_out').on('click', function () { _zoomOut(); });
-
-    $toolbar.find('.zoom_reset').on('click', function () {
-      _updateTransform(function (transform) {
-        transform.scale[0] = 1;
-        transform.scale[1] = 1;
-      });
-      _center();
-      _resizeText($divElement);
-    });
+    $toolbar.find('.zoom_reset').on('click', function () { _zoomReset(); });
   }
 
   var init = function () {
-    var graph = options.graph;
 
+    /**
+     * Copy nodes and edges from graph to d3Graph.
+     * @param d3Graph
+     * @param graph
+     */
+    function initD3Graph(d3Graph, graph) {
+      $.each(graph.nodes, function (i, node) {
+        var attrs = { label: node.label, detail: node.description };
+        if (node.styleClass)  attrs['styleClass'] = node.styleClass;
+        d3Graph.addNode(node.id, attrs);
+      });
+      $.each(graph.edges, function (i, edge) {
+        var attrs = { collapsedLinearPathIds: edge.collapsedLinearPathIds };
+        if (edge.label)       attrs['label'] = edge.label;
+        if (edge.description) attrs['detail'] = edge.description;
+        if (edge.styleClass)  attrs['styleClass'] = edge.styleClass;
+        d3Graph.addEdge(null, edge.from, edge.to, attrs);
+      });
+    }
+
+    var graph = options.graph;
     _preConvert(graph);
 
     var d3Graph = new dagreD3.Digraph();
-
-    $.each(graph.nodes, function (i, node) {
-      var attrs = { label: node.label, detail: node.description };
-      if (node.styleClass)  attrs['styleClass'] = node.styleClass;
-      d3Graph.addNode(node.id, attrs);
-    });
-
-    $.each(graph.edges, function (i, edge) {
-      var attrs = {
-        collapsedLinearPathIds: edge.collapsedLinearPathIds
-      };
-      if (edge.label)       attrs['label']       = edge.label;
-      if (edge.description) attrs['detail']      = edge.description;
-      if (edge.styleClass)  attrs['styleClass']  = edge.styleClass;
-      d3Graph.addEdge(null, edge.from, edge.to, attrs);
-    });
+    initD3Graph(d3Graph, graph);
 
     var layout = dagreD3.layout().rankDir(options.direction);
     var renderer = new dagreD3.Renderer();
 
-    // Behavior overrides.
+    // Dagre-d3 behavior overrides.
     _drawNodes(renderer);
     _drawEdgeLabels(renderer);
     _drawEdgePaths(renderer);
     _zoom(renderer);
 
-    _bindToolbar(d3Graph, renderer);
+    _bindToolbar();
 
     renderer = renderer.layout(layout);
     renderer.run(d3Graph, d3.select("#" + contentId + " svg g"));
