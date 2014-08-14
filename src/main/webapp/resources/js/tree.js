@@ -39,6 +39,12 @@ function Tree(contentId, options) {
    */
   var hideLabelsOfLinearPath = true;
 
+  /**
+   * If set, zoom is only available using toolbar buttons.
+   * @type {boolean}
+   */
+  var zoomButtonsOnly = true;
+
   this.setVisible = function (visible) {
     $divElement.show(visible);
   };
@@ -119,17 +125,32 @@ function Tree(contentId, options) {
     });
   }
 
-  function _zoom(renderer) {
+  function _resizeText($wrapper) {
     var marginX = 10; // px
+    $wrapper.find('.nodes rect').each(function (i, rect) {
+      var $rect = $(rect),
+          $text = $rect.siblings('g');
+      $rect.attr('width', $text[0].getBBox().width + 2 * marginX);
+    });
+  }
+
+  function _zoom(renderer) {
     renderer.zoom(function (graph, root) {
-      return d3.behavior.zoom().on('zoom', function() {
-        root.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
-        $(root[0]).find('.nodes rect').each(function (i, rect) {
-          var $rect = $(rect),
-              $text = $rect.siblings('g');
-          $rect.attr('width', $text[0].getBBox().width + 2 * marginX);
+      if (zoomButtonsOnly) {
+        return d3.behavior.drag().on('drag', function() {
+          _updateTransform(function (transform) {
+            transform.translate[0] += d3.event.dx;
+            transform.translate[1] += d3.event.dy;
+          });
+          _resizeText($(root[0]));
         });
-      });
+
+      } else {
+        return d3.behavior.zoom().on('zoom', function() {
+          root.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+          _resizeText($(root[0]));
+        });
+      }
     });
   }
 
@@ -219,28 +240,44 @@ function Tree(contentId, options) {
     })(graph)) {}
   }
 
-  function _postRender(d3Graph) {
-
-    // Center depending on orientation.
-    (function () {
+  function _center() {
+    function _center0() {
       var canvasWidth = $divElement.width(),
           canvasHeight = $divElement.height(),
-          $translateInner = $divElement.find('svg > g');
+          $translateInner = $divElement.find('.zoom');
 
-      var bbox = $translateInner[0].getBBox();
+      var bbox = $translateInner[0].getBoundingClientRect();
 
       var translateY = 20;
       if (canvasHeight > bbox.height) {
         translateY = (canvasHeight - bbox.height) / 2;
+      } else {
+        return false;
       }
 
       var translateX = 20;
       if (canvasWidth > bbox.width) {
         translateX = (canvasWidth - bbox.width) / 2;
+      } else {
+        return false;
       }
 
-      $translateInner.attr('transform', 'translate(' + translateX + ', ' + translateY + ')');
-    })();
+      _updateTransform(function (transform) {
+        transform.translate = [translateX, translateY];
+      });
+
+      return true;
+    }
+
+    while (!_center0()) {
+      _zoomOut();
+    }
+  }
+
+  function _postRender(d3Graph) {
+
+    // Center depending on orientation.
+    _center();
 
     // Bind node click events.
     (function () {
@@ -302,6 +339,45 @@ function Tree(contentId, options) {
         .on('mouseout',   function () { onHighlight($(this), false); });
   }
 
+  function _updateTransform(callback) {
+    var zoomCanvas = d3.select($divElement.find('.zoom')[0]);
+    var transform = d3.transform(zoomCanvas.attr('transform'));
+    callback(transform);
+    zoomCanvas.attr('transform', transform);
+  }
+
+  function _zoomIn() {
+    _updateTransform(function (transform) {
+      transform.scale[0] *= 1.1;
+      transform.scale[1] *= 1.1;
+    });
+    _resizeText($divElement);
+  }
+
+  function _zoomOut() {
+    _updateTransform(function (transform) {
+      transform.scale[0] *= 0.9;
+      transform.scale[1] *= 0.9;
+    });
+    _resizeText($divElement);
+  }
+
+  function _bindToolbar(d3Graph, renderer) {
+    var $toolbar = $divElement.find('.eyeline_tree_toolbar');
+
+    $toolbar.find('.zoom_in').on('click', function () { _zoomIn(); });
+    $toolbar.find('.zoom_out').on('click', function () { _zoomOut(); });
+
+    $toolbar.find('.zoom_reset').on('click', function () {
+      _updateTransform(function (transform) {
+        transform.scale[0] = 1;
+        transform.scale[1] = 1;
+      });
+      _center();
+      _resizeText($divElement);
+    });
+  }
+
   var init = function () {
     var graph = options.graph;
 
@@ -332,6 +408,7 @@ function Tree(contentId, options) {
     _drawEdgeLabels(renderer);
     _drawEdgePaths(renderer);
     _zoom(renderer);
+    _bindToolbar(d3Graph, renderer);
 
     renderer = renderer.layout(layout);
     renderer.run(d3Graph, d3.select("#" + contentId + " svg g"));

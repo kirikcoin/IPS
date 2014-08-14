@@ -45,7 +45,11 @@
           $('#content').attr('action',
               '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
 
-
+          page.setTreeLabels(
+              "#{bundle['survey.settings.tree.zoom.in']}",
+              "#{bundle['survey.settings.tree.zoom.out']}",
+              "#{bundle['survey.settings.tree.zoom.reset']}"
+          );
         });
 
 
@@ -338,7 +342,7 @@
                   <ips:tree id="questionsTree"
                             value="#{surveySettingsController.questionsGraph}"
                             height="600"
-                            width="1100"
+                            width="1162"
                             direction="TB"/>
                 </eye:tab>
               </eye:tabs>

@@ -76,3 +76,50 @@ svg.eyeline_tree {
     display: none !important;
   }
 }
+
+.eyeline_tree_wrapper {
+
+  //
+  //  Toolbar.
+  //
+
+  .eyeline_tree_toolbar {
+
+    .ui-icon-circle-zoomin.large {
+      background-position: -264px -288px;
+    }
+
+    .ui-icon-circle-zoomout.large {
+      background-position: -288px -288px;
+    }
+
+    .ui-icon-arrow-4-diag.large {
+      background-position: -24px -120px;
+    }
+
+    .ui-icon.large {
+      background-size: 384px 360px;
+      width: 24px;
+      height: 24px;
+      margin-top: 0;
+    }
+
+
+    span {
+      margin-bottom: 5px;
+      border-radius: 50%;
+
+      // Avoid selection on double click.
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+    }
+
+    span:hover {
+      box-shadow: 0 0 10px 2px #ccc;
+    }
+  }
+
+}

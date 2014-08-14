@@ -153,6 +153,14 @@ var page = {
     $('#endSmsDetails, .endSmsDetails').toggle(self.value == 'SMS' || self.value == 'COUPON');
     $('#couponDetails, #couponHint').toggle(self.value == 'COUPON');
     return false;
-  }
+  },
 
+  // XXX: In case tree component is extracted to the component library,
+  // this should be done in the renderer.
+  setTreeLabels: function (zoomIn, zoomOut, zoomReset) {
+    var $toolbar = $('.eyeline_tree_toolbar');
+    $toolbar.find('.zoom_in').attr('title', zoomIn);
+    $toolbar.find('.zoom_out').attr('title', zoomOut);
+    $toolbar.find('.zoom_reset').attr('title', zoomReset);
+  }
 };

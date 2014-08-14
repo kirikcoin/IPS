@@ -26,7 +26,11 @@ public class TreeRenderer extends Renderer {
         w.a("\n<div" +
                 " id='" + tree.getId() + "'" +
                 " style='" + (tree.isVisible() ? "" : "display: none") + "'" +
+                " class='eyeline_tree_wrapper'" +
                 ">");
+
+        renderToolbar(tree, w);
+
         w.a("\n<svg" +
                 " class='eyeline_tree'" +
                 " width='" + tree.getWidth() + "'" +
@@ -39,6 +43,32 @@ public class TreeRenderer extends Renderer {
         w.a("\n</div>");
 
         renderJs(tree, w);
+    }
+
+    private void renderToolbar(Tree tree, HtmlWriter w) throws IOException {
+        w.a("\n<div" +
+                " class='eyeline_tree_toolbar'" +
+                " style='" +
+                "position: absolute; padding-top: 10px; margin-left: " + (tree.getWidth() - 30) + "px;" +
+                "'" +
+                ">");
+
+        w.a("\n<span" +
+                " class='zoom_in ui-icon ui-icon-circle-zoomin large'" +
+                ">");
+        w.a("\n</span>");
+
+        w.a("\n<span" +
+                " class='zoom_out ui-icon ui-icon-circle-zoomout large'" +
+                "/>");
+        w.a("\n</span>");
+
+        w.a("\n<span" +
+                " class='zoom_reset ui-icon ui-icon-arrow-4-diag large'" +
+                "/>");
+        w.a("\n</span>");
+
+        w.a("\n</div>");
     }
 
     private void renderJs(Tree tree, HtmlWriter w) throws IOException {
