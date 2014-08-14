@@ -22,7 +22,8 @@ class SurveyTreeUtil {
                                         TreeNode terminal,
                                         Map<Integer, TreeNode> target = new LinkedHashMap<>()) {
         new TreeNode(q.id, "${q.activeIndex + 1}. $q.title" as String, q.title).with { TreeNode n ->
-            if (!target.put(q.id, n)) {
+            if (!target.containsKey(n.id)) {
+                target.put(n.id, n)
                 n.edges.addAll(q.activeOptions.collect { QuestionOption opt -> new TreeEdge(
                         opt.id,
                         opt.activeIndex + 1 as String,
@@ -31,8 +32,10 @@ class SurveyTreeUtil {
                                 addQuestion(opt.nextQuestion, terminal, target) :
                                 terminal)
                 })
+                n
+            } else {
+                target[q.id]
             }
-            n
         }
     }
 
