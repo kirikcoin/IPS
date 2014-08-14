@@ -9,6 +9,7 @@ import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
@@ -21,6 +22,7 @@ class SurveyListController extends BaseController {
     private final UserRepository userRepository = Services.instance().userRepository
 
     private final EsdpService esdpService = Services.instance().esdpService
+    private final SurveyService surveyService = Services.instance().surveyService
 
     //
     //  List
@@ -140,16 +142,17 @@ class SurveyListController extends BaseController {
         def surveyId = surveyRepository.save(survey)
 
         try {
+            // Requires survey ID, so it should be already persisted.
             esdpService.save(getCurrentUser(), survey)
+            SurveySettingsController.goToSurvey(surveyId)
+
         } catch (Exception e) {
-            logger.error(e.message, e)
+            logger.error e.message, e
             newSurveyValidationError = true
             addErrorMessage strings['esdp.error.survey.creation']
 
-            return
+            surveyService.delete survey
         }
-
-        SurveySettingsController.goToSurvey(surveyId)
     }
 
     void surveyClickHandler() {

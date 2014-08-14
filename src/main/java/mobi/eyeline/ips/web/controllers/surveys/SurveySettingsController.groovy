@@ -264,11 +264,7 @@ class SurveySettingsController extends BaseSurveyController {
             return null
         }
 
-        survey.active = false
-        if (survey.statistics.accessNumber) {
-            survey.statistics.accessNumber = null
-        }
-        surveyRepository.update(survey)
+        surveyService.delete survey
 
         return 'SURVEY_LIST'
     }

@@ -114,4 +114,13 @@ public class SurveyService {
 
         return refs;
     }
+
+    public void delete(Survey survey) {
+        survey.setActive(false);
+
+        if (survey.getStatistics().getAccessNumber() != null) {
+            survey.getStatistics().setAccessNumber(null);
+        }
+        surveyRepository.update(survey);
+    }
 }
