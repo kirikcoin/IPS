@@ -27,7 +27,7 @@ class SurveyTreeUtil {
                 n.edges.addAll(q.activeOptions.collect { QuestionOption opt -> new TreeEdge(
                         opt.id,
                         opt.activeIndex + 1 as String,
-                        opt.answer,
+                        "${opt.activeIndex + 1}. $opt.answer" as String,
                         opt.nextQuestion ?
                                 addQuestion(opt.nextQuestion, terminal, target) :
                                 terminal)
