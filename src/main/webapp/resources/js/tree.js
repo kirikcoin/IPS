@@ -241,7 +241,7 @@ function Tree(contentId, options) {
   }
 
   function _center() {
-    function _center0() {
+    function centerIfFits() {
       var canvasWidth = $divElement.width(),
           canvasHeight = $divElement.height(),
           $translateInner = $divElement.find('.zoom');
@@ -269,7 +269,7 @@ function Tree(contentId, options) {
       return true;
     }
 
-    while (!_center0()) {
+    while (!centerIfFits()) {
       _zoomOut();
     }
   }
@@ -404,10 +404,12 @@ function Tree(contentId, options) {
     var layout = dagreD3.layout().rankDir(options.direction);
     var renderer = new dagreD3.Renderer();
 
+    // Behavior overrides.
     _drawNodes(renderer);
     _drawEdgeLabels(renderer);
     _drawEdgePaths(renderer);
     _zoom(renderer);
+
     _bindToolbar(d3Graph, renderer);
 
     renderer = renderer.layout(layout);

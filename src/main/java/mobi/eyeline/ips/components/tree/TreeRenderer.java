@@ -10,6 +10,15 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * The component depends on:
+ * <ol>
+ *     <li>tree.js</li>
+ *     <li>tree.less</li>
+ *     <li>d3.js and dagre-d3.js</li>
+ *     <li>FontAwesome stylesheets for toolbar icons</li>
+ * </ol>
+ */
 public class TreeRenderer extends Renderer {
 
     @Override
@@ -54,17 +63,17 @@ public class TreeRenderer extends Renderer {
                 ">");
 
         w.a("\n<span" +
-                " class='zoom_in ui-icon ui-icon-circle-zoomin large'" +
+                " class='zoom_in fa fa-search-plus fa-2x'" +
                 ">");
         w.a("\n</span>");
 
         w.a("\n<span" +
-                " class='zoom_out ui-icon ui-icon-circle-zoomout large'" +
+                " class='zoom_out fa fa-search-minus fa-2x'" +
                 "/>");
         w.a("\n</span>");
 
         w.a("\n<span" +
-                " class='zoom_reset ui-icon ui-icon-arrow-4-diag large'" +
+                " class='zoom_reset fa fa-arrows-alt fa-2x'" +
                 "/>");
         w.a("\n</span>");
 
