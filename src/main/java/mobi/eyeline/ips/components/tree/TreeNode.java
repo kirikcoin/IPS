@@ -48,7 +48,7 @@ public class TreeNode implements Comparable<TreeNode> {
     }
 
     @Override
-    public int compareTo(TreeNode that) {
+    public int compareTo(@SuppressWarnings("NullableProblems") TreeNode that) {
         return Integer.compare(this.getId(), that.getId());
     }
 

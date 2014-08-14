@@ -235,10 +235,9 @@ class SurveySettingsController extends BaseSurveyController {
         }
         persistedSurvey.client = survey.client
 
-        surveyRepository.update(persistedSurvey)
-
         try {
             esdpService.update(getCurrentUser(), persistedSurvey)
+            surveyRepository.update(persistedSurvey)
 
         } catch (Exception e) {
             logger.error(e.message, e)
