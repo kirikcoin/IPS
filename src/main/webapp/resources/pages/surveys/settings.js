@@ -35,6 +35,20 @@ var page = {
       page.onEndSmsEnabledChange($('#endSmsEnabled')[0]);
     });
 
+    var treeInitialized = false;
+    $(function () {
+      $('#tabs > div').show();
+      if ($('.ui-tabs-nav li:nth-child(2)').hasClass('ui-state-active')) {
+        treeInitialized = true;
+        jsfc('questionsTree').init();
+      }
+      $('#tabs').on('tabsshow', function (event, ui) {
+        if ((ui.index == 1) && !treeInitialized) {
+          treeInitialized = true;
+          jsfc('questionsTree').init();
+        }
+      });
+    });
   },
 
   showQuestionDeleteDialog: function (id) {

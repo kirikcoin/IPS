@@ -45,6 +45,8 @@ function Tree(contentId, options) {
    */
   var zoomButtonsOnly = true;
 
+  var initOnLoad = false;
+
   this.setVisible = function (visible) {
     $divElement.show(visible);
   };
@@ -79,6 +81,14 @@ function Tree(contentId, options) {
   this.unbind = function (event, listener) {
     if (listener)   $events.off(event, listener);
     else            $events.off(event);
+  };
+
+  this.zoomReset = function () {
+    _zoomReset();
+  };
+
+  this.init = function () {
+    init();
   };
 
   function _drawNodes(renderer) {
@@ -217,7 +227,7 @@ function Tree(contentId, options) {
               ((connecting.length == 1) && !connecting[0].hiddenLabels))) {
 
             var descs = $.map(connecting, function (e) { return e.description; }),
-                styles = $.map(connecting, function (e) { return e.styleClass ? e.styleClass : ''; });;
+                styles = $.map(connecting, function (e) { return e.styleClass ? e.styleClass : ''; });
 
             // Replace collapsed edges with a new one.
             g.edges = _diff(g.edges, connecting);
@@ -410,6 +420,8 @@ function Tree(contentId, options) {
   };
 
   $(function () {
-    init();
+    if (initOnLoad) {
+      init();
+    }
   });
 }
