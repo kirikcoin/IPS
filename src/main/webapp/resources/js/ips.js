@@ -110,3 +110,18 @@ var ips = new (function() {
   this.pages = {};
 
 })();
+
+
+// Prohibits multiple form submits by removing `onclick' actions
+// from all the links marked with the specified class once they're clicked.
+(function (submitButtonClass) {
+  $(function () {
+    $('a.' + submitButtonClass).each(function (i, elem) {
+      var $elem = $(elem);
+
+      var oldClick = $elem.attr('onclick');
+      $elem.attr('onclick',
+          '$(this).attr("onclick", "return false;").unbind("click"); ' + oldClick);
+    });
+  });
+})('btnSubmit');

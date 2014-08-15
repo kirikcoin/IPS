@@ -110,11 +110,13 @@
 
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['accessnumbers.add.save']}"
+              <h:commandLink styleClass="button-green btnSubmit"
+                             value="#{bundle['accessnumbers.add.save']}"
                              action="#{accessNumberController.addNumber}"/>
             </eye:button>
             <eye:button>
-              <h:commandLink styleClass="button-green" value="#{bundle['accessnumbers.add.cancel']}"
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['accessnumbers.add.cancel']}"
                              onclick="jsfc('newAccessNumberDialog').hide(); ips.message.hideAll(); return false;"/>
             </eye:button>
             <eye:space/>

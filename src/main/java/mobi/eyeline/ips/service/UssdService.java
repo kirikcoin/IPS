@@ -196,11 +196,7 @@ public class UssdService implements MessageHandler {
                 questionOptionRepository.load(request.getAnswerId());
         answerRepository.save(respondent, option);
 
-        if (option.isTerminal()) {
-            return surveyFinish(respondent, survey);
-        }
-
-        final Question next = option.getQuestion().getNext();
+        final Question next = option.getNextQuestion();
         if (next != null) {
             return question(next, request.isSkipValidation());
 
@@ -217,7 +213,7 @@ public class UssdService implements MessageHandler {
 
         final Question next = option.getQuestion().getNext();
         assert next!=null;
-            return question(next, request.isSkipValidation());
+        return question(next, request.isSkipValidation());
     }
 
     @Override

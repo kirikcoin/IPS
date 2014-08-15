@@ -1,0 +1,104 @@
+svg.eyeline_tree {
+  overflow: hidden;
+  background-color: white;
+  cursor: pointer;
+
+
+  //
+  //  Nodes.
+  //
+  .node {
+    rect {
+      stroke: #cacaca;
+      stroke-width: 1px;
+      fill: #fff;
+    }
+  }
+
+  .node.hlSource {
+    rect {
+      stroke: black;
+    }
+  }
+
+  .node.hlTarget {
+    rect {
+      stroke: #3F3F3F;
+    }
+  }
+
+  .node[data-id="-1"] {
+    rect {
+      stroke-width: 2px;
+    }
+  }
+
+  .node[data-id="-2"] {
+    rect {
+      stroke-width: 2px;
+    }
+  }
+
+  .node.treeUnused {
+    rect {
+      stroke-dasharray: 9, 5;
+      stroke: #cacaca !important;
+    }
+  }
+
+
+  //
+  //  Edge labels.
+  //
+
+  .edgeLabel {
+    rect {
+      fill: #fff;
+    }
+  }
+
+
+  //
+  //  Edges.
+  //
+
+  .edgePath {
+    stroke: #cacaca;
+    stroke-width: 1px;
+    fill: none;
+  }
+
+  .edgePath.hlEdgeFrom {
+    stroke: black;
+  }
+
+  .edgePath.treeInvisible {
+    display: none !important;
+  }
+}
+
+.eyeline_tree_wrapper {
+
+  //
+  //  Toolbar.
+  //
+
+  .eyeline_tree_toolbar {
+
+    color: #303030;
+
+    span {
+      margin-bottom: 5px;
+      border-radius: 50%;
+
+      // Avoid selection on double click.
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -o-user-select: none;
+      user-select: none;
+
+      cursor: pointer;
+    }
+  }
+}

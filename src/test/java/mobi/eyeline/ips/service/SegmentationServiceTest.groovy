@@ -82,4 +82,26 @@ class SegmentationServiceTest extends GroovyTestCase {
         assertEquals new SegmentationService.SegmentationInfo(4, 596, 160),
                 segmentationService.getSegmentationInfo(q)
     }
+
+    void test8() {
+        def q = new Question(title: 'ô… Keď ?')
+        [
+                new QuestionOption(answer: 'môže', active: true),
+                new QuestionOption(answer: 'ním tiež siať', active: true)
+        ].each {it.question = q; q.options << it}
+
+        assertEquals new SegmentationService.SegmentationInfo(1, 31, 70),
+                segmentationService.getSegmentationInfo(q)
+    }
+
+    void test9() {
+        def q = new Question(title: 'Spôsob sejby… Keď sa ďatelina seje medzi ovos?')
+        [
+                new QuestionOption(answer: 'môže sa s ním tiež siať aj naraz', active: true),
+                new QuestionOption(answer: 'keby ale túto spoločnú', active: true)
+        ].each {it.question = q; q.options << it}
+
+        assertEquals new SegmentationService.SegmentationInfo(2, 106, 70),
+                segmentationService.getSegmentationInfo(q)
+    }
 }

@@ -1,8 +1,6 @@
 package mobi.eyeline.ips.messages;
 
-import mobi.eyeline.ips.util.RequestParseUtils;
-
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static mobi.eyeline.ips.messages.UssdOption.UssdOptionType.ANSWER;
@@ -36,12 +34,10 @@ public class BadCommandOption extends UssdOption {
 
     @Override
     public Map<String, Object> getProperties() {
-        final Map<String, Object> properties = new HashMap<>(super.getProperties());
-
-        properties.put(PARAM_QUESTION_ID, questionId);
-        properties.put(PARAM_ANSWER_ID, answerId);
-
-        return properties;
+        return new LinkedHashMap<String, Object>(super.getProperties()) {{
+            put(PARAM_QUESTION_ID, questionId);
+            put(PARAM_ANSWER_ID, answerId);
+        }};
     }
 
     public int getAnswerId() {

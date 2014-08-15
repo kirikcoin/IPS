@@ -25,6 +25,26 @@ a {
   color: #079239;
 }
 
+.ui-tabs {
+  .ui-tabs-nav {
+    padding: 0;
+
+    li {
+      margin-right: 0;
+      padding-bottom: 0;
+    }
+
+    li.ui-tabs-selected {
+      padding-bottom: 0;
+      margin-bottom: 0;
+
+      a {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
 table {
   border: 0;
   width: 100%;
@@ -462,4 +482,18 @@ div.eyeline_inputDate {
 
 input.hasDatepicker {
   text-align: left !important;
+}
+
+.ui-tabs {
+  li.ui-state-default {
+    background: #F0F0F0;
+  }
+
+  li.ui-state-default:hover {
+    background: rgba(0, 0, 0, 0.0980392);
+  }
+
+  li.ui-state-active {
+    background: #FFFFFF;
+  }
 }

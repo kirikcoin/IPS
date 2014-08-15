@@ -35,6 +35,20 @@ var page = {
       page.onEndSmsEnabledChange($('#endSmsEnabled')[0]);
     });
 
+    var treeInitialized = false;
+    $(function () {
+      $('#tabs > div').show();
+      if ($('.ui-tabs-nav li:nth-child(2)').hasClass('ui-state-active')) {
+        treeInitialized = true;
+        jsfc('questionsTree').init();
+      }
+      $('#tabs').on('tabsshow', function (event, ui) {
+        if ((ui.index == 1) && !treeInitialized) {
+          treeInitialized = true;
+          jsfc('questionsTree').init();
+        }
+      });
+    });
   },
 
   showQuestionDeleteDialog: function (id) {
@@ -116,6 +130,10 @@ var page = {
     jsfc('questionModificationDialog').show();
   },
 
+  onQuestionDeleteDialog: function() {
+    jsfc('questionDeleteDialog').show();
+  },
+
   onPreviewClick: function() {
     jsfc('surveyPreviewDialog').show();
 
@@ -149,6 +167,14 @@ var page = {
     $('#endSmsDetails, .endSmsDetails').toggle(self.value == 'SMS' || self.value == 'COUPON');
     $('#couponDetails, #couponHint').toggle(self.value == 'COUPON');
     return false;
-  }
+  },
 
+  // XXX: In case tree component is extracted to the component library,
+  // this should be done in the renderer.
+  setTreeLabels: function (zoomIn, zoomOut, zoomReset) {
+    var $toolbar = $('.eyeline_tree_toolbar');
+    $toolbar.find('.zoom_in').attr('title', zoomIn);
+    $toolbar.find('.zoom_out').attr('title', zoomOut);
+    $toolbar.find('.zoom_reset').attr('title', zoomReset);
+  }
 };

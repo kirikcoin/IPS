@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -51,14 +52,9 @@ public class QuestionOption implements Serializable {
     @Column(name = "option_order")
     private int order;
 
-    /**
-     * Индикатор прекращения опроса. <br/>
-     * В случае, если (1) флаг выставлен и (2) выбирается именно эта опция,
-     * опрос завершается.
-     */
-    @Column(name = "terminal", columnDefinition = "BIT", nullable = false)
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean terminal;
+    @JoinColumn(name = "next_question")
+    @OneToOne(optional = true)
+    private Question nextQuestion = null;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "question_id")
@@ -105,14 +101,6 @@ public class QuestionOption implements Serializable {
         return getQuestion().getActiveOptions().indexOf(this);
     }
 
-    public boolean isTerminal() {
-        return terminal;
-    }
-
-    public void setTerminal(boolean terminal) {
-        this.terminal = terminal;
-    }
-
     public Question getQuestion() {
         return question;
     }
@@ -131,6 +119,14 @@ public class QuestionOption implements Serializable {
 
     public void moveTo(int idx) {
         ListUtils.moveTo(getQuestion().getOptions(), this, idx, SKIP_INACTIVE);
+    }
+
+    public Question getNextQuestion() {
+        return nextQuestion;
+    }
+
+    public void setNextQuestion(Question nextQuestion) {
+        this.nextQuestion = nextQuestion;
     }
 
     @Override

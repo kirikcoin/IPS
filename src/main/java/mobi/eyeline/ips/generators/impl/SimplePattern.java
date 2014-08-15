@@ -1,7 +1,7 @@
 package mobi.eyeline.ips.generators.impl;
 
-import mobi.eyeline.ips.generators.util.CharUtils;
 import mobi.eyeline.ips.generators.Pattern;
+import mobi.eyeline.ips.generators.util.CharUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,8 +13,15 @@ public class SimplePattern implements Pattern {
     private final long capacity;
 
     public SimplePattern(CharSequence[] options) {
-        this.options = options;
-        this.capacity = CharUtils.permutations(options);
+        this.options = unify(options);
+        this.capacity = CharUtils.permutations(this.options);
+    }
+
+    private CharSequence[] unify(CharSequence[] options) {
+        for (int i = 0; i < options.length; i++) {
+            options[i] = CharUtils.sort(options[i]);
+        }
+        return options;
     }
 
     @Override

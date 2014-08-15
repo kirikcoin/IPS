@@ -4,12 +4,15 @@
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
         xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-    >
+        >
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
       <link rel="STYLESHEET" type="text/css"
             href="#{resources.path}/resources/pages/surveys/settings.less"/>
+
+      <link rel="STYLESHEET" type="text/css"
+            href="#{resources.path}/resources/styles/font-awesome/css/font-awesome.min.css"/>
 
       <script type="text/javascript"
               src="#{resources.path}/resources/pages/surveys/settings.js#{resources.version}">
@@ -29,6 +32,8 @@
             page.onEditEndMessageClick();
           } else if ("#{surveySettingsController.errorId}" == 'questionModificationDialog') {
             page.onQuestionModificationDialog();
+          } else if ("#{surveySettingsController.errorId}" == 'questionDeleteDialog') {
+            page.onQuestionDeleteDialog();
           } else if ("#{surveySettingsController.errorId}" == 'surveyPreviewDialog') {
             page.onPreviewClick();
           } else if ("#{surveySettingsController.errorId}" == 'deleteDialog') {
@@ -43,10 +48,14 @@
           $('#content').attr('action',
               '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
 
+          page.setTreeLabels(
+              "#{bundle['survey.settings.tree.zoom.in']}",
+              "#{bundle['survey.settings.tree.zoom.out']}",
+              "#{bundle['survey.settings.tree.zoom.reset']}"
+          );
 
+          jsfc('questionsTree').show();
         });
-
-
         //    ]]>
       </script>
 
@@ -211,7 +220,7 @@
 
                   <eye:buttons>
                     <eye:button>
-                      <h:commandLink styleClass="button-green"
+                      <h:commandLink styleClass="button-green btnSubmit"
                                      value="#{bundle['survey.settings.save']}"
                                      action="#{surveySettingsController.saveSettings}">
                         <f:param name="errorId" value="settingsDialog"/>
@@ -235,97 +244,111 @@
                   <h:outputText value="#{bundle['survey.settings.questions']}"/>
                 </h:panelGroup>
               </f:facet>
-
               <h:panelGroup>
-
-                <h:outputText rendered="#{empty surveySettingsController.persistedSurvey.questions}"
+                <h:outputText rendered="#{empty surveySettingsController.persistedSurvey.activeQuestions}"
                               value="#{bundle['survey.settings.no.questions']}"
                               styleClass="placeholder"/>
-
-                <ui:repeat value="#{surveySettingsController.persistedSurvey.activeQuestions}"
-                           var="question">
-                  <h:panelGrid columns="1" styleClass="question">
-
-                    <!-- Question header -->
-                    <f:facet name="header">
-                      <h:panelGrid columns="2" style="background-color: #F0F0F0;">
-                        <h:panelGroup>
-                          <h:outputText value="#{question.activeIndex + 1}. "
-                                        style="padding-right: 5px"/>
-                          <h:outputText value="#{question.title}"/>
-                        </h:panelGroup>
-                        <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
-                          <h:outputLink value="#"
-                                        styleClass="modify"
-                                        onclick="return page.showQuestionDeleteDialog(#{question.id});">
-                            <h:outputText value="#{bundle['survey.details.delete']}"/>
-                          </h:outputLink>
-                          <h:commandLink value="#{bundle['survey.settings.modify']}"
-                                         action="#{surveySettingsController.modifyQuestion}"
-                                         styleClass="modify">
-                            <f:param name="questionId" value="${question.id}"/>
-                          </h:commandLink>
-                          <h:commandLink value="#{bundle['survey.settings.question.move.down']}"
-                                         styleClass="modify"
-                                         rendered="#{not question.last}"
-                                         action="#{surveySettingsController.moveUp}">
-                            <f:param name="questionId" value="#{question.id}"/>
-                          </h:commandLink>
-                          <h:commandLink value="#{bundle['survey.settings.question.move.up']}"
-                                         styleClass="modify"
-                                         rendered="#{not question.first}"
-                                         action="#{surveySettingsController.moveDown}">
-                            <f:param name="questionId" value="#{question.id}"/>
-                          </h:commandLink>
-                        </h:panelGroup>
-                      </h:panelGrid>
-                    </f:facet>
-
-                    <!-- Question body -->
-                    <h:panelGrid columns="2" columnClasses="columnOptionsList,columnSegmentation">
-
-                      <!-- Options list -->
-                      <h:outputText rendered="#{empty question.options}"
-                                    value="#{bundle['survey.settings.not.specified']}"
-                                    styleClass="placeholder"/>
-
-                      <h:dataTable var="option"
-                                   value="#{question.activeOptions}"
-                                   style="padding-left: 20px">
-                        <h:column>
-                          <h:outputText value="#{option.activeIndex + 1}. "
-                                        styleClass="option-number"/>
-                          <h:outputText value="#{option.answer}"/>
-                          <h:outputText value="#{bundle['question.option.terminal.list.label']}"
-                                        rendered="#{option.terminal}"
-                                        styleClass="terminal-label"/>
-                        </h:column>
-                      </h:dataTable>
-
-                      <!-- Segmentation -->
-                      <h:panelGroup layout="block" id="segmentation">
-                        <h:panelGrid columns="2">
-                          <h:outputLabel for="symbols"
-                                         value="#{bundle['survey.settings.question.symbols']}:"/>
-                          <h:outputText id="symbols"
-                                        value="#{question.segmentationInfo.symbolsCount}"/>
-
-                          <h:outputLabel for="segments"
-                                         value="#{bundle['survey.settings.question.segments']}:"/>
-                          <h:outputText id="segments"
-                                        value="#{question.segmentationInfo.segmentsCount}"/>
-
-                          <h:outputLabel for="perSegment"
-                                         value="#{bundle['survey.settings.question.symbols.per.segment']}:"/>
-                          <h:outputText id="perSegment"
-                                        value="#{question.segmentationInfo.maxSymbolsPerSegment}"/>
-                        </h:panelGrid>
-                      </h:panelGroup>
-                    </h:panelGrid>
-
-                  </h:panelGrid>
-                </ui:repeat>
               </h:panelGroup>
+              <eye:tabs id="tabs" rendered="#{!empty surveySettingsController.persistedSurvey.activeQuestions}">
+                <eye:tab label="#{bundle['survey.settings.questions.tabs.questions']}">
+                  <h:panelGroup>
+
+                    <ui:repeat value="#{surveySettingsController.persistedSurvey.activeQuestions}"
+                               var="question">
+                      <h:panelGrid columns="1" styleClass="question">
+
+                        <!-- Question header -->
+                        <f:facet name="header">
+                          <h:panelGrid columns="2" style="background-color: #F0F0F0;">
+                            <h:panelGroup>
+                              <h:outputText value="#{question.activeIndex + 1}. "
+                                            style="padding-right: 5px"/>
+                              <h:outputText value="#{question.title}"/>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
+                              <h:commandLink value="#{bundle['survey.details.delete']}"
+                                             styleClass="modify"
+                                             action="#{surveySettingsController.beforeDeleteQuestion}">
+                                <f:param name="questionId" value="${question.id}"/>
+                              </h:commandLink>
+                              <h:commandLink value="#{bundle['survey.settings.modify']}"
+                                             action="#{surveySettingsController.modifyQuestion}"
+                                             styleClass="modify">
+                                <f:param name="questionId" value="${question.id}"/>
+                              </h:commandLink>
+                              <!--<h:commandLink value="#{bundle['survey.settings.question.move.down']}"-->
+                                             <!--styleClass="modify"-->
+                                             <!--rendered="#{not question.last}"-->
+                                             <!--action="#{surveySettingsController.moveUp}">-->
+                                <!--<f:param name="questionId" value="#{question.id}"/>-->
+                              <!--</h:commandLink>-->
+                              <!--<h:commandLink value="#{bundle['survey.settings.question.move.up']}"-->
+                                             <!--styleClass="modify"-->
+                                             <!--rendered="#{not question.first}"-->
+                                             <!--action="#{surveySettingsController.moveDown}">-->
+                                <!--<f:param name="questionId" value="#{question.id}"/>-->
+                              <!--</h:commandLink>-->
+                            </h:panelGroup>
+                          </h:panelGrid>
+                        </f:facet>
+
+                        <!-- Question body -->
+                        <h:panelGrid columns="2" columnClasses="columnOptionsList,columnSegmentation">
+
+                          <!-- Options list -->
+                          <h:outputText rendered="#{empty question.options}"
+                                        value="#{bundle['survey.settings.not.specified']}"
+                                        styleClass="placeholder"/>
+
+                          <h:dataTable var="option"
+                                       value="#{question.activeOptions}"
+                                       style="padding-left: 20px">
+                            <h:column>
+                              <h:outputText value="#{option.activeIndex + 1}. "
+                                            styleClass="option-number"/>
+                              <h:outputText value="#{option.answer}"/>
+                              <h:outputText value="&#8594; #{bundle['question.option.terminal.list.label']}"
+                                            rendered="#{option.nextQuestion == null}"
+                                            styleClass="option-label"/>
+                              <h:outputText value="&#8594; #{option.nextQuestion.activeIndex+1}"
+                                            rendered="#{option.nextQuestion != null}"
+                                            styleClass="option-label"/>
+                            </h:column>
+                          </h:dataTable>
+
+                          <!-- Segmentation -->
+                          <h:panelGroup layout="block" id="segmentation">
+                            <h:panelGrid columns="2">
+                              <h:outputLabel for="symbols"
+                                             value="#{bundle['survey.settings.question.symbols']}:"/>
+                              <h:outputText id="symbols"
+                                            value="#{question.segmentationInfo.symbolsCount}"/>
+
+                              <h:outputLabel for="segments"
+                                             value="#{bundle['survey.settings.question.segments']}:"/>
+                              <h:outputText id="segments"
+                                            value="#{question.segmentationInfo.segmentsCount}"/>
+
+                              <h:outputLabel for="perSegment"
+                                             value="#{bundle['survey.settings.question.symbols.per.segment']}:"/>
+                              <h:outputText id="perSegment"
+                                            value="#{question.segmentationInfo.maxSymbolsPerSegment}"/>
+                            </h:panelGrid>
+                          </h:panelGroup>
+                        </h:panelGrid>
+
+                      </h:panelGrid>
+                    </ui:repeat>
+                  </h:panelGroup>
+                </eye:tab>
+                <eye:tab label="#{bundle['survey.settings.questions.tabs.graphs']}">
+                  <ips:tree id="questionsTree"
+                            value="#{surveySettingsController.questionsGraph}"
+                            height="600"
+                            width="1162"
+                            direction="TB"/>
+                </eye:tab>
+              </eye:tabs>
 
               <h:panelGrid columns="2" columnClasses="previewLeft,previewRight">
                 <eye:buttons>
@@ -500,13 +523,15 @@
 
                   <eye:buttons>
                     <eye:button>
-                      <h:commandLink styleClass="button-green" value="#{bundle['survey.settings.save']}"
+                      <h:commandLink styleClass="button-green btnSubmit"
+                                     value="#{bundle['survey.settings.save']}"
                                      action="#{surveySettingsController.saveMessage}">
                         <f:param name="errorId" value="endMessageDialog"/>
                       </h:commandLink>
                     </eye:button>
                     <eye:button>
-                      <h:commandLink styleClass="button-green" value="#{bundle['survey.create.button.cancel']}"
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['survey.create.button.cancel']}"
                                      action="#{surveySettingsController.onCancel}"/>
                     </eye:button>
                     <eye:space/>
@@ -538,24 +563,45 @@
         <!--
             Question delete confirmation dialog
         -->
+        <eye:dialog id="questionDeleteDialog"
+                    title="#{bundle['survey.settings.questions.delete.title']}"
+                    width="400">
 
-        <ips:confirmDialog id="questionDeleteDialog"
-                           text="#{bundle['survey.settings.questions.delete.prompt']}"
-                           title="#{bundle['survey.settings.questions.delete.title']}"
-                           actionBean="#{surveySettingsController}"
-                           actionName="deleteQuestion"
-                           paramKey="errorId"
-                           paramValue="questionDeleteDialog"
-                           width="300"/>
+          <h:panelGroup styleClass="confirmDialog_content"
+                        layout="block">
+            <h:outputText value="#{surveySettingsController.questionDeletePrompt}"
+                          escape="false"/>
+          </h:panelGroup>
 
+          <h:panelGroup layout="block" style="margin:10px"/>
 
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink id="questionDeleteDialog_confirmButton"
+                             styleClass="button-green"
+                             value="#{bundle['dialog.confirm']}"
+                             action="#{surveySettingsController.deleteQuestion}">
+                <f:param name="errorId" value="questionDeleteDialog"/>
+              </h:commandLink>
+            </eye:button>
+
+            <eye:button>
+              <h:commandLink id="questionDeleteDialog_cancelButton"
+                             styleClass="button-green"
+                             value="#{bundle['dialog.cancel']}"
+                             onclick="jsfc('questionDeleteDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
 
         <!--
             Question modification dialog
         -->
         <eye:dialog id="questionModificationDialog"
                     title="#{bundle['survey.settings.question.modify.title']}"
-                    width="500">
+                    width="700">
 
           <h:outputLabel value="#{bundle['survey.settings.question.modify.text']}:"
                          for="title"/>
@@ -567,12 +613,14 @@
           <br/>
 
           <h:panelGroup id="headerBlock" layout="block">
-            <h:panelGrid columns="4" columnClasses="colTerminal">
-              <h:outputText  value=" "/>
+            <h:panelGrid columns="5"
+                         columnClasses="questionColDrag, questionColId, questionColTitle, questionColNext, questionColAdd">
+              <h:outputText value=" "/>
+              <h:outputText value=" "/>
 
-              <h:outputText  value="#{bundle['question.option.label']}"/>
-              <h:outputText  value=" #{bundle['question.option.terminal.label']}"/>
-              <h:outputText  value=" "/>
+              <h:outputText value="#{bundle['question.option.label']}"/>
+              <h:outputText value="#{bundle['question.option.next']}"/>
+              <h:outputText value=" "/>
             </h:panelGrid>
           </h:panelGroup>
 
@@ -588,17 +636,20 @@
               <eye:textColumn name="answer"
                               allowEditAfterAdd="true"
                               allowEmpty="false"
+                              columnClass="answerColumn"
                               maxLength="70"/>
-              <eye:selectColumn name="terminal"
-                                values="#{surveySettingsController.terminalValues}"
-                                var="t" itemLabel="#{t.label}" itemValue="#{t.value}"
+
+              <eye:selectColumn name="nextQuestion"
+                                values="#{surveySettingsController.questions}"
+                                var="t2" itemLabel="#{t2.label}" itemValue="#{t2.value}"
                                 allowEditAfterAdd="true"
-                                columnClass="colTerminal"/>
+                                columnClass="nextColumn"/>
+
             </eye:dynamicTable>
           </h:panelGroup>
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['survey.settings.question.modify.save']}"
                              onclick="return page.onQuestionSave('#{bundle['question.option.answer.empty']}');"
                              action="#{surveySettingsController.saveQuestion}">
