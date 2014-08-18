@@ -1,13 +1,22 @@
 package mobi.eyeline.ips.web.controllers.profile
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.LocaleController
+import mobi.eyeline.ips.web.controllers.TimeZoneHelper
+import org.apache.commons.lang3.tuple.Pair
+
+import javax.faces.model.SelectItem
+
+import static java.util.concurrent.TimeUnit.HOURS
+import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 @CompileStatic
 class ProfilePageController extends BaseController {
@@ -86,4 +95,5 @@ class ProfilePageController extends BaseController {
         return true
     }
 
+    List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(getLocale()) }
 }

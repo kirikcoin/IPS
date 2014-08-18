@@ -88,6 +88,7 @@
       <root url="jar://$USER_HOME$/.ideaLibSources/ehcache-core-2.4.3-sources.jar!/" />
       <root url="file://$PROJECT_DIR$/../smsc/webapps/jsfComponents/components/java" />
       <root url="jar://$USER_HOME$/.ideaLibSources/groovy-all-2.3.6-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/guava-16.0.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
