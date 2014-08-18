@@ -3,8 +3,8 @@ var page = {
   init: function () {
 
     $("#deliveryType").change(function(){
-      var $deliveryType = $('#deliveryType').val();
-      $('#invitationTextBlock').toggle($deliveryType=="USSD_PUSH" || $deliveryType=="SMS");
+      var deliveryType = $('#deliveryType').val();
+      $('#invitationTextBlock').toggle(deliveryType == "USSD_PUSH" || deliveryType == "SMS");
 
       $('#invitationText').val("");
     });
