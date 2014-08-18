@@ -79,6 +79,7 @@
     <!-- Utils -->
     <dependency org="com.google.guava" name="guava" rev="16.0.1" conf="site->default"/>
     <dependency org="org.apache.commons" name="commons-lang3" rev="3.1" conf="site->default"/>
+    <dependency org="commons-cli" name="commons-cli" rev="1.2" conf="site->default"/>
 
     <!-- Email -->
     <dependency org="org.apache.commons"  name="commons-email"  rev="1.3.2"   conf="site->default"/>

@@ -79,6 +79,7 @@
     </groovyc>
 
     <antcall target="gen-version"/>
+    <antcall target="gen-tznames"/>
   </target>
 
   <target name="build-exploded" depends="compile">
@@ -166,6 +167,26 @@
       <src path="${gen.dir}"/>
       <classpath refid="classpath"/>
     </javac>
+  </target>
+
+  <target name="gen-tznames">
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="classpath"/>
+
+    <groovy src="${basedir}/src/utils/java/mobi/eyeline/ips/tzdata/GenTzData.groovy">
+      <arg value="--source=${basedir}/src/utils/resources/tzdata"/>
+      <arg value="--target=${gen.dir}"/>
+      <arg value="en"/>
+      <arg value="ru"/>
+      <arg value="sk"/>
+    </groovy>
+
+    <copy todir="${build.dir}/classes">
+      <fileset dir="${gen.dir}">
+        <include name="tznames_*.*"/>
+      </fileset>
+    </copy>
   </target>
 
   <!-- Tests -->
