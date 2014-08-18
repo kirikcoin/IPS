@@ -3,7 +3,9 @@ var page = {
   init: function () {
 
     $("#deliveryType").change(function(){
-      $('#invitationTextBlock').toggle($('#deliveryType').val()=="USSD_PUSH");
+      var $deliveryType = $('#deliveryType').val();
+      $('#invitationTextBlock').toggle($deliveryType=="USSD_PUSH" || $deliveryType=="SMS");
+
       $('#invitationText').val("");
     });
 

@@ -233,7 +233,7 @@
                     <h:outputText value="#{bundle['results.empty']}"/>
                   </f:facet>
 
-                  <eye:row innerData="#{row.typeValue == 'USSD_PUSH'}">
+                  <eye:row innerData="#{row.typeValue == 'USSD_PUSH' or row.typeValue == 'SMS' }">
 
                     <!-- Delivery date -->
                     <eye:column name="date"
