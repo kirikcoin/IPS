@@ -52,19 +52,22 @@ public abstract class BaseController implements Serializable {
         return context.isUserInRole(role.name)
     }
 
-    public User getCurrentUser() {userRepository.load(userPrincipal.id)}
+    User getCurrentUser() {userRepository.load(userPrincipal.id)}
 
-    public boolean isClientRole() {
-        return inRole(Role.CLIENT)
-    }
+    /**
+     * Returns current request locale, which may differ from the user's one.
+     *
+     * <p>Use this snippet to access persisted user locale:
+     * <code>getCurrentUser().getLocale().asLocale()</code>
+     */
+    @SuppressWarnings("GrMethodMayBeStatic")
+    Locale getLocale() { FacesContext.currentInstance.viewRoot.locale }
 
-    public boolean isManagerRole() {
-        return inRole(Role.MANAGER)
-    }
+    boolean isClientRole() { inRole(Role.CLIENT) }
 
-    public boolean isAdminRole() {
-        return inRole(Role.ADMIN)
-    }
+    boolean isManagerRole() { inRole(Role.MANAGER) }
+
+    boolean isAdminRole() { return inRole(Role.ADMIN) }
 
     //
     //  Request/session routines.

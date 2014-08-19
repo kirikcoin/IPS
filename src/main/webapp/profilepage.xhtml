@@ -46,7 +46,7 @@
                                value="#{profilePageController.user.fullName}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.email']}"
-                               for="email" />
+                               for="email"/>
                 <eye:inputText id="email"
                                maxlength="70"
                                value="#{profilePageController.user.email}"/>
@@ -58,10 +58,16 @@
                                value="#{profilePageController.user.phoneNumber}"/>
 
                 <h:outputLabel value="#{bundle['profile.edit.locale']}"
-                               for="locale" />
-
+                               for="locale"/>
                 <h:selectOneMenu id="locale" value="#{profilePageController.user.locale}">
                   <f:selectItems value="#{clientController.locales}"/>
+                </h:selectOneMenu>
+
+                <h:outputLabel value="#{bundle['profile.edit.timezone']}"
+                               for="timezone"/>
+                <h:selectOneMenu id="timezone"
+                                 value="#{profilePageController.user.timeZoneId}">
+                  <f:selectItems value="#{profilePageController.timeZones}"/>
                 </h:selectOneMenu>
               </h:panelGrid>
 

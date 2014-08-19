@@ -31,7 +31,6 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$/../..">
-      <sourceFolder url="file://$MODULE_DIR$/../../.build/generated" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../utils/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../test/java" isTestSource="true" />
@@ -39,9 +38,10 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/../../.build/generated-esdp" isTestSource="false" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../.build/generated-madv" isTestSource="false" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../.build/generated" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/../../.build/classes" />
       <excludeFolder url="file://$MODULE_DIR$/../../.build/distr" />
-      <excludeFolder url="file://$MODULE_DIR$/../../.build/generated" />
+      <excludeFolder url="file://$MODULE_DIR$/../../.build/generated/mobi" />
       <excludeFolder url="file://$MODULE_DIR$/../../.build/test" />
       <excludeFolder url="file://$MODULE_DIR$/../../.build/test-classes" />
       <excludeFolder url="file://$MODULE_DIR$/../../.build/web" />

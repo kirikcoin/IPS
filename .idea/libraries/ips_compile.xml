@@ -69,12 +69,13 @@
       <root url="jar://$PROJECT_DIR$/lib/jboss-transaction-api_1.1_spec-1.0.1.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/hibernate-c3p0-4.2.8.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jgrapht-core-0.9.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/groovy-all-2.3.6.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/gpars-1.2.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jansi-1.11.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jcommander-1.35.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jline-2.11.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/xstream-1.4.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-cli-1.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/groovy-all-2.3.6.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -87,6 +88,7 @@
       <root url="jar://$USER_HOME$/.ideaLibSources/ehcache-core-2.4.3-sources.jar!/" />
       <root url="file://$PROJECT_DIR$/../smsc/webapps/jsfComponents/components/java" />
       <root url="jar://$USER_HOME$/.ideaLibSources/groovy-all-2.3.6-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/guava-16.0.1-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
