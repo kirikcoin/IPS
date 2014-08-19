@@ -3,10 +3,10 @@
 /* Стили главного меню */
 
 .ipsLogo {
-    width: 320px;
+    width: 191px;
     height: 69px;
     background: url(../images/logoinoma.png);
-    background-size: 320px 69px;
+    background-size: 191px 69px;
     margin-right: 20px;
 }
 
