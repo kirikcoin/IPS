@@ -1,0 +1,119 @@
+@import "../../../styles/jsf-components-ips-design.css";
+
+
+
+/* COLLAPSING GROUP ------------------------------------------------------------------------------------------------- */
+
+.eyeline_collapsingGroupHeader0,
+.eyeline_collapsingGroupHeader1 {
+  font-family: Georgia, serif;
+}
+
+.eyeline_collapsingGroupBody {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif", sans-serif;
+}
+
+
+/* DATA TABLE ------------------------------------------------------------------------------------------------------- */
+
+/* Данные */
+table.eyeline_list th {
+  font-family:'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+table.eyeline_list tr.eyeline_inner {
+  background-color: rgba(120, 160, 187, 0.2) !important;
+}
+
+table.eyeline_list tbody a,
+table.eyeline_list tbody a:visited,
+table.eyeline_list tbody a:hover {
+  color: #78a0bb;
+}
+
+.eyeline_navbar_button {
+    color: #78a0bb;
+}
+
+.eyeline_navbar_first {
+    background-image: url(../images/nav_first.gif);
+}
+
+.eyeline_navbar_prev {
+    background-image: url(../images/nav_prev.gif);
+}
+
+.eyeline_navbar_next {
+    background-image: url(../images/nav_next.gif);
+}
+
+.eyeline_navbar_last {
+    background-image: url(../images/nav_last.gif);
+}
+
+.eyeline_navbar_current_page {
+    color: #498BB8 !important;
+}
+
+.select_menu_content {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+.select_menu_content span {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+/* INPUT DATE ------------------------------------------------------------------------------------------------------- */
+
+div.eyeline_inputDate input {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+/*Стиль для компонента input text*/
+.eyeline_inputText_component {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+/*Стиль для компонента textarea*/
+.eyeline_textarea_component {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+.eyeline_progress_bar_precent_text {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+/* SELECT MANY SHUTTLE ---------------------------------------------------------------------------------------------- */
+
+/*Стиль внешнего div*/
+div.eyeline_selectManyShuttle {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+/* SELECT MANY CHECKLIST -------------------------------------------------------------------------------------------- */
+
+/*Стиль тела*/
+.eyeline_selectManyChecklist .lbody {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+/* TOOLTIP ---------------------------------------------------------------------------------------------------------- */
+
+.eyeline_tooltip {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+.eyeline_dialog {
+  border-radius: 0;
+}
+
+.eyeline_dialog_title {
+  border-radius: 0;
+  background-color: #78a0bb;
+
+  background-image: -moz-linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+  background-image: -ms-linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+  background-image: -o-linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+  background-image: -webkit-linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+  background-image: linear-gradient(top, transparent, rgba(0, 0, 0, 0.0));
+}
