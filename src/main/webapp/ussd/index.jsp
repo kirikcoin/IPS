@@ -39,7 +39,13 @@
       <navigation>
 
         <c:forEach items="${model.options}" var="option">
-          <link accesskey="${option.key}" pageId="index.jsp?${fn:escapeXml(option.uri)}">
+
+          <link
+            <c:if test="${not empty option.linkType}">
+              type="${option.linkType}"
+            </c:if>
+              accesskey="${option.key}"
+              pageId="index.jsp?${fn:escapeXml(option.uri)}">
             <c:out value="${option.text}"/>
           </link>
         </c:forEach>
