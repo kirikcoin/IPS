@@ -26,6 +26,7 @@ import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
 @CompileStatic
 @Slf4j('logger')
 class InvitationDeliveryController extends BaseController {
+    private static final int DEFAULT_SPEED = 1
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().invitationDeliveryRepository
     private final CsvParseService csvParseService = Services.instance().csvParseService
@@ -120,6 +121,7 @@ class InvitationDeliveryController extends BaseController {
 
         } else {
             invitationDelivery = new InvitationDelivery()
+            speedString = DEFAULT_SPEED.toString()
             dialogForEdit = false
         }
     }
