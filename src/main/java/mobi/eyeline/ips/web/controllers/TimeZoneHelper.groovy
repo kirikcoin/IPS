@@ -17,7 +17,7 @@ class TimeZoneHelper {
             def hours = MILLISECONDS.toHours raw
             def minutes = MILLISECONDS.toMinutes(raw) - HOURS.toMinutes(hours)
 
-            def prefix = "UTC${raw < 0 ? '' : '+'}" + sprintf("%d:%02d", hours, minutes)
+            def prefix = "UTC${raw < 0 ? '' : '+'}" + sprintf("%d:%02d", hours, minutes.abs())
 
             new SelectItem(tzId, "$name ($prefix)" as String)
         }
