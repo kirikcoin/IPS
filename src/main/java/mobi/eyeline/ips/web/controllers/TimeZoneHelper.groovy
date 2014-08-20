@@ -17,9 +17,9 @@ class TimeZoneHelper {
             def hours = MILLISECONDS.toHours raw
             def minutes = MILLISECONDS.toMinutes(raw) - HOURS.toMinutes(hours)
 
-            def prefix = "GMT${raw < 0 ? '' : '+'}" + sprintf("%d:%02d", hours, minutes)
+            def prefix = "UTC${raw < 0 ? '' : '+'}" + sprintf("%d:%02d", hours, minutes)
 
-            new SelectItem(tzId, "($prefix) $name" as String)
+            new SelectItem(tzId, "$name ($prefix)" as String)
         }
 
         Services.instance().timeZoneService.getZoneNames(locale).collect {

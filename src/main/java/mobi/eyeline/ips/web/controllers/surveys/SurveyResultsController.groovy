@@ -66,7 +66,8 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
                 strings['results.list.csv.date']
         ]
 
-        resultsExportService.writeResultsCsv(os, header, getSurvey(), periodStart, periodEnd, filter)
+        resultsExportService.writeResultsCsv(
+                os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
     }
 
     @SuppressWarnings("GroovyUnusedDeclaration")
@@ -76,6 +77,7 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
                 strings['results.list.csv.coupon']
         ]
 
-        resultsExportService.writeCouponsCsv(os, header, getSurvey(), periodStart, periodEnd, filter)
+        resultsExportService.writeCouponsCsv(
+                os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
     }
 }

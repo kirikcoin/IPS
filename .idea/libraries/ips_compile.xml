@@ -2,7 +2,6 @@
   <library name="ips-compile">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/freemarker-2.3.20.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/jsf-components-1.108.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/commons-discovery-0.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/commons-lang-2.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/myfaces-api-1.2.9.jar!/" />
@@ -76,6 +75,7 @@
       <root url="jar://$PROJECT_DIR$/lib/xstream-1.4.7.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/commons-cli-1.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/groovy-all-2.3.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsf-components-1.110.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
@@ -89,6 +89,8 @@
       <root url="file://$PROJECT_DIR$/../smsc/webapps/jsfComponents/components/java" />
       <root url="jar://$USER_HOME$/.ideaLibSources/groovy-all-2.3.6-sources.jar!/" />
       <root url="jar://$USER_HOME$/.ideaLibSources/guava-16.0.1-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/trinidad-api-1.2.13-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/myfaces-api-1.2.9-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

@@ -63,6 +63,8 @@ public abstract class BaseController implements Serializable {
     @SuppressWarnings("GrMethodMayBeStatic")
     Locale getLocale() { FacesContext.currentInstance.viewRoot.locale }
 
+    TimeZone getTimeZone() { TimeZone.getTimeZone(getCurrentUser().getTimeZoneId()) }
+
     boolean isClientRole() { inRole(Role.CLIENT) }
 
     boolean isManagerRole() { inRole(Role.MANAGER) }

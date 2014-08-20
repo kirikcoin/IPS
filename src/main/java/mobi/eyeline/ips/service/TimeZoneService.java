@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.base.Charsets.UTF_8;
@@ -27,6 +28,10 @@ public class TimeZoneService {
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getOffsetMillis(TimeZone timeZone) {
+        return TimeZone.getDefault().getRawOffset() - timeZone.getRawOffset();
     }
 
     private static class TzCacheLoader extends CacheLoader<Locale, List<Pair<String, String>>> {
