@@ -31,16 +31,28 @@ public abstract class UssdOption {
 
     private final int surveyId;
 
+    private final String linkType;
+
     protected UssdOption(int key,
                          String text,
                          boolean skipValidation,
                          int surveyId,
                          UssdOptionType type) {
+        this(key, text, skipValidation, surveyId, type, null);
+    }
+
+    protected UssdOption(int key,
+                         String text,
+                         boolean skipValidation,
+                         int surveyId,
+                         UssdOptionType type,
+                         String linkType) {
         this.key = key;
         this.text = text;
         this.skipValidation = skipValidation;
         this.type = type;
         this.surveyId = surveyId;
+        this.linkType = linkType;
     }
 
     public int getKey() {
@@ -53,6 +65,10 @@ public abstract class UssdOption {
 
     public int getSurveyId() {
         return surveyId;
+    }
+
+    public String getLinkType() {
+        return linkType;
     }
 
     public Map<String, Object> getProperties() {

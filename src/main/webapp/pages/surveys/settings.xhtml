@@ -40,7 +40,6 @@
             page.showSurveyDeleteDialog();
           }
 
-
           if (#{surveySettingsController.previewSentOk}) {
             ips.message.info("#{bundle['survey.settings.preview.success']}");
           }
@@ -144,7 +143,7 @@
                                  for="surveyStartDate"/>
                   <h:outputText id="surveyStartDate"
                                 value="#{surveySettingsController.persistedSurvey.startDate}">
-                    <f:convertDateTime type="both" dateStyle="short"/>
+                    <f:convertDateTime type="both" dateStyle="short" timeZone="#{userSession.timeZone}"/>
                   </h:outputText>
 
                   <!-- End date -->
@@ -152,7 +151,7 @@
                                  for="surveyEndDate"/>
                   <h:outputText id="surveyEndDate"
                                 value="#{surveySettingsController.persistedSurvey.endDate}">
-                    <f:convertDateTime type="both" dateStyle="short"/>
+                    <f:convertDateTime type="both" dateStyle="short" timeZone="#{userSession.timeZone}"/>
                   </h:outputText>
 
                   <!-- Client -->
@@ -194,11 +193,15 @@
                     <h:panelGrid id="dates" columns="3" cellpadding="0"  >
                       <eye:inputDate id="newSurveyStartDate"
                                      inputTime="true"
-                                     value="#{surveySettingsController.survey.startDate}"/>
+                                     value="#{surveySettingsController.survey.startDate}">
+                        <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                      </eye:inputDate>
                       <h:outputText style="margin:0 10px 0 0;" value=" — "/>
                       <eye:inputDate id="newSurveyEndDate"
                                      inputTime="true"
-                                     value="#{surveySettingsController.survey.endDate}"/>
+                                     value="#{surveySettingsController.survey.endDate}">
+                        <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                      </eye:inputDate>
                     </h:panelGrid>
 
                     <h:outputLabel value="#{bundle['survey.properties.client']}"
@@ -502,7 +505,7 @@
                   <h:panelGrid columns="2"
                                columnClasses="settings-left,none"
                                styleClass="endSmsDetails">
-                    <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms']}"
+                    <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.enabled.sms.text']}"
                                    for="endSmsText"/>
 
                     <h:panelGrid columns="1">

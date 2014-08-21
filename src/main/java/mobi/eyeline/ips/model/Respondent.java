@@ -127,4 +127,13 @@ public class Respondent implements Serializable {
         final int questionsCount = getSurvey().getActiveQuestionsCount();
         return (questionsCount == 0) ? 0 : ((getAnswersCount() * 100) / questionsCount);
     }
+
+    @Override
+    public String toString() {
+        return "Respondent{" +
+                "id=" + id +
+                ", msisdn='" + msisdn + '\'' +
+                ", surveyId=" + getSurvey().getId() +
+                '}';
+    }
 }

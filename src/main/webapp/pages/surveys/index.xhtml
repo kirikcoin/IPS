@@ -85,13 +85,13 @@
                           sortable="true">
                 <span>
                 <h:outputText value="#{row.startDate}">
-                  <f:convertDateTime type="both" dateStyle="short"/>
+                  <f:convertDateTime type="both" dateStyle="short" timeZone="#{userSession.timeZone}"/>
                 </h:outputText>
                 </span>
                 &#x2014;
                 <span>
                 <h:outputText value="#{row.endDate}">
-                  <f:convertDateTime type="both" dateStyle="short"/>
+                  <f:convertDateTime type="both" dateStyle="short" timeZone="#{userSession.timeZone}"/>
                 </h:outputText>
                 </span>
               </eye:column>
@@ -121,18 +121,21 @@
 
             <h:outputLabel value="#{bundle['survey.properties.period']}" for="newSurveyStartDate"/>
 
-            <h:panelGrid id="dates" columns="3" cellpadding="0" >
+            <h:panelGrid id="dates" columns="3" cellpadding="0">
               <eye:inputDate id="newSurveyStartDate"
                              inputTime="true"
                              minDate="#{dateController.now}"
-                             value="#{surveyListController.newSurveyStartDate}"/>
+                             value="#{surveyListController.newSurveyStartDate}">
+                <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+              </eye:inputDate>
               <h:outputText style="margin:0 10px 0 0;" value=" — "/>
               <eye:inputDate id="newSurveyEndDate"
                              inputTime="true"
                              minDate="#{dateController.now}"
-                             value="#{surveyListController.newSurveyEndDate}"/>
+                             value="#{surveyListController.newSurveyEndDate}">
+                <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+              </eye:inputDate>
             </h:panelGrid>
-
 
             <h:outputLabel value="#{bundle['survey.properties.client']}" for="clients"/>
             <h:selectOneMenu id="clients" value="#{surveyListController.newSurveyClientId}">
@@ -140,7 +143,6 @@
             </h:selectOneMenu>
 
           </h:panelGrid>
-
 
           <eye:buttons>
             <eye:button>

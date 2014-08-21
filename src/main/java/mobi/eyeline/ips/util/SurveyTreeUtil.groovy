@@ -77,33 +77,4 @@ class SurveyTreeUtil {
             return null
         }
     }
-
-    // TODO: delete after migration.
-    @SuppressWarnings(["GrMethodMayBeStatic", "GroovyUnusedDeclaration"])
-    @JmxOperation(operationAction = JmxOperationInfo.OperationAction.ACTION)
-    void migrateToTreeStructure() {
-        logger.info 'Migrating to tree survey structure'
-
-        def surveyRepository = Services.instance().surveyRepository
-        def questionOptionRepository = Services.instance().questionOptionRepository
-
-        surveyRepository.list()
-                .grep { Survey s -> s.active }
-                .each { Survey s ->
-            logger.info "Processing sid = [$s.id]"
-            try {
-                s.activeQuestions.each { Question q ->
-                    logger.info "Processing qid = [$q.id], next qid = [${q.next?.id}]"
-                    q.activeOptions.each { QuestionOption opt ->
-                        opt.nextQuestion = q.next
-                        questionOptionRepository.update opt
-                    }
-                }
-            } catch (Exception e) {
-                logger.error "Migration failed, sid = [$s.id]", e
-            }
-        }
-
-        logger.info 'Migration finished'
-    }
 }

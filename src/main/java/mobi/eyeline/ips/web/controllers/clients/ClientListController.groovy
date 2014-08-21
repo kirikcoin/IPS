@@ -11,10 +11,13 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+
+import javax.faces.model.SelectItem
 
 @CompileStatic
 @Slf4j('logger')
@@ -183,6 +186,8 @@ class ClientListController extends BaseController {
             passwordResetError = true
         }
     }
+
+    List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(getLocale()) }
 
     static class TableItem implements Serializable {
         int id

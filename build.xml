@@ -79,6 +79,7 @@
     </groovyc>
 
     <antcall target="gen-version"/>
+    <antcall target="gen-tznames"/>
   </target>
 
   <target name="build-exploded" depends="compile">
@@ -92,6 +93,7 @@
         <mapper type="glob" from="resources/skins/mobak/styles/*.css" to="resources/skins/mobak/styles/*.css.${release.version}"/>
         <mapper type="glob" from="resources/skins/araks/styles/*.css" to="resources/skins/araks/styles/*.css.${release.version}"/>
         <mapper type="glob" from="resources/skins/eyeline/styles/*.css" to="resources/skins/eyeline/styles/*.css.${release.version}"/>
+        <mapper type="glob" from="resources/skins/inomanet/styles/*.css" to="resources/skins/inomanet/styles/*.css.${release.version}"/>
         <mapper type="glob" from="*.js" to="*.js.${release.version}"/>
         <mapper type="identity"/>
       </firstmatchmapper>
@@ -166,6 +168,26 @@
       <src path="${gen.dir}"/>
       <classpath refid="classpath"/>
     </javac>
+  </target>
+
+  <target name="gen-tznames">
+    <taskdef name="groovy"
+             classname="org.codehaus.groovy.ant.Groovy"
+             classpathref="classpath"/>
+
+    <groovy src="${basedir}/src/utils/java/mobi/eyeline/ips/tzdata/GenTzData.groovy">
+      <arg value="--source=${basedir}/src/utils/resources/tzdata"/>
+      <arg value="--target=${gen.dir}"/>
+      <arg value="en"/>
+      <arg value="ru"/>
+      <arg value="sk"/>
+    </groovy>
+
+    <copy todir="${build.dir}/classes">
+      <fileset dir="${gen.dir}">
+        <include name="tznames_*.*"/>
+      </fileset>
+    </copy>
   </target>
 
   <!-- Tests -->

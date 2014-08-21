@@ -199,6 +199,11 @@ public class InvitationDelivery implements Serializable {
         /**
          * Subscriber gets first page of an associated survey.
          */
-        NI_DIALOG
+        NI_DIALOG,
+
+        /**
+         * Subscriber gets SMS message.
+         */
+        SMS
     }
 }

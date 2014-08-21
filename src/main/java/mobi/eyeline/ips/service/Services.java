@@ -66,6 +66,7 @@ public class Services {
     private final NotificationService notificationService;
 
     private final CsvParseService csvParseService;
+    private final TimeZoneService timeZoneService;
 
     private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -143,6 +144,7 @@ public class Services {
         notificationService = new NotificationService(deliverySubscriberRepository);
 
         csvParseService = new CsvParseService();
+        timeZoneService = new TimeZoneService();
     }
 
     public static synchronized void initialize(Config properties) {
@@ -273,12 +275,16 @@ public class Services {
         return deliveryService;
     }
 
+    public NotificationService getNotificationService() {
+        return notificationService;
+    }
+
     public CsvParseService getCsvParseService() {
         return csvParseService;
     }
 
-    public NotificationService getNotificationService() {
-        return notificationService;
+    public TimeZoneService getTimeZoneService() {
+        return timeZoneService;
     }
 
 }
