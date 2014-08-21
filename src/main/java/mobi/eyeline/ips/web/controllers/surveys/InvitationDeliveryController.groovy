@@ -22,7 +22,6 @@ import java.util.regex.Pattern
 
 import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
 import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
-import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 
 @CompileStatic
 @Slf4j('logger')
@@ -122,7 +121,7 @@ class InvitationDeliveryController extends BaseController {
 
         } else {
             invitationDelivery = new InvitationDelivery()
-            speedString = DEFAULT_SPEED
+            speedString = DEFAULT_SPEED.toString()
             dialogForEdit = false
         }
     }
@@ -140,8 +139,6 @@ class InvitationDeliveryController extends BaseController {
                 if (invitationDelivery.state == ACTIVE) {
                     deliveryService.start invitationDelivery
                 }
-            } else {
-                invitationDelivery.state = INACTIVE
             }
 
         } else {
@@ -180,17 +177,10 @@ class InvitationDeliveryController extends BaseController {
         if(speedString!= null && pattern.matcher(speedString).matches()){
             invitationDelivery.speed = Integer.parseInt(speedString)
         } else {
-            addErrorMessage(strings['invitations.deliveries.dialog.speed.max'], 'deliverySpeed')
+            addErrorMessage(strings['invitations.deliveries.dialog.speed.max'], 'deliveryReceivers')
             deliveryModifyError = true
         }
-
-        if(invitationDelivery.type != NI_DIALOG) {
-            if(invitationDelivery.text == null){
-                addErrorMessage(strings['invitations.deliveries.dialog.text'], 'invitationText')
-                deliveryModifyError = true
-            }
-        }
-        deliveryModifyError = deliveryModifyError ||
+        deliveryModifyError =
                 renderViolationMessage(validator.validate(invitationDelivery), [
                         'text': 'invitationText',
                         'speed': 'deliverySpeed',

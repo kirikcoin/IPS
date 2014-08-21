@@ -22,24 +22,26 @@ public class AnswerOption extends UssdOption {
                          boolean skipValidation,
                          int surveyId,
                          int questionId,
-                         int answerId) {
+                         int answerId,
+                         String linkType) {
 
-        super(key, text, skipValidation, surveyId, ANSWER);
+        super(key, text, skipValidation, surveyId, ANSWER, linkType);
         this.questionId = questionId;
         this.answerId = answerId;
     }
 
     public AnswerOption(int key,
                         QuestionOption option,
-                        boolean skipValidation) {
+                        boolean skipValidation,
+                        boolean isExitLink) {
         this(
                 key,
                 option.getAnswer(),
                 skipValidation,
                 option.getQuestion().getSurvey().getId(),
                 option.getQuestion().getId(),
-                option.getId()
-        );
+                option.getId(),
+                isExitLink ? "exit" : null);
 
         assert option.isActive() : "Sending inactive answer option";
     }
@@ -77,7 +79,7 @@ public class AnswerOption extends UssdOption {
                 getBoolean(options, PARAM_SKIP_VALIDATION, false),
                 getInt(options, PARAM_SURVEY_ID),
                 getInt(options, PARAM_QUESTION_ID),
-                getInt(options, PARAM_ANSWER_ID)
-        );
+                getInt(options, PARAM_ANSWER_ID),
+                null);
     }
 }

@@ -8,16 +8,16 @@ class QuestionTest extends ValidationTestCase {
 
     void test1() {
         assertThat validate(new Question()), hasSize(2)
-        assertThat validate(new Question(title: "",)), hasSize(2)
+        assertThat validate(new Question(title: '')), hasSize(2)
     }
 
     void test2() {
-        assertThat validate(new Question(title: "foo")), hasSize(1)
+        assertThat validate(new Question(title: 'foo')), hasSize(1)
     }
 
     void test3() {
         def question =
-                new Question(title: "foo", options: [new QuestionOption(answer: 'Foo')])
+                new Question(title: 'foo', options: [new QuestionOption(answer: 'Foo')])
         assertThat validate(question), empty()
     }
 
@@ -26,7 +26,7 @@ class QuestionTest extends ValidationTestCase {
                 new Question(title: 't'*71, options: [new QuestionOption(answer: 'Foo')])
         def violations = validate question
         assertThat validate(question), hasSize(1)
-        assertEquals "title", violations[0].propertyPath.first().name
+        assertEquals 'title', violations[0].propertyPath.first().name
     }
 
     void test5() {
@@ -35,6 +35,12 @@ class QuestionTest extends ValidationTestCase {
 
     void test6() {
         assertThat validate(new QuestionOption(answer: 'a'*71)), hasSize(1)
+    }
+
+    void test7() {
+        def question =
+                new Question(title: 'foo', options: [new QuestionOption(answer: 'Foo', active: false)])
+        assertThat validate(question), hasSize(1)
     }
 
     void testMoveUpSkipped() {
