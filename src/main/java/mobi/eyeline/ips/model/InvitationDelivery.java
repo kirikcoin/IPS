@@ -197,13 +197,13 @@ public class InvitationDelivery implements Serializable {
         USSD_PUSH,
 
         /**
-         * Subscriber gets first page of an associated survey.
-         */
-        NI_DIALOG,
-
-        /**
          * Subscriber gets SMS message.
          */
-        SMS
+        SMS,
+
+        /**
+         * Subscriber gets the first page of an associated survey.
+         */
+        NI_DIALOG
     }
 }
