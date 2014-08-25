@@ -69,6 +69,13 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
 
     public void saveWithSubscribers(final InvitationDelivery delivery,
                                     final List<String> msisdns) {
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("InvitationDeliveryRepository.saveWithSubscribers:" +
+                    " deliveryId = [" + delivery.getId() + "]," +
+                    " size = [" + msisdns.size() + "]");
+        }
+
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
