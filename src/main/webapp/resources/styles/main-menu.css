@@ -37,7 +37,7 @@
 .menuButtons {
     background-color: #626262;
     line-height: 25px;
-    height: 25px;
+    /*height: 25px;*/
 }
 .menuButton {
     font-family: Arial, Verdana, sans-serif;
