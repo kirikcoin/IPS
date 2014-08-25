@@ -63,6 +63,13 @@ var ips = new (function() {
       $ips_page_errors.show();
     };
 
+    this.infoWithDelay = function(infoText, delay) {
+      this.info(infoText)
+      var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
+      setTimeout(function(){$ips_page_errors.hide();}, delay*1000);
+
+    };
+
     /**
      * Прячет сообщение об ошибке, если оно отображается на экране
      * @param {String} [elementId] опциональный идентификатор элемента, из-за которого произошла ошибки или внутри которого есть элемент, явившийся причиной ошибки.

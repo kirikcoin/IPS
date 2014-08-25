@@ -41,7 +41,7 @@
           }
 
           if (#{surveySettingsController.previewSentOk}) {
-            ips.message.info("#{bundle['survey.settings.preview.success']}");
+            ips.message.infoWithDelay("#{bundle['survey.settings.preview.success']}",5);
           }
 
           $('#content').attr('action',
