@@ -41,7 +41,7 @@ public class DeliverySubscriber implements Serializable {
     private String msisdn;
 
     @NotNull
-    @Column(name = "state")
+    @Column(name = "state", columnDefinition = "VARCHAR(255) NOT NULL DEFAULT 'NEW'")
     @Enumerated(EnumType.STRING)
     private State state = State.NEW;
 
