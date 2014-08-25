@@ -10,9 +10,13 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.jdbc.AbstractWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,22 +67,40 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         return ((Number) criteria.uniqueResult()).intValue();
     }
 
-    public void saveWithSubscribers(InvitationDelivery delivery, List<String> msisdns){
+    public void saveWithSubscribers(final InvitationDelivery delivery,
+                                    final List<String> msisdns) {
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
 
             session.save(delivery);
-            for(String msisdn:msisdns){
-                final DeliverySubscriber subscriber = new DeliverySubscriber();
-                subscriber.setMsisdn(msisdn);
-                subscriber.setInvitationDelivery(delivery);
 
-                session.save(subscriber);
-            }
+            session.doWork(new AbstractWork() {
+                @Override
+                public void execute(Connection connection) throws SQLException {
+                    final PreparedStatement stmt = connection.prepareStatement(
+                            "INSERT INTO delivery_subscribers (delivery_id, msisdn)" +
+                            " VALUES (?, ?)");
+
+                    int i = 0;
+                    for (String msisdn : msisdns) {
+                        i++;
+
+                        stmt.setInt(1, delivery.getId());
+                        stmt.setString(2, msisdn);
+                        stmt.addBatch();
+
+                        if (i % 100 == 0) {
+                            stmt.executeBatch();
+                        }
+                    }
+                    stmt.executeBatch();
+                }
+            });
 
             transaction.commit();
+
         } catch (HibernateException e) {
             if ((transaction != null) && transaction.isActive()) {
                 try {
