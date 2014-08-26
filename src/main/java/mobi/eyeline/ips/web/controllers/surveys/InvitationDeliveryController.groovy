@@ -4,28 +4,31 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.InvitationDelivery
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository
-import mobi.eyeline.ips.service.Services
-import mobi.eyeline.ips.service.deliveries.DeliveryService
 import mobi.eyeline.ips.service.CsvParseService
 import mobi.eyeline.ips.service.CsvParseService.CsvLineException
 import mobi.eyeline.ips.service.CsvParseService.DuplicateMsisdnException
 import mobi.eyeline.ips.service.CsvParseService.InvalidMsisdnFormatException
+import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.deliveries.DeliveryService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
-import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
 import java.util.regex.Pattern
 
 import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
 import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
+import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 
 @CompileStatic
 @Slf4j('logger')
 class InvitationDeliveryController extends BaseController {
+
+    private static final int DEFAULT_SPEED = 10
+
     private final InvitationDeliveryRepository invitationDeliveryRepository =
             Services.instance().invitationDeliveryRepository
     private final CsvParseService csvParseService = Services.instance().csvParseService
@@ -120,6 +123,7 @@ class InvitationDeliveryController extends BaseController {
 
         } else {
             invitationDelivery = new InvitationDelivery()
+            speedString = DEFAULT_SPEED
             dialogForEdit = false
         }
     }
@@ -131,12 +135,14 @@ class InvitationDeliveryController extends BaseController {
             invitationDelivery.date = new Date()
             invitationDelivery.inputFile = inputFile?.filename
 
-            if (validate(invitationDelivery) && validate(inputFile)) {
+            if (validate(inputFile, invitationDelivery) && validate(inputFile)) {
                 invitationDeliveryRepository.saveWithSubscribers(invitationDelivery, msisdnList)
 
                 if (invitationDelivery.state == ACTIVE) {
                     deliveryService.start invitationDelivery
                 }
+            } else {
+                invitationDelivery.state = INACTIVE
             }
 
         } else {
@@ -172,20 +178,41 @@ class InvitationDeliveryController extends BaseController {
 
         Pattern pattern = Pattern.compile('^[1-9]\\d{0,2}+$')
 
-        if(speedString!= null && pattern.matcher(speedString).matches()){
+        if (speedString != null && pattern.matcher(speedString).matches()) {
             invitationDelivery.speed = Integer.parseInt(speedString)
         } else {
-            addErrorMessage(strings['invitations.deliveries.dialog.speed.max'], 'deliveryReceivers')
+            addErrorMessage(strings['invitations.deliveries.dialog.speed.max'], 'deliverySpeed')
             deliveryModifyError = true
         }
-        deliveryModifyError =
+
+        if(invitationDelivery.type != NI_DIALOG) {
+            if(invitationDelivery.text == null){
+                addErrorMessage(strings['invitations.deliveries.dialog.text'], 'invitationText')
+                deliveryModifyError = true
+            }
+        }
+
+        deliveryModifyError |=
                 renderViolationMessage(validator.validate(invitationDelivery), [
                         'text': 'invitationText',
                         'speed': 'deliverySpeed',
                         'inputFile': 'deliveryReceivers',
                 ])
 
+        return !deliveryModifyError
+    }
 
+    private boolean validate(UploadedFile inputFile,
+                             InvitationDelivery invitationDelivery) {
+
+        if (inputFile && inputFile.length < 0) {
+            addErrorMessage(
+                    strings['invitations.deliveries.dialog.file.error.upload'],
+                    'deliveryReceivers')
+            deliveryModifyError = true
+        }
+
+        validate(invitationDelivery)
 
         return !deliveryModifyError
     }

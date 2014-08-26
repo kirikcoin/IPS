@@ -2,11 +2,15 @@ package mobi.eyeline.ips.service
 
 import au.com.bytecode.opencsv.CSVWriter
 import groovy.transform.CompileStatic
+import groovy.transform.stc.ClosureParams
+import groovy.transform.stc.SimpleType
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Answer
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveySession
 import mobi.eyeline.ips.repository.AnswerRepository
+
+import java.text.DateFormat
 
 @CompileStatic
 @Slf4j('logger')
@@ -21,11 +25,13 @@ public class ResultsExportService {
     }
 
     void writeResultsCsv(OutputStream os,
-                  List<String> header,
-                  Survey survey,
-                  Date periodStart,
-                  Date periodEnd,
-                  String filter) {
+                         List<String> header,
+                         Survey survey,
+                         Date periodStart,
+                         Date periodEnd,
+                         String filter,
+                         TimeZone timeZone,
+                         Locale locale) {
 
         os.withWriter('UTF-8') { Writer writer ->
             final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
@@ -34,25 +40,17 @@ public class ResultsExportService {
                 // Add header line.
                 csvWriter.writeNext(header as String[])
 
-                final int count = answerRepository.count(
+                iterateResults(
+                        csvWriter,
                         survey,
                         periodStart,
                         periodEnd,
                         filter,
-                        null)
-
-                // Write in chunks.
-                (0..count / chunkSize).each { int i ->
-                    def records = answerRepository.list(
-                            survey,
-                            periodStart,
-                            periodEnd,
-                            filter,
-                            null,
-                            chunkSize,
-                            i * chunkSize)
-                    writeResultsData records, csvWriter
-                }
+                        null,    // hasCoupon: doesn't really matter
+                        timeZone,
+                        locale,
+                        this.&writeResultsData
+                )
 
             } finally {
                 csvWriter.close()
@@ -62,7 +60,13 @@ public class ResultsExportService {
 
     @SuppressWarnings("GrMethodMayBeStatic")
     private void writeResultsData(List<SurveySession> sessions,
-                                  CSVWriter csvWriter) {
+                                  CSVWriter csvWriter,
+                                  TimeZone timeZone,
+                                  Locale locale) {
+
+        def df = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, locale)
+        df.timeZone = timeZone
+
         sessions.each { SurveySession session ->
             session.answers.each { Answer answer ->
                 csvWriter.writeNext([
@@ -71,7 +75,7 @@ public class ResultsExportService {
                         answer.question.title,
                         answer.option.activeIndex + 1,
                         answer.option.answer,
-                        answer.date
+                        df.format(answer.date)
                 ] as String[])
             }
         }
@@ -82,7 +86,9 @@ public class ResultsExportService {
                          Survey survey,
                          Date periodStart,
                          Date periodEnd,
-                         String filter) {
+                         String filter,
+                         TimeZone timeZone,
+                         Locale locale) {
 
         os.withWriter('UTF-8') { Writer writer ->
             final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
@@ -91,25 +97,17 @@ public class ResultsExportService {
                 // Add header line.
                 csvWriter.writeNext(header as String[])
 
-                final int count = answerRepository.count(
+                iterateResults(
+                        csvWriter,
                         survey,
                         periodStart,
                         periodEnd,
                         filter,
-                        true)
-
-                // Write in chunks.
-                (0..count / chunkSize).each { int i ->
-                    def records = answerRepository.list(
-                            survey,
-                            periodStart,
-                            periodEnd,
-                            filter,
-                            true,
-                            chunkSize,
-                            i * chunkSize)
-                    writeCouponsData records, csvWriter
-                }
+                        true,    // with coupons only
+                        timeZone,
+                        locale,
+                        this.&writeCouponsData
+                )
 
             } finally {
                 csvWriter.close()
@@ -119,7 +117,9 @@ public class ResultsExportService {
 
     @SuppressWarnings("GrMethodMayBeStatic")
     private void writeCouponsData(List<SurveySession> sessions,
-                                  CSVWriter csvWriter) {
+                                  CSVWriter csvWriter,
+                                  TimeZone timeZone,
+                                  Locale locale) {
         sessions.each { SurveySession session ->
             session.answers.each { Answer answer ->
                 csvWriter.writeNext([
@@ -127,6 +127,36 @@ public class ResultsExportService {
                         session.respondent.coupon
                 ] as String[])
             }
+        }
+    }
+
+    private void iterateResults(CSVWriter csvWriter,
+                                Survey survey,
+                                Date periodStart,
+                                Date periodEnd,
+                                String filter,
+                                Boolean hasCoupon,
+                                TimeZone timeZone,
+                                Locale locale,
+                                @ClosureParams(value = SimpleType, options = ['List<SurveySession>', 'CSVWriter', 'TimeZone', 'Locale']) Closure doWrite) {
+        final int count = answerRepository.count(
+                survey,
+                periodStart,
+                periodEnd,
+                filter,
+                hasCoupon)
+
+        // Write in chunks.
+        (0..count / chunkSize).each { int i ->
+            def records = answerRepository.list(
+                    survey,
+                    periodStart,
+                    periodEnd,
+                    filter,
+                    hasCoupon,
+                    chunkSize,
+                    i * chunkSize)
+            doWrite records, csvWriter, timeZone, locale
         }
     }
 }

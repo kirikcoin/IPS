@@ -39,6 +39,25 @@ public class DeliveryPushService extends BasePushService {
             throw new IOException(e);
         }
     }
+    public void pushSms(final int id,
+                         Survey survey,
+                         final String msisdn,
+                         final String message) throws IOException {
+        try {
+            final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey)) {{
+                addParameter("scenario", "push-inform");
+                addParameter("protocol", "sms");
+                addParameter("subscriber", msisdn);
+                addParameter("message", message);
+                addParameter("resource_id", String.valueOf(id));
+            }};
+
+            doRequest(builder.build());
+
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
+    }
 
     public void niDialog(final int id,
                          Survey survey,

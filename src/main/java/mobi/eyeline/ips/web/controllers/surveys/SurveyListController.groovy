@@ -1,5 +1,7 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Survey
@@ -10,6 +12,7 @@ import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
+import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
@@ -23,6 +26,7 @@ class SurveyListController extends BaseController {
 
     private final EsdpService esdpService = Services.instance().esdpService
     private final SurveyService surveyService = Services.instance().surveyService
+    private final TimeZoneService timeZoneService = Services.instance().timeZoneService
 
     //
     //  List
@@ -37,12 +41,19 @@ class SurveyListController extends BaseController {
 
     String newSurveyTitle
 
-    Date newSurveyStartDate = (new Date() + 1).clearTime()
-    Date newSurveyEndDate = newSurveyStartDate + 7
+    Date newSurveyStartDate
+    Date newSurveyEndDate
 
     Integer newSurveyClientId
 
     boolean newSurveyValidationError = false
+
+    SurveyListController() {
+        def now = new Date()
+        newSurveyStartDate =
+                new Date((now + 1).clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
+        newSurveyEndDate = newSurveyStartDate + 7
+    }
 
     public DataTableModel getTableModel() {
 

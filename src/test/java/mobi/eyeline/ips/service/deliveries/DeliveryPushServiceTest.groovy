@@ -51,6 +51,23 @@ class DeliveryPushServiceTest extends GroovyTestCase {
         }
     }
 
+
+    void testPushSms() {
+        deliveryPushService.with {
+            pushSms(1, new Survey(id: 42), '79131112233', 'Hello there')
+            assertEquals \
+             'http://foo/push?id=42&scenario=push-inform&protocol=sms&subscriber=79131112233&message=Hello+there&resource_id=1',
+                    requested.toString()
+        }
+
+        deliveryPushService.with {
+            pushSms(10, new Survey(id: 42), '123', 'Ки рил ли ца')
+            assertEquals \
+             'http://foo/push?id=42&scenario=push-inform&protocol=sms&subscriber=123&message=%D0%9A%D0%B8+%D1%80%D0%B8%D0%BB+%D0%BB%D0%B8+%D1%86%D0%B0&resource_id=10',
+                    requested.toString()
+        }
+    }
+
     void testPushNi() {
         deliveryPushService.with {
             niDialog(1, new Survey(id: 42), '123', 12345)

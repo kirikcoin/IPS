@@ -6,10 +6,10 @@ import mobi.eyeline.ips.web.IPSViewHandler
 import javax.faces.context.FacesContext
 import javax.servlet.http.HttpServletRequest
 
-public class LocaleController extends BaseController {
+class LocaleController extends BaseController {
 
     void changeLocale() {
-        Locale locale = new Locale(getParamValue("lang").asString())
+        Locale locale = new Locale(getParamValue('lang').asString())
         setLocaleAttributes(locale)
 
         FacesContext.currentInstance.externalContext.redirect(getFullUrl())

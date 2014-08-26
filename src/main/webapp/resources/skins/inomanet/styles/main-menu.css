@@ -1,0 +1,37 @@
+@import "../../../styles/main-menu.css";
+
+/* Стили главного меню */
+
+.ipsLogo {
+    width: 191px;
+    height: 69px;
+    background: url(../images/logoinoma.png);
+    background-size: 191px 69px;
+    margin-right: 20px;
+}
+
+.menuTitle {
+  background-color: #78a0bb;
+  background-image: none;
+
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+.exitButton {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+}
+
+.menuButtons {
+  background-color: #ffffff;
+  border-bottom: 1px solid #999999;
+}
+.menuButton {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+  color: #78a0bb;
+  font-weight: normal;
+}
+.menuButtonSelected {
+  background-color: #eeeeee;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+  color: #78a0bb;
+  font-weight: normal;
+}

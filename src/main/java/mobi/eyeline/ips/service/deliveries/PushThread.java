@@ -143,6 +143,13 @@ class PushThread extends LoopThread {
                         message.getMsisdn(),
                         next.getModel().getText());
                 break;
+            case SMS:
+                deliveryPushService.pushSms(
+                        message.getId(),
+                        next.getModel().getSurvey(),
+                        message.getMsisdn(),
+                        next.getModel().getText());
+                break;
             case NI_DIALOG:
                 deliveryPushService.niDialog(
                         message.getId(),

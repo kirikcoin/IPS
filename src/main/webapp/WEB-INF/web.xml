@@ -42,13 +42,15 @@
   <context-param>
     <description>Maximum memory per request (in bytes)</description>
     <param-name>org.apache.myfaces.trinidad.UPLOAD_MAX_MEMORY</param-name>
-    <param-value>5120000</param-value>
+    <!-- 5Mb -->
+    <param-value>5242880</param-value>
   </context-param>
 
   <context-param>
     <description>Maximum disk space per request (in bytes)</description>
     <param-name>org.apache.myfaces.trinidad.UPLOAD_MAX_DISK_SPACE</param-name>
-    <param-value>1024000000</param-value>
+    <!-- 100Mb -->
+    <param-value>104857600</param-value>
   </context-param>
 
   <context-param>

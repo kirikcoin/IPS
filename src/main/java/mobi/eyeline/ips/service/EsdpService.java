@@ -47,7 +47,7 @@ public class EsdpService {
 
         final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
         entries.add(entry("service-enabled", "true"));
-        entries.add(entry("scenario.default", "default"));
+        entries.add(entry("scenario.default", "default-noinform"));
         entries.add(entry("description", survey.getDetails().getTitle()));
         entries.add(entry("use-method-post", "false"));
         entries.add(entry("force-transaction-mode", "true"));   // Note: transactional!

@@ -202,6 +202,13 @@
             <h:selectOneMenu id="clientSettingsLocale" value="#{clientListController.userForEdit.locale}">
               <f:selectItems value="#{clientController.locales}"/>
             </h:selectOneMenu>
+
+            <h:outputLabel value="#{bundle['profile.edit.timezone']}"
+                           for="clientSettingsTimezone"/>
+            <h:selectOneMenu id="clientSettingsTimezone"
+                             value="#{clientListController.userForEdit.timeZoneId}">
+              <f:selectItems value="#{clientListController.timeZones}"/>
+            </h:selectOneMenu>
           </h:panelGrid>
 
           <eye:buttons>
