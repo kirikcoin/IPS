@@ -118,11 +118,9 @@ class PushThread extends LoopThread {
     private void doHandleMessage(DeliveryWrapper delivery,
                                  DeliveryWrapper.Message message) throws InterruptedException {
         try {
-            try {
-                doPush(delivery, message);
-            } finally {
-                toSend.put(DelayedDeliveryWrapper.forSent(timeSource, delivery));
-            }
+            toSend.put(DelayedDeliveryWrapper.forSent(timeSource, delivery));
+
+            doPush(delivery, message);
 
             onSentAttempt(delivery, message, true);
 
