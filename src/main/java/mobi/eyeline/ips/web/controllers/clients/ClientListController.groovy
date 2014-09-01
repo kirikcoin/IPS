@@ -40,7 +40,7 @@ class ClientListController extends BaseController {
     Boolean passwordResetError
 
     ClientListController() {
-        userForEdit= new User()
+        userForEdit = new User()
     }
 
     public DataTableModel getTableModel() {
@@ -99,6 +99,7 @@ class ClientListController extends BaseController {
                     email: userForEdit.email,
                     password: HashUtils.hashPassword(password),
                     locale: userForEdit.locale,
+                    timeZoneId: userForEdit.timeZoneId,
                     role: Role.CLIENT)
 
             if (validate(user)) {
@@ -118,6 +119,7 @@ class ClientListController extends BaseController {
                 u.login = userForEdit.login
                 u.email = userForEdit.email
                 u.locale = userForEdit.locale
+                u.timeZoneId = userForEdit.timeZoneId
             }
 
             if (validate(user)) {

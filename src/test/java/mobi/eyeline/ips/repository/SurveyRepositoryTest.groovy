@@ -1,8 +1,16 @@
 package mobi.eyeline.ips.repository
 
-import mobi.eyeline.ips.model.*
+import mobi.eyeline.ips.model.AccessNumber
+import mobi.eyeline.ips.model.Question
+import mobi.eyeline.ips.model.QuestionOption
+import mobi.eyeline.ips.model.Role
+import mobi.eyeline.ips.model.Survey
+import mobi.eyeline.ips.model.SurveyDetails
+import mobi.eyeline.ips.model.SurveyStats
+import mobi.eyeline.ips.model.User
 
 import static mobi.eyeline.ips.model.Role.MANAGER
+import static mobi.eyeline.ips.utils.ModelBuilder.survey
 import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
@@ -19,33 +27,36 @@ class SurveyRepositoryTest extends DbTestCase {
     }
 
     void testSaveAndLoad() {
-        def survey =
-                new Survey(startDate: new Date(), endDate: new Date())
+        def s = survey(startDate: new Date(), endDate: new Date()) {
+            details(title: 'Foo')
 
-        def details = new SurveyDetails(survey: survey, title: 'Foo')
-        survey.details = details
-        surveyRepository.save survey
+            questions {
+                question(title: 'First one') {
+                    option(answer: 'O1')
+                }
 
-        def q1 = new Question(survey: survey, title: "First one")
-        q1.options.add(new QuestionOption(answer: 'O1', question: q1))
+                question(title: 'Second one') {
+                    option(answer: 'O2')
+                }
 
-        def q2 = new Question(survey: survey, title: "Second one")
-        q2.options.add(new QuestionOption(answer: 'O2', question: q2))
+                question(title: 'With options') {
+                    option(answer: 'O3')
+                }
+            }
+        }
 
-        def q3 = new Question(survey: survey, title: "With options")
-        q3.options.add(new QuestionOption(answer: 'O3', question: q3))
+        surveyRepository.save s
 
-        survey.questions.addAll([q1, q2, q3])
+        // Add a few more options to check update operations.
+        def q3 = questionRepository.load(3)
 
-        surveyRepository.update(survey)
-
-        q3 = questionRepository.load(3)
-
-        [
-            new QuestionOption(answer: "Option 1", question: q3),
-            new QuestionOption(answer: "Option 2", question: q3),
-            new QuestionOption(answer: "Option 3", question: q3)
-        ].each {q3.options.add it}
+        survey {
+            question(q3) {
+                option(answer: 'Option 1')
+                option(answer: 'Option 2')
+                option(answer: 'Option 3')
+            }
+        }
 
         questionRepository.update(q3)
 
@@ -234,20 +245,19 @@ class SurveyRepositoryTest extends DbTestCase {
                 role: MANAGER, password: '123'.pw(), onlyOwnSurveysVisible: true)
 
         [
-            new Survey(id: 1, client: user1).with {
-                details = new SurveyDetails(survey: it, title: 'A A%\\')
-                statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[0])
-                startDate = new Date() + 2
-                endDate = new Date() + 4
-                it
+            survey(id: 1, client: user1, startDate: new Date() + 2, endDate: new Date() + 4) {
+                details(title: 'A A%\\')
+                statistics([:]) {
+                    accessNumber(accessNumbers[0])
+                }
             },
 
-            new Survey(id: 2, client: user2, owner: user6).with {
-                details = new SurveyDetails(survey: it, title: 'B A_\\')
-                statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[1])
-                startDate = new Date() - 4
-                endDate = new Date() + 1
-                it
+            survey(id: 2, client: user2, owner: user6,
+                    startDate: new Date() - 4, endDate: new Date() + 1) {
+                details(title: 'B A_\\')
+                statistics([:]) {
+                    accessNumber(accessNumbers[1])
+                }
             },
 
             new Survey(id: 3, client: user3, owner: user5).with {

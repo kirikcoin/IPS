@@ -9,6 +9,8 @@
 var ips = new (function() {
 
   var VALIDATION_ERROR_CLASS = "validationError";
+  var INFO_MESSAGE_DELAY = 5;
+  var timeout;
 
   this.$byId = function(id) {
     var $res = $(document.getElementById('content:' + id));
@@ -31,6 +33,7 @@ var ips = new (function() {
      * @param {String} [elementId] опциональный идентификатор DOM-элемента, из-за которого произошла ошибка. К данному элементу будет применен стиль validationError
      */
     this.error = function (errorText, elementId, skipMarker) {
+      clearTimeout(timeout)
       $(JSF_MESSAGES_ELEMENT_ID).hide();
 
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
@@ -54,13 +57,20 @@ var ips = new (function() {
      * Отображает на экране информационное сообщение
      * @param {String} infoText текст сообщения
      */
-    this.info = function(infoText) {
+    this.info0 = function(infoText) {
       $(JSF_MESSAGES_ELEMENT_ID).hide();
 
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
       $ips_page_errors.empty();
       $ips_page_errors.append('<li class=\'info-message\'><span>' + infoText + '</span></li>');
       $ips_page_errors.show();
+    };
+
+    this.info= function(infoText) {
+      clearTimeout(timeout)
+      this.info0(infoText)
+      var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
+      timeout=setTimeout(function(){$ips_page_errors.hide();}, INFO_MESSAGE_DELAY*1000);
     };
 
     /**
