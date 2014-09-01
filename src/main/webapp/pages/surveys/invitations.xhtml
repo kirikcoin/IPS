@@ -451,14 +451,14 @@
 
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['invitations.deliveries.dialog.button.start']}"
                              action="#{invitationDeliveryController.startDelivery}"
                              rendered="#{invitationDeliveryController.modifiedDeliveryId==null || invitationDeliveryController.invitationDelivery.state != 'ACTIVE'}"/>
             </eye:button>
 
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['dialog.save']}"
                              action="#{invitationDeliveryController.saveDelivery}"/>
             </eye:button>
@@ -491,7 +491,7 @@
           </h:panelGrid>
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['dialog.save']}"
                              action="#{surveyInvitesController.addInvite}"/>
             </eye:button>
