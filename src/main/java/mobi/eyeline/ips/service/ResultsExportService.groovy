@@ -147,7 +147,7 @@ public class ResultsExportService {
                 hasCoupon)
 
         // Write in chunks.
-        (count / chunkSize).times { int i ->
+        (Math.ceil(count / chunkSize)).times { int i ->
             def records = answerRepository.list(
                     survey,
                     periodStart,
