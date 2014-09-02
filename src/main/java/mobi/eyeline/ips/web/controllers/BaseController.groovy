@@ -164,7 +164,7 @@ public abstract class BaseController implements Serializable {
     boolean renderViolationMessage(Set<ConstraintViolation<?>> violations,
                                    Map<String, String> fieldNamesMapping) {
 
-        violations.each { ConstraintViolation it -> addFacesMessage(it, fieldNamesMapping) }
+        violations.each { addFacesMessage(it, fieldNamesMapping) }
     }
 
     boolean renderViolationMessage(Set<ConstraintViolation<?>> violations) {

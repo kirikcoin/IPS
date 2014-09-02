@@ -18,8 +18,8 @@ class ClientController extends BaseController {
     List<SelectItem> getClients() {
         return userRepository
                 .listByRole(Role.CLIENT)
-                .findAll { User it -> !it.blocked }
-                .collect { User it -> new SelectItem(it.id, it.fullName) }
+                .findAll { !it.blocked }
+                .collect { new SelectItem(it.id, it.fullName) }
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")

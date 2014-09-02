@@ -74,7 +74,7 @@ class SurveyListController extends BaseController {
                         limit,
                         offset)
 
-                return list.collect { Survey it ->
+                return list.collect {
                     new TableItem(
                             id: it.id,
                             title: it.details.title,

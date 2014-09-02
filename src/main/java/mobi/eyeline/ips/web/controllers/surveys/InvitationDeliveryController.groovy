@@ -75,7 +75,7 @@ class InvitationDeliveryController extends BaseController {
                         limit,
                         offset)
 
-                return list.collect { InvitationDelivery it ->
+                return list.collect {
                     //noinspection UnnecessaryQualifiedReference
                     new TableItem(
                             id: it.id,

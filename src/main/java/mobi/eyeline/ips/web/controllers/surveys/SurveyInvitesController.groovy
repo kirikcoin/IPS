@@ -58,7 +58,7 @@ class SurveyInvitesController extends BaseController {
                             limit,
                             offset)
 
-                return list.collect { SurveyInvitation it ->
+                return list.collect {
                     new TableItem(
                             id: it.id,
                             date: it.date,
@@ -101,11 +101,11 @@ class SurveyInvitesController extends BaseController {
 
     void onMadvEditSave() {
         if (StringUtils.isNumeric(madvId)) {
-            survey.statistics.with { SurveyStats s ->
-                s.campaign = madvId
-                s.sentCount = 0
-                s.lastUpdate = null
-                s.updateStatus = UNDEFINED
+            survey.statistics.with {
+                campaign = madvId
+                sentCount = 0
+                lastUpdate = null
+                updateStatus = UNDEFINED
             }
             surveyRepository.update(survey)
             madvUpdateService.runNow(survey.id)
@@ -125,11 +125,11 @@ class SurveyInvitesController extends BaseController {
     }
 
     void clearMadvId() {
-        survey.statistics.with { SurveyStats s ->
-            s.campaign = null
-            s.sentCount = 0
-            s.lastUpdate = null
-            s.updateStatus = UNDEFINED
+        survey.statistics.with {
+            campaign = null
+            sentCount = 0
+            lastUpdate = null
+            updateStatus = UNDEFINED
         }
         surveyRepository.update(survey)
 
@@ -139,7 +139,7 @@ class SurveyInvitesController extends BaseController {
     void updateSentCount() { madvUpdateService.runNow() }
 
     int getTotalInvitations() {
-        surveyInvitationRepository.list(survey).collect {SurveyInvitation inv -> inv.value}.sum(0) as int
+        surveyInvitationRepository.list(survey).collect { it.value }.sum(0) as int
     }
 
     static class TableItem implements Serializable {
