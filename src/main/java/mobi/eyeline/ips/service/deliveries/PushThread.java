@@ -2,7 +2,9 @@ package mobi.eyeline.ips.service.deliveries;
 
 import com.google.common.base.Throwables;
 import mobi.eyeline.ips.model.InvitationDelivery;
+import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
+import mobi.eyeline.ips.service.BasePushService;
 import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.util.TimeSource;
 import org.slf4j.Logger;
@@ -115,12 +117,15 @@ class PushThread extends LoopThread {
         }
     }
 
-    private void doHandleMessage(DeliveryWrapper delivery,
+    private void doHandleMessage(final DeliveryWrapper delivery,
                                  DeliveryWrapper.Message message) throws InterruptedException {
         try {
-            toSend.put(DelayedDeliveryWrapper.forSent(timeSource, delivery));
-
-            doPush(delivery, message);
+            doPush(delivery, message, new BasePushService.RequestExecutionListener() {
+                @Override
+                public void onAfterSendRequest() {
+                    toSend.put(DelayedDeliveryWrapper.forSent(timeSource, delivery));
+                }
+            });
 
             onSentAttempt(delivery, message, true);
 
@@ -130,30 +135,25 @@ class PushThread extends LoopThread {
         }
     }
 
-    private void doPush(DeliveryWrapper next,
-                        DeliveryWrapper.Message message) throws IOException {
-        final InvitationDelivery.Type type = next.getModel().getType();
+    private void doPush(DeliveryWrapper delivery,
+                        DeliveryWrapper.Message message,
+                        BasePushService.RequestExecutionListener listener) throws IOException {
+        final int msgId = message.getId();
+        final Survey survey = delivery.getModel().getSurvey();
+        final String msisdn = message.getMsisdn();
+
+        final InvitationDelivery.Type type = delivery.getModel().getType();
         switch (type) {
             case USSD_PUSH:
                 deliveryPushService.pushUssd(
-                        message.getId(),
-                        next.getModel().getSurvey(),
-                        message.getMsisdn(),
-                        next.getModel().getText());
+                        msgId, survey, msisdn, delivery.getModel().getText(), listener);
                 break;
             case SMS:
                 deliveryPushService.pushSms(
-                        message.getId(),
-                        next.getModel().getSurvey(),
-                        message.getMsisdn(),
-                        next.getModel().getText());
+                        msgId, survey, msisdn, delivery.getModel().getText(), listener);
                 break;
             case NI_DIALOG:
-                deliveryPushService.niDialog(
-                        message.getId(),
-                        next.getModel().getSurvey(),
-                        message.getMsisdn(),
-                        next.getModel().getSurvey().getId());
+                deliveryPushService.niDialog(msgId, survey, msisdn, listener);
                 break;
             default:
                 throw new AssertionError("Unknown delivery type: " + type);

@@ -23,7 +23,8 @@ public class DeliveryPushService extends BasePushService {
     public void pushUssd(final int id,
                          Survey survey,
                          final String msisdn,
-                         final String message) throws IOException {
+                         final String message,
+                         RequestExecutionListener listener) throws IOException {
         try {
             final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey)) {{
                 addParameter("scenario", "push-inform");
@@ -33,16 +34,18 @@ public class DeliveryPushService extends BasePushService {
                 addParameter("resource_id", String.valueOf(id));
             }};
 
-            doRequest(builder.build());
+            doRequest(builder.build(), listener);
 
         } catch (URISyntaxException e) {
             throw new IOException(e);
         }
     }
+
     public void pushSms(final int id,
                          Survey survey,
                          final String msisdn,
-                         final String message) throws IOException {
+                         final String message,
+                         RequestExecutionListener listener) throws IOException {
         try {
             final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey)) {{
                 addParameter("scenario", "push-inform");
@@ -52,7 +55,7 @@ public class DeliveryPushService extends BasePushService {
                 addParameter("resource_id", String.valueOf(id));
             }};
 
-            doRequest(builder.build());
+            doRequest(builder.build(), listener);
 
         } catch (URISyntaxException e) {
             throw new IOException(e);
@@ -60,18 +63,18 @@ public class DeliveryPushService extends BasePushService {
     }
 
     public void niDialog(final int id,
-                         Survey survey,
+                         final Survey survey,
                          final String msisdn,
-                         final int surveyId) throws IOException {
+                         RequestExecutionListener listener) throws IOException {
         try {
             final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey)) {{
                 addParameter("scenario", "default-inform");
                 addParameter("subscriber", msisdn);
-                addParameter("survey_id", String.valueOf(surveyId));
+                addParameter("survey_id", String.valueOf(survey.getId()));
                 addParameter("resource_id", String.valueOf(id));
             }};
 
-            doRequest(builder.build());
+            doRequest(builder.build(), listener);
 
         } catch (URISyntaxException e) {
             throw new IOException(e);

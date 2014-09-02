@@ -2,6 +2,9 @@ package mobi.eyeline.ips.service;
 
 import mobi.eyeline.ips.properties.Config;
 import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpClientConnection;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
@@ -10,12 +13,14 @@ import org.apache.http.client.protocol.RequestClientConnControl;
 import org.apache.http.client.protocol.RequestDefaultHeaders;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.RequestWrapper;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpRequestExecutor;
 import org.apache.http.protocol.RequestContent;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
@@ -41,7 +46,12 @@ public abstract class BasePushService {
     }
 
     protected void doRequest(URI uri) throws IOException {
-        final HttpGet get = new HttpGet(uri);
+        doRequest(uri, RequestExecutionListener.EMPTY);
+    }
+
+    protected void doRequest(URI uri,
+                             RequestExecutionListener listener) throws IOException {
+        final HttpGet get = new HttpGetWithListener(uri, listener);
         final HttpResponse response = clientHolder.get().execute(get);
 
         try {
@@ -58,7 +68,7 @@ public abstract class BasePushService {
     private ThreadLocal<HttpClient> initClient() {
         final PoolingClientConnectionManager connectionManager =
                 new PoolingClientConnectionManager();
-        connectionManager.setDefaultMaxPerRoute(2 * config.getSadsMaxSessions());
+        connectionManager.setDefaultMaxPerRoute(config.getSadsMaxSessions());
 
         return new ThreadLocal<HttpClient>() {
             @Override
@@ -114,6 +124,85 @@ public abstract class BasePushService {
 
             return httpProcessor;
         }
+
+        @Override
+        protected HttpRequestExecutor createRequestExecutor() {
+            return new NotifyingRequestExecutor();
+        }
+
     }
 
+
+    /**
+     * Calls {@link RequestExecutionListener execution listener} after request is sent.
+     */
+    private static class NotifyingRequestExecutor extends HttpRequestExecutor {
+        @Override
+        protected HttpResponse doSendRequest(HttpRequest request,
+                                             HttpClientConnection conn,
+                                             HttpContext context)
+                throws IOException, HttpException {
+            try {
+                return super.doSendRequest(request, conn, context);
+
+            } finally {
+                if (request instanceof RequestWrapper) {
+                    request = ((RequestWrapper) request).getOriginal();
+                }
+
+                if (request instanceof RequestWithListener) {
+                    final RequestExecutionListener listener =
+                            ((RequestWithListener) request).getRequestExecutionListener();
+                    if (listener != null) {
+                        listener.onAfterSendRequest();
+                    }
+                }
+            }
+        }
+    }
+
+
+    //
+    //
+    //
+
+    public static class RequestExecutionListener {
+        private static final RequestExecutionListener EMPTY =
+                new RequestExecutionListener() {
+                    @Override
+                    public void onAfterSendRequest() {}
+                };
+
+        public void onAfterSendRequest() {}
+    }
+
+
+    //
+    //
+    //
+
+    private static interface RequestWithListener {
+        RequestExecutionListener getRequestExecutionListener();
+    }
+
+
+    //
+    //
+    //
+
+    private static class HttpGetWithListener
+            extends HttpGet implements RequestWithListener {
+
+        private final RequestExecutionListener listener;
+
+        private HttpGetWithListener(URI uri, RequestExecutionListener listener) {
+            super(uri);
+            this.listener = listener;
+        }
+
+        @Override
+        public RequestExecutionListener getRequestExecutionListener() {
+            return listener;
+        }
+    }
 }
