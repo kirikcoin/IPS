@@ -1,8 +1,8 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.Respondent
-import mobi.eyeline.ips.model.Survey
-import static mobi.eyeline.ips.utils.ModelBuilder.survey
+
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 
 @Mixin(RepositoryMock)
 class RespondentRepositoryTest extends DbTestCase {

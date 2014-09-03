@@ -7,7 +7,7 @@ import mobi.eyeline.ips.service.CsvParseService
 import static mobi.eyeline.ips.model.InvitationDelivery.State.*
 import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 import static mobi.eyeline.ips.model.InvitationDelivery.Type.USSD_PUSH
-import static mobi.eyeline.ips.utils.ModelBuilder.survey
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 
 class InvitationDeliveryRepositoryTestBase {
 

@@ -1,6 +1,6 @@
 package mobi.eyeline.ips.model
 
-import static mobi.eyeline.ips.utils.ModelBuilder.survey
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.not

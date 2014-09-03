@@ -3,7 +3,7 @@ package mobi.eyeline.ips.repository
 import mobi.eyeline.ips.model.*
 
 import static mobi.eyeline.ips.model.Role.MANAGER
-import static mobi.eyeline.ips.utils.ModelBuilder.survey
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
@@ -44,10 +44,12 @@ class SurveyRepositoryTest extends DbTestCase {
         def q3 = questionRepository.load(3)
 
         survey {
-            question(q3) {
-                option(answer: 'Option 1')
-                option(answer: 'Option 2')
-                option(answer: 'Option 3')
+            questions {
+                question(q3) {
+                    option(answer: 'Option 1')
+                    option(answer: 'Option 2')
+                    option(answer: 'Option 3')
+                }
             }
         }
 
@@ -76,9 +78,7 @@ class SurveyRepositoryTest extends DbTestCase {
                 }
             }
         }
-      //  surveyRepository.save survey
-//        def survey =
-//                new Survey(startDate: new Date(), endDate: new Date())
+
         def sid = surveyRepository.save survey
 
         def loadSurvey = {surveyRepository.load sid}
@@ -93,9 +93,6 @@ class SurveyRepositoryTest extends DbTestCase {
         def q2 = newQuestion 2,'Q2'
         def q3 = newQuestion 3,'Q3'
         def q4 = newQuestion 4,'Q4'
-
-//        survey.questions.addAll([q1, q2, q3, q4])
-//        surveyRepository.update(survey)
 
         assertEquals([q1, q2, q3, q4], loadSurvey().questions)
 
@@ -144,10 +141,12 @@ class SurveyRepositoryTest extends DbTestCase {
         q = s.questions.last()
 
         survey {
-            question(q) {
-                option(answer: 'Option1')
-                option(answer: 'Option2')
-                option(answer: 'Option3')
+            questions {
+                question(q) {
+                    option(answer: 'Option1')
+                    option(answer: 'Option2')
+                    option(answer: 'Option3')
+                }
             }
         }
         

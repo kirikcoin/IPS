@@ -2,7 +2,6 @@ package mobi.eyeline.ips.service
 
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
-import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.repository.DbTestCase
 import mobi.eyeline.ips.repository.QuestionOptionRepository
 import mobi.eyeline.ips.repository.QuestionRepository
@@ -10,6 +9,7 @@ import mobi.eyeline.ips.repository.RepositoryMock
 import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.utils.TreeBuilder
 
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
 
@@ -52,21 +52,28 @@ class SurveyServiceTest extends DbTestCase {
     }
 
     void testDeleteQuestion1() {
-        def questions = (0..<4).collect { newQ(it) }
-
-        questions[0].options = [newO(0, questions[1]), newO(1, questions[1])]
-        questions[1].options = [newO(0, questions[2]), newO(1, questions[2])]
-        questions[2].options = [newO(0, questions[3]), newO(1, questions[3])]
-        questions[3].options = [newO(0, null), newO(1, null)]
-
-        def survey = new Survey(questions: questions).with { s ->
-            questions.each { q-> q.survey = s; q.options.each { it.question = q } }
-            //noinspection GroovyAccessibility
-            prepareIndex()
-            s
+        def survey = survey([:]) {
+            questions {
+                question(id: 0) {
+                    option(id: 0, nextQuestion: ref(id: 1))
+                    option(id: 1, nextQuestion: ref(id: 1))
+                }
+                question(id: 1) {
+                    option(id: 0, nextQuestion: ref(id: 2))
+                    option(id: 1, nextQuestion: ref(id: 2))
+                }
+                question(id: 2) {
+                    option(id: 0, nextQuestion: ref(id: 3))
+                    option(id: 1, nextQuestion: ref(id: 3))
+                }
+                question(id: 3) {
+                    option(id: 0, nextQuestion: null)
+                    option(id: 1, nextQuestion: null)
+                }
+            }
         }
 
-        surveyService.deleteQuestion(questions[1])
+        surveyService.deleteQuestion(survey.questions[1])
 
         def tree = SurveyTreeUtil.asTree(survey, '', '', '')
         assertThat tree.describe(), equalToIgnoringWhiteSpace('''

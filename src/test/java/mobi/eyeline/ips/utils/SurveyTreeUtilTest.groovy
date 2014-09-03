@@ -1,10 +1,8 @@
 package mobi.eyeline.ips.utils
 
-import mobi.eyeline.ips.model.Question
-import mobi.eyeline.ips.model.QuestionOption
-import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.util.SurveyTreeUtil
 
+import static SurveyBuilder.survey
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
 
@@ -17,32 +15,27 @@ class SurveyTreeUtilTest extends GroovyTestCase {
         TreeBuilder.init()
     }
 
-    def newQ = {id -> new Question(id: id)}
-    def newO = {id, next -> new QuestionOption(id: id, nextQuestion: next)}
-
-    @SuppressWarnings("GrMethodMayBeStatic")
-    private Survey newSurvey(List<Question> questions) {
-        new Survey(questions: questions).with { s ->
-            questions.each { q -> q.survey = s; q.options.each { it.question = q } }
-            //noinspection GroovyAccessibility
-            prepareIndex()
-            s
-        }
-    }
-
     void test1() {
-        def questions = (0..<4).collect { newQ(it) }
 
-        questions[0].options = [newO(0, questions[1]), newO(1, questions[1])]
-        questions[1].options = [newO(0, questions[2]), newO(1, questions[2])]
-        questions[2].options = [newO(0, questions[3]), newO(1, questions[3])]
-        questions[3].options = [newO(0, null), newO(1, null)]
-
-        def survey = new Survey(questions: questions).with { s ->
-            questions.each { q-> q.survey = s; q.options.each { it.question = q } }
-            //noinspection GroovyAccessibility
-            prepareIndex()
-            s
+        def survey = survey([:]) {
+            questions {
+                question(id: 0) {
+                    option(id: 0, nextQuestion: ref(id: 1))
+                    option(id: 1, nextQuestion: ref(id: 1))
+                }
+                question(id: 1) {
+                    option(id: 0, nextQuestion: ref(id: 2))
+                    option(id: 1, nextQuestion: ref(id: 2))
+                }
+                question(id: 2) {
+                    option(id: 0, nextQuestion: ref(id: 3))
+                    option(id: 1, nextQuestion: ref(id: 3))
+                }
+                question(id: 3) {
+                    option(id: 0, nextQuestion: null)
+                    option(id: 1, nextQuestion: null)
+                }
+            }
         }
 
         def tree = SurveyTreeUtil.asTree(survey, '', '', '')
@@ -64,13 +57,24 @@ class SurveyTreeUtilTest extends GroovyTestCase {
     }
 
     void testLoop() {
-        def questions = (0..<2).collect { newQ(it) }
+        def survey = survey([:]) {
+            questions {
+                question(id: 0) {
+                    option(id: 0, nextQuestion: ref(id: 1))
+                    option(id: 1, nextQuestion: ref(title: 'Q1'))
+                    option(id: 2, nextQuestion: null)
+                    option(id: 3, nextQuestion: ref(id: 0))
+                }
 
-        questions[0].options =
-                [newO(0, questions[1]), newO(1, questions[1]), newO(2, null), newO(3, questions[0])]
-        questions[1].options = [newO(0, questions[0]), newO(1, questions[1]), newO(2, null)]
+                question(id: 1, title: 'Q1') {
+                    option(id: 0, nextQuestion: ref(id: 0))
+                    option(id: 1, nextQuestion: ref(id: 1))
+                    option(id: 2, nextQuestion: null)
+                }
+            }
+        }
 
-        def tree = SurveyTreeUtil.asTree(newSurvey(questions), '', '', '')
+        def tree = SurveyTreeUtil.asTree(survey, '', '', '')
         assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
