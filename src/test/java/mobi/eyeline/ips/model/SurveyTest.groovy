@@ -24,7 +24,7 @@ class SurveyTest extends ValidationTestCase {
     }
 
     void testValid1() {
-        def survey = new Survey(
+        def survey = survey(
                 startDate: Date.parse('HH:mm', '00:00'), 
                 endDate: Date.parse('HH:mm', '01:00'))
         
@@ -32,7 +32,7 @@ class SurveyTest extends ValidationTestCase {
     }
 
     void testValid2() {
-        def survey = new Survey(
+        def survey = survey(
                 startDate: Date.parse('HH:mm', '00:00'),
                 endDate: Date.parse('HH:mm', '00:00'))
 

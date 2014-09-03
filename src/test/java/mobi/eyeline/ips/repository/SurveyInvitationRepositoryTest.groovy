@@ -4,6 +4,7 @@ import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyInvitation
 
 import static org.junit.Assert.assertEquals
+import static mobi.eyeline.ips.utils.ModelBuilder.survey
 
 @Mixin(RepositoryMock)
 class SurveyInvitationRepositoryTest extends DbTestCase {
@@ -41,10 +42,10 @@ class SurveyInvitationRepositoryTest extends DbTestCase {
 
     private void fillTestData() {
         [
-            survey1 = new Survey(id: 1),
-            survey2 = new Survey(id: 2),
-            survey3 = new Survey(id: 3),
-            survey4 = new Survey(id: 4, active: false)
+            survey1 = survey(id: 1),
+            survey2 = survey(id: 2),
+            survey3 = survey(id: 3),
+            survey4 = survey(id: 4, active: false)
         ].each { s ->
             s.startDate = new Date()
             s.endDate = new Date()

@@ -13,11 +13,11 @@ import mobi.eyeline.ips.model.SurveyStats
 
 @SuppressWarnings("GrMethodMayBeStatic")
 class ModelBuilder {
+     //TODO: for Respondent(RespondentRepositoryTest), Invitations(SurveyInvitationsRepositoryTest, InvitationDeliveryRepositoryTestBase)
+    static Survey survey(Map args = [:]) { new Survey(args) }
 
-    static Survey survey(Map _ = [:]) { new Survey(_) }
-
-    static Survey survey(Map _, @DelegatesTo(SurveyContext) Closure closure) {
-        def survey = survey(_)
+    static Survey survey(Map args, @DelegatesTo(SurveyContext) Closure closure) {
+        def survey = survey(args)
         new SurveyContext(survey).with closure
         survey
     }
@@ -27,8 +27,8 @@ class ModelBuilder {
         null
     }
 
-    static QuestionOption option(Map _) {
-        new QuestionContext(_['question'] as Question).option(_)
+    static QuestionOption option(Map args) {
+        new QuestionContext(args['question'] as Question).option(args)
     }
 
     @InheritConstructors static class SurveyContext extends Context<Survey> {
@@ -37,8 +37,8 @@ class ModelBuilder {
         // SurveyDetails
         //
 
-        SurveyDetails details(Map _) {
-            bind(new SurveyDetails(_)) {
+        SurveyDetails details(Map args) {
+            bind(new SurveyDetails(args)) {
                 it.survey = enclosing
                 enclosing.details = it
             }
@@ -49,15 +49,15 @@ class ModelBuilder {
         // SurveyStats
         //
 
-        SurveyStats statistics(Map _) {
-            bind(new SurveyStats(_)) {
+        SurveyStats statistics(Map args) {
+            bind(new SurveyStats(args)) {
                 it.survey = enclosing
                 enclosing.statistics = it
             }
         }
 
-        SurveyStats statistics(Map _, @DelegatesTo(SurveyStatisticsContext) Closure closure) {
-            statistics(statistics(_), closure)
+        SurveyStats statistics(Map args, @DelegatesTo(SurveyStatisticsContext) Closure closure) {
+            statistics(statistics(args), closure)
         }
 
 
@@ -75,15 +75,15 @@ class ModelBuilder {
             this.with closure
         }
 
-        Question question(Map _) {
-            bind(new Question(_)) {
+        Question question(Map args) {
+            bind(new Question(args)) {
                 enclosing.questions << it
                 it.survey = enclosing
             }
         }
 
-        Question question(Map _, @DelegatesTo(QuestionContext) Closure closure) {
-            question(question(_), closure)
+        Question question(Map args, @DelegatesTo(QuestionContext) Closure closure) {
+            question(question(args), closure)
         }
 
         static Question question(Question question, @DelegatesTo(QuestionContext) Closure closure) {
@@ -94,8 +94,8 @@ class ModelBuilder {
 
     @InheritConstructors static class SurveyStatisticsContext extends Context<SurveyStats> {
 
-        AccessNumber accessNumber(Map _) {
-            accessNumber(new AccessNumber(_))
+        AccessNumber accessNumber(Map args) {
+            accessNumber(new AccessNumber(args))
         }
 
         AccessNumber accessNumber(AccessNumber accessNumber) {
@@ -107,15 +107,15 @@ class ModelBuilder {
 
     @InheritConstructors static class QuestionContext extends Context<Question> {
 
-        QuestionOption option(Map _) {
-            bind(new QuestionOption(_)) {
+        QuestionOption option(Map args) {
+            bind(new QuestionOption(args)) {
                 enclosing.options << it
                 it.question = enclosing
             }
         }
 
-        Question question(Map _) {
-            new DeferredQuestion(_)
+        Question question(Map args) {
+            new DeferredQuestion(args)
         }
     }
 
