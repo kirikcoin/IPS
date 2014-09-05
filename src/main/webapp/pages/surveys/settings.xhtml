@@ -26,9 +26,11 @@
 
         $(function() {
 
-          if ("#{surveySettingsController.errorId}" == 'settingsDialog'|| $("#newSurveyStartDate").hasClass("validationError") || $("#newSurveyEndDate").hasClass("validationError") ) {
+          if ("#{surveySettingsController.errorId}" == 'settingsDialog'
+              || $("#newSurveyStartDate").hasClass("validationError")
+              || $("#newSurveyEndDate").hasClass("validationError") ) {
             page.onEditSettingsClick();
-          } else if ("#{surveySettingsController.errorId}" == 'endMessageDialog' ) {
+          } else if ("#{surveySettingsController.errorId}" == 'endMessageDialog') {
             page.onEditEndMessageClick();
           } else if ("#{surveySettingsController.errorId}" == 'questionModificationDialog') {
             page.onQuestionModificationDialog();
