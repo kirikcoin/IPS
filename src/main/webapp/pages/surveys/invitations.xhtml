@@ -24,7 +24,11 @@
           page.init();
 
           if ("#{invitationDeliveryController.deliveryModifyError}" == "true") {
+            if("#{invitationDeliveryController.deliveryReceiversError}" == "true") {
+              $("#deliveryReceivers").addClass("validationError");
+            }
             page.onNewDeliveryShow();
+
           }
 
           $('#content').attr('action',
