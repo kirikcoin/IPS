@@ -144,7 +144,6 @@ class SurveySettingsController extends BaseSurveyController {
         boolean validationError =
                 renderViolationMessage(validator.validate(survey.details), [
                         'endSmsTextSet': 'endSmsText',
-                        'endSmsFromSet': 'endSmsFrom'
                 ])
         if (validationError) {
             this.errorId =
