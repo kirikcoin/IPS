@@ -55,7 +55,10 @@
               "#{bundle['survey.settings.tree.zoom.reset']}"
           );
 
-          jsfc('questionsTree').show();
+          var treeComponent = jsfc('questionsTree');
+          if (treeComponent) {
+            treeComponent.show();
+          }
         });
         //    ]]>
       </script>

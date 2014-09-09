@@ -9,8 +9,6 @@
 var ips = new (function() {
 
   var VALIDATION_ERROR_CLASS = "validationError";
-  var INFO_MESSAGE_DELAY = 5;
-  var timeout;
 
   this.$byId = function(id) {
     var $res = $(document.getElementById('content:' + id));
@@ -27,13 +25,16 @@ var ips = new (function() {
     var JSF_MESSAGES_ELEMENT_ID = "#jsf_messages";
     var PAGE_MESSAGES_ELEMENT_ID = "#page_messages";
 
+    var INFO_MESSAGE_LIFETIME = 5 * 1000;
+    var infoMessageTimer;
+
     /**
      * Отображает на экране сообщение об ошибке
      * @param {String} errorText текст сообщения об ошибке
      * @param {String} [elementId] опциональный идентификатор DOM-элемента, из-за которого произошла ошибка. К данному элементу будет применен стиль validationError
      */
     this.error = function (errorText, elementId, skipMarker) {
-      clearTimeout(timeout)
+      clearTimeout(infoMessageTimer);
       $(JSF_MESSAGES_ELEMENT_ID).hide();
 
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
@@ -57,7 +58,7 @@ var ips = new (function() {
      * Отображает на экране информационное сообщение
      * @param {String} infoText текст сообщения
      */
-    this.info0 = function(infoText) {
+    this.info0 = function (infoText) {
       $(JSF_MESSAGES_ELEMENT_ID).hide();
 
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
@@ -66,11 +67,11 @@ var ips = new (function() {
       $ips_page_errors.show();
     };
 
-    this.info= function(infoText) {
-      clearTimeout(timeout);
+    this.info = function (infoText) {
+      clearTimeout(infoMessageTimer);
       this.info0(infoText);
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
-      timeout=setTimeout(function(){$ips_page_errors.hide();}, INFO_MESSAGE_DELAY*1000);
+      infoMessageTimer = setTimeout(function () { $ips_page_errors.hide(); }, INFO_MESSAGE_LIFETIME);
     };
 
     /**
