@@ -13,6 +13,8 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
 
+import java.text.SimpleDateFormat
+
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
 import static mobi.eyeline.ips.web.controllers.BaseController.beanByName
 
@@ -31,6 +33,7 @@ class SurveyInvitesController extends BaseController {
 
     // Invitations
     Date inviteDate = new Date()
+    String newInviteDate
     String inviteValue
     boolean inviteError
 
@@ -40,6 +43,9 @@ class SurveyInvitesController extends BaseController {
 
     SurveyInvitesController() {
         madvId = survey.statistics.campaign
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
+        dateFormat.setTimeZone(getTimeZone())
+        newInviteDate = dateFormat.format(inviteDate)
     }
 
     boolean isCampaignDefined() { survey.statistics.campaign != null }

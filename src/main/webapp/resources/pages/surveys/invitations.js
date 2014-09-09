@@ -72,6 +72,7 @@ var page = {
 
   onNewInviteCancel: function() {
     jsfc('newInviteDialog').hide();
+    $("#inviteDate").val($("#newInviteDate").val());
     ips.message.hideAll();
     return false;
   },
