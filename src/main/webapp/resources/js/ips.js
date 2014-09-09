@@ -78,23 +78,25 @@ var ips = new (function() {
      * @param {String} [elementId] опциональный идентификатор элемента, из-за которого произошла ошибки или внутри которого есть элемент, явившийся причиной ошибки.
      */
     this.hide = function(elementId) {
+      function removeElementError($element) {
+        $element.removeClass(VALIDATION_ERROR_CLASS);
+
+        var $possibleErrorSpan =
+            ($element.hasClass('hasDatepicker') ? $element.next().next() : $element.next());
+        if ($possibleErrorSpan.is('span.error')) {
+          $possibleErrorSpan.remove();
+        }
+
+        $element.find('.' + VALIDATION_ERROR_CLASS).each(function() {
+          removeElementError($(this));
+        });
+      }
+
       $(JSF_MESSAGES_ELEMENT_ID).hide();
       $(PAGE_MESSAGES_ELEMENT_ID).hide();
 
-      if(elementId) {
-        var $element = ips.$byId(elementId);
-        $element.removeClass(VALIDATION_ERROR_CLASS);
-        if($element.next().is('span.error'))
-          $element.next().remove();
-
-        $element.find('.' + VALIDATION_ERROR_CLASS).each(function() {
-          var el = $(this);
-          el.removeClass(VALIDATION_ERROR_CLASS);
-          var $nextEl = el.next();
-          if($nextEl.is('span.error')) {
-            $nextEl.remove();
-          }
-        });
+      if (elementId) {
+        removeElementError(ips.$byId(elementId));
       }
     };
 

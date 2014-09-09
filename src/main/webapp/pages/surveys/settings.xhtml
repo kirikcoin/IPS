@@ -68,6 +68,9 @@
         <h:inputHidden id="id" value="#{surveySettingsController.surveyId}"/>
         <h:inputHidden id="questionId" value="#{surveySettingsController.questionId}"/>
 
+        <h:inputHidden id="settingsStartDate" value="#{surveySettingsController.settingsStartDate}"/>
+        <h:inputHidden id="settingsEndDate" value="#{surveySettingsController.settingsEndDate}"/>
+
         <h:panelGroup layout="block" styleClass="border-shadow">
 
           <h:panelGrid columns="2" styleClass="page-header">
@@ -195,7 +198,7 @@
                     <h:panelGrid id="dates" columns="3" cellpadding="0"  >
                       <eye:inputDate id="newSurveyStartDate"
                                      inputTime="true"
-                                     converterMessage="error"
+                                     converterMessage="#{bundle['survey.validation.date.format']}"
                                      value="#{surveySettingsController.survey.startDate}">
                         <f:convertDateTime timeZone="#{userSession.timeZone}"/>
                       </eye:inputDate>
@@ -203,7 +206,7 @@
                       <h:outputText style="margin:0 10px 0 0;" value=" — "/>
                       <eye:inputDate id="newSurveyEndDate"
                                      inputTime="true"
-                                     converterMessage="error"
+                                     converterMessage="#{bundle['survey.validation.date.format']}"
                                      value="#{surveySettingsController.survey.endDate}">
                         <f:convertDateTime timeZone="#{userSession.timeZone}"/>
                       </eye:inputDate>
@@ -236,9 +239,6 @@
                     </eye:button>
 
                     <eye:button>
-                      <!--<h:outputLink styleClass="button-green"-->
-                                    <!--value="#{bundle['survey.create.button.cancel']}"-->
-                                    <!--onclick="page.onEditSettingsCancel();"/>-->
                       <h:commandLink styleClass="button-green"
                                      id="settingsCancel"
                                      action="#{surveySettingsController.onCancel}"

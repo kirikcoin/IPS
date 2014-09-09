@@ -1,5 +1,3 @@
-var newSurveyStartDate;
-var newSurveyEndDate;
 var page = {
 
   init: function () {
@@ -117,8 +115,6 @@ var page = {
   onEditSettingsClick: function() {
     $('.settingsDisplay').hide();
     $('#settingsDialog').show();
-    newSurveyStartDate = $("#newSurveyStartDate").val();
-    newSurveyEndDate = $("#newSurveyEndDate").val();
 
     page.disableEditables();
 
@@ -129,14 +125,15 @@ var page = {
     $('#settingsDialog').hide();
     $('.settingsDisplay').show();
 
-    $("#newSurveyStartDate").val(newSurveyStartDate);
-    $("#newSurveyEndDate").val(newSurveyEndDate);
+    $("#newSurveyStartDate").val($("#settingsStartDate").val());
+    $("#newSurveyEndDate").val($("#settingsEndDate").val());
 
     page.enableEditables();
     ips.message.hideAll();
 
     return false;
   },
+
 
   onQuestionModificationDialog: function() {
     jsfc('questionModificationDialog').show();
