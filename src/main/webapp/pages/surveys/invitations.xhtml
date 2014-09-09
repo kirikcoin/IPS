@@ -117,6 +117,8 @@
 
           <h:panelGroup layout="block" styleClass="page-body">
 
+            <!-- MADV synchronization disabled, see ips-227. -->
+            <h:panelGroup rendered="false">
             <eye:collapsingGroup opened="true" id="groupMadv">
               <f:facet name="header">
                 <h:panelGroup>
@@ -219,6 +221,7 @@
 
               </h:panelGroup>
             </eye:collapsingGroup>
+            </h:panelGroup>
 
             <eye:collapsingGroup id="invitationsDelivery" opened="true">
               <f:facet name="header">

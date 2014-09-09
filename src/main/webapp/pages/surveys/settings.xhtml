@@ -529,11 +529,14 @@
                                     value="#{bundle['survey.settings.end.message.coupon.hint']}"/>
                     </h:panelGrid>
 
-                    <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.number']}"
-                                   for="endSmsFrom"/>
-                    <eye:inputText id="endSmsFrom"
-                                   maxlength="70"
-                                   value="#{surveySettingsController.survey.details.endSmsFrom}"/>
+                    <!-- Originating address disabled (ips-228) -->
+                    <h:panelGroup rendered="false">
+                      <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.number']}"
+                                     for="endSmsFrom"/>
+                      <eye:inputText id="endSmsFrom"
+                                     maxlength="70"
+                                     value="#{surveySettingsController.survey.details.endSmsFrom}"/>
+                    </h:panelGroup>
                   </h:panelGrid>
 
                   <eye:buttons>
