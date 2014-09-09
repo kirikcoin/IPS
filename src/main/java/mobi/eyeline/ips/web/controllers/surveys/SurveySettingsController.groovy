@@ -406,7 +406,10 @@ class SurveySettingsController extends BaseSurveyController {
     private void updateQuestionModel(Question persistedQuestion) {
         def getId = { DynamicTableRow row -> row.getValue('id') as String }
         def getAnswer = { DynamicTableRow row -> row.getValue('answer') as String }
-        def getNextQuestion = { DynamicTableRow row -> questionRepository.get(row.getValue('nextQuestion') as Integer) as Question }
+        def getNextQuestion = { DynamicTableRow row ->
+            int nextId = row.getValue('nextQuestion') as Integer
+            nextId == -1 ? null : questionRepository.get(nextId) as Question
+        }
         def index = { DynamicTableRow row -> questionOptions.rows.indexOf(row) }
 
         persistedQuestion.title = question.title
@@ -439,8 +442,10 @@ class SurveySettingsController extends BaseSurveyController {
             questionOptions.rows
                     .findAll { DynamicTableRow row -> getId(row).empty }
                     .each { DynamicTableRow row ->
-                def option =
-                        new QuestionOption(question: persistedQuestion, answer: getAnswer(row))
+                def option = new QuestionOption(
+                        question: persistedQuestion,
+                        answer: getAnswer(row),
+                        nextQuestion: getNextQuestion(row))
                 persistedQuestion.options.add option
                 option.moveTo index(row)
             }
