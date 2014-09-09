@@ -67,8 +67,8 @@ var ips = new (function() {
     };
 
     this.info= function(infoText) {
-      clearTimeout(timeout)
-      this.info0(infoText)
+      clearTimeout(timeout);
+      this.info0(infoText);
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
       timeout=setTimeout(function(){$ips_page_errors.hide();}, INFO_MESSAGE_DELAY*1000);
     };

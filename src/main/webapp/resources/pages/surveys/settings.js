@@ -1,3 +1,5 @@
+var newSurveyStartDate;
+var newSurveyEndDate;
 var page = {
 
   init: function () {
@@ -21,6 +23,7 @@ var page = {
     $(function () {
       $.each(['groupEndMessage', 'groupSettings', 'questionsList'], function(i, e) {
         wireModificationLink(e);
+
       });
 
 
@@ -49,6 +52,10 @@ var page = {
         }
       });
     });
+
+    $("#settingsCancel").attr("onclick", "page.onEditSettingsCancel();");
+    $("#endMessageCancel").attr("onclick", "page.onEditEndMessageCancel();");
+
   },
 
   showQuestionDeleteDialog: function (id) {
@@ -110,6 +117,8 @@ var page = {
   onEditSettingsClick: function() {
     $('.settingsDisplay').hide();
     $('#settingsDialog').show();
+    newSurveyStartDate = $("#newSurveyStartDate").val();
+    newSurveyEndDate = $("#newSurveyEndDate").val();
 
     page.disableEditables();
 
@@ -119,6 +128,9 @@ var page = {
   onEditSettingsCancel: function() {
     $('#settingsDialog').hide();
     $('.settingsDisplay').show();
+
+    $("#newSurveyStartDate").val(newSurveyStartDate);
+    $("#newSurveyEndDate").val(newSurveyEndDate);
 
     page.enableEditables();
     ips.message.hideAll();
