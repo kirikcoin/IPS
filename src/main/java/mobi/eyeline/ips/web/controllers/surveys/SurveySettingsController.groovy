@@ -149,7 +149,6 @@ class SurveySettingsController extends BaseSurveyController {
     String getSurveyUrl() { esdpServiceSupport.getServiceUrl(persistedSurvey) }
 
     void saveMessage() {
-        survey = surveyRepository.load(surveyId)
         survey.details.endSmsEnabled = endSmsType != DISABLED
 
         boolean validationError =
