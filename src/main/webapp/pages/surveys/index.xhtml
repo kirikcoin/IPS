@@ -22,7 +22,9 @@
         $(function () {
           page.init();
 
-          if ("#{surveyListController.newSurveyValidationError}" == "true") {
+          if ("#{surveyListController.newSurveyValidationError}" == "true" ||
+                $('#newSurveyStartDate').hasClass('validationError') ||
+                $('#newSurveyEndDate').hasClass('validationError')) {
             jsfc('newSurveyDialog').show();
           }
         })
@@ -33,7 +35,10 @@
 
       <h:form enctype="multipart/form-data" id="content">
 
-        <h:panelGroup layout="block" styleClass="border-shadow">
+          <h:inputHidden id="newSurveyStartDateOrig" value="#{surveyListController.newSurveyStartDateOrig}"/>
+          <h:inputHidden id="newSurveyEndDateOrig" value="#{surveyListController.newSurveyEndDateOrig}"/>
+
+          <h:panelGroup layout="block" styleClass="border-shadow">
 
           <h:panelGrid columns="2" styleClass="page-header">
             <h:outputText value="#{bundle['survey.list.title']}"/>
@@ -125,6 +130,7 @@
               <eye:inputDate id="newSurveyStartDate"
                              inputTime="true"
                              minDate="#{dateController.now}"
+                             converterMessage="#{bundle['survey.validation.date.format']}"
                              value="#{surveyListController.newSurveyStartDate}">
                 <f:convertDateTime timeZone="#{userSession.timeZone}"/>
               </eye:inputDate>
@@ -132,6 +138,7 @@
               <eye:inputDate id="newSurveyEndDate"
                              inputTime="true"
                              minDate="#{dateController.now}"
+                             converterMessage="#{bundle['survey.validation.date.format']}"
                              value="#{surveyListController.newSurveyEndDate}">
                 <f:convertDateTime timeZone="#{userSession.timeZone}"/>
               </eye:inputDate>
@@ -153,7 +160,7 @@
             <eye:button>
               <h:commandLink styleClass="button-green"
                              value="#{bundle['survey.create.button.cancel']}"
-                             onclick="jsfc('newSurveyDialog').hide(); ips.message.hideAll(); return false;"/>
+                             onclick="return page.onCreateSurveyCancel();"/>
             </eye:button>
             <eye:space/>
           </eye:buttons>

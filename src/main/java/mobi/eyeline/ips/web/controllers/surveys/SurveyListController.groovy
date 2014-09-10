@@ -14,8 +14,11 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
+
+import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 
 @CompileStatic
 @Slf4j('logger')
@@ -44,6 +47,9 @@ class SurveyListController extends BaseController {
     Date newSurveyStartDate
     Date newSurveyEndDate
 
+    String newSurveyStartDateOrig
+    String newSurveyEndDateOrig
+
     Integer newSurveyClientId
 
     boolean newSurveyValidationError = false
@@ -53,6 +59,9 @@ class SurveyListController extends BaseController {
         newSurveyStartDate =
                 new Date((now + 1).clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
         newSurveyEndDate = newSurveyStartDate + 7
+
+        newSurveyStartDateOrig = formatDateTime(newSurveyStartDate, getTimeZone())
+        newSurveyEndDateOrig = formatDateTime(newSurveyEndDate, getTimeZone())
     }
 
     public DataTableModel getTableModel() {
