@@ -34,10 +34,11 @@
           $('#content').attr('action',
               '/pages/surveys/invitations.faces?id=#{surveyInvitesController.surveyId}');
 
-          if ("#{surveyInvitesController.inviteError}"=="true"
-                  || $("#inviteDate").hasClass("validationError")) {
+          if ("#{surveyInvitesController.inviteError}" == "true"
+              || $("#inviteDate").hasClass("validationError")) {
             page.onNewInviteShow();
           }
+
           if (#{surveyInvitesController.madvIdError}) {
             page.onMadvEditClick();
           }

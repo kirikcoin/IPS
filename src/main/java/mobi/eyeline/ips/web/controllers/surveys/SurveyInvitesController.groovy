@@ -3,7 +3,6 @@ package mobi.eyeline.ips.web.controllers.surveys
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.SurveyInvitation
-import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.service.MadvUpdateService
@@ -13,10 +12,8 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
 
-import java.text.SimpleDateFormat
-
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
-import static mobi.eyeline.ips.web.controllers.BaseController.beanByName
+import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 
 @CompileStatic
 @Slf4j('logger')
@@ -43,9 +40,8 @@ class SurveyInvitesController extends BaseController {
 
     SurveyInvitesController() {
         madvId = survey.statistics.campaign
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
-        dateFormat.setTimeZone(getTimeZone())
-        newInviteDate = dateFormat.format(inviteDate)
+
+        newInviteDate = formatDateTime(inviteDate, getTimeZone())
     }
 
     boolean isCampaignDefined() { survey.statistics.campaign != null }

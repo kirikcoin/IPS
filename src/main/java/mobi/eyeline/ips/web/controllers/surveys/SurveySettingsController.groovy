@@ -19,6 +19,7 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
@@ -29,6 +30,7 @@ import javax.faces.model.SelectItem
 import java.text.MessageFormat
 import java.text.SimpleDateFormat
 
+import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.COUPON
 import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.DISABLED
 import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.SMS
@@ -107,10 +109,8 @@ class SurveySettingsController extends BaseSurveyController {
 
         updateQuestionsGraph()
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
-        dateFormat.setTimeZone(getTimeZone())
-        settingsStartDate = dateFormat.format(survey.startDate)
-        settingsEndDate = dateFormat.format(survey.endDate)
+        settingsStartDate = formatDateTime(survey.startDate, getTimeZone())
+        settingsEndDate = formatDateTime(survey.endDate, getTimeZone())
     }
 
     List<SelectItem> getQuestions() {
