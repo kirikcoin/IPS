@@ -434,10 +434,11 @@
                                     styleClass="placeholder"/>
                     </h:panelGroup>
 
+                    <!-- Originating address disabled (ips-228) -->
                     <h:outputText value="#{bundle['survey.settings.end.message.title.sms.number']}"
-                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
+                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled and false}"/>
                     <h:outputText value="#{surveySettingsController.persistedSurvey.details.endSmsFrom}"
-                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
+                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled and false}"/>
 
                     <h:outputText value="#{bundle['survey.settings.end.message.coupon.format']}"
                                   rendered="#{surveySettingsController.couponEnabled}"/>
