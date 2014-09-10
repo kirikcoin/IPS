@@ -146,9 +146,7 @@ class SurveyListController extends BaseController {
             return
         }
 
-        if (logger.traceEnabled) {
-            logger.trace "Creating survey: ${survey.toTraceString()}"
-        }
+        logger.trace "Creating survey: ${survey.toTraceString()}"
 
         def surveyId = surveyRepository.save(survey)
 
