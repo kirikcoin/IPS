@@ -18,6 +18,7 @@ var page = {
   onCreateSurveyCancel: function () {
     jsfc('newSurveyDialog').hide();
 
+    $('#newSurveyTitle').val('');
     $("#newSurveyStartDate").val($("[id$=newSurveyStartDateOrig]").val());
     $("#newSurveyEndDate").val($("[id$=newSurveyEndDateOrig]").val());
 
