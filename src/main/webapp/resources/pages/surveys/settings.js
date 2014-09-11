@@ -21,6 +21,7 @@ var page = {
     $(function () {
       $.each(['groupEndMessage', 'groupSettings', 'questionsList'], function(i, e) {
         wireModificationLink(e);
+
       });
 
 
@@ -49,6 +50,12 @@ var page = {
         }
       });
     });
+
+    // TODO: Why do we replace attributes here? If the links need to be handled on the client side
+    // (i.e. with no form submit) seems better to use different link type.
+    $("#settingsCancel").attr("onclick", "page.onEditSettingsCancel();");
+    $("#endMessageCancel").attr("onclick", "page.onEditEndMessageCancel();");
+
   },
 
   showQuestionDeleteDialog: function (id) {
@@ -120,11 +127,15 @@ var page = {
     $('#settingsDialog').hide();
     $('.settingsDisplay').show();
 
+    $("#newSurveyStartDate").val($("#settingsStartDate").val());
+    $("#newSurveyEndDate").val($("#settingsEndDate").val());
+
     page.enableEditables();
     ips.message.hideAll();
 
     return false;
   },
+
 
   onQuestionModificationDialog: function() {
     jsfc('questionModificationDialog').show();

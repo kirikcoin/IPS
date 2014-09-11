@@ -1,5 +1,7 @@
 package mobi.eyeline.ips.model
 
+import static mobi.eyeline.ips.utils.SurveyBuilder.question
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.hasSize
@@ -16,14 +18,18 @@ class QuestionTest extends ValidationTestCase {
     }
 
     void test3() {
-        def question =
-                new Question(title: 'foo', options: [new QuestionOption(answer: 'Foo')])
+        def question = question(title: 'foo') {
+            option(answer: 'Foo')
+        }
+
         assertThat validate(question), empty()
     }
 
     void test4(){
-        def question =
-                new Question(title: 't'*71, options: [new QuestionOption(answer: 'Foo')])
+        def question = question(title: 't'*71) {
+            option(answer: 'Foo')
+        }
+
         def violations = validate question
         assertThat validate(question), hasSize(1)
         assertEquals 'title', violations[0].propertyPath.first().name
@@ -38,28 +44,29 @@ class QuestionTest extends ValidationTestCase {
     }
 
     void test7() {
-        def question =
-                new Question(title: 'foo', options: [new QuestionOption(answer: 'Foo', active: false)])
+        def question = question(title: 'foo') {
+            option(answer: 'Foo', active: false)
+        }
+
         assertThat validate(question), hasSize(1)
     }
 
     void testMoveUpSkipped() {
 
         // Prepare
-        def add = {s, q -> s.questions.add(q); q.survey = s}
-        def newQ = {_ -> new Question(title: _)}
-
-        Survey survey = new Survey()
-
-        Question q1 = newQ('1')
-        Question q2 = newQ('2')
-        Question q3 = newQ('3')
-        Question q4 = newQ('4')
-
-        [q1, q2, q3, q4].each {add(survey, it)}
+        Question q1, q2, q3, q4
+        Survey survey = survey([:]) {
+            questions {
+                q1 = question(title: '1')
+                q2 = question(title: '2')
+                q3 = question(title: '3')
+                q4 = question(title: '4')
+            }
+        }
 
         survey.prepareIndex()
 
+        //noinspection GroovyVariableNotAssigned
         assertEquals([q1, q2, q3, q4], survey.questions)
 
         //
@@ -91,20 +98,19 @@ class QuestionTest extends ValidationTestCase {
     void testMoveDownSkipped() {
 
         // Prepare
-        def add = {s, q -> s.questions.add(q); q.survey = s}
-        def newQ = {_ -> new Question(title: _)}
-
-        Survey survey = new Survey()
-
-        Question q1 = newQ('1')
-        Question q2 = newQ('2')
-        Question q3 = newQ('3')
-        Question q4 = newQ('4')
-
-        [q1, q2, q3, q4].each {add(survey, it)}
+        Question q1, q2, q3, q4
+        Survey survey = survey([:]) {
+            questions {
+                q1 = question(title: '1')
+                q2 = question(title: '2')
+                q3 = question(title: '3')
+                q4 = question(title: '4')
+            }
+        }
 
         survey.prepareIndex()
 
+        //noinspection GroovyVariableNotAssigned
         assertEquals([q1, q2, q3, q4], survey.questions)
 
         //

@@ -51,7 +51,6 @@
     <orderEntry type="library" name="ips-compile" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="ips-provided" level="project" />
     <orderEntry type="library" scope="TEST" name="ips-test" level="project" />
-    <orderEntry type="library" name="groovy-2.2.1" level="application" />
   </component>
 </module>
 

@@ -1,13 +1,14 @@
 var page = {
 
   init: function () {
+    var self = this;
 
-    $("#deliveryType").change(function(){
-      var deliveryType = $('#deliveryType').val();
-      $('#invitationTextBlock').toggle(deliveryType == "USSD_PUSH" || deliveryType == "SMS");
-
-      $('#invitationText').val("");
+    $('#deliveryType').change(function () {
+      self.handleDeliveryTypeChange();
+      $('#invitationText').val('');
     });
+
+    this.handleDeliveryTypeChange();
 
     function wireModificationLink(groupId) {
       var $header = ips.$byId(groupId + '_header');
@@ -26,6 +27,11 @@ var page = {
     }
 
     wireModificationLink('groupMadv');
+  },
+
+  handleDeliveryTypeChange: function () {
+    var deliveryType = $('#deliveryType').val();
+    $('#invitationTextBlock').toggle(deliveryType == 'USSD_PUSH' || deliveryType == 'SMS');
   },
 
   onMadvEditClick: function() {
@@ -72,6 +78,7 @@ var page = {
 
   onNewInviteCancel: function() {
     jsfc('newInviteDialog').hide();
+    $("#inviteDate").val($("#newInviteDate").val());
     ips.message.hideAll();
     return false;
   },

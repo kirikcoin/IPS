@@ -1,6 +1,6 @@
 package mobi.eyeline.ips.model
 
-import static mobi.eyeline.ips.utils.ModelBuilder.survey
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.not
@@ -24,7 +24,7 @@ class SurveyTest extends ValidationTestCase {
     }
 
     void testValid1() {
-        def survey = new Survey(
+        def survey = survey(
                 startDate: Date.parse('HH:mm', '00:00'), 
                 endDate: Date.parse('HH:mm', '01:00'))
         
@@ -32,7 +32,7 @@ class SurveyTest extends ValidationTestCase {
     }
 
     void testValid2() {
-        def survey = new Survey(
+        def survey = survey(
                 startDate: Date.parse('HH:mm', '00:00'),
                 endDate: Date.parse('HH:mm', '00:00'))
 

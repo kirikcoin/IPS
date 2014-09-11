@@ -1,16 +1,9 @@
 package mobi.eyeline.ips.repository
 
-import mobi.eyeline.ips.model.AccessNumber
-import mobi.eyeline.ips.model.Question
-import mobi.eyeline.ips.model.QuestionOption
-import mobi.eyeline.ips.model.Role
-import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.model.SurveyDetails
-import mobi.eyeline.ips.model.SurveyStats
-import mobi.eyeline.ips.model.User
+import mobi.eyeline.ips.model.*
 
 import static mobi.eyeline.ips.model.Role.MANAGER
-import static mobi.eyeline.ips.utils.ModelBuilder.survey
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
@@ -51,10 +44,12 @@ class SurveyRepositoryTest extends DbTestCase {
         def q3 = questionRepository.load(3)
 
         survey {
-            question(q3) {
-                option(answer: 'Option 1')
-                option(answer: 'Option 2')
-                option(answer: 'Option 3')
+            questions {
+                question(q3) {
+                    option(answer: 'Option 1')
+                    option(answer: 'Option 2')
+                    option(answer: 'Option 3')
+                }
             }
         }
 
@@ -66,25 +61,38 @@ class SurveyRepositoryTest extends DbTestCase {
     }
 
     void testQuestionOrdering() {
-        def survey =
-                new Survey(startDate: new Date(), endDate: new Date())
+
+        def survey = survey(startDate: new Date(), endDate: new Date()) {
+            questions {
+                question(title: 'Q1'){
+                    option(answer: "${enclosing.title}-option")
+                }
+                question(title: 'Q2'){
+                    option(answer: "${enclosing.title}-option")
+                }
+                question(title: 'Q3'){
+                    option(answer: "${enclosing.title}-option")
+                }
+                question(title: 'Q4'){
+                    option(answer: "${enclosing.title}-option")
+                }
+            }
+        }
+
         def sid = surveyRepository.save survey
 
         def loadSurvey = {surveyRepository.load sid}
 
-        def newQuestion = {title ->
-            def q = new Question(survey: survey, title: title);
+        def newQuestion = {id,title ->
+            def q = new Question(id:id, survey: survey, title: title);
             q.options.add(new QuestionOption(answer: "${q.title}-option", question: q))
             q
         }
 
-        def q1 = newQuestion 'Q1'
-        def q2 = newQuestion 'Q2'
-        def q3 = newQuestion 'Q3'
-        def q4 = newQuestion 'Q4'
-
-        survey.questions.addAll([q1, q2, q3, q4])
-        surveyRepository.update(survey)
+        def q1 = newQuestion 1,'Q1'
+        def q2 = newQuestion 2,'Q2'
+        def q3 = newQuestion 3,'Q3'
+        def q4 = newQuestion 4,'Q4'
 
         assertEquals([q1, q2, q3, q4], loadSurvey().questions)
 
@@ -105,51 +113,46 @@ class SurveyRepositoryTest extends DbTestCase {
     }
 
     void testOptionOrdering() {
-
-        def prepare = {
-            def survey =
-                    new Survey(startDate: new Date(), endDate: new Date())
-
-            def details = new SurveyDetails(survey: survey, title: 'Foo')
-            survey.details = details
-            surveyRepository.save survey
-
-            def newQuestion = {title ->
-                def q = new Question(survey: survey, title: title);
-                q.options.add(new QuestionOption(answer: "${q.title}-option", question: q))
-                q
+        def s = survey(startDate: new Date(), endDate: new Date()) {
+            details(title: 'Foo')
+            questions {
+                question(title: 'First one') {
+                    option(answer: "${enclosing.title}-option")
+                }
+                question(title: 'Second one') {
+                    option(answer: "${enclosing.title}-option")
+                }
             }
-
-            survey.questions.addAll([
-                    newQuestion("First one"),
-                    newQuestion("Second one")])
-
-            surveyRepository.update(survey)
         }
 
-        prepare()
+        surveyRepository.save(s)
 
-        def survey = surveyRepository.load(1)
+        s = surveyRepository.load(1)
 
-        def question = new Question(survey: survey, title: "With options")
-        question.options.add(new QuestionOption(answer: 'Foo', question: question))
+        def q = new Question(survey: s, title: 'With options')
+        q.options << new QuestionOption(answer: 'Foo', question: q)
 
-        survey.questions.add(question)
-        surveyRepository.update(survey)
+        s.questions.add(q)
+        surveyRepository.update(s)
 
         // For ordering
-        surveyRepository.refresh(survey)
-        question = survey.questions.last()
+        surveyRepository.refresh(s)
 
-        [
-                new QuestionOption(answer: "Option 1", question: question),
-                new QuestionOption(answer: "Option 2", question: question),
-                new QuestionOption(answer: "Option 3", question: question)
-        ].each {question.options.add it}
+        q = s.questions.last()
 
-        questionRepository.update(question)
+        survey {
+            questions {
+                question(q) {
+                    option(answer: 'Option1')
+                    option(answer: 'Option2')
+                    option(answer: 'Option3')
+                }
+            }
+        }
+        
+        questionRepository.update(q)
 
-        assertThat survey.questions, hasSize(3)
+        assertThat s.questions, hasSize(3)
         assertThat questionRepository.list(), hasSize(3)
         assertThat questionRepository.load(3).options, hasSize(4)
     }
@@ -260,21 +263,22 @@ class SurveyRepositoryTest extends DbTestCase {
                 }
             },
 
-            new Survey(id: 3, client: user3, owner: user5).with {
-                details = new SurveyDetails(survey: it, title: 'D C _')
-                statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[2])
-                startDate = new Date() - 4
-                endDate = new Date() + 2
-                it
+            survey(id: 3, client: user3, owner: user5,
+                    startDate: new Date() - 4, endDate: new Date() + 2) {
+                details(title: 'D C _')
+                statistics([:]) {
+                    accessNumber(accessNumbers[2])
+                }
             },
 
-            new Survey(id: 4, client: user4, active: false).with {
-                details = new SurveyDetails(survey: it, title: 'A C%')
-                statistics = new SurveyStats(survey: it, accessNumber: accessNumbers[3])
-                startDate = new Date() - 4
-                endDate = new Date() - 2
-                it
+            survey(id: 4, client: user4, active: false,
+                    startDate: new Date() - 4, endDate: new Date() - 2 ) {
+                details(title: 'A C%')
+                statistics([:]) {
+                    accessNumber(accessNumbers[3])
+                }
             }
+
         ].each { s ->
             surveyRepository.save s
         }

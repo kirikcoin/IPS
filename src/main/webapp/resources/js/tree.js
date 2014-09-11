@@ -97,7 +97,7 @@ function Tree(contentId, options) {
       var svgNodes = oldDrawNodes(graph, root);
       svgNodes.attr('data-id', function (d) { return d; });
       svgNodes.append("svg:title").text(function (d) {
-        return graph.node(d).detail.replace('\\n', ' ');
+        return graph.node(d).detail.replace(/\\n/g, ' ');
       });
       svgNodes.attr('class', function (d) {
         var styleClass = graph.node(d).styleClass ? graph.node(d).styleClass : '';

@@ -1,9 +1,8 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.AccessNumber
-import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.model.SurveyStats
 
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.junit.Assert.assertEquals
 
 @Mixin(RepositoryMock)
@@ -17,34 +16,30 @@ class AccessNumberRepositoryTest extends DbTestCase {
     def assertIds = { expected, numbers -> assertEquals(expected, numbers.collect { it.id }) }
 
     void fillTestData() {
-        AccessNumber number1, number2, number3, number4
+        def numbers = [
+                new AccessNumber(number: '79130000011'),
+                new AccessNumber(number: '79130000112'),
+                new AccessNumber(number: '79130000013'),
+                new AccessNumber(number: '79130000014')
+        ].collect { an -> accessNumberRepository.save(an); an }
 
         [
-                number1 = new AccessNumber(number: '79130000011'),
-                number2 = new AccessNumber(number: '79130000112'),
-                number3 = new AccessNumber(number: '79130000013'),
-                number4 = new AccessNumber(number: '79130000014'),
-        ].each { an ->
-            accessNumberRepository.save(an)
-        }
+                survey(id: 1) {
+                    statistics(accessNumber: numbers[0])
+                },
 
-        [
-                new Survey(id: 1).with {
-                    statistics = new SurveyStats(survey: it, accessNumber: number1)
-                    it
+                survey(id: 2) {
+                    statistics(accessNumber: numbers[1])
                 },
-                new Survey(id: 2).with {
-                    statistics = new SurveyStats(survey: it, accessNumber: number2)
-                    it
+
+                survey(id: 3) {
+                    statistics(accessNumber: numbers[2])
                 },
-                new Survey(id: 3).with {
-                    statistics = new SurveyStats(survey: it, accessNumber: number3)
-                    it
-                },
-                new Survey(id: 4).with {
-                    statistics = new SurveyStats(survey: it, accessNumber: number4)
-                    it
-                },
+
+                survey(id: 4) {
+                    statistics(accessNumber: numbers[3])
+                }
+
         ].each { s ->
             s.startDate = new Date()
             s.endDate = new Date()

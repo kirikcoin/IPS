@@ -35,6 +35,7 @@ class InvitationDeliveryController extends BaseController {
     private final DeliveryService deliveryService = Services.instance().deliveryService
 
     boolean deliveryModifyError
+    boolean deliveryReceiversError
     Boolean activateError
     Boolean pauseError
 
@@ -75,7 +76,7 @@ class InvitationDeliveryController extends BaseController {
                         limit,
                         offset)
 
-                return list.collect { InvitationDelivery it ->
+                return list.collect {
                     //noinspection UnnecessaryQualifiedReference
                     new TableItem(
                             id: it.id,
@@ -198,6 +199,9 @@ class InvitationDeliveryController extends BaseController {
                         'speed': 'deliverySpeed',
                         'inputFile': 'deliveryReceivers',
                 ])
+        if(invitationDelivery.inputFile == null){
+            deliveryReceiversError = true
+        }
 
         return !deliveryModifyError
     }

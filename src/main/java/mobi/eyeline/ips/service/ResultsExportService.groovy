@@ -67,8 +67,8 @@ public class ResultsExportService {
         def df = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, locale)
         df.timeZone = timeZone
 
-        sessions.each { SurveySession session ->
-            session.answers.each { Answer answer ->
+        sessions.each { session ->
+            session.answers.each { answer ->
                 csvWriter.writeNext([
                         session.respondent.msisdn,
                         answer.question.activeIndex + 1,
@@ -120,8 +120,8 @@ public class ResultsExportService {
                                   CSVWriter csvWriter,
                                   TimeZone timeZone,
                                   Locale locale) {
-        sessions.each { SurveySession session ->
-            session.answers.each { Answer answer ->
+        sessions.each { session ->
+            session.answers.each { answer ->
                 csvWriter.writeNext([
                         session.respondent.msisdn,
                         session.respondent.coupon
@@ -147,7 +147,7 @@ public class ResultsExportService {
                 hasCoupon)
 
         // Write in chunks.
-        (0..count / chunkSize).each { int i ->
+        (Math.ceil(count / chunkSize)).times { int i ->
             def records = answerRepository.list(
                     survey,
                     periodStart,

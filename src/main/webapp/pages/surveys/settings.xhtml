@@ -26,7 +26,9 @@
 
         $(function() {
 
-          if ("#{surveySettingsController.errorId}" == 'settingsDialog') {
+          if ("#{surveySettingsController.errorId}" == 'settingsDialog'
+              || $("#newSurveyStartDate").hasClass("validationError")
+              || $("#newSurveyEndDate").hasClass("validationError") ) {
             page.onEditSettingsClick();
           } else if ("#{surveySettingsController.errorId}" == 'endMessageDialog') {
             page.onEditEndMessageClick();
@@ -41,7 +43,7 @@
           }
 
           if (#{surveySettingsController.previewSentOk}) {
-            ips.message.info("#{bundle['survey.settings.preview.success']}",5);
+            ips.message.info("#{bundle['survey.settings.preview.success']}");
           }
 
           $('#content').attr('action',
@@ -53,7 +55,10 @@
               "#{bundle['survey.settings.tree.zoom.reset']}"
           );
 
-          jsfc('questionsTree').show();
+          var treeComponent = jsfc('questionsTree');
+          if (treeComponent) {
+            treeComponent.show();
+          }
         });
         //    ]]>
       </script>
@@ -65,6 +70,9 @@
 
         <h:inputHidden id="id" value="#{surveySettingsController.surveyId}"/>
         <h:inputHidden id="questionId" value="#{surveySettingsController.questionId}"/>
+
+        <h:inputHidden id="settingsStartDate" value="#{surveySettingsController.settingsStartDate}"/>
+        <h:inputHidden id="settingsEndDate" value="#{surveySettingsController.settingsEndDate}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -193,12 +201,15 @@
                     <h:panelGrid id="dates" columns="3" cellpadding="0"  >
                       <eye:inputDate id="newSurveyStartDate"
                                      inputTime="true"
+                                     converterMessage="#{bundle['survey.validation.date.format']}"
                                      value="#{surveySettingsController.survey.startDate}">
                         <f:convertDateTime timeZone="#{userSession.timeZone}"/>
                       </eye:inputDate>
+
                       <h:outputText style="margin:0 10px 0 0;" value=" — "/>
                       <eye:inputDate id="newSurveyEndDate"
                                      inputTime="true"
+                                     converterMessage="#{bundle['survey.validation.date.format']}"
                                      value="#{surveySettingsController.survey.endDate}">
                         <f:convertDateTime timeZone="#{userSession.timeZone}"/>
                       </eye:inputDate>
@@ -229,13 +240,17 @@
                         <f:param name="errorId" value="settingsDialog"/>
                       </h:commandLink>
                     </eye:button>
+
                     <eye:button>
                       <h:commandLink styleClass="button-green"
-                                     value="#{bundle['survey.create.button.cancel']}"
-                                     action="#{surveySettingsController.onCancel}"/>
+                                     id="settingsCancel"
+                                     action="#{surveySettingsController.onCancel}"
+                                     value="#{bundle['survey.create.button.cancel']}"/>
                     </eye:button>
+
                     <eye:space/>
                   </eye:buttons>
+
                 </h:panelGroup>
 
               </h:panelGroup>
@@ -419,10 +434,11 @@
                                     styleClass="placeholder"/>
                     </h:panelGroup>
 
+                    <!-- Originating address disabled (ips-228) -->
                     <h:outputText value="#{bundle['survey.settings.end.message.title.sms.number']}"
-                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
+                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled and false}"/>
                     <h:outputText value="#{surveySettingsController.persistedSurvey.details.endSmsFrom}"
-                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
+                                  rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled and false}"/>
 
                     <h:outputText value="#{bundle['survey.settings.end.message.coupon.format']}"
                                   rendered="#{surveySettingsController.couponEnabled}"/>
@@ -517,11 +533,14 @@
                                     value="#{bundle['survey.settings.end.message.coupon.hint']}"/>
                     </h:panelGrid>
 
-                    <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.number']}"
-                                   for="endSmsFrom"/>
-                    <eye:inputText id="endSmsFrom"
-                                   maxlength="70"
-                                   value="#{surveySettingsController.survey.details.endSmsFrom}"/>
+                    <!-- Originating address disabled (ips-228) -->
+                    <h:panelGroup rendered="false">
+                      <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.number']}"
+                                     for="endSmsFrom"/>
+                      <eye:inputText id="endSmsFrom"
+                                     maxlength="70"
+                                     value="#{surveySettingsController.survey.details.endSmsFrom}"/>
+                    </h:panelGroup>
                   </h:panelGrid>
 
                   <eye:buttons>
@@ -534,8 +553,8 @@
                     </eye:button>
                     <eye:button>
                       <h:commandLink styleClass="button-green"
-                                     value="#{bundle['survey.create.button.cancel']}"
-                                     action="#{surveySettingsController.onCancel}"/>
+                                     id="endMessageCancel"
+                                     value="#{bundle['survey.create.button.cancel']}"/>
                     </eye:button>
                     <eye:space/>
                   </eye:buttons>

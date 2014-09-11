@@ -93,6 +93,8 @@
       <root url="jar://$USER_HOME$/.ideaLibSources/myfaces-api-1.2.9-sources.jar!/" />
       <root url="jar://$USER_HOME$/.ideaLibSources/hibernate-core-4.2.8.Final-sources.jar!/" />
       <root url="jar://$USER_HOME$/.ideaLibSources/hibernate-jpa-2.0-api-1.0.1.Final-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/httpcore-4.2.4-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/httpclient-4.2.4-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

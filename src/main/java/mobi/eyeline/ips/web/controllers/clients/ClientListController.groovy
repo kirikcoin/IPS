@@ -58,7 +58,7 @@ class ClientListController extends BaseController {
                         offset
                 )
 
-                return list.collect { User it ->
+                return list.collect {
                     new TableItem(
                             id: it.id,
                             fullName: it.fullName,
@@ -113,13 +113,13 @@ class ClientListController extends BaseController {
             String oldEmail = user.email
             String oldLogin = user.login
 
-            user.with { User u ->
-                u.fullName = userForEdit.fullName
-                u.company = userForEdit.company
-                u.login = userForEdit.login
-                u.email = userForEdit.email
-                u.locale = userForEdit.locale
-                u.timeZoneId = userForEdit.timeZoneId
+            user.with {
+                fullName = userForEdit.fullName
+                company = userForEdit.company
+                login = userForEdit.login
+                email = userForEdit.email
+                it.locale = userForEdit.locale
+                timeZoneId = userForEdit.timeZoneId
             }
 
             if (validate(user)) {
