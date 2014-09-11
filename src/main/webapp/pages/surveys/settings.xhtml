@@ -240,14 +240,13 @@
                         <f:param name="errorId" value="settingsDialog"/>
                       </h:commandLink>
                     </eye:button>
-
                     <eye:button>
-                      <h:commandLink styleClass="button-green"
-                                     id="settingsCancel"
-                                     action="#{surveySettingsController.onCancel}"
-                                     value="#{bundle['survey.create.button.cancel']}"/>
+                      <h:outputLink styleClass="button-green"
+                                    value="#"
+                                    onclick="return page.onEditSettingsCancel();">
+                        <h:outputText value="#{bundle['survey.create.button.cancel']}"/>
+                      </h:outputLink>
                     </eye:button>
-
                     <eye:space/>
                   </eye:buttons>
 
@@ -552,9 +551,11 @@
                       </h:commandLink>
                     </eye:button>
                     <eye:button>
-                      <h:commandLink styleClass="button-green"
-                                     id="endMessageCancel"
-                                     value="#{bundle['survey.create.button.cancel']}"/>
+                      <h:outputLink styleClass="button-green"
+                                    value="#"
+                                    onclick="return page.onEditEndMessageCancel();">
+                        <h:outputText value="#{bundle['survey.create.button.cancel']}"/>
+                      </h:outputLink>
                     </eye:button>
                     <eye:space/>
                   </eye:buttons>
