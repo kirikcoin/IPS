@@ -1,7 +1,8 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.Respondent
-import mobi.eyeline.ips.model.Survey
+
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 
 @Mixin(RepositoryMock)
 class RespondentRepositoryTest extends DbTestCase {
@@ -40,11 +41,11 @@ class RespondentRepositoryTest extends DbTestCase {
     private void fillTestData() {
 
          survey1 =
-                new Survey(startDate: new Date(), endDate: new Date())
+                survey(startDate: new Date(), endDate: new Date())
          survey2 =
-                new Survey(startDate: new Date(), endDate: new Date())
+                survey(startDate: new Date(), endDate: new Date())
          survey3 =
-                new Survey(startDate: new Date(), endDate: new Date())
+                survey(startDate: new Date(), endDate: new Date())
 
         [survey1,survey2,survey3].each {s -> surveyRepository.save s}
 

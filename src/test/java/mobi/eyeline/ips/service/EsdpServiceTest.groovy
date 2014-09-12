@@ -4,12 +4,11 @@ import mobi.eyeline.ips.external.esdp.EsdpServiceManager
 import mobi.eyeline.ips.external.esdp.Service
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.model.SurveyDetails
-import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.properties.DefaultMockConfig
 
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
 
@@ -35,11 +34,10 @@ class EsdpServiceTest extends GroovyTestCase {
     }
 
     void testSave() {
-
-        def survey = new Survey(
-                id: 42,
-                owner: new User(id: 53),
-                details: new SurveyDetails(title: 'Survey 1'))
+        def survey = survey(id: 42) {
+            details(title: 'Survey 1')
+            owner(id: 53)
+        }
 
         esdpService.save(new User(), survey)
 
@@ -55,9 +53,9 @@ class EsdpServiceTest extends GroovyTestCase {
     }
 
     void testDelete() {
-        def survey = new Survey(
-                id: 42,
-                owner: new User(id: 53, esdpProvider: 'ips'))
+        def survey = survey(id: 42) {
+            owner(id: 53, esdpProvider: 'ips')
+        }
 
         esdpService.delete(new User(), survey)
 
@@ -74,11 +72,11 @@ class EsdpServiceTest extends GroovyTestCase {
         }
         esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
 
-        def survey = new Survey(
-                id: 42,
-                owner: new User(id: 53),
-                details: new SurveyDetails(title: 'Survey 1'),
-                statistics: new SurveyStats(accessNumber: null))
+        def survey = survey(id: 42) {
+            details(title: 'Survey 1')
+            statistics(accessNumber: null)
+            owner(id: 53)
+        }
 
         esdpService.update(new User(), survey)
 
@@ -98,11 +96,11 @@ class EsdpServiceTest extends GroovyTestCase {
         }
         esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
 
-        def survey = new Survey(
-                id: 42,
-                owner: new User(id: 53),
-                details: new SurveyDetails(title: 'Survey 1'),
-                statistics: new SurveyStats(accessNumber: new AccessNumber(number: '123')))
+        def survey = survey(id: 42) {
+            details(title: 'Survey 1')
+            statistics(accessNumber: new AccessNumber(number: '123'))
+            owner(id: 53)
+        }
 
         esdpService.update(new User(), survey)
 

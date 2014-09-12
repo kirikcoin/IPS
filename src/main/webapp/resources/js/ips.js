@@ -25,12 +25,16 @@ var ips = new (function() {
     var JSF_MESSAGES_ELEMENT_ID = "#jsf_messages";
     var PAGE_MESSAGES_ELEMENT_ID = "#page_messages";
 
+    var INFO_MESSAGE_LIFETIME = 5 * 1000;
+    var infoMessageTimer;
+
     /**
      * Отображает на экране сообщение об ошибке
      * @param {String} errorText текст сообщения об ошибке
      * @param {String} [elementId] опциональный идентификатор DOM-элемента, из-за которого произошла ошибка. К данному элементу будет применен стиль validationError
      */
     this.error = function (errorText, elementId, skipMarker) {
+      clearTimeout(infoMessageTimer);
       $(JSF_MESSAGES_ELEMENT_ID).hide();
 
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
@@ -54,7 +58,7 @@ var ips = new (function() {
      * Отображает на экране информационное сообщение
      * @param {String} infoText текст сообщения
      */
-    this.info = function(infoText) {
+    this.info0 = function (infoText) {
       $(JSF_MESSAGES_ELEMENT_ID).hide();
 
       var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
@@ -63,28 +67,37 @@ var ips = new (function() {
       $ips_page_errors.show();
     };
 
+    this.info = function (infoText) {
+      clearTimeout(infoMessageTimer);
+      this.info0(infoText);
+      var $ips_page_errors = $(PAGE_MESSAGES_ELEMENT_ID);
+      infoMessageTimer = setTimeout(function () { $ips_page_errors.hide(); }, INFO_MESSAGE_LIFETIME);
+    };
+
     /**
      * Прячет сообщение об ошибке, если оно отображается на экране
      * @param {String} [elementId] опциональный идентификатор элемента, из-за которого произошла ошибки или внутри которого есть элемент, явившийся причиной ошибки.
      */
     this.hide = function(elementId) {
+      function removeElementError($element) {
+        $element.removeClass(VALIDATION_ERROR_CLASS);
+
+        var $possibleErrorSpan =
+            ($element.hasClass('hasDatepicker') ? $element.next().next() : $element.next());
+        if ($possibleErrorSpan.is('span.error')) {
+          $possibleErrorSpan.remove();
+        }
+
+        $element.find('.' + VALIDATION_ERROR_CLASS).each(function() {
+          removeElementError($(this));
+        });
+      }
+
       $(JSF_MESSAGES_ELEMENT_ID).hide();
       $(PAGE_MESSAGES_ELEMENT_ID).hide();
 
-      if(elementId) {
-        var $element = ips.$byId(elementId);
-        $element.removeClass(VALIDATION_ERROR_CLASS);
-        if($element.next().is('span.error'))
-          $element.next().remove();
-
-        $element.find('.' + VALIDATION_ERROR_CLASS).each(function() {
-          var el = $(this);
-          el.removeClass(VALIDATION_ERROR_CLASS);
-          var $nextEl = el.next();
-          if($nextEl.is('span.error')) {
-            $nextEl.remove();
-          }
-        });
+      if (elementId) {
+        removeElementError(ips.$byId(elementId));
       }
     };
 
@@ -110,3 +123,18 @@ var ips = new (function() {
   this.pages = {};
 
 })();
+
+
+// Prohibits multiple form submits by removing `onclick' actions
+// from all the links marked with the specified class once they're clicked.
+(function (submitButtonClass) {
+  $(function () {
+    $('a.' + submitButtonClass).each(function (i, elem) {
+      var $elem = $(elem);
+
+      var oldClick = $elem.attr('onclick');
+      $elem.attr('onclick',
+          '$(this).attr("onclick", "return false;").unbind("click"); ' + oldClick);
+    });
+  });
+})('btnSubmit');

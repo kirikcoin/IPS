@@ -1,5 +1,7 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
+import groovy.time.TimeCategory
+import groovy.time.TimeDuration
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Survey
@@ -9,9 +11,14 @@ import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.SurveyService
+import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
+
+import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 
 @CompileStatic
 @Slf4j('logger')
@@ -21,6 +28,8 @@ class SurveyListController extends BaseController {
     private final UserRepository userRepository = Services.instance().userRepository
 
     private final EsdpService esdpService = Services.instance().esdpService
+    private final SurveyService surveyService = Services.instance().surveyService
+    private final TimeZoneService timeZoneService = Services.instance().timeZoneService
 
     //
     //  List
@@ -35,12 +44,25 @@ class SurveyListController extends BaseController {
 
     String newSurveyTitle
 
-    Date newSurveyStartDate = (new Date() + 1).clearTime()
-    Date newSurveyEndDate = newSurveyStartDate + 7
+    Date newSurveyStartDate
+    Date newSurveyEndDate
+
+    String newSurveyStartDateOrig
+    String newSurveyEndDateOrig
 
     Integer newSurveyClientId
 
     boolean newSurveyValidationError = false
+
+    SurveyListController() {
+        def now = new Date()
+        newSurveyStartDate =
+                new Date((now + 1).clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
+        newSurveyEndDate = newSurveyStartDate + 7
+
+        newSurveyStartDateOrig = formatDateTime(newSurveyStartDate, getTimeZone())
+        newSurveyEndDateOrig = formatDateTime(newSurveyEndDate, getTimeZone())
+    }
 
     public DataTableModel getTableModel() {
 
@@ -61,7 +83,7 @@ class SurveyListController extends BaseController {
                         limit,
                         offset)
 
-                return list.collect { Survey it ->
+                return list.collect {
                     new TableItem(
                             id: it.id,
                             title: it.details.title,
@@ -133,23 +155,22 @@ class SurveyListController extends BaseController {
             return
         }
 
-        if (logger.traceEnabled) {
-            logger.trace "Creating survey: ${survey.toTraceString()}"
-        }
+        logger.trace "Creating survey: ${survey.toTraceString()}"
 
         def surveyId = surveyRepository.save(survey)
 
         try {
+            // Requires survey ID, so it should be already persisted.
             esdpService.save(getCurrentUser(), survey)
+            SurveySettingsController.goToSurvey(surveyId)
+
         } catch (Exception e) {
-            logger.error(e.message, e)
+            logger.error e.message, e
             newSurveyValidationError = true
             addErrorMessage strings['esdp.error.survey.creation']
 
-            return
+            surveyService.delete survey
         }
-
-        SurveySettingsController.goToSurvey(surveyId)
     }
 
     void surveyClickHandler() {

@@ -87,7 +87,9 @@
                                  inputTime="true"
                                  value="#{surveyResultsController.periodStart}"
                                  minDate="#{surveyResultsController.survey.startDate}"
-                                 maxDate="#{surveyResultsController.survey.endDate}"/>
+                                 maxDate="#{surveyResultsController.survey.endDate}">
+                    <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                  </eye:inputDate>
                 </h:panelGroup>
 
                 <h:panelGroup>
@@ -96,7 +98,9 @@
                                  inputTime="true"
                                  value="#{surveyResultsController.periodEnd}"
                                  minDate="#{surveyResultsController.survey.startDate}"
-                                 maxDate="#{surveyResultsController.survey.endDate}"/>
+                                 maxDate="#{surveyResultsController.survey.endDate}">
+                    <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                  </eye:inputDate>
                 </h:panelGroup>
 
                 <h:panelGroup>
@@ -111,7 +115,7 @@
             <eye:buttons>
                 <eye:button>
                   <h:outputLink value="#"
-                                onclick="jsfc('table').update(true); return false;"
+                                onclick="jsfc('resultsTable').update(true); return false;"
                                 styleClass="button-green">
                     <h:outputText value="#{bundle['results.button.search']}"/>
                   </h:outputLink>
@@ -147,7 +151,7 @@
 
               </eye:buttons>
 
-              <eye:dataTable id="table"
+              <eye:dataTable id="resultsTable"
                              value="#{surveyResultsController.tableModel}"
                              var="row"
                              pageSize="50"
@@ -170,12 +174,12 @@
                               defaultSortOrder="desc"
                               columnClass="colDate">
                     <h:outputText value="#{row.respondent.startDate}">
-                      <f:convertDateTime type="both" dateStyle="short"/>
+                      <f:convertDateTime type="both" dateStyle="short" timeZone="#{userSession.timeZone}"/>
                     </h:outputText>
 
                     <f:facet name="inner">
                       <h:outputText value="#{row.date}">
-                        <f:convertDateTime type="both" dateStyle="short"/>
+                        <f:convertDateTime type="both" dateStyle="short" timeZone="#{userSession.timeZone}"/>
                       </h:outputText>
                     </f:facet>
                   </eye:column>

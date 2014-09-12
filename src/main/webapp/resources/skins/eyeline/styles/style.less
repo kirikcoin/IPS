@@ -3,14 +3,40 @@
 // ОБЩИЕ СТИЛИ ---------------------------------------------------------------------------------------------------------
 
 body {
-  font-family: 'Arial', 'Verdana', "Helvetica sans-serif",sans-serif;
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif", sans-serif;
   color: #4F4F4F;
 }
 
-a {
+a,
+.ui-state-active a:link, .ui-state-active a, .ui-state-active a:visited,
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
   color: #78a0bb;
 }
 
+.ui-tabs {
+  li.ui-state-default {
+    background: white;
+  }
+  li.ui-state-active {
+    background-color: #eeeeee;
+  }
+  li.ui-state-active:hover {
+    background: #eeeeee;
+  }
+
+  .ui-tabs-nav {
+    border-top: 1px solid #c0c0c0;
+    border-bottom: 1px solid #c0c0c0;
+  }
+}
+
+.ui-widget-header {
+  background: white;
+
+  li {
+    border-right: 1px solid #c0c0c0 !important;
+  }
+}
 
 // ФОН СТРАНИЦЫ --------------------------------------------------------------------------------------------------------
 
@@ -46,6 +72,13 @@ a {
 
   color: #CC3535;
 }
+
+#profilePage{
+  .page-header{
+    padding-left: 10px;
+  }
+}
+
 
 // СТИЛИ ТАБЛИЦ --------------------------------------------------------------------------------------------------------
 
@@ -202,4 +235,12 @@ input.hasDatepicker {
 
 #error .page-header {
   text-align: center;
+}
+
+.eyeline_tree_wrapper {
+  .eyeline_tree_toolbar {
+    span:hover {
+      color: #78a0bb;
+    }
+  }
 }

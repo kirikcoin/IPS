@@ -3,7 +3,6 @@ package mobi.eyeline.ips.web.controllers.surveys
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.SurveyInvitation
-import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.service.MadvUpdateService
@@ -14,7 +13,7 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
 
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
-import static mobi.eyeline.ips.web.controllers.BaseController.beanByName
+import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 
 @CompileStatic
 @Slf4j('logger')
@@ -31,6 +30,7 @@ class SurveyInvitesController extends BaseController {
 
     // Invitations
     Date inviteDate = new Date()
+    String newInviteDate
     String inviteValue
     boolean inviteError
 
@@ -40,6 +40,8 @@ class SurveyInvitesController extends BaseController {
 
     SurveyInvitesController() {
         madvId = survey.statistics.campaign
+
+        newInviteDate = formatDateTime(inviteDate, getTimeZone())
     }
 
     boolean isCampaignDefined() { survey.statistics.campaign != null }
@@ -58,7 +60,7 @@ class SurveyInvitesController extends BaseController {
                             limit,
                             offset)
 
-                return list.collect { SurveyInvitation it ->
+                return list.collect {
                     new TableItem(
                             id: it.id,
                             date: it.date,
@@ -101,11 +103,11 @@ class SurveyInvitesController extends BaseController {
 
     void onMadvEditSave() {
         if (StringUtils.isNumeric(madvId)) {
-            survey.statistics.with { SurveyStats s ->
-                s.campaign = madvId
-                s.sentCount = 0
-                s.lastUpdate = null
-                s.updateStatus = UNDEFINED
+            survey.statistics.with {
+                campaign = madvId
+                sentCount = 0
+                lastUpdate = null
+                updateStatus = UNDEFINED
             }
             surveyRepository.update(survey)
             madvUpdateService.runNow(survey.id)
@@ -125,11 +127,11 @@ class SurveyInvitesController extends BaseController {
     }
 
     void clearMadvId() {
-        survey.statistics.with { SurveyStats s ->
-            s.campaign = null
-            s.sentCount = 0
-            s.lastUpdate = null
-            s.updateStatus = UNDEFINED
+        survey.statistics.with {
+            campaign = null
+            sentCount = 0
+            lastUpdate = null
+            updateStatus = UNDEFINED
         }
         surveyRepository.update(survey)
 
@@ -139,7 +141,7 @@ class SurveyInvitesController extends BaseController {
     void updateSentCount() { madvUpdateService.runNow() }
 
     int getTotalInvitations() {
-        surveyInvitationRepository.list(survey).collect {SurveyInvitation inv -> inv.value}.sum(0) as int
+        surveyInvitationRepository.list(survey).collect { it.value }.sum(0) as int
     }
 
     static class TableItem implements Serializable {

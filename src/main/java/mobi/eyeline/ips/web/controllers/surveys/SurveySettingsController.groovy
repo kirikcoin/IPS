@@ -2,6 +2,8 @@ package mobi.eyeline.ips.web.controllers.surveys
 
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import mobi.eyeline.ips.components.tree.TreeEdge
+import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
@@ -14,19 +16,23 @@ import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.EsdpServiceSupport
 import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.SurveyService
+import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
+import mobi.eyeline.util.jsf.components.input_date.InputDateRenderer
 
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
+import java.text.MessageFormat
+import java.text.SimpleDateFormat
 
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.COUPON
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.DISABLED
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.SMS
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.*
 
-@SuppressWarnings("UnnecessaryQualifiedReference")
+@SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
 @Slf4j('logger')
 class SurveySettingsController extends BaseSurveyController {
@@ -37,10 +43,14 @@ class SurveySettingsController extends BaseSurveyController {
 
     private final PushService pushService = Services.instance().pushService
     private final CouponService couponService = Services.instance().couponService
+    private final SurveyService surveyService = Services.instance().surveyService
     private final EsdpService esdpService = Services.instance().esdpService
     private final EsdpServiceSupport esdpServiceSupport = Services.instance().esdpServiceSupport
 
     String errorId
+
+    String settingsStartDate
+    String settingsEndDate
 
     int newSurveyClientId
 
@@ -50,14 +60,13 @@ class SurveySettingsController extends BaseSurveyController {
     Question question = new Question()
     DynamicTableModel questionOptions = new DynamicTableModel()
 
-    List<TerminalOption> terminalValues = [TerminalOption.FALSE, TerminalOption.TRUE]
-
     // Phone number for survey preview.
     String phoneNumber = currentUser.phoneNumber
 
     boolean previewSentOk
 
     EndSmsType endSmsType = determineEndSmsType()
+
     EndSmsType determineEndSmsType() {
         if (!survey.details.endSmsEnabled) return DISABLED
         return survey.activePattern != null ? COUPON : SMS
@@ -72,13 +81,13 @@ class SurveySettingsController extends BaseSurveyController {
             .collect { SurveyPattern.Mode mode ->
         def key = "survey.settings.end.message.coupon.format.$mode".toString()
 
-        new SelectItem( mode, BaseController.strings[key] as String)
+        new SelectItem(mode, BaseController.strings[key] as String)
     }.toList()
 
     String generatorName = !couponEnabled ? null :
             BaseController.strings["survey.settings.end.message.coupon.format.${survey.activePattern.mode}".toString()]
 
-    long couponsSent = survey.patterns.collect { SurveyPattern sp -> sp.position }.sum(0) as long
+    long couponsSent = survey.patterns.collect { it.position }.sum(0) as long
     long couponsAvailable = !couponEnabled ? 0 : couponService.getAvailable(survey)
 
     boolean showWarning = couponEnabled && (couponService.getPercentAvailable(survey) <= 10)
@@ -87,9 +96,51 @@ class SurveySettingsController extends BaseSurveyController {
     String accessNumberNumber = survey.statistics.accessNumber?.number
     Integer accessNumberId = survey.statistics.accessNumber?.id
 
+    TreeNode questionsGraph
+
+    String questionDeletePrompt
+
     SurveySettingsController() {
         super()
         newSurveyClientId = survey.client.id
+
+        updateQuestionsGraph()
+
+        settingsStartDate = formatDateTime(survey.startDate, getTimeZone())
+        settingsEndDate = formatDateTime(survey.endDate, getTimeZone())
+    }
+
+    List<SelectItem> getQuestions() {
+        [
+                new SelectItem(-1, strings['question.option.terminal.inlist'] as String),
+                * survey.activeQuestions.collect { q ->
+                    def idx = q.activeIndex + 1
+                    def maxLabel = 20
+                    def title = q.title.replace('\n', ' ')
+                    new SelectItem(
+                            q.id,
+                            "$idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel-3] + '...'}",
+                            "$idx. ${q.title} ")
+                }
+        ]  as List<SelectItem>
+    }
+
+    private void updateQuestionsGraph() {
+        def tree = SurveyTreeUtil.asTree(
+                survey,
+                strings['survey.settings.questions.tabs.graphs.end.label'],
+                strings['survey.settings.questions.tabs.graphs.end.description'],
+                strings['survey.settings.questions.option.unused'])
+
+        def start = new TreeNode(-2,
+                strings['survey.settings.questions.tabs.graphs.start.label'],
+                strings['survey.settings.questions.tabs.graphs.start.label'])
+        start.edges << new TreeEdge(-1,
+                strings['survey.settings.questions.tabs.graphs.start.label'],
+                strings['survey.settings.questions.tabs.graphs.start.label'],
+                tree)
+
+        questionsGraph = start
     }
 
     String getSurveyUrl() { esdpServiceSupport.getServiceUrl(persistedSurvey) }
@@ -100,7 +151,6 @@ class SurveySettingsController extends BaseSurveyController {
         boolean validationError =
                 renderViolationMessage(validator.validate(survey.details), [
                         'endSmsTextSet': 'endSmsText',
-                        'endSmsFromSet': 'endSmsFrom'
                 ])
         if (validationError) {
             this.errorId =
@@ -138,7 +188,7 @@ class SurveySettingsController extends BaseSurveyController {
                 // Do nothing as pattern is unchanged.
 
             } else {
-                persistedSurvey.patterns.each { SurveyPattern p -> p.active = false }
+                persistedSurvey.patterns.each { it.active = false }
 
                 final SurveyPattern existing = persistedSurvey.patterns.find { SurveyPattern p ->
                     p.mode == currentPatternMode && p.length == currentPatternLength
@@ -158,7 +208,7 @@ class SurveySettingsController extends BaseSurveyController {
             }
         } else {
             if (activePattern != null) {
-                persistedSurvey.patterns.each { SurveyPattern p -> p.active = false }
+                persistedSurvey.patterns.each { it.active = false }
             }
         }
     }
@@ -192,10 +242,9 @@ class SurveySettingsController extends BaseSurveyController {
         }
         persistedSurvey.client = survey.client
 
-        surveyRepository.update(persistedSurvey)
-
         try {
             esdpService.update(getCurrentUser(), persistedSurvey)
+            surveyRepository.update(persistedSurvey)
 
         } catch (Exception e) {
             logger.error(e.message, e)
@@ -221,11 +270,7 @@ class SurveySettingsController extends BaseSurveyController {
             return null
         }
 
-        survey.active = false
-        if (survey.statistics.accessNumber) {
-            survey.statistics.accessNumber = null
-        }
-        surveyRepository.update(survey)
+        surveyService.delete survey
 
         return 'SURVEY_LIST'
     }
@@ -245,11 +290,33 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     void deleteQuestion() {
-        def question = questionRepository.load(questionId)
-        question.active = false
-        questionRepository.update(question)
+        int questionId = getParamValue('questionId').asInteger()
 
+        def question = questionRepository.load(questionId)
+
+        def refs = surveyService.getReferencesTo(question)
+        if (refs.empty) {
+            questionDeletePrompt = strings['survey.settings.questions.delete.prompt']
+
+        } else if (refs.size() == 1) {
+            questionDeletePrompt = MessageFormat.format(
+                    strings['survey.settings.questions.delete.prompt.with.references.single'] as String,
+                    refs.first().activeIndex + 1 as String)
+        } else {
+            questionDeletePrompt = MessageFormat.format(
+                    strings['survey.settings.questions.delete.prompt.with.references.plural'] as String,
+                    refs.collect { Question q -> q.activeIndex + 1 }.join(', '))
+        }
+
+        errorId = 'questionDeleteDialog'
+    }
+
+    void deleteQuestion() {
+        int questionId = getParamValue('questionId').asInteger()
+
+        surveyService.deleteQuestion(questionRepository.load(questionId))
         persistedSurvey = surveyRepository.load(surveyId)
+        updateQuestionsGraph()
     }
 
     String modifyQuestion(Integer questionId) {
@@ -260,14 +327,16 @@ class SurveySettingsController extends BaseSurveyController {
 
             questionOptions = new DynamicTableModel()
             question.options
-                    .findAll { QuestionOption it -> it.active }
+                    .findAll { it.active }
                     .each { QuestionOption it ->
-                def row = new DynamicTableRow()
-                row.setValue('answer', it.answer)
-                row.setValue('terminal', it.terminal)
-                row.setValue('id', it.id)
+                def row = new DynamicTableRow() {{
+                    setValue 'answer', it.answer
+                    setValue 'nextQuestion', it.nextQuestion ? it.nextQuestion.id : -1 as String
+                    setValue 'id', it.id
+                }}
                 questionOptions.addRow(row)
             }
+
         } else {
             question = new Question()
             questionOptions = new DynamicTableModel()
@@ -300,16 +369,15 @@ class SurveySettingsController extends BaseSurveyController {
             questionRepository.saveOrUpdate(persistedQuestion)
         }
 
+        updateQuestionsGraph()
         goToSurvey(surveyId)
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
     private Map<String, String> getPropertyMap(Question q) {
-        def map = [:]
-        (0..q.options.size()).each {
-            map.put("options[${it}].answer".toString(), "questionOptions_${it}_answer".toString())
+        (0..<q.options.size()).collectEntries { i ->
+            ["options[$i].answer".toString(), "questionOptions_${i}_answer".toString()]
         }
-        map
     }
 
     void onCancel() {
@@ -332,10 +400,13 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     private void updateQuestionModel(Question persistedQuestion) {
-        def getId       = { DynamicTableRow row -> row.getValue('id') as String }
-        def getAnswer   = { DynamicTableRow row -> row.getValue('answer') as String }
-        def getTerminal = { DynamicTableRow row -> (row.getValue('terminal') as String).toBoolean() }
-        def index       = { DynamicTableRow row -> questionOptions.rows.indexOf(row) }
+        def getId = { DynamicTableRow row -> row.getValue('id') as String }
+        def getAnswer = { DynamicTableRow row -> row.getValue('answer') as String }
+        def getNextQuestion = { DynamicTableRow row ->
+            int nextId = row.getValue('nextQuestion') as Integer
+            nextId == -1 ? null : questionRepository.get(nextId) as Question
+        }
+        def index = { DynamicTableRow row -> questionOptions.rows.indexOf(row) }
 
         persistedQuestion.title = question.title
 
@@ -346,18 +417,18 @@ class SurveySettingsController extends BaseSurveyController {
                     .collect { String id -> id.toInteger() }
 
             persistedQuestion.options
-                    .findAll { QuestionOption opt -> !(opt.id in retainedOptionIds) }
-                    .each { QuestionOption opt -> opt.active = false }
+                    .findAll { opt -> !(opt.id in retainedOptionIds) }
+                    .each { opt -> opt.active = false }
         }
 
         def handleUpdated = {
-            persistedQuestion.activeOptions.each { QuestionOption option ->
+            persistedQuestion.activeOptions.each { option ->
                 questionOptions.rows
                         .findAll { DynamicTableRow row -> !getId(row).empty }
                         .find { DynamicTableRow row -> getId(row).toInteger() == option.id }
                         .each { DynamicTableRow row ->
                     option.answer = getAnswer(row)
-                    option.terminal = getTerminal(row)
+                    option.nextQuestion = getNextQuestion(row)
                     option.moveTo index(row)
                 }
             }
@@ -367,8 +438,10 @@ class SurveySettingsController extends BaseSurveyController {
             questionOptions.rows
                     .findAll { DynamicTableRow row -> getId(row).empty }
                     .each { DynamicTableRow row ->
-                def option =
-                        new QuestionOption(question: persistedQuestion, answer: getAnswer(row))
+                def option = new QuestionOption(
+                        question: persistedQuestion,
+                        answer: getAnswer(row),
+                        nextQuestion: getNextQuestion(row))
                 persistedQuestion.options.add option
                 option.moveTo index(row)
             }
@@ -377,7 +450,6 @@ class SurveySettingsController extends BaseSurveyController {
         handleRemoved()
         handleAdded()
         handleUpdated()
-        print persistedQuestion
     }
 
     List<SelectItem> getAvailableAccessNumbers() {
@@ -386,9 +458,10 @@ class SurveySettingsController extends BaseSurveyController {
         ]
 
         def available = { AccessNumber number ->
-            (number.surveyStats == null) || ((survey.statistics.accessNumber != null) && (number.id == survey.statistics.accessNumber.id)) }
+            !number.surveyStats || (survey.statistics.accessNumber && (number.id == survey.statistics.accessNumber.id))
+        }
 
-        accessNumberRepository.list().each {AccessNumber number ->
+        accessNumberRepository.list().each { number ->
             items << new SelectItem(number.id, number.number, number.number, !available(number))
         }
 
@@ -398,21 +471,6 @@ class SurveySettingsController extends BaseSurveyController {
     static void goToSurvey(int surveyId) {
         FacesContext.currentInstance.externalContext
                 .redirect("/pages/surveys/settings.faces?id=${surveyId}")
-    }
-
-    static abstract class TerminalOption {
-        abstract boolean getValue()
-        abstract String getLabel()
-
-        static final TerminalOption TRUE = [
-                getValue: { true },
-                getLabel: { BaseController.strings['question.option.terminal.yes'] }
-        ] as TerminalOption
-
-        static final TerminalOption FALSE = [
-                getValue: { false },
-                getLabel: { BaseController.strings['question.option.terminal.no'] }
-        ] as TerminalOption
     }
 
     static enum EndSmsType {

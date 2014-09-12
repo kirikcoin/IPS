@@ -15,6 +15,17 @@ var page = {
     return false;
   },
 
+  onCreateSurveyCancel: function () {
+    jsfc('newSurveyDialog').hide();
+
+    $('#newSurveyTitle').val('');
+    $("#newSurveyStartDate").val($("[id$=newSurveyStartDateOrig]").val());
+    $("#newSurveyEndDate").val($("[id$=newSurveyEndDateOrig]").val());
+
+    ips.message.hideAll();
+    return false;
+  },
+
   init: function () {
     ips.$byId("search").focus();
   }

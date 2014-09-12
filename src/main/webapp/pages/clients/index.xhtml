@@ -165,7 +165,6 @@
         <h:panelGroup layout="block" style="margin-top: 15px;">
           <h:commandLink value="#{bundle['client.list.button.createclient']}"
                          styleClass="button-black"
-
                          action="#{clientListController.fillUserForEdit}"/>
         </h:panelGroup>
 
@@ -203,11 +202,18 @@
             <h:selectOneMenu id="clientSettingsLocale" value="#{clientListController.userForEdit.locale}">
               <f:selectItems value="#{clientController.locales}"/>
             </h:selectOneMenu>
+
+            <h:outputLabel value="#{bundle['profile.edit.timezone']}"
+                           for="clientSettingsTimezone"/>
+            <h:selectOneMenu id="clientSettingsTimezone"
+                             value="#{clientListController.userForEdit.timeZoneId}">
+              <f:selectItems value="#{clientListController.timeZones}"/>
+            </h:selectOneMenu>
           </h:panelGrid>
 
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['client.dialog.settings.button.save']}"
                              action="#{clientListController.saveModifiedUser}"/>
             </eye:button>

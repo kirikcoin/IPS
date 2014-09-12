@@ -11,9 +11,12 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
+
+import javax.faces.model.SelectItem
 
 @CompileStatic
 @Slf4j('logger')
@@ -36,7 +39,7 @@ class ClientListController extends BaseController {
     Boolean passwordResetError
 
     ClientListController() {
-        userForEdit= new User()
+        userForEdit = new User()
     }
 
     public DataTableModel getTableModel() {
@@ -54,7 +57,7 @@ class ClientListController extends BaseController {
                         offset
                 )
 
-                return list.collect { User it ->
+                return list.collect {
                     new TableItem(
                             id: it.id,
                             fullName: it.fullName,
@@ -95,6 +98,7 @@ class ClientListController extends BaseController {
                     email: userForEdit.email,
                     password: HashUtils.hashPassword(password),
                     locale: userForEdit.locale,
+                    timeZoneId: userForEdit.timeZoneId,
                     role: Role.CLIENT)
 
             if (validate(user)) {
@@ -108,12 +112,13 @@ class ClientListController extends BaseController {
             String oldEmail = user.email
             String oldLogin = user.login
 
-            user.with { User u ->
-                u.fullName = userForEdit.fullName
-                u.company = userForEdit.company
-                u.login = userForEdit.login
-                u.email = userForEdit.email
-                u.locale = userForEdit.locale
+            user.with {
+                fullName = userForEdit.fullName
+                company = userForEdit.company
+                login = userForEdit.login
+                email = userForEdit.email
+                it.locale = userForEdit.locale
+                timeZoneId = userForEdit.timeZoneId
             }
 
             if (validate(user)) {
@@ -182,6 +187,8 @@ class ClientListController extends BaseController {
             passwordResetError = true
         }
     }
+
+    List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(getLocale()) }
 
     static class TableItem implements Serializable {
         int id

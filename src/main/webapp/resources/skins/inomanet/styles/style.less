@@ -1,0 +1,245 @@
+@import "../../../styles/functions.less";
+
+// ОБЩИЕ СТИЛИ ---------------------------------------------------------------------------------------------------------
+
+body {
+  font-family: 'Arial', 'Verdana', "Helvetica sans-serif", sans-serif;
+  color: #4F4F4F;
+}
+
+a,
+.ui-state-active a:link, .ui-state-active a, .ui-state-active a:visited,
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited {
+  color: #78a0bb;
+}
+
+.ui-tabs {
+  li.ui-state-default {
+    background: white;
+  }
+  li.ui-state-active {
+    background-color: #eeeeee;
+  }
+  li.ui-state-active:hover {
+    background: #eeeeee;
+  }
+
+  .ui-tabs-nav {
+    border-top: 1px solid #c0c0c0;
+    border-bottom: 1px solid #c0c0c0;
+  }
+}
+
+.ui-widget-header {
+  background: white;
+
+  li {
+    border-right: 1px solid #c0c0c0 !important;
+  }
+}
+
+// ФОН СТРАНИЦЫ --------------------------------------------------------------------------------------------------------
+
+#pageBackground {
+  #__f > .radial-eclipse-gradient-background(white, white);
+}
+
+// ВСПЛЫВАЮЩИЕ СООБЩЕНИЯ -----------------------------------------------------------------------------------------------
+
+#jsf_messages, #page_messages {
+  #__f > .border-radius(0);
+}
+
+// СТИЛЬ СТРАНИЦЫ ------------------------------------------------------------------------------------------------------
+
+.border-shadow {
+  border: none;
+  box-shadow: none;
+
+  #__f > .border-radius(0);
+}
+
+.page-header {
+  background-color: inherit;
+
+  padding-left: 0px;
+  padding-right: 0;
+
+  #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
+
+  #__f > .border-top-left-radius (0);
+  #__f > .border-top-right-radius (0);
+
+  color: #CC3535;
+}
+
+#profilePage{
+  .page-header{
+    padding-left: 10px;
+  }
+}
+
+// СТИЛИ ТАБЛИЦ --------------------------------------------------------------------------------------------------------
+
+
+table.grid>thead>tr>th {
+  background-color: #ffffff;
+//  border: none;
+  font-weight: normal;
+  height: initial;
+  padding: 0;
+
+  padding-bottom: 5px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-top: 5px;
+
+  text-align: center;
+}
+
+
+// ТАБИКИ --------------------------------------------------------------------------------------------------------------
+
+.tabs {
+  border-top: 1px solid #9A9A9A;
+  border-bottom: 1px solid #9A9A9A;
+  background-color: inherit;
+
+  .tab {
+
+    a {
+      color: #78a0bb;
+    }
+  }
+
+  .tab_active {
+    background: none;
+    background-color: #eeeeee;
+
+    a {
+      color: #78a0bb !important;
+      text-shadow: none;
+    }
+  }
+
+}
+
+// КНОПКИ --------------------------------------------------------------------------------------------------------------
+
+#__buttons {
+  .button {
+    #__f > .border-radius(0);
+  }
+
+  .button-green {
+    background: none;
+    background-color: #78a0bb;
+    .button;
+  }
+
+  .button-green_disabled {
+    background: none;
+    background-color: #A8B3BB;
+  }
+
+  .button-green_hover {
+    background-color: #498BB8;
+  }
+
+  .button-black {
+    background-color: #78a0bb;
+    background-repeat: no-repeat;
+    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
+    .button;
+  }
+
+  .button-black_hover {
+    background: none;
+    background-color: #498BB8;
+  }
+
+  .button-heading {
+    border: none;
+
+    background-color: #78a0bb;
+
+    #__f > .linear-gradient-background-image(top, transparent, rgba(0, 0, 0, 0.0));
+    box-shadow: none;
+
+    .button;
+  }
+
+  .button-heading_hover {
+    background-color: #498BB8;
+  }
+}
+
+a.button-green {
+  #__buttons > .button-green;
+}
+
+a.button-green.disabled {
+  #__buttons > .button-green_disabled;
+}
+
+a.button-green:hover {
+  #__buttons > .button-green_hover;
+}
+
+a.button-green.disabled:hover {
+  #__buttons > .button-green_disabled;
+}
+
+a.button-black {
+  #__buttons > .button-black;
+}
+
+a.button-black:hover {
+  #__buttons > .button-black_hover;
+}
+
+a.button-heading {
+  #__buttons > .button-heading;
+}
+
+a.button-heading:hover {
+  #__buttons > .button-heading_hover;
+}
+
+div.menu-bar.button-green>a:first-child {
+  #__buttons > .button-green;
+}
+
+div.menu-bar.button-green>a:first-child:hover {
+  #__buttons > .button-green_hover;
+}
+
+div.menu-bar.button-green>a:first-child {
+  #__buttons > .button-green;
+}
+
+div.menu-bar.button-green>a:first-child:hover {
+  #__buttons > .button-green_hover;
+}
+
+div.eyeline_inputDate {
+  font-family: Georgia, serif;
+//  font-family: serif;
+//  font-family: Georgia, Times, "Times New Roman", serif;
+}
+
+input.hasDatepicker {
+  text-align: left !important;
+}
+
+#error .page-header {
+  text-align: center;
+}
+
+.eyeline_tree_wrapper {
+  .eyeline_tree_toolbar {
+    span:hover {
+      color: #78a0bb;
+    }
+  }
+}

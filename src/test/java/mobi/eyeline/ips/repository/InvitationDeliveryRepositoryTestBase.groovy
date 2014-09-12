@@ -7,6 +7,7 @@ import mobi.eyeline.ips.service.CsvParseService
 import static mobi.eyeline.ips.model.InvitationDelivery.State.*
 import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 import static mobi.eyeline.ips.model.InvitationDelivery.Type.USSD_PUSH
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 
 class InvitationDeliveryRepositoryTestBase {
 
@@ -60,10 +61,10 @@ class InvitationDeliveryRepositoryTestBase {
             79130000020'''
 
         [
-                survey1 = new Survey(id: 1),
-                survey2 = new Survey(id: 2),
-                survey3 = new Survey(id: 3),
-                survey4 = new Survey(id: 4),
+                survey1 = survey(id: 1),
+                survey2 = survey(id: 2),
+                survey3 = survey(id: 3),
+                survey4 = survey(id: 4),
 
         ].each { s ->
             s.startDate = new Date()

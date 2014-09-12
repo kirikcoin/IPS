@@ -24,15 +24,21 @@
           page.init();
 
           if ("#{invitationDeliveryController.deliveryModifyError}" == "true") {
+            if("#{invitationDeliveryController.deliveryReceiversError}" == "true") {
+              $("#deliveryReceivers").addClass("validationError");
+            }
             page.onNewDeliveryShow();
+
           }
 
           $('#content').attr('action',
               '/pages/surveys/invitations.faces?id=#{surveyInvitesController.surveyId}');
 
-          if (#{surveyInvitesController.inviteError}) {
+          if ("#{surveyInvitesController.inviteError}" == "true"
+              || $("#inviteDate").hasClass("validationError")) {
             page.onNewInviteShow();
           }
+
           if (#{surveyInvitesController.madvIdError}) {
             page.onMadvEditClick();
           }
@@ -75,6 +81,8 @@
         <h:inputHidden id="deliveryFilename"
                        value="#{invitationDeliveryController.modifiedDeliveryFilename}"/>
 
+        <h:inputHidden id="newInviteDate" value="#{surveyInvitesController.newInviteDate}"/>
+
         <h:panelGroup layout="block" styleClass="border-shadow">
 
           <h:panelGrid columns="2" styleClass="page-header">
@@ -113,6 +121,8 @@
 
           <h:panelGroup layout="block" styleClass="page-body">
 
+            <!-- MADV synchronization disabled, see ips-227. -->
+            <h:panelGroup rendered="false">
             <eye:collapsingGroup opened="true" id="groupMadv">
               <f:facet name="header">
                 <h:panelGroup>
@@ -161,7 +171,7 @@
                   <h:outputText
                       value="#{surveyInvitesController.survey.statistics.lastUpdate}"
                       rendered="#{surveyInvitesController.survey.statistics.lastUpdate != null}">
-                    <f:convertDateTime type="both" dateStyle="short"/>
+                    <f:convertDateTime type="both" dateStyle="short" timeZone="#{userSession.timeZone}"/>
                   </h:outputText>
                   <h:outputText
                       value="#{bundle['invitations.block.advertising.company.lastupdate.never']}"
@@ -212,6 +222,7 @@
 
               </h:panelGroup>
             </eye:collapsingGroup>
+            </h:panelGroup>
 
             <eye:collapsingGroup id="invitationsDelivery" opened="true">
               <f:facet name="header">
@@ -230,7 +241,7 @@
                     <h:outputText value="#{bundle['results.empty']}"/>
                   </f:facet>
 
-                  <eye:row innerData="#{row.typeValue == 'USSD_PUSH'}">
+                  <eye:row innerData="#{row.typeValue == 'USSD_PUSH' or row.typeValue == 'SMS' }">
 
                     <!-- Delivery date -->
                     <eye:column name="date"
@@ -238,7 +249,8 @@
                                 sortable="true"
                                 defaultSortOrder="desc">
                       <h:outputText value="#{row.date}">
-                        <f:convertDateTime type="both" dateStyle="short"/>
+                        <f:convertDateTime type="both" dateStyle="short"
+                                           timeZone="#{userSession.timeZone}"/>
                       </h:outputText>
                     </eye:column>
 
@@ -359,7 +371,8 @@
                                 sortable="true"
                                 defaultSortOrder="desc">
                       <h:outputText value="#{row.date}">
-                        <f:convertDateTime type="both" dateStyle="short"/>
+                        <f:convertDateTime type="both" dateStyle="short"
+                                           timeZone="#{userSession.timeZone}"/>
                       </h:outputText>
                     </eye:column>
 
@@ -401,7 +414,7 @@
 
         <eye:dialog id="newDeliveryDialog"
                     title="#{bundle['invitations.deliveries.dialog.title']}"
-                    width="520">
+                    width="530">
           <h:panelGrid columns="2">
 
             <h:outputLabel for="deliveryType"
@@ -443,14 +456,14 @@
 
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['invitations.deliveries.dialog.button.start']}"
                              action="#{invitationDeliveryController.startDelivery}"
                              rendered="#{invitationDeliveryController.modifiedDeliveryId==null || invitationDeliveryController.invitationDelivery.state != 'ACTIVE'}"/>
             </eye:button>
 
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['dialog.save']}"
                              action="#{invitationDeliveryController.saveDelivery}"/>
             </eye:button>
@@ -472,7 +485,10 @@
                            value="#{bundle['invitations.block.invitations.delivery.dialog.date.text']}"/>
             <eye:inputDate id="inviteDate"
                            inputTime="true"
-                           value="#{surveyInvitesController.inviteDate}"/>
+                           converterMessage="#{bundle['survey.validation.date.format']}"
+                           value="#{surveyInvitesController.inviteDate}">
+              <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+            </eye:inputDate>
 
             <h:outputLabel for="inviteValue"
                            value="#{bundle['invitations.block.invitations.delivery.dialog.number.text']}"/>
@@ -481,7 +497,7 @@
           </h:panelGrid>
           <eye:buttons>
             <eye:button>
-              <h:commandLink styleClass="button-green"
+              <h:commandLink styleClass="button-green btnSubmit"
                              value="#{bundle['dialog.save']}"
                              action="#{surveyInvitesController.addInvite}"/>
             </eye:button>

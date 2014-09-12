@@ -5,31 +5,32 @@ import mobi.eyeline.ips.external.MadvSoapApi
 import mobi.eyeline.ips.external.madv.BannerInfo
 import mobi.eyeline.ips.external.madv.CampaignsSoapImpl
 import mobi.eyeline.ips.external.madv.DeliveryInfo
-import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.model.SurveyDetails
-import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.properties.DefaultMockConfig
-import mobi.eyeline.ips.repository.*
+import mobi.eyeline.ips.repository.DbTestCase
+import mobi.eyeline.ips.repository.RepositoryMock
 
 import javax.xml.ws.WebServiceException
 
-import static mobi.eyeline.ips.model.InvitationUpdateStatus.*
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.CAMPAIGN_NOT_FOUND
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.SERVER_IS_NOT_AVAILABLE
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.SUCCESSFUL
+import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
+import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 
+@Mixin(RepositoryMock)
 class MadvUpdateServiceTest extends DbTestCase {
 
     // Configuration
     def configClass
     Config config
 
-    SurveyRepository surveyRepository
-    SurveyStatsRepository surveyStatsRepository
-    SurveyInvitationRepository surveyInvitationRepository
-    InvitationDeliveryRepository invitationDeliveryRepository
     SurveyService surveyService
 
     void setUp() {
         super.setUp()
+
+        initRepository(db)
 
         // Configuration
         configClass = new MockFor(Config).with {
@@ -40,11 +41,12 @@ class MadvUpdateServiceTest extends DbTestCase {
         }
         config = configClass.proxyDelegateInstance() as Config
 
-        surveyRepository = new SurveyRepository(db)
-        surveyStatsRepository = new SurveyStatsRepository(db)
-        surveyInvitationRepository = new SurveyInvitationRepository(db)
-        invitationDeliveryRepository = new InvitationDeliveryRepository(db)
-        surveyService = new SurveyService(surveyRepository, surveyInvitationRepository, invitationDeliveryRepository)
+        surveyService = new SurveyService(
+                surveyRepository,
+                questionRepository,
+                questionOptionRepository,
+                surveyInvitationRepository,
+                invitationDeliveryRepository)
     }
 
     MadvUpdateService createService(Config config, MadvSoapApi api) {
@@ -57,11 +59,10 @@ class MadvUpdateServiceTest extends DbTestCase {
     }
 
     void createSurvey(String campaign) {
-        new Survey(startDate: new Date(), endDate: new Date()).with {
-            details = new SurveyDetails(survey: it, title: 'Foo')
-            statistics = new SurveyStats(survey: it, campaign: campaign)
-            surveyRepository.save(it)
-        }
+        surveyRepository.save (survey(startDate: new Date(), endDate: new Date()) {
+            details(title: 'Foo')
+            statistics(campaign: campaign)
+        })
     }
 
     void test1() {

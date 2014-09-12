@@ -35,12 +35,12 @@ class AccessNumbersController extends BaseController {
                         limit,
                         offset)
 
-                return list.collect { AccessNumber it ->
+                return list.collect { an ->
                         new TableItem(
-                                id: it.id,
-                                number: it.number,
-                                surveyTitle: it.surveyStats?.survey?.details?.title,
-                                surveyId: it.surveyStats?.survey?.id
+                                id: an.id,
+                                number: an.number,
+                                surveyTitle: an.surveyStats?.survey?.details?.title,
+                                surveyId: an.surveyStats?.survey?.id
                         )
                 }
             }

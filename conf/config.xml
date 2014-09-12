@@ -23,7 +23,7 @@
 
     <!-- Shared test DB. -->
 
-    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8</param>
+    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8&amp;rewriteBatchedStatements=true&amp;allowMultiQueries=true</param>
     <param name="hibernate.connection.username" type="string">user</param>
     <param name="hibernate.connection.password" type="string">password</param>
 
@@ -99,6 +99,10 @@
     <section name="eyeline">
       <param name="pattern" type="string">[^\.]*eyeline.*</param>
       <param name="skin" type="string">eyeline</param>
+    </section>
+    <section name="inomanet">
+      <param name="pattern" type="string">[^\.]*inomanet.*</param>
+      <param name="skin" type="string">inomanet</param>
     </section>
     <section name="default">
       <param name="pattern" type="string">.*</param>

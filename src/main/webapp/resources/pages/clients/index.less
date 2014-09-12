@@ -1,26 +1,38 @@
 .clientStatusActive {
   color: #29d362;
 }
+
 .clientStatusBlocked {
   color: #b7422e;
 }
 
-
-.eyeline_dialog{
+.eyeline_dialog {
 
   td {
     padding-bottom: 10px;
   }
 
-  input{
-    width: 100%;
+  input {
+    width: 280px
   }
-  .eyeline_dialog_body{
+
+  .eyeline_dialog_body {
     padding: 15px 30px 0 15px;
-    select{
+
+    select {
       margin-left: 0px;
     }
   }
 }
 
 
+
+#clientSettingsDialog_div {
+  td:first-child {
+    width: 20%;
+  }
+
+  select[id$="clientSettingsTimezone"] {
+    width: 284px;
+  }
+}

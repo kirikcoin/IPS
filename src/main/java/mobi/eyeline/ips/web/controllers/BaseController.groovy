@@ -52,19 +52,24 @@ public abstract class BaseController implements Serializable {
         return context.isUserInRole(role.name)
     }
 
-    public User getCurrentUser() {userRepository.load(userPrincipal.id)}
+    User getCurrentUser() {userRepository.load(userPrincipal.id)}
 
-    public boolean isClientRole() {
-        return inRole(Role.CLIENT)
-    }
+    /**
+     * Returns current request locale, which may differ from the user's one.
+     *
+     * <p>Use this snippet to access persisted user locale:
+     * <code>getCurrentUser().getLocale().asLocale()</code>
+     */
+    @SuppressWarnings("GrMethodMayBeStatic")
+    Locale getLocale() { FacesContext.currentInstance.viewRoot.locale }
 
-    public boolean isManagerRole() {
-        return inRole(Role.MANAGER)
-    }
+    TimeZone getTimeZone() { TimeZone.getTimeZone(getCurrentUser().getTimeZoneId()) }
 
-    public boolean isAdminRole() {
-        return inRole(Role.ADMIN)
-    }
+    boolean isClientRole() { inRole(Role.CLIENT) }
+
+    boolean isManagerRole() { inRole(Role.MANAGER) }
+
+    boolean isAdminRole() { return inRole(Role.ADMIN) }
 
     //
     //  Request/session routines.
@@ -159,9 +164,7 @@ public abstract class BaseController implements Serializable {
     boolean renderViolationMessage(Set<ConstraintViolation<?>> violations,
                                    Map<String, String> fieldNamesMapping) {
 
-        return !violations
-                .each { ConstraintViolation it -> addFacesMessage(it, fieldNamesMapping) }
-                .empty
+        violations.each { addFacesMessage(it, fieldNamesMapping) }
     }
 
     boolean renderViolationMessage(Set<ConstraintViolation<?>> violations) {

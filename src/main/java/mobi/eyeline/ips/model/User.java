@@ -135,6 +135,9 @@ public class User implements Serializable {
     @Column(name = "esdp_password")
     private String esdpPasswordHash;
 
+    @Column(name = "time_zone_id")
+    private String timeZoneId = "Europe/Moscow";
+
     public User() {
     }
 
@@ -272,6 +275,14 @@ public class User implements Serializable {
 
     public void setEsdpPasswordHash(String esdpPasswordHash) {
         this.esdpPasswordHash = esdpPasswordHash;
+    }
+
+    public String getTimeZoneId() {
+        return timeZoneId;
+    }
+
+    public void setTimeZoneId(String timeZoneId) {
+        this.timeZoneId = timeZoneId;
     }
 
     @Override
