@@ -127,7 +127,7 @@ class UserRepositoryTest extends DbTestCase {
                 fullName: 'John Doe',
                 role: Role.CLIENT,
                 uiProfile: new UiProfile(
-                        icon: null,
+                        icon: new byte[10],
                         skin: 'foo'
                 ))
 
@@ -136,4 +136,6 @@ class UserRepositoryTest extends DbTestCase {
         user = userRepository.load savedId
         assertEquals 'foo', user.uiProfile.skin
     }
+
+
 }

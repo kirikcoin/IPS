@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
@@ -25,10 +26,12 @@ public class UiProfile {
     private Integer id;
 
     @Lob
+    @NotNull
     @Column(name = "icon", columnDefinition = "BLOB")
     private byte[] icon;
 
     @Column(name = "skin")
+    @NotNull
     private String skin;
 
     public Integer getId() {
