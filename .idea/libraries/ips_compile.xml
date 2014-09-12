@@ -67,7 +67,7 @@
       <root url="jar://$PROJECT_DIR$/lib/jboss-transaction-api_1.1_spec-1.0.1.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/hibernate-c3p0-4.2.8.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/javax.faces-2.2.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/jsf2components.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jsf2components-2.0.2.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
