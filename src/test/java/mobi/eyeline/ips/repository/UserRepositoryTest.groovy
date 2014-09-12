@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.Role
+import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.utils.HashUtilsSupport
 import org.junit.Assert
@@ -116,5 +117,23 @@ class UserRepositoryTest extends DbTestCase {
         shouldFail(ConstraintViolationException){
             userRepository.save(users[3])
         }
+    }
+    
+    void testUiProfile1() {
+        def user = new User(
+                login: 'user',
+                password: 'password'.pw(),
+                email: 'username@example.com',
+                fullName: 'John Doe',
+                role: Role.CLIENT,
+                uiProfile: new UiProfile(
+                        icon: null,
+                        skin: 'foo'
+                ))
+
+        def savedId = userRepository.save user
+
+        user = userRepository.load savedId
+        assertEquals 'foo', user.uiProfile.skin
     }
 }

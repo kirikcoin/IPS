@@ -20,5 +20,6 @@
         <mapping class="mobi.eyeline.ips.model.InvitationDelivery"/>
         <mapping class="mobi.eyeline.ips.model.DeliverySubscriber"/>
         <mapping class="mobi.eyeline.ips.model.SurveyPattern"/>
+        <mapping class="mobi.eyeline.ips.model.UiProfile"/>
     </session-factory>
 </hibernate-configuration>
