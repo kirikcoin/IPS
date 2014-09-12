@@ -5,8 +5,8 @@ import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.service.ResultsExportService
 import mobi.eyeline.ips.service.Services
-import mobi.eyeline.jsfcomponents.data_table.model.DataTableModel
-import mobi.eyeline.jsfcomponents.data_table.model.DataTableSortOrder
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
 import javax.faces.context.FacesContext
 

@@ -9,8 +9,8 @@ import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.service.MadvUpdateService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.jsfcomponents.data_table.model.DataTableModel
-import mobi.eyeline.jsfcomponents.data_table.model.DataTableSortOrder
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
 
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED

@@ -10,8 +10,8 @@ import mobi.eyeline.ips.repository.RespondentRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.jsfcomponents.chart.bar.BarModel
-import mobi.eyeline.jsfcomponents.chart.pie.PieModel
+import mobi.eyeline.util.jsf.components.chart.bar.BarModel
+import mobi.eyeline.util.jsf.components.chart.pie.PieModel
 
 import javax.faces.bean.ManagedBean
 import javax.faces.bean.RequestScoped

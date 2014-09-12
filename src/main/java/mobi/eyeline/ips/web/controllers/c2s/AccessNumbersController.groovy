@@ -7,8 +7,8 @@ import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController
-import mobi.eyeline.jsfcomponents.data_table.model.DataTableModel
-import mobi.eyeline.jsfcomponents.data_table.model.DataTableSortOrder
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
 
 @CompileStatic

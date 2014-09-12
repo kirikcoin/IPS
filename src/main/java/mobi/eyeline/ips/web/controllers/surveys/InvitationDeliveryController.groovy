@@ -11,9 +11,9 @@ import mobi.eyeline.ips.service.CsvParseService.CsvLineException
 import mobi.eyeline.ips.service.CsvParseService.DuplicateMsisdnException
 import mobi.eyeline.ips.service.CsvParseService.InvalidMsisdnFormatException
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.jsfcomponents.data_table.model.DataTableModel
-import mobi.eyeline.jsfcomponents.data_table.model.DataTableSortOrder
-import mobi.eyeline.jsfcomponents.input_file.UploadedFile
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
+import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
