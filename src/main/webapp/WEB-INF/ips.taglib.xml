@@ -21,8 +21,9 @@
   <tag>
     <tag-name>tree</tag-name>
     <component>
-      <component-type>mobi.eyeline.ips.components.tree</component-type>
-      <handler-class>com.sun.facelets.tag.jsf.ComponentHandler</handler-class>
+      <component-type>mobi.eyeline.ips.Tree</component-type>
+      <renderer-type>mobi.eyeline.ips.TreeRenderer</renderer-type>
+
     </component>
   </tag>
 

@@ -1,4 +1,5 @@
-<ivy-module version="2.0">
+<ivy-module version="2.0"
+            xmlns:m="http://ant.apache.org/ivy/maven.xsd">
   <info organisation="mobi.eyeline" module="ips"/>
 
   <configurations>
@@ -40,7 +41,7 @@
 
     <dependency org="dk.brics.automaton" name="automaton" rev="1.11-8" transitive="false"
                 conf="site->default"/>
-
+    <dependency org="org.jgrapht" name="jgrapht-core" rev="0.9.0" conf="site->default"/>
 
     <dependency org="mobi.eyeline.util.extutils" name="lessparser" rev="1.6.1" conf="site->prod"/>
     <dependency org="mobi.eyeline.util.extutils" name="generalutils" rev="1.38.0"

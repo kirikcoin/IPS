@@ -21,9 +21,7 @@ var page = {
     $(function () {
       $.each(['groupEndMessage', 'groupSettings', 'questionsList'], function(i, e) {
         wireModificationLink(e);
-
       });
-
 
       jsfc('questionOptions').addListener(function (event) {
         if (event.type == 'added') {
@@ -41,12 +39,12 @@ var page = {
       $('#tabs > div').show();
       if ($('.ui-tabs-nav li:nth-child(2)').hasClass('ui-state-active')) {
         treeInitialized = true;
-        jsfc('questionsTree').init();
+        jsfc('questionsTree').init(true);
       }
       $('#tabs').on('tabsshow', function (event, ui) {
         if ((ui.index == 1) && !treeInitialized) {
           treeInitialized = true;
-          jsfc('questionsTree').init();
+          jsfc('questionsTree').init(true);
         }
       });
     });

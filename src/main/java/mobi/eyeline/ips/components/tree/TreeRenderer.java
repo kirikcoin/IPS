@@ -1,14 +1,22 @@
 package mobi.eyeline.ips.components.tree;
 
-import mobi.eyeline.util.jsf.components.HtmlWriter;
 
-import javax.faces.component.UIComponent;
+import mobi.eyeline.utils.HtmlWriter;
+import mobi.eyeline.utils.base.RendererImpl;
+
 import javax.faces.context.FacesContext;
-import javax.faces.render.Renderer;
+import javax.faces.render.FacesRenderer;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import static mobi.eyeline.utils.HtmlWriter.AttributeUtils.inCase;
+import static mobi.eyeline.utils.HtmlWriter.CommonAttributes.DISPLAY_NONE;
+import static mobi.eyeline.utils.HtmlWriter.Tag.DIV;
+import static mobi.eyeline.utils.HtmlWriter.Tag.SPAN;
+import static mobi.eyeline.utils.base.Components.COMPONENT_FAMILY;
+import static mobi.eyeline.utils.base.Components.getParentCustomComponentId;
 
 /**
  * The component depends on:
@@ -19,27 +27,24 @@ import java.util.TreeSet;
  *     <li>FontAwesome stylesheets for toolbar icons</li>
  * </ol>
  */
-public class TreeRenderer extends Renderer {
+@FacesRenderer(
+        componentFamily = COMPONENT_FAMILY,
+        rendererType = "mobi.eyeline.ips.TreeRenderer")
+public class TreeRenderer extends RendererImpl<Tree> {
 
     @Override
-    public void encodeBegin(FacesContext context, UIComponent component) throws IOException {
-        super.encodeBegin(context, component);
+    protected void encodeBegin(FacesContext context,
+                               HtmlWriter w,
+                               Tree tree) throws IOException {
 
-        if (!(component instanceof Tree)) {
-            return;
-        }
-
-        final Tree tree = (Tree) component;
-        final HtmlWriter w = new HtmlWriter(context.getResponseWriter());
-
-        w.a("\n<div" +
-                " id='" + tree.getId() + "'" +
-                " style='" + (tree.isVisible() ? "" : "display: none") + "'" +
-                " class='eyeline_tree_wrapper'" +
-                ">");
+        w.begin(DIV,
+                "id", tree.getId(),
+                inCase(!tree.isVisible(), DISPLAY_NONE),
+                "class", "eyeline_tree_wrapper");
 
         renderToolbar(tree, w);
 
+        // TODO: add SVG tag to HtmlWriter and replace with proper tag creation.
         w.a("\n<svg" +
                 " class='eyeline_tree'" +
                 " width='" + tree.getWidth() + "'" +
@@ -49,35 +54,23 @@ public class TreeRenderer extends Renderer {
         w.a("\n<g transform='translate(0, 0)'/>");
 
         w.a("\n</svg>");
-        w.a("\n</div>");
+        w.end(DIV);
 
         renderJs(tree, w);
     }
 
     private void renderToolbar(Tree tree, HtmlWriter w) throws IOException {
-        w.a("\n<div" +
-                " class='eyeline_tree_toolbar'" +
-                " style='" +
-                "position: absolute; padding-top: 10px; margin-left: " + (tree.getWidth() - 30) + "px;" +
-                "'" +
-                ">");
+        w.begin(DIV,
+                "class", "eyeline_tree_toolbar",
+                "style", "position: absolute;" +
+                        " padding-top: 10px;" +
+                        " margin-left: " + (tree.getWidth() - 30) + "px;");
 
-        w.a("\n<span" +
-                " class='zoom_in fa fa-search-plus fa-2x'" +
-                ">");
-        w.a("\n</span>");
+        w.tag(SPAN, "class", "zoom_in fa fa-search-plus fa-2x");
+        w.tag(SPAN, "class", "zoom_out fa fa-search-minus fa-2x");
+        w.tag(SPAN, "class", "zoom_reset fa fa-arrows-alt fa-2x");
 
-        w.a("\n<span" +
-                " class='zoom_out fa fa-search-minus fa-2x'" +
-                "/>");
-        w.a("\n</span>");
-
-        w.a("\n<span" +
-                " class='zoom_reset fa fa-arrows-alt fa-2x'" +
-                "/>");
-        w.a("\n</span>");
-
-        w.a("\n</div>");
+        w.end(DIV);
     }
 
     private void renderJs(Tree tree, HtmlWriter w) throws IOException {
@@ -87,7 +80,7 @@ public class TreeRenderer extends Renderer {
         w.a("options['graph']=").a(new JsonBuilder().toJson(tree.getValue())).a(";");
         w.a("options['direction']='").a(tree.getDirection().name()).a("';");
 
-        w.a("createTree('" + tree.getId() + "', options);");
+        w.a("createTree('" + tree.getId() + "', '" + getParentCustomComponentId(tree) + "', options);");
 
         w.a("\n</script>");
     }

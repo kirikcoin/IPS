@@ -284,22 +284,18 @@
                             <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
                               <h:commandLink value="#{bundle['survey.details.delete']}"
                                              styleClass="modify"
-                                             action="#{surveySettingsController.beforeDeleteQuestion(questionId)}"/>
+                                             action="#{surveySettingsController.beforeDeleteQuestion(question.id)}"/>
                               <h:commandLink value="#{bundle['survey.settings.modify']}"
-                                             action="#{surveySettingsController.modifyQuestion(questionId}"
+                                             action="#{surveySettingsController.modifyQuestion(question.id)}"
                                              styleClass="modify"/>
                               <!--<h:commandLink value="#{bundle['survey.settings.question.move.down']}"-->
                                              <!--styleClass="modify"-->
                                              <!--rendered="#{not question.last}"-->
-                                             <!--action="#{surveySettingsController.moveUp}">-->
-                                <!--<f:param name="questionId" value="#{question.id}"/>-->
-                              <!--</h:commandLink>-->
+                                             <!--action="#{surveySettingsController.moveUp(question.id)}"/>-->
                               <!--<h:commandLink value="#{bundle['survey.settings.question.move.up']}"-->
                                              <!--styleClass="modify"-->
                                              <!--rendered="#{not question.first}"-->
-                                             <!--action="#{surveySettingsController.moveDown}">-->
-                                <!--<f:param name="questionId" value="#{question.id}"/>-->
-                              <!--</h:commandLink>-->
+                                             <!--action="#{surveySettingsController.moveDown(question.id)}"/>-->
                             </h:panelGroup>
                           </h:panelGrid>
                         </f:facet>
