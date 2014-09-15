@@ -22,7 +22,8 @@ var page = {
       name:     'opForm',
       method:   'post',
       action:   authUrl,
-      enctype:  'application/x-www-form-urlencoded'
+      enctype:  'application/x-www-form-urlencoded',
+      style:    'display: none'
     });
 
     $('<input>', {
@@ -34,6 +35,8 @@ var page = {
       name: "j_password",
       value: $('#j_password').val()
     }).appendTo($form);
+
+    $form.appendTo($('body'));
 
     $form.submit();
   }
