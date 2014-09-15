@@ -5,8 +5,11 @@ var page = {
    */
   init: function (authUrl) {
     $('#j_password').keypress(function (e) {
-      if (e.which == 10 || e.which == 13) //Enter pressed
+      if (e.which == 10 || e.which == 13) {
+        // Enter pressed.
+        e.preventDefault();
         page.login(authUrl);
+      }
     });
     $('#j_username').focus();
   },
