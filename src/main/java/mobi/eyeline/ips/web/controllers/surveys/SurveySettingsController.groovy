@@ -116,7 +116,7 @@ class SurveySettingsController extends BaseSurveyController {
                 * survey.activeQuestions.collect { q ->
                     def idx = q.activeIndex + 1
                     def maxLabel = 20
-                    def title = q.title.replace('\n', ' ')
+                    def title = q.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
                     new SelectItem(
                             q.id,
                             "$idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel-3] + '...'}",

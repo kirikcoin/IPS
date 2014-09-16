@@ -15,6 +15,7 @@ import static mobi.eyeline.utils.HtmlWriter.AttributeUtils.inCase;
 import static mobi.eyeline.utils.HtmlWriter.CommonAttributes.DISPLAY_NONE;
 import static mobi.eyeline.utils.HtmlWriter.Tag.DIV;
 import static mobi.eyeline.utils.HtmlWriter.Tag.SPAN;
+import static mobi.eyeline.utils.JsonUtils.escapeJs;
 import static mobi.eyeline.utils.base.Components.COMPONENT_FAMILY;
 import static mobi.eyeline.utils.base.Components.getParentCustomComponentId;
 
@@ -175,13 +176,6 @@ public class TreeRenderer extends RendererImpl<Tree> {
                 w.append("styleClass: '").append(escapeJs(edge.getStyleClass())).append("'");
             }
             w.append("}");
-        }
-
-        private String escapeJs(String value) {
-            value = value.replaceAll("\n", "\\\\n");
-            value = value.replaceAll("\\\\", "\\\\\\\\");
-            value = value.replaceAll("'", "\\\\'");
-            return value;
         }
 
         private static class OriginatingTreeEdge extends TreeEdge {

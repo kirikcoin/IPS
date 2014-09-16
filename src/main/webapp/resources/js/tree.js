@@ -97,10 +97,18 @@ function Tree(clientId, options) {
   function _drawNodes(renderer) {
     var oldDrawNodes = renderer.drawNodes();
     renderer.drawNodes(function (graph, root) {
+      $.each(graph._nodes, function (i, e) {
+        var node = e.value;
+        node.label = node.label.replace(/\\r\\n/g, '\n');
+      });
+
       var svgNodes = oldDrawNodes(graph, root);
       svgNodes.attr('data-id', function (d) { return d; });
       svgNodes.append("svg:title").text(function (d) {
-        return graph.node(d).detail.replace(/\\n/g, ' ');
+        return graph.node(d).detail
+            .replace(/\\r\\n/g, ' ')
+            .replace(/\\r/g, ' ')
+            .replace(/\\n/g, ' ');
       });
       svgNodes.attr('class', function (d) {
         var styleClass = graph.node(d).styleClass ? graph.node(d).styleClass : '';
