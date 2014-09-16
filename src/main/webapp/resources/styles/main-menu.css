@@ -21,6 +21,7 @@
     float: right;
     display: inline;
 }
+
 .settingButtons table tr td {
     height: 24px;
 }
@@ -34,11 +35,29 @@
     font-weight: normal;
 }
 
+.exitButtonSelected{
+    margin-left: 4px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.settingsSeparator{
+    font-family: Arial, Verdana, sans-serif;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: normal;
+}
+
 .menuButtons {
     background-color: #626262;
     /*line-height: 25px;*/
     min-height: 23px;
 }
+
 .menuButton {
     font-family: Arial, Verdana, sans-serif;
     color: #FFFFFF;
@@ -50,6 +69,7 @@
     display: inline-block;
 
 }
+
 .menuButtonSelected {
     background-color: #ffffff;
     font-family: Arial, Verdana, sans-serif;

@@ -274,6 +274,20 @@
 
   <security-constraint>
     <web-resource-collection>
+      <web-resource-name>Manager settings</web-resource-name>
+      <url-pattern>/settings.faces</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+      <role-name>manager</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
       <web-resource-name>C2S numbers</web-resource-name>
       <url-pattern>/pages/admin/*</url-pattern>
     </web-resource-collection>

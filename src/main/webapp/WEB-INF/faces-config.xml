@@ -133,6 +133,13 @@
   </managed-bean>
 
   <managed-bean>
+    <managed-bean-name>settingsPageController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.settings.SettingsPageController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+  </managed-bean>
+
+
+  <managed-bean>
     <managed-bean-name>clientListController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.clients.ClientListController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
@@ -199,6 +206,15 @@
     <navigation-case>
       <from-outcome>PROFILE</from-outcome>
       <to-view-id>/profilepage.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Страница профиля</description>
+    <navigation-case>
+      <from-outcome>MANAGER_SETTINGS</from-outcome>
+      <to-view-id>/settings.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

@@ -5,6 +5,8 @@ import org.hibernate.annotations.Proxy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,9 +32,10 @@ public class UiProfile {
     @Column(name = "icon", columnDefinition = "BLOB")
     private byte[] icon;
 
-    @Column(name = "skin")
     @NotNull
-    private String skin;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "skin")
+    private Skin skin;
 
     public Integer getId() {
         return id;
@@ -50,11 +53,16 @@ public class UiProfile {
         this.icon = icon;
     }
 
-    public String getSkin() {
+    public Skin getSkin() {
         return skin;
     }
 
-    public void setSkin(String skin) {
+    public void setSkin(Skin skin) {
         this.skin = skin;
+    }
+
+    public static enum Skin {
+        ARAKS,
+        MOBAK
     }
 }
