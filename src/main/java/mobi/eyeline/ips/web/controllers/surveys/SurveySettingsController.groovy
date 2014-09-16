@@ -291,6 +291,7 @@ class SurveySettingsController extends BaseSurveyController {
 
     void beforeDeleteQuestion(int questionId) {
         def question = questionRepository.load(questionId)
+        this.questionId = questionId
 
         def refs = surveyService.getReferencesTo(question)
         if (refs.empty) {
