@@ -3,9 +3,9 @@
 /* Стили главного меню */
 
 .ipsLogo {
-    width: 151px;
-    height: 67px;
-    background: url(../images/logo_eyeline.png);
+    /*width: 151px;*/
+    /*height: 67px;*/
+    /*background: url(../images/logo_eyeline.png);*/
     background-size: 151px 67px;
     margin-right: 20px;
 }

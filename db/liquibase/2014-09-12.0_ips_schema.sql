@@ -3,7 +3,7 @@
 
 CREATE TABLE `ui_profiles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `icon` BLOB NOT NULL,
+  `icon` BLOB,
   `skin` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

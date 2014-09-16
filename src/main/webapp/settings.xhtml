@@ -14,7 +14,9 @@
     <ui:define name="scripts">
       <script type="text/javascript">
         //    <![CDATA[
-
+        if ("#{settingsPageController.error}" == 'false') {
+          ips.message.info("#{bundle['settings.saved']}");
+        }
         //    ]]>
       </script>
     </ui:define>
@@ -41,11 +43,23 @@
                   <f:selectItems value="#{settingsPageController.skins}"/>
                 </h:selectOneMenu>
 
-                <h:outputLabel for="logo"
-                               value="#{bundle['settings.logo']}"/>
-                <eye:inputFile id="logo"
-                               value="#{invitationDeliveryController.inputFile}"
-                              />
+                <eye:collapsingGroup opened="true" id="groupSettings">
+                  <f:facet name="header">
+                    <h:panelGroup>
+                      <h:outputText value="#{bundle['settings.logo']}"/>
+                      <h:commandLink value="#{bundle['settings.logo.modify.button']}"
+                                     onclick="return true"
+                                     styleClass="modify-left"
+                                     rendered="true"/>
+                    </h:panelGroup>
+                  </f:facet>
+                  <div style="margin:10px"></div>
+                  <h:panelGroup>
+                     <eye:inputFile id="logo"
+                                   value="#{settingsPageController.imageFile}"/>
+                  </h:panelGroup>
+                </eye:collapsingGroup>
+
 
               </h:panelGrid>
 
@@ -54,7 +68,7 @@
               <eye:buttons>
                 <eye:button>
                   <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.save.btn']}"
-                                 action="#{profilePageController.saveProfile}" />
+                                 action="#{settingsPageController.save}" />
                 </eye:button>
                 <eye:button>
                   <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.cancel.btn']}"

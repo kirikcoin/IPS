@@ -28,7 +28,6 @@ public class UiProfile {
     private Integer id;
 
     @Lob
-    @NotNull
     @Column(name = "icon", columnDefinition = "BLOB")
     private byte[] icon;
 
@@ -62,7 +61,7 @@ public class UiProfile {
     }
 
     public static enum Skin {
-        ARAKS,
-        MOBAK
+        MOBAK,
+        ARAKS
     }
 }
