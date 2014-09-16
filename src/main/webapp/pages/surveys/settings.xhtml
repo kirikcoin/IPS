@@ -46,7 +46,7 @@
             ips.message.info("#{bundle['survey.settings.preview.success']}");
           }
 
-          $('#content').attr('action',
+          $('form').attr('action',
               '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
 
           page.setTreeLabels(

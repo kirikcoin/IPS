@@ -32,30 +32,21 @@
                                  styleClass="exitButton"/>
 
                   <h:commandLink title="Русский"
-                                 action="#{localeController.changeLocale}"
+                                 action="#{localeController.changeLocale('ru')}"
                                  style="margin-left:15px">
-                    <h:graphicImage
-                        value="#{resources.path}/resources/images/ru.png"/>
-                    <f:param name="lang" value="ru"/>
-                    <f:param name="param" value="#{param}"/>
+                    <h:graphicImage value="#{resources.path}/resources/images/ru.png"/>
                   </h:commandLink>
 
                   <h:commandLink title="English"
-                                 action="#{localeController.changeLocale}"
+                                 action="#{localeController.changeLocale('en')}"
                                  style="margin-left:3px">
-                    <h:graphicImage
-                        value="#{resources.path}/resources/images/us.png"/>
-                    <f:param name="lang" value="en"/>
-                    <f:param name="param" value="#{param}"/>
+                    <h:graphicImage value="#{resources.path}/resources/images/us.png"/>
                   </h:commandLink>
 
                   <h:commandLink title="Slovencina"
-                                 action="#{localeController.changeLocale}"
+                                 action="#{localeController.changeLocale('sk')}"
                                  style="margin-left:3px">
-                    <h:graphicImage
-                        value="#{resources.path}/resources/images/sk.png"/>
-                    <f:param name="lang" value="sk"/>
-                    <f:param name="param" value="#{param}"/>
+                    <h:graphicImage value="#{resources.path}/resources/images/sk.png"/>
                   </h:commandLink>
 
                 </h:panelGrid>

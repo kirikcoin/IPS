@@ -173,9 +173,8 @@ class SurveyListController extends BaseController {
         }
     }
 
-    void surveyClickHandler() {
-        def surveyId = getParamValue('surveyId').asInteger()
-
+  @SuppressWarnings("GrMethodMayBeStatic")
+  void surveyClickHandler(int surveyId) {
         SurveySettingsController.goToSurvey(surveyId)
     }
 
