@@ -2,7 +2,7 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi">
+        xmlns:eye="http://jsfcomponents.eyeline.mobi" >
 
   <ui:composition template="/templates/main.xhtml">
 
@@ -43,7 +43,7 @@
                   <f:selectItems value="#{settingsPageController.skins}"/>
                 </h:selectOneMenu>
 
-                <eye:collapsingGroup opened="true" id="groupSettings">
+                <eye:collapsingGroup opened="false" id="groupSettings">
                   <f:facet name="header">
                     <h:panelGroup>
                       <h:outputText value="#{bundle['settings.logo']}"/>
@@ -55,14 +55,15 @@
                   </f:facet>
                   <div style="margin:10px"></div>
                   <h:panelGroup>
-                     <eye:inputFile id="logo"
-                                   value="#{settingsPageController.imageFile}"/>
+                     <eye:inputFile id="logo" value="#{settingsPageController.imageFile}"/>
+
+                      <h:graphicImage rendered="#{settingsPageController.user.uiProfile.icon != null}" value="images/#{settingsPageController.user.id}"/>
+                      <h:outputText rendered="#{settingsPageController.user.uiProfile.icon == null}" value="#{bundle['settings.logo.no']}"/>
                   </h:panelGroup>
                 </eye:collapsingGroup>
 
 
               </h:panelGrid>
-
 
               <div style="margin:10px"></div>
               <eye:buttons>
@@ -82,6 +83,37 @@
             <h:panelGroup layout="block" styleClass="page-footer"/>
 
           </h:panelGroup>
+
+          <eye:dialog id="logoModifyDialog"
+                      title="#{bundle['client.dialog.settings.title']}"
+                      width="400">
+            <h:panelGrid columns="2">
+              <h:outputLabel value="#{bundle['settings.logo']}"
+                             for="logo"/>
+              <eye:inputFile id="logo" value="#{settingsPageController.imageFile}"/>
+            </h:panelGrid>
+
+            <eye:buttons>
+              <eye:button>
+                <h:commandLink styleClass="button-green btnSubmit"
+                               value="Save"
+                               action="#{clientListController.saveModifiedUser}"/>
+              </eye:button>
+              <eye:button>
+                <h:commandLink styleClass="button-green btnSubmit"
+                               value="Delete logo"
+                               action="#{clientListController.saveModifiedUser}"/>
+              </eye:button>
+              <eye:button>
+                <h:commandLink styleClass="button-green"
+                               value="#{bundle['client.dialog.settings.button.cancel']}"
+                               onclick="return page.hideSettingsDialog();"/>
+              </eye:button>
+              <eye:space/>
+            </eye:buttons>
+
+          </eye:dialog>
+
         </h:form>
       </div>
 

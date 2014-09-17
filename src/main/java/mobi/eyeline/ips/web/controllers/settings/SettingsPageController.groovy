@@ -10,6 +10,7 @@ import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.ImageValidator
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
+
 import javax.faces.model.SelectItem
 
 import static mobi.eyeline.ips.web.controllers.BaseController.getStrings
@@ -48,6 +49,7 @@ class SettingsPageController extends BaseController {
         } else{
             addErrorMessage(strings['settings.validation.logo'], 'logo')
         }
+
 
     }
 

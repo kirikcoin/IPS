@@ -188,6 +188,17 @@
     <url-pattern>/inform/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <description>Servlet for logo images view</description>
+    <servlet-name>imageViewServlet</servlet-name>
+    <servlet-class>mobi.eyeline.ips.web.servlets.ImageViewServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>imageViewServlet</servlet-name>
+    <url-pattern>/images/*</url-pattern>
+  </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>faces</servlet-name>
     <url-pattern>*.faces</url-pattern>
