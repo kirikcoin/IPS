@@ -31,7 +31,7 @@
 
           }
 
-          $('#content').attr('action',
+          $('form').attr('action',
               '/pages/surveys/invitations.faces?id=#{surveyInvitesController.surveyId}');
 
           if ("#{surveyInvitesController.inviteError}" == "true"
