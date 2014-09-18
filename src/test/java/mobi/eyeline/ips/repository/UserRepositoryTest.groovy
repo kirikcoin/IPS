@@ -8,6 +8,8 @@ import org.junit.Assert
 
 import javax.validation.ConstraintViolationException
 
+import static mobi.eyeline.ips.model.UiProfile.Skin.ARAKS
+
 class UserRepositoryTest extends DbTestCase {
 
     private UserRepository userRepository
@@ -58,7 +60,9 @@ class UserRepositoryTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.MANAGER)
+                role: Role.MANAGER,
+                uiProfile: new UiProfile()
+        )
 
         userRepository.save(user)
 
@@ -125,17 +129,16 @@ class UserRepositoryTest extends DbTestCase {
                 password: 'password'.pw(),
                 email: 'username@example.com',
                 fullName: 'John Doe',
-                role: Role.CLIENT,
+                role: Role.MANAGER,
                 uiProfile: new UiProfile(
                         icon: new byte[10],
-                        skin: 'foo'
+                        skin: ARAKS
                 ))
 
         def savedId = userRepository.save user
 
         user = userRepository.load savedId
-        assertEquals 'foo', user.uiProfile.skin
+        assertEquals ARAKS, user.uiProfile.skin
     }
-
 
 }

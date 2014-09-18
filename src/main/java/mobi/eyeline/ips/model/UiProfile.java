@@ -14,6 +14,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static mobi.eyeline.ips.model.UiProfile.Skin.MOBAK;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Entity
@@ -34,7 +35,7 @@ public class UiProfile {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "skin")
-    private Skin skin;
+    private Skin skin = MOBAK;
 
     public Integer getId() {
         return id;

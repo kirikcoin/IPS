@@ -241,11 +241,11 @@ class SurveyRepositoryTest extends DbTestCase {
 
         userRepository.save user5 = new User(
                 login: 'user5', fullName: 'F C', email: 'mail5@mail.ru',
-                role: MANAGER, password: '123'.pw())
+                role: MANAGER, password: '123'.pw(), uiProfile: new UiProfile())
 
         userRepository.save user6 = new User(
                 login: 'user6', fullName: 'F C', email: 'mail6@mail.ru',
-                role: MANAGER, password: '123'.pw(), onlyOwnSurveysVisible: true)
+                role: MANAGER, password: '123'.pw(), uiProfile: new UiProfile(), onlyOwnSurveysVisible: true)
 
         [
             survey(id: 1, client: user1, startDate: new Date() + 2, endDate: new Date() + 4) {

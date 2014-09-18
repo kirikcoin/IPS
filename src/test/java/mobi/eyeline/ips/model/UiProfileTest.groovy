@@ -15,14 +15,11 @@ class UiProfileTest extends ValidationTestCase {
                 email: 'username@example.com',
                 fullName: 'John Doe',
                 role: Role.CLIENT,
-                uiProfile: new UiProfile(
-                        icon: null,
-                        skin: 'foo'
-                )
+                uiProfile: new UiProfile()
         )
         
         def violations = validate user
-        assertThat violations, hasSize(0)
+        assertThat violations, hasSize(1)
     }
 
     void test2() {
@@ -32,14 +29,11 @@ class UiProfileTest extends ValidationTestCase {
                 password: '123'.pw(),
                 email: 'username@example.com',
                 fullName: 'John Doe',
-                role: Role.CLIENT,
-                uiProfile: new UiProfile(
-                        icon: null,
-                        skin: 'foo'
-                )
+                role: Role.MANAGER,
+                uiProfile: null
         )
 
-        def violations = validate user.uiProfile
+        def violations = validate user
         assertThat violations, hasSize(1)
     }
 
@@ -50,14 +44,14 @@ class UiProfileTest extends ValidationTestCase {
                 password: '123'.pw(),
                 email: 'username@example.com',
                 fullName: 'John Doe',
-                role: Role.CLIENT,
+                role: Role.MANAGER,
                 uiProfile: new UiProfile(
-                        icon: null,
                         skin: null
                 )
         )
 
         def violations = validate user.uiProfile
-        assertThat violations, hasSize(2)
+        assertThat violations, hasSize(1)
     }
+
 }

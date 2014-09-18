@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.Role
+import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.model.User
 
 @Mixin(RepositoryMock)
@@ -19,9 +20,9 @@ class UserRepositorySessionTest extends DbTestCase {
                 new User(
                         login: "user2", fullName: "User", password: "123".pw(), email: "mail2@mail.ru", role: Role.ADMIN),
                 new User(
-                        login: "user3", fullName: "User", password: "123".pw(), email: "mail3@mail.ru", role: Role.MANAGER),
+                        login: "user3", fullName: "User", password: "123".pw(), email: "mail3@mail.ru",uiProfile: new UiProfile(), role: Role.MANAGER),
                 new User(
-                        login: "user4", fullName: "User", password: "123".pw(), email: "mail4@mail.ru", role: Role.MANAGER),
+                        login: "user4", fullName: "User", password: "123".pw(), email: "mail4@mail.ru", uiProfile: new UiProfile(), role: Role.MANAGER),
                 new User(
                         login: "user5", fullName: "User", password: "123".pw(), email: "mail5@mail.ru", role: Role.CLIENT),
                 new User(
