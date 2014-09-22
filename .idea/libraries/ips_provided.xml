@@ -3,9 +3,19 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/javax.el-2.2.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/javax.el-api-2.2.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/servlet-api-6.0.35.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/tomcat-servlet-api-7.0.52.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/tomcat-annotations-api-7.0.52.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/tomcat-api-7.0.52.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/tomcat-catalina-7.0.52.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/tomcat-juli-7.0.52.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/tomcat-util-7.0.52.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/tomcat-coyote-7.0.52.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/tomcat-servlet-api-7.0.52-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/tomcat-catalina-7.0.52-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/tomcat-coyote-7.0.52-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

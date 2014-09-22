@@ -31,8 +31,6 @@
                 conf="site->default"/>
     <dependency org="commons-el" name="commons-el" rev="1.0" transitive="false"
                 conf="site->default"/>
-    <dependency org="commons-fileupload" name="commons-fileupload" rev="1.2.2" transitive="false"
-                conf="site->default"/>
     <dependency org="commons-lang" name="commons-lang" rev="2.4" transitive="false"
                 conf="site->default"/>
 
@@ -61,7 +59,7 @@
 
     <!-- JSF components -->
     <dependency org="org.glassfish" name="javax.faces" rev="2.2.4" conf="site->default"/>
-    <dependency org="mobi.eyeline.util" name="jsf2components" rev="2.0.5" conf="site->components"
+    <dependency org="mobi.eyeline.util" name="jsf2components" rev="2.0.7" conf="site->components"
             transitive="false"/>
 
     <!-- Utils -->
@@ -86,8 +84,9 @@
     <dependency org="javax.servlet.jsp" name="jsp-api" rev="2.0"
                 conf="site->default"/>
 
-    <dependency org="org.apache.tomcat" name="servlet-api" rev="6.0.35" transitive="false"
-                conf="site->default"/>
+    <dependency org="org.apache.tomcat" name="tomcat-catalina" rev="7.0.52" conf="site->default"/>
+    <dependency org="org.apache.tomcat" name="tomcat-coyote" rev="7.0.52" conf="site->default"/>
+
     <dependency org="javax.el" name="javax.el-api" rev="2.2.4"/>
     <dependency org="org.glassfish.web" name="javax.el" rev="2.2.4"/>
 

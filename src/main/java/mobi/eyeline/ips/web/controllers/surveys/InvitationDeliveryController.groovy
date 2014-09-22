@@ -160,7 +160,6 @@ class InvitationDeliveryController extends BaseController {
                 editedDelivery.speed = invitationDelivery.speed
             }
 
-
             if (validate(editedDelivery)) {
                 invitationDeliveryRepository.update(editedDelivery)
                 if (speedChanged) {

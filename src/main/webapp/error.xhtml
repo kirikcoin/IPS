@@ -20,6 +20,9 @@
       <c:if test="${param['id'] == 500}">
         <c:set var="errorText" value="#{bundle['error.page.500']}"/>
       </c:if>
+      <c:if test="${param['id'] == 400 and param['type'] == 'FILE_SIZE'}">
+        <c:set var="errorText" value="#{bundle['error.page.400.FILE_SIZE']}"/>
+      </c:if>
 
       <h:form prependId="false">
         <h:panelGroup id="error" layout="block" styleClass="border-shadow">

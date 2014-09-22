@@ -440,10 +440,13 @@
           </div>
           <h:panelGrid columns="2">
 
+            <!-- 100Mb maximal upload size -->
             <h:outputLabel value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
             <eye:inputFile id="deliveryReceivers"
                            value="#{invitationDeliveryController.inputFile}"
-                           rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"/>
+                           rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"
+                           maxSize="104857600"/>
+
             <h:outputText value="#{invitationDeliveryController.modifiedDeliveryFilename}"
                           rendered="#{invitationDeliveryController.modifiedDeliveryId!=null}"/>
 
