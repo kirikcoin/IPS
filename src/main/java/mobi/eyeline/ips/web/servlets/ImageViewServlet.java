@@ -12,11 +12,11 @@ import java.io.IOException;
 
 public class ImageViewServlet extends HttpServlet {
     //TODO: dont forget any exceptions here
-    private final UserRepository userRepository = Services.instance().getUserRepository();
+//    private final UserRepository userRepository = Services.instance().getUserRepository();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        Integer userId = Integer.valueOf(request.getPathInfo().substring(1));
-        User user = userRepository.get(userId);
+//        Integer userId = Integer.valueOf(request.getPathInfo().substring(1));
+        User user = (User) request.getSession().getAttribute("updatedUser");
         response.setHeader("Content-Type", getServletContext().getMimeType("logo"));
         response.setHeader("Content-Disposition", "inline; filename=\"" + "logo" + "\"");
 

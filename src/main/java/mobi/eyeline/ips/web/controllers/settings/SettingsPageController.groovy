@@ -13,6 +13,7 @@ import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpSession
 
 import static mobi.eyeline.ips.web.controllers.BaseController.getStrings
 
@@ -21,21 +22,29 @@ import static mobi.eyeline.ips.web.controllers.BaseController.getStrings
 class SettingsPageController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
-
+    private final  HttpSession session = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getSession()
     User user
+    User updatedUser
     UploadedFile imageFile
     Boolean error
+
 
     final List<SelectItem> skins = UiProfile.Skin.values().collect {
         UiProfile.Skin skin -> new SelectItem(skin.toString(), nameOf(skin))
     }
 
     SettingsPageController() {
-        this.user = getCurrentUser()
-        if (user.uiProfile == null) {
-            user.uiProfile = new UiProfile(icon: new byte[10])
+        user = getCurrentUser()
+        if(session.getAttribute("updatedUser") != null && session.getAttribute("cancelled") == true) {
+            user = session.getAttribute("updatedUser") as User
+        } else {
+            session.setAttribute("updatedUser", user)
         }
-        ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getSession().setAttribute(user.id.toString()+"old", user)
+        if (user.uiProfile == null) {
+            user.uiProfile = new UiProfile()
+
+        }
+        session.setAttribute("cancelled", false)
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
@@ -44,24 +53,24 @@ class SettingsPageController extends BaseController {
         strings["settings.skin.$skin".toString()]
     }
 
+
     void save() {
         userRepository.update(user)
+        error = false
         // if cancel - take in session
     }
 
     String cancelSave() {
-//        this.user = ((HttpServletRequest) FacesContext.getCurrentInstance().
-//                getExternalContext().getRequest()).getSession().getAttribute(user.id.toString()) as User
-
-//        userRepository.update(user)
+        session.setAttribute("updatedUser", null)
+        session.setAttribute("cancelled", true)
         return "LOGIN"
-
     }
 
     void saveLogo() {
-        user.uiProfile.icon = imageFile.inputStream.bytes
         if (validate()) {
-            userRepository.update(user)
+            user.uiProfile.icon = imageFile.inputStream.bytes
+            session.setAttribute("cancelled", true)
+
         } else {
             addErrorMessage(strings['settings.validation.logo'], 'logo')
         }
@@ -69,12 +78,15 @@ class SettingsPageController extends BaseController {
 
     void deleteLogo() {
         user.uiProfile.icon = null
-        userRepository.update(user)
+        session.setAttribute("cancelled", true)
     }
 
     boolean validate() {
+        if (imageFile == null) {
+            error = true
+            return false
+        }
         if(ImageValidator.validate(imageFile.filename)){
-            error = false
             return true
         }
         error = true

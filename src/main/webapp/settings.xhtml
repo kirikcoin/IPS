@@ -47,79 +47,77 @@
                 <h:selectOneMenu id="skin" value="#{settingsPageController.user.uiProfile.skin}">
                   <f:selectItems value="#{settingsPageController.skins}"/>
                 </h:selectOneMenu>
+              </h:panelGrid>
 
-                <eye:collapsingGroup opened="false" id="groupSettings">
-                  <f:facet name="header">
-                    <h:panelGroup>
-                      <h:outputText value="#{bundle['settings.logo']}"/>
 
-                    </h:panelGroup>
-                  </f:facet>
-                  <div style="margin:10px"></div>
+              <eye:collapsingGroup opened="true" id="groupSettings">
+                <f:facet name="header">
                   <h:panelGroup>
+                    <h:outputText value="#{bundle['settings.logo']}"/>
+
                     <h:commandLink value="#{bundle['settings.logo.modify.button']}"
                                    onclick="return page.onLogoModifyDialogShow()"
                                    styleClass="modify-left"
                                    rendered="true"/>
-                    <div style="margin:10px"></div>
-                     <!--<eye:inputFile id="logo" value="#{settingsPageController.imageFile}"/>-->
-
-                      <h:graphicImage rendered="#{settingsPageController.user.uiProfile.icon != null}" value="images/#{settingsPageController.user.id}"/>
-                      <h:outputText rendered="#{settingsPageController.user.uiProfile.icon == null}" value="#{bundle['settings.logo.no']}"/>
                   </h:panelGroup>
-                </eye:collapsingGroup>
+                </f:facet>
+                <div style="margin:10px"></div>
+                <h:panelGroup styleClass="displayed">
 
+                  <div style="margin:10px"></div>
 
-              </h:panelGrid>
+                  <h:graphicImage rendered="#{settingsPageController.user.uiProfile.icon != null}" value="images/#{settingsPageController.user.id}"/>
+                  <h:outputText rendered="#{settingsPageController.user.uiProfile.icon == null}" value="#{bundle['settings.logo.no']}"/>
+                </h:panelGroup>
+
+                <h:panelGroup id="logoModifyDialog" style="display: none">
+                  <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle['settings.logo']}"
+                                   for="logo"/>
+                    <eye:inputFile id="logo" value="#{settingsPageController.imageFile}"/>
+                  </h:panelGrid>
+
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['settings.logo.modify.dialog.save']}"
+                                     action="#{settingsPageController.saveLogo}"/>
+                    </eye:button>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['settings.logo.modify.dialog.delete']}"
+                                     action="#{settingsPageController.deleteLogo}"/>
+                    </eye:button>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['settings.logo.modify.dialog.cancel']}"
+                                     onclick="return page.onLogoModifyDialogHide();"/>
+                    </eye:button>
+                    <eye:space/>
+                  </eye:buttons>
+                </h:panelGroup>
+              </eye:collapsingGroup>
 
               <div style="margin:10px"></div>
-              <eye:buttons>
-                <eye:button>
-                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.save.btn']}"
-                                 action="#{settingsPageController.save}" />
-                </eye:button>
-                <eye:button>
-                  <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.cancel.btn']}"
-                                 action="#{settingsPageController.cancelSave}"/>
-                </eye:button>
-                <eye:space/>
-              </eye:buttons>
+              <h:panelGroup styleClass="displayed">
+                <eye:buttons>
+                  <eye:button>
+                    <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.save.btn']}"
+                                   action="#{settingsPageController.save}" />
+                  </eye:button>
+                  <eye:button>
+                    <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.cancel.btn']}"
+                                   action="#{settingsPageController.cancelSave}"/>
+                  </eye:button>
+                  <eye:space/>
+                </eye:buttons>
+              </h:panelGroup>
             </h:panelGroup>
 
 
             <h:panelGroup layout="block" styleClass="page-footer"/>
 
           </h:panelGroup>
-
-          <eye:dialog id="logoModifyDialog"
-                      title="#{bundle['client.dialog.settings.title']}"
-                      width="400">
-            <h:panelGrid columns="2">
-              <h:outputLabel value="#{bundle['settings.logo']}"
-                             for="logo"/>
-              <eye:inputFile id="logo" value="#{settingsPageController.imageFile}"/>
-            </h:panelGrid>
-
-            <eye:buttons>
-              <eye:button>
-                <h:commandLink styleClass="button-green"
-                               value="#{bundle['settings.logo.modify.dialog.save']}"
-                               action="#{settingsPageController.saveLogo}"/>
-              </eye:button>
-              <eye:button>
-                <h:commandLink styleClass="button-green"
-                               value="#{bundle['settings.logo.modify.dialog.delete']}"
-                               action="#{settingsPageController.deleteLogo}"/>
-              </eye:button>
-              <eye:button>
-                <h:commandLink styleClass="button-green"
-                               value="#{bundle['settings.logo.modify.dialog.cancel']}"
-                               onclick="return page.onLogoModifyDialogHide();"/>
-              </eye:button>
-              <eye:space/>
-            </eye:buttons>
-
-          </eye:dialog>
 
         </h:form>
       </div>
