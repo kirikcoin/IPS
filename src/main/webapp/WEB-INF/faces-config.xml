@@ -29,6 +29,8 @@
 
     <view-handler>mobi.eyeline.ips.web.IPSViewHandler</view-handler>
 
+    <message-bundle>external</message-bundle>
+
   </application>
 
   <!-- COMPONENTS=================================================================================================== -->
