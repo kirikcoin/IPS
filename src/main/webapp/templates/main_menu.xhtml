@@ -12,7 +12,12 @@
       <table width="100%" id="MAIN_MENU_TABLE" border="0" cellspacing="0" cellpadding="0">
         <tr>
           <td>
-            <div class="ipsLogo"></div>
+              <h:panelGroup layout="block"
+                            styleClass="ipsLogo"
+                            rendered="#{view.viewId != '/login.xhtml'}" >
+                <h:graphicImage value="/logo/1" height="49"/>
+                <!--<img src="/resources/skins/araks/images/logo_araks.png"/>-->
+              </h:panelGroup>
           </td>
 
           <td width="100%">

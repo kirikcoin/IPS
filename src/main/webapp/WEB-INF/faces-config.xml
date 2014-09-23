@@ -49,6 +49,12 @@
   </managed-bean>
 
   <managed-bean>
+    <managed-bean-name>skinController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.SkinController</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
+  <managed-bean>
     <managed-bean-name>dateController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.DateController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>

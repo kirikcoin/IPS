@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.model.UiProfile;
 import mobi.eyeline.ips.properties.LocationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +16,14 @@ public class LocationService {
 
     private final List<LocationProperties> locations;
     private final String defaultLoginUrl;
+    private UiProfile.Skin skin;
 
     public LocationService(List<LocationProperties> locations,
                            String defaultLoginUrl) {
 
         this.locations = locations;
         this.defaultLoginUrl = defaultLoginUrl;
+        this.skin = UiProfile.Skin.ARAKS;
     }
 
     public String getLoginUrl() {
@@ -35,8 +38,13 @@ public class LocationService {
     }
 
     public String getSkin() {
-        return getLocationProperties().getSkin();
+        return skin.toString().toLowerCase();
     }
+
+    public void setSkin(UiProfile.Skin skin) {
+        this.skin = skin;
+    }
+
 
     private LocationProperties getLocationProperties() {
         try {

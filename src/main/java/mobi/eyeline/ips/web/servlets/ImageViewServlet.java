@@ -3,6 +3,7 @@ package mobi.eyeline.ips.web.servlets;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.repository.UserRepository;
 import mobi.eyeline.ips.service.Services;
+import mobi.eyeline.ips.web.controllers.SkinController;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,9 +17,10 @@ public class ImageViewServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 //        Integer userId = Integer.valueOf(request.getPathInfo().substring(1));
+
         User user = (User) request.getSession().getAttribute("updatedUser");
-        response.setHeader("Content-Type", getServletContext().getMimeType("logo"));
-        response.setHeader("Content-Disposition", "inline; filename=\"" + "logo" + "\"");
+        response.setHeader("Content-Type", getServletContext().getMimeType("logoImage"));
+        response.setHeader("Content-Disposition", "inline; filename=\"" + "logoImage" + "\"");
 
 
         response.getOutputStream().write(user.getUiProfile().getIcon());

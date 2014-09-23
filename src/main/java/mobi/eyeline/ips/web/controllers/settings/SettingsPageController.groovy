@@ -7,6 +7,7 @@ import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.controllers.SkinController
 import mobi.eyeline.ips.web.validators.ImageValidator
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
@@ -24,7 +25,6 @@ class SettingsPageController extends BaseController {
     private final UserRepository userRepository = Services.instance().userRepository
     private final  HttpSession session = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getSession()
     User user
-    User updatedUser
     UploadedFile imageFile
     Boolean error
 
@@ -42,7 +42,6 @@ class SettingsPageController extends BaseController {
         }
         if (user.uiProfile == null) {
             user.uiProfile = new UiProfile()
-
         }
         session.setAttribute("cancelled", false)
     }
@@ -56,6 +55,10 @@ class SettingsPageController extends BaseController {
 
     void save() {
         userRepository.update(user)
+        SkinController skinController = (SkinController)session.getAttribute("skinController")
+        skinController.logo = user.uiProfile.icon
+        skinController.skin = user.uiProfile.skin
+        Services.instance().locationService.skin = user.uiProfile.skin
         error = false
         // if cancel - take in session
     }

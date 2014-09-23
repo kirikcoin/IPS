@@ -199,6 +199,18 @@
     <url-pattern>/images/*</url-pattern>
   </servlet-mapping>
 
+
+  <servlet>
+    <description>Servlet for logo view</description>
+    <servlet-name>logoViewServlet</servlet-name>
+    <servlet-class>mobi.eyeline.ips.web.servlets.LogoViewServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>logoViewServlet</servlet-name>
+    <url-pattern>/logo/*</url-pattern>
+  </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>faces</servlet-name>
     <url-pattern>*.faces</url-pattern>
