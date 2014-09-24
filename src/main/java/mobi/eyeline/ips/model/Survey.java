@@ -234,7 +234,7 @@ public class Survey implements Serializable {
 
     @SuppressWarnings("UnusedDeclaration")
     @AssertTrue(message = "{survey.validation.end.must.be.after.start}")
-    private boolean isEndDate() {
+    private boolean isEndDateAfterStartDate() {
         return (getStartDate() != null) &&
                (getEndDate() != null) &&
                getStartDate().compareTo(getEndDate()) <= 0;
