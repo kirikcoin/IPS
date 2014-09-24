@@ -3,8 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-    >
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc">
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -517,26 +516,22 @@
         <ips:confirmDialog id="removeBindingDialog"
                            title="#{bundle['invitations.block.advertising.company.remove.title']}"
                            text="#{bundle['invitations.block.advertising.company.remove.text']}"
-                           actionBean="#{surveyInvitesController}"
-                           actionName="clearMadvId"/>
+                           action="#{surveyInvitesController.clearMadvId}"/>
 
         <ips:confirmDialog id="removeInviteDialog"
                            title="#{bundle['invitations.block.invitations.delivery.remove.title']}"
                            text="#{bundle['invitations.block.invitations.delivery.remove.text']}"
-                           actionBean="#{surveyInvitesController}"
-                           actionName="deleteInvite"/>
+                           action="#{surveyInvitesController.deleteInvite}"/>
 
         <ips:confirmDialog id="deliveryActivateDialog"
                            text="#{bundle['invitations.deliveries.table.status.activate.dialog.text']}"
                            title="#{bundle['invitations.deliveries.table.status.activate.dialog.title']}"
-                           actionBean="#{invitationDeliveryController}"
-                           actionName="activateDelivery"/>
+                           action="#{invitationDeliveryController.activateDelivery}"/>
 
         <ips:confirmDialog id="deliveryPauseDialog"
                            text="#{bundle['invitations.deliveries.table.status.pause.dialog.text']}"
                            title="#{bundle['invitations.deliveries.table.status.pause.dialog.title']}"
-                           actionBean="#{invitationDeliveryController}"
-                           actionName="pauseDelivery"/>
+                           action="#{invitationDeliveryController.pauseDelivery}"/>
       </h:form>
 
     </ui:define>

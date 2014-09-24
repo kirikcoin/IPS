@@ -3,8 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-        >
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc">
 
   <ui:composition template="/templates/main.xhtml">
 
@@ -228,24 +227,21 @@
         </eye:dialog>
 
         <ips:confirmDialog id="clientBlockDialog"
-                           text="#{bundle['client.dialog.block.text']}"
+                           action="#{clientListController.deActivateUser}"
                            title="#{bundle['client.dialog.block.title']}"
-                           actionBean="#{clientListController}"
-                           actionName="deActivateUser"
+                           text="#{bundle['client.dialog.block.text']}"
                            isDuplicateText="true"/>
 
         <ips:confirmDialog id="clientUnblockDialog"
-                           text="#{bundle['client.dialog.unblock.text']}"
+                           action="#{clientListController.activateUser}"
                            title="#{bundle['client.dialog.unblock.title']}"
-                           actionBean="#{clientListController}"
-                           actionName="activateUser"
+                           text="#{bundle['client.dialog.unblock.text']}"
                            isDuplicateText="true"/>
 
         <ips:confirmDialog id="clientPasswordResetDialog"
-                           text="#{bundle['client.dialog.passwordreset.text']}"
+                           action="#{clientListController.resetPassword}"
                            title="#{bundle['client.dialog.passwordreset.title']}"
-                           actionBean="#{clientListController}"
-                           actionName="resetPassword"
+                           text="#{bundle['client.dialog.passwordreset.text']}"
                            isDuplicateText="true"/>
 
       </h:form>

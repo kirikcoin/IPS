@@ -3,8 +3,8 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-        >
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc"
+        xmlns:ipsc="http://ips.eyeline.mobi">
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -350,7 +350,7 @@
                   </h:panelGroup>
                 </eye:tab>
                 <eye:tab label="#{bundle['survey.settings.questions.tabs.graphs']}">
-                  <ips:tree id="questionsTree"
+                  <ipsc:tree id="questionsTree"
                             value="#{surveySettingsController.questionsGraph}"
                             height="600"
                             width="1162"
@@ -565,10 +565,7 @@
         <ips:confirmDialog id="deleteDialog"
                            text="#{bundle['survey.settings.delete.prompt']}"
                            title="#{bundle['survey.settings.delete.title']}"
-                           actionBean="#{surveySettingsController}"
-                           actionName="deleteSurvey"
-                           paramKey="errorId"
-                           paramValue="deleteDialog"
+                           action="#{surveySettingsController.deleteSurvey}"
                            width="450"/>
 
 

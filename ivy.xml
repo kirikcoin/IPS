@@ -58,7 +58,7 @@
     <dependency org="mysql" name="mysql-connector-java" rev="5.1.13" conf="site->default"/>
 
     <!-- JSF components -->
-    <dependency org="org.glassfish" name="javax.faces" rev="2.2.4" conf="site->default"/>
+    <dependency org="org.glassfish" name="javax.faces" rev="2.2.8" conf="site->default"/>
     <dependency org="mobi.eyeline.util" name="jsf2components" rev="2.0.7" conf="site->components"
             transitive="false"/>
 
@@ -84,8 +84,8 @@
     <dependency org="org.apache.tomcat" name="tomcat-servlet-api" rev="7.0.52" transitive="false"
                 conf="site->default"/>
 
-    <dependency org="javax.el" name="javax.el-api" rev="2.2.4"/>
-    <dependency org="org.glassfish.web" name="javax.el" rev="2.2.4"/>
+    <dependency org="javax.el" name="javax.el-api" rev="2.2.1"/>
+    <!--<dependency org="org.glassfish.web" name="javax.el" rev="2.2.4"/>-->
 
     <dependency org="jstl" name="jstl" rev="1.2" transitive="false" conf="site->default"/>
 

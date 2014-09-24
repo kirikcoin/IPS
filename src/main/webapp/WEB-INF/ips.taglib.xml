@@ -3,28 +3,56 @@
         "-//Sun Microsystems, Inc.//DTD Facelet Taglib 1.0//EN"
         "http://java.sun.com/dtd/facelet-taglib_1_0.dtd">
 
-<facelet-taglib>
-  <namespace>http://ips.eyeline.mobi/jsf/facelets</namespace>
-
-  <tag>
-    <!-- Confirmation dialog. -->
-    <tag-name>confirmDialog</tag-name>
-    <source>../WEB-INF/tags/confirmDialog.xhtml</source>
-  </tag>
-
-  <tag>
-    <!-- Date range. -->
-    <tag-name>dateRange</tag-name>
-    <source>../WEB-INF/tags/dateRange.xhtml</source>
-  </tag>
+<facelet-taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.0">
+  <namespace>http://ips.eyeline.mobi</namespace>
 
   <tag>
     <tag-name>tree</tag-name>
     <component>
       <component-type>mobi.eyeline.ips.Tree</component-type>
       <renderer-type>mobi.eyeline.ips.TreeRenderer</renderer-type>
-
     </component>
+
+    <attribute>
+      <description>Идентификатор компонента</description>
+      <name>id</name>
+      <required>false</required>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Флаг, означающий отображать или нет объект</description>
+      <name>rendered</name>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>Показывать или нет компонент на странице (по-умолчанию: true)</description>
+      <name>visible</name>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <attribute>
+      <description>Атрибут, описывающий откуда брать модель для объекта</description>
+      <name>value</name>
+      <required>true</required>
+      <type>mobi.eyeline.ips.components.tree.TreeNode</type>
+    </attribute>
+    <attribute>
+      <description>Высота канвы</description>
+      <name>height</name>
+      <required>true</required>
+      <type>java.lang.Integer</type>
+    </attribute>
+    <attribute>
+      <description>Ширина канвы</description>
+      <name>width</name>
+      <required>true</required>
+      <type>java.lang.Integer</type>
+    </attribute>
+    <attribute>
+      <description>Направление дерева</description>
+      <name>direction</name>
+      <required>false</required>
+      <type>mobi.eyeline.ips.components.tree.TreeDirection</type>
+    </attribute>
   </tag>
 
 </facelet-taglib>

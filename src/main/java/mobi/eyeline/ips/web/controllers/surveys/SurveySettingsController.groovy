@@ -265,7 +265,7 @@ class SurveySettingsController extends BaseSurveyController {
         } catch (Exception e) {
             logger.error(e.message, e)
             addErrorMessage strings['esdp.error.survey.deletion']
-            errorId = FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
+            errorId = 'deleteDialog'
 
             return null
         }

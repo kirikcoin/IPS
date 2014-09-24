@@ -55,12 +55,14 @@ public class RequestEagerParsingFilter implements Filter {
 
         try {
             tryParsingIfApplicable(httpRequest);
-            chain.doFilter(request, response);
 
         } catch (Exception e) {
             httpResponse.sendRedirect(
                     httpRequest.getContextPath() + "/error.faces?id=400&type=FILE_SIZE");
+            return;
         }
+
+        chain.doFilter(request, response);
     }
 
     private void tryParsingIfApplicable(HttpServletRequest httpRequest)
