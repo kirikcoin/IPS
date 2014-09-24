@@ -19,7 +19,7 @@ class TemplateServiceTest extends GroovyTestCase {
         configClass = new MockFor(Config)
 
         config = configClass.proxyDelegateInstance() as Config
-        templateService = new TemplateService(config, new LocationService(null, "http://example.com"))
+        templateService = new TemplateService(config, new LocationService("http://example.com"))
     }
 
     void tearDown() {

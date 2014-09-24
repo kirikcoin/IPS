@@ -28,8 +28,6 @@ public interface Config {
     public int getSadsMaxSessions();
     public String getBaseSurveyUrl();
 
-    public List<LocationProperties> getLocationProperties();
-
     public int getPushThreadsNumber();
     public int getMessageQueueBaseline();
     public int getStateUpdateBatchSize();
@@ -63,8 +61,6 @@ public interface Config {
 
         private final int sadsMaxSessions;
         private final String baseSurveyUrl;
-
-        private final List<LocationProperties> locationProperties = new ArrayList<>();
 
         private final int pushThreadsNumber;
         private final int messageQueueBaseline;
@@ -106,16 +102,6 @@ public interface Config {
             {
                 sadsMaxSessions = sads.getInt("max.sessions", 4);
                 baseSurveyUrl = sads.getString("base.survey.url");
-            }
-
-            final XmlConfigSection locations = xmlConfig.getSection("locations");
-            {
-                for (XmlConfigSection section : locations.sections()) {
-                    final LocationProperties parsed = new LocationProperties(
-                            section.getString("pattern"),
-                            section.getString("skin"));
-                    locationProperties.add(parsed);
-                }
             }
 
             final XmlConfigSection deliveries = xmlConfig.getSection("deliveries");
@@ -208,11 +194,6 @@ public interface Config {
         @Override
         public String getBaseSurveyUrl() {
             return baseSurveyUrl;
-        }
-
-        @Override
-        public List<LocationProperties> getLocationProperties() {
-            return locationProperties;
         }
 
         @Override

@@ -3,6 +3,7 @@ package mobi.eyeline.ips.service
 
 import groovy.mock.interceptor.MockFor
 import mobi.eyeline.ips.model.Role
+import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.repository.DbTestCase
@@ -21,6 +22,7 @@ class UserServiceTest extends DbTestCase {
     def config
     def senderProxy
     def user
+    def manager
 
     @SuppressWarnings("GroovyMissingReturnStatement")
     static class StubTemplateService extends TemplateService {
@@ -37,6 +39,8 @@ class UserServiceTest extends DbTestCase {
 
     void setUp() {
         super.setUp()
+
+
 
         configClass = new MockFor(Config)
         config = configClass.proxyDelegateInstance() as Config
@@ -55,6 +59,17 @@ class UserServiceTest extends DbTestCase {
         }
         mailService = new MailService(templateService, senderProxy)
         userService = new UserService(userRepository, mailService)
+
+        manager = new User(
+                login: 'testManager',
+                password: "testManagerPassw".pw(),
+                email: 'manager@example.com',
+                fullName: 'John Doe',
+                role: Role.MANAGER,
+                uiProfile: new UiProfile())
+
+        userRepository.save(manager)
+
     }
 
     void testRestorePassword() {
@@ -64,7 +79,8 @@ class UserServiceTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         userRepository.save(user)
         userService.resetPassword("username@example.com")
@@ -80,7 +96,8 @@ class UserServiceTest extends DbTestCase {
                 email: "username@example.com",
                 fullName: "John Doe",
                 blocked: false,
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         userRepository.save(user)
         userService.deActivate(user)
@@ -95,7 +112,8 @@ class UserServiceTest extends DbTestCase {
                 email: "username@example.com",
                 fullName: "John Doe",
                 blocked: true,
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         userRepository.save(user)
         userService.activate(user)
@@ -110,7 +128,8 @@ class UserServiceTest extends DbTestCase {
                 email: "username1@example.com",
                 fullName: "John Doe1",
                 blocked: false,
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         User user2 =  new User(
                 login: "user2",
@@ -118,7 +137,8 @@ class UserServiceTest extends DbTestCase {
                 email: "username2@example.com",
                 fullName: "John Doe2",
                 blocked: false,
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         User user3 =  new User(
                 login: "user1",
@@ -126,7 +146,8 @@ class UserServiceTest extends DbTestCase {
                 email: "username1@example.com",
                 fullName: "John Doe2",
                 blocked: false,
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         userRepository.save(user1)
 
@@ -148,7 +169,8 @@ class UserServiceTest extends DbTestCase {
                 email: "username1@example.com",
                 fullName: "John Doe1",
                 blocked: false,
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         userRepository.save(user)
         user = userRepository.getByLogin("user")

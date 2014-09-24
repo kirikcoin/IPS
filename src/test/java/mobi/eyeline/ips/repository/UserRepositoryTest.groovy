@@ -16,11 +16,23 @@ class UserRepositoryTest extends DbTestCase {
 
     private DB db
 
+    def manager
+
     void setUp() {
         db = new DB(new Properties())
         HashUtilsSupport.init()
 
         userRepository = new UserRepository(db)
+
+        manager = new User(
+                login: 'testManager',
+                password: "testManagerPassw".pw(),
+                email: 'manager@example.com',
+                fullName: 'John Doe',
+                role: Role.MANAGER,
+                uiProfile: new UiProfile())
+
+        userRepository.save(manager)
     }
 
     void tearDown() {
@@ -33,7 +45,8 @@ class UserRepositoryTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         def savedId = userRepository.save(user)
         def fetched = userRepository.getUser("user", "password")
@@ -47,7 +60,8 @@ class UserRepositoryTest extends DbTestCase {
                 password: "fake",
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.ADMIN)
+                role: Role.ADMIN,
+                manager: manager)
 
         userRepository.save(user)
 
@@ -75,7 +89,8 @@ class UserRepositoryTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         def savedId = userRepository.save(user)
         def fetched = userRepository.getByLogin("user")
@@ -89,7 +104,8 @@ class UserRepositoryTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         def savedId = userRepository.save(user)
         def fetched = userRepository.getByEmail("username@example.com")

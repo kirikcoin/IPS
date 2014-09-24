@@ -1,7 +1,6 @@
 package mobi.eyeline.ips.web.servlets;
 
-import mobi.eyeline.ips.model.User;
-import mobi.eyeline.ips.web.controllers.SkinController;
+import mobi.eyeline.ips.web.controllers.LogoBean;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,13 +12,12 @@ public class LogoViewServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        SkinController skinController= (SkinController) request.getSession().getAttribute("skinController");
-//        User user = (User) request.getSession().getAttribute("currentUser");
+        LogoBean logoBean= (LogoBean) request.getSession().getAttribute("skinController");
 
         response.setHeader("Content-Type", getServletContext().getMimeType("logo"));
         response.setHeader("Content-Disposition", "inline; filename=\"" + "logo" + "\"");
 
 
-        response.getOutputStream().write(skinController.getLogo());
+        response.getOutputStream().write(logoBean.getLogo());
     }
 }

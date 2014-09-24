@@ -32,10 +32,10 @@
 
                   <h:commandLink value="#{bundle['settings.profile.button']}"
                                  action="PROFILE"
-                                 rendered="#{userSession.authenticated}"
+                                 rendered="#{userSession.authenticated and userSession.managerRole}"
                                  styleClass="#{profile ? 'exitButtonSelected' : 'exitButton'}"/>
 
-                  <h:outputText value=" | " rendered="#{userSession.authenticated}" styleClass="settingsSeparator"/>
+                  <h:outputText value=" | " rendered="#{userSession.authenticated and userSession.managerRole}" styleClass="settingsSeparator"/>
 
                   <h:commandLink value="#{bundle['settings.managersettings.button']}"
                                  action="MANAGER_SETTINGS"

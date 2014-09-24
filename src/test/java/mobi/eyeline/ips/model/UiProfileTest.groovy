@@ -15,7 +15,13 @@ class UiProfileTest extends ValidationTestCase {
                 email: 'username@example.com',
                 fullName: 'John Doe',
                 role: Role.CLIENT,
-                uiProfile: new UiProfile()
+                uiProfile: new UiProfile(),
+                manager: new User(login: 'jdoe',
+                        password: '123'.pw(),
+                        email: 'username@example.com',
+                        fullName: 'John Doe',
+                        role: Role.MANAGER,
+                        uiProfile: new UiProfile())
         )
         
         def violations = validate user

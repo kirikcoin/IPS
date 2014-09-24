@@ -7,13 +7,29 @@ import static org.hamcrest.Matchers.hasSize
 
 class UserTest extends ValidationTestCase {
 
+    def manager
+
+    @Override
+    void setUp() {
+        super.setUp()
+
+        manager = new User(
+                login: 'testManager',
+                password: "testManagerPassw".pw(),
+                email: 'manager@example.com',
+                fullName: 'John Doe',
+                role: Role.MANAGER,
+                uiProfile: new UiProfile())
+    }
+
     void test1() {
         def violations = validate new User(
                 login: null,
                 password: "123".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         assertThat violations, hasSize(1)
         assertEquals "login", violations[0].propertyPath.first().name
@@ -25,7 +41,8 @@ class UserTest extends ValidationTestCase {
                 password: "123".pw(),
                 email: "123",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         assertThat violations, hasSize(1)
         assertEquals 'email', violations[0].propertyPath.toString()
@@ -37,7 +54,8 @@ class UserTest extends ValidationTestCase {
                 password: "123".pw(),
                 email: null,
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         assertThat violations, hasSize(1)
         assertEquals "email", violations[0].propertyPath.first().name
@@ -49,7 +67,8 @@ class UserTest extends ValidationTestCase {
                 password: null,
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         assertThat violations, hasSize(1)
         assertEquals "password", violations[0].propertyPath.first().name
@@ -61,7 +80,8 @@ class UserTest extends ValidationTestCase {
                 password: "123".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.ADMIN)
+                role: Role.ADMIN,
+                manager: manager)
 
         assertThat violations, empty()
     }
@@ -88,7 +108,8 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: 'f'*71,
                 role: Role.CLIENT,
-                company: 'c'*71
+                company: 'c'*71,
+                manager: manager
         )
         assertThat violations, hasSize(3)
     }
@@ -100,7 +121,8 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: 'f'*71,
                 role: Role.CLIENT,
-                company: "company"
+                company: "company",
+                manager: manager
         )
         assertThat violations, hasSize(2)
     }
@@ -112,7 +134,8 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: "John Doe",
                 role: Role.CLIENT,
-                company: "company"
+                company: "company",
+                manager: manager
         )
         assertThat violations, hasSize(1)
         assertEquals "login", violations[0].propertyPath.first().name
@@ -125,7 +148,8 @@ class UserTest extends ValidationTestCase {
                 email:  'e'*71,
                 fullName: "John Doe",
                 role: Role.CLIENT,
-                company: "company"
+                company: "company",
+                manager: manager
         )
         assertThat violations, hasSize(2)
         assertEquals "email", violations[0].propertyPath.first().name
@@ -140,7 +164,8 @@ class UserTest extends ValidationTestCase {
                 fullName: "John Doe",
                 role: Role.CLIENT,
                 company: "company",
-                phoneNumber:'p'*31
+                phoneNumber:'p'*31,
+                manager: manager
         )
         assertThat violations, hasSize(2)
         assertEquals "phoneNumber", violations[0].propertyPath.first().name
@@ -154,7 +179,8 @@ class UserTest extends ValidationTestCase {
                 fullName: "John Doe",
                 role: Role.CLIENT,
                 company: "company",
-                phoneNumber:'p'*9
+                phoneNumber:'p'*9,
+                manager: manager
         )
         assertThat violations, hasSize(1)
         assertEquals "phoneNumber", violations[0].propertyPath.first().name
@@ -168,7 +194,8 @@ class UserTest extends ValidationTestCase {
                 fullName: "John Doe",
                 role: Role.CLIENT,
                 company: "company",
-                phoneNumber:'8'*31
+                phoneNumber:'8'*31,
+                manager: manager
         )
         assertThat violations, hasSize(1)
         assertEquals "phoneNumber", violations[0].propertyPath.first().name
@@ -182,7 +209,8 @@ class UserTest extends ValidationTestCase {
                 fullName: "John Doe",
                 role: Role.CLIENT,
                 company: "company",
-                phoneNumber:'8'*29
+                phoneNumber:'8'*29,
+                manager: manager
         )
         assertThat violations, empty()
     }
@@ -194,6 +222,7 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: "John Doe",
                 role: Role.CLIENT,
+                manager: manager
         )
         assertThat violations, hasSize(1)
         assertEquals "login", violations[0].propertyPath.first().name
@@ -206,6 +235,7 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: "John Doe",
                 role: Role.CLIENT,
+                manager: manager
         )
         assertThat violations, empty()
     }
@@ -217,6 +247,7 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: "symbols: %",
                 role: Role.CLIENT,
+                manager: manager
         )
         def violations2 = validate new User(
                 login: "login1",
@@ -224,6 +255,7 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: "symbols: '",
                 role: Role.CLIENT,
+                manager: manager
         )
         def violations3 = validate new User(
                 login: "login1",
@@ -231,6 +263,7 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: "symbols: \"",
                 role: Role.CLIENT,
+                manager: manager
         )
         def violations4 = validate new User(
                 login: "login1",
@@ -238,6 +271,7 @@ class UserTest extends ValidationTestCase {
                 email:  "username@example.com",
                 fullName: "symbols: \\",
                 role: Role.CLIENT,
+                manager: manager
         )
         assertThat violations1, hasSize(1)
         assertThat violations2, hasSize(1)
@@ -248,6 +282,19 @@ class UserTest extends ValidationTestCase {
         assertEquals "fullName", violations2[0].propertyPath.first().name
         assertEquals "fullName", violations3[0].propertyPath.first().name
         assertEquals "fullName", violations4[0].propertyPath.first().name
+    }
+
+    void test19() {
+        def violations = validate new User(
+                login: "login",
+                password: "123".pw(),
+                email: "username@example.com",
+                fullName: "John Doe",
+                role: Role.CLIENT,
+                manager: null)
+
+        assertThat violations, hasSize(1)
+        assertEquals "valid2", violations[0].propertyPath.first().name
     }
 
 }

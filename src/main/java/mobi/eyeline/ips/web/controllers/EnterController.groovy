@@ -1,20 +1,22 @@
 package mobi.eyeline.ips.web.controllers
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
 
 import javax.faces.context.FacesContext
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
 
 @CompileStatic
+@Slf4j('logger')
 class EnterController extends BaseController {
     private final UserRepository userRepository = Services.instance().userRepository
     private final  HttpSession session = request.session
-    private final SkinController skinController = new SkinController();
+    private final LogoBean logoBean = new LogoBean();
+
     Object getRunOnLogin() {
         init()
         return null
@@ -23,21 +25,25 @@ class EnterController extends BaseController {
     private void init() {
         User user = getCurrentUser()
         new LocaleController().changeLocale(user)
-        skinController.skin = user.uiProfile.skin
-        skinController.logo = user.uiProfile.icon
-        Services.instance().locationService.skin = user.uiProfile.skin
+
 //        session.setAttribute("currentUser",user)
-//        SkinController skinController= new SkinController()
+//        LogoBean logoBean= new LogoBean()
 
         if (request.isUserInRole('manager') ) {
-//            skinController.logo = user.uiProfile.icon
+            logoBean.logo = user.uiProfile.icon
+
+            Services.instance().locationService.skin = user.uiProfile.skin
             redirect '/pages/surveys/index.faces'
 
         } else if (request.isUserInRole('client')) {
+            logoBean.logo = user.manager.uiProfile.icon
+
+            Services.instance().locationService.skin = user.manager.uiProfile.skin
 
             redirect '/pages/surveys/index.faces'
         } else if (request.isUserInRole('admin')) {
-            redirect '/pages/admin/accessNumbers.faces'
+            throw new AssertionError()
+            logger.error("There no admin role in ips")
 
         } else {
             redirect '/login.faces'

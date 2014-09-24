@@ -12,6 +12,7 @@ abstract class ValidationTestCase extends GroovyTestCase {
         validator = Validation.buildDefaultValidatorFactory().validator
 
         HashUtilsSupport.init()
+
     }
 
     def validate = {validator.validate it}

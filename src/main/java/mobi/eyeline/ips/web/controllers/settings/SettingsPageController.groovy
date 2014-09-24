@@ -1,13 +1,12 @@
 package mobi.eyeline.ips.web.controllers.settings
 
 import groovy.transform.CompileStatic
-import mobi.eyeline.ips.model.InvitationDelivery
 import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.ips.web.controllers.SkinController
+import mobi.eyeline.ips.web.controllers.LogoBean
 import mobi.eyeline.ips.web.validators.ImageValidator
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
@@ -55,9 +54,8 @@ class SettingsPageController extends BaseController {
 
     void save() {
         userRepository.update(user)
-        SkinController skinController = (SkinController)session.getAttribute("skinController")
+        LogoBean skinController = (LogoBean)session.getAttribute("logoBean")
         skinController.logo = user.uiProfile.icon
-        skinController.skin = user.uiProfile.skin
         Services.instance().locationService.skin = user.uiProfile.skin
         error = false
         // if cancel - take in session

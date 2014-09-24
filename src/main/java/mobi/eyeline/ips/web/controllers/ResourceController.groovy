@@ -28,5 +28,5 @@ class ResourceController implements Serializable {
      * @return Skin-specific stylesheet path part value.
      */
     @SuppressWarnings("GrMethodMayBeStatic")
-    String getSkin() { Services.instance().locationService.skin }
+    String getSkin() { Services.instance().locationService.skin.toString().toLowerCase() }
 }

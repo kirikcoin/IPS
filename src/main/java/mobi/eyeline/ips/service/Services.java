@@ -97,7 +97,7 @@ public class Services {
                 invitationDeliveryRepository);
 
         locationService =
-                new LocationService(config.getLocationProperties(), config.getLoginUrl());
+                new LocationService(config.getLoginUrl());
 
         templateService = new TemplateService(config, locationService);
         mailService = new MailService(templateService,

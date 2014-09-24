@@ -50,7 +50,7 @@
 
   <managed-bean>
     <managed-bean-name>skinController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.SkinController</managed-bean-class>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.LogoBean</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
 

@@ -100,7 +100,8 @@ class ClientListController extends BaseController {
                     password: HashUtils.hashPassword(password),
                     locale: userForEdit.locale,
                     timeZoneId: userForEdit.timeZoneId,
-                    role: Role.CLIENT)
+                    role: Role.CLIENT,
+                    manager: currentUser)
 
             if (validate(user)) {
                 userRepository.save(user)

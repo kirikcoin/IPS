@@ -18,9 +18,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.AssertFalse;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -145,6 +147,10 @@ public class User implements Serializable {
     @OneToOne(cascade = ALL)
     @JoinColumn(name = "ui_profile_id")
     private UiProfile uiProfile;
+
+    @JoinColumn(name = "manager_id")
+    @ManyToOne
+    private User manager;
 
     public User() {
     }
@@ -301,6 +307,14 @@ public class User implements Serializable {
         this.timeZoneId = timeZoneId;
     }
 
+    public User getManager() {
+        return manager;
+    }
+
+    public void setManager(User manager) {
+        this.manager = manager;
+    }
+
     @AssertTrue(message = "{settings.validation.user}")
     private boolean isValid() {
         if(role == Role.MANAGER){
@@ -308,6 +322,15 @@ public class User implements Serializable {
         }
 
         return (uiProfile == null);
+    }
+
+    @AssertTrue(message = "Manager must have manager field equals null")
+    private boolean isValid2() {
+        if(role == Role.MANAGER){
+            return (manager == null);
+        }
+
+        return (manager != null);
     }
 
     @Override

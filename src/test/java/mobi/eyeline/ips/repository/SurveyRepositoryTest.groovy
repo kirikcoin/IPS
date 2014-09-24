@@ -218,6 +218,15 @@ class SurveyRepositoryTest extends DbTestCase {
     }
 
     private void fillTestData() {
+        def manager = new User(
+                login: 'testManager',
+                password: "testManagerPassw".pw(),
+                email: 'manager@example.com',
+                fullName: 'John Doe',
+                role: Role.MANAGER,
+                uiProfile: new UiProfile())
+
+        userRepository.save(manager)
         [
             user1 = new User(login: 'user1', fullName: 'F B', email: 'mail@mail.ru'),
             user2 = new User(login: 'user2', fullName: 'D C', email: 'mail2@mail.ru'),
@@ -225,6 +234,7 @@ class SurveyRepositoryTest extends DbTestCase {
             user4 = new User(login: 'user4', fullName: 'F C', email: 'mail4@mail.ru'),
         ].each { u ->
             u.role = Role.CLIENT
+            u.manager = manager
             u.password = '123'.pw()
             userRepository.save u
         }

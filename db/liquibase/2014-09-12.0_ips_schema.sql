@@ -11,3 +11,6 @@ CREATE TABLE `ui_profiles` (
 
 ALTER TABLE `users` ADD COLUMN `ui_profile_id` INT(11) DEFAULT NULL;
 ALTER TABLE `users` ADD FOREIGN KEY FK_users_ui_profiles (ui_profile_id) REFERENCES ui_profiles (id);
+
+ALTER TABLE `users` ADD COLUMN `manager_id` INT(11) DEFAULT NULL;
+ALTER TABLE `users` ADD FOREIGN KEY FK_user_manager (manager_id) REFERENCES users (id);
