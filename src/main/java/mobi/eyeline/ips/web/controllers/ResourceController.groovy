@@ -4,6 +4,8 @@ import groovy.transform.CompileStatic
 import mobi.eyeline.ips.service.Services
 
 import javax.faces.context.FacesContext
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpSession
 
 import static mobi.eyeline.ips.web.BuildVersion.BUILD_VERSION
 
@@ -29,4 +31,13 @@ class ResourceController implements Serializable {
      */
     @SuppressWarnings("GrMethodMayBeStatic")
     String getSkin() { Services.instance().locationService.skin.toString().toLowerCase() }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    boolean isLogoAllowed() {
+        HttpSession session = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getSession()
+
+        LogoBean logoBean = (LogoBean) session.getAttribute("logoBean");
+
+        return logoBean.logo != null
+    }
 }

@@ -34,15 +34,10 @@ class SettingsPageController extends BaseController {
 
     SettingsPageController() {
         user = getCurrentUser()
-        if(session.getAttribute("updatedUser") != null && session.getAttribute("cancelled") == true) {
-            user = session.getAttribute("updatedUser") as User
-        } else {
-            session.setAttribute("updatedUser", user)
-        }
+        session.setAttribute("updatedUser", user)
         if (user.uiProfile == null) {
             user.uiProfile = new UiProfile()
         }
-        session.setAttribute("cancelled", false)
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
@@ -58,20 +53,16 @@ class SettingsPageController extends BaseController {
         skinController.logo = user.uiProfile.icon
         Services.instance().locationService.skin = user.uiProfile.skin
         error = false
-        // if cancel - take in session
     }
 
     String cancelSave() {
         session.setAttribute("updatedUser", null)
-        session.setAttribute("cancelled", true)
         return "LOGIN"
     }
 
     void saveLogo() {
         if (validate()) {
             user.uiProfile.icon = imageFile.inputStream.bytes
-            session.setAttribute("cancelled", true)
-
         } else {
             addErrorMessage(strings['settings.validation.logo'], 'logo')
         }
@@ -79,7 +70,6 @@ class SettingsPageController extends BaseController {
 
     void deleteLogo() {
         user.uiProfile.icon = null
-        session.setAttribute("cancelled", true)
     }
 
     boolean validate() {

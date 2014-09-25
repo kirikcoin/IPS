@@ -12,9 +12,9 @@ public class LogoViewServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        LogoBean logoBean= (LogoBean) request.getSession().getAttribute("skinController");
+        LogoBean logoBean= (LogoBean) request.getSession().getAttribute("logoBean");
 
-        response.setHeader("Content-Type", getServletContext().getMimeType("logo"));
+        response.setHeader("Content-Type", getServletContext().getMimeType("image"));
         response.setHeader("Content-Disposition", "inline; filename=\"" + "logo" + "\"");
 
 

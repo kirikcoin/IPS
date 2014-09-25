@@ -30,6 +30,7 @@
 
       <div id="settingsPage">
         <h:form enctype="multipart/form-data" id="content" prependId="false">
+          <eye:saveState value="#{settingsPageController.user.uiProfile}"/>
 
           <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -50,7 +51,7 @@
               </h:panelGrid>
 
 
-              <eye:collapsingGroup opened="true" id="groupSettings">
+              <eye:collapsingGroup opened="true" id="logoSettings">
                 <f:facet name="header">
                   <h:panelGroup>
                     <h:outputText value="#{bundle['settings.logo']}"/>
