@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.model;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Lists;
 import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Formula;
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.beust.jcommander.internal.Lists.newArrayList;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Iterables.tryFind;
@@ -271,7 +271,7 @@ public class Survey implements Serializable {
     }
 
     public List<SurveyPattern> getInactivePatterns() {
-        return newArrayList(filter(getPatterns(), new Predicate<SurveyPattern>() {
+        return Lists.newArrayList(filter(getPatterns(), new Predicate<SurveyPattern>() {
             @Override
             public boolean apply(SurveyPattern input) {
                 return !input.isActive();

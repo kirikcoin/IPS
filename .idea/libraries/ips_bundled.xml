@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="ips-bundled">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../smsc/webapps/jsf2Components/components/java" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/javax.faces-2.2.4-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/guava-16.0.1-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/hibernate-core-4.2.8.Final-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/hibernate-validator-5.0.2.Final-sources.jar!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+  </library>
+</component>
