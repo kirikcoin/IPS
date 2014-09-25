@@ -132,20 +132,6 @@
       <fileset dir="${lib.dir}">
         <include name="*.jar"/>
       </fileset>
-
-        <!--&lt;!&ndash; Provided &ndash;&gt;-->
-        <!--<exclude name="servlet-api*.jar"/>-->
-        <!--<exclude name="jsp-api*.jar"/>-->
-        <!--<exclude name="javax.el*.jar"/>-->
-
-        <!--&lt;!&ndash; Test &ndash;&gt;-->
-        <!--<exclude name="junit*.jar"/>-->
-        <!--<exclude name="org.jacoco*.jar"/>-->
-        <!--<exclude name="hsqldb*.jar"/>-->
-        <!--<exclude name="hamcrest*.jar"/>-->
-
-        <!--<include name="*.jar"/>-->
-      <!--</fileset>-->
     </copy>
   </target>
 

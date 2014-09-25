@@ -84,12 +84,9 @@
     <dependency org="org.apache.tomcat" name="tomcat-servlet-api" rev="7.0.52" transitive="false"
                 conf="site_dev->default"/>
     <dependency org="javax.el" name="javax.el-api" rev="2.2.1" conf="site->default"/>
-    <dependency org="jstl" name="jstl" rev="1.2" transitive="false" conf="site_dev->default"/>
+    <dependency org="jstl" name="jstl" rev="1.2" transitive="false" conf="site->default"/>
 
     <dependency org="org.glassfish.web" name="javax.el" rev="2.2.4" conf="site_dev->default"/>
-
-    <dependency org="jstl" name="jstl" rev="1.2" transitive="false" conf="site_dev->default"/>
-
 
     <!--
         Test
