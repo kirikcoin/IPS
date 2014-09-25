@@ -86,6 +86,11 @@
     <dependency org="javax.el" name="javax.el-api" rev="2.2.1" conf="site_dev->default"/>
     <dependency org="jstl" name="jstl" rev="1.2" transitive="false" conf="site_dev->default"/>
 
+    <dependency org="javax.el" name="javax.el-api" rev="2.2.1"/>
+    <dependency org="org.glassfish.web" name="javax.el" rev="2.2.4"/>
+
+    <dependency org="jstl" name="jstl" rev="1.2" transitive="false" conf="site->default"/>
+
 
     <!--
         Test

@@ -68,7 +68,8 @@
       <root url="jar://$PROJECT_DIR$/lib/jgrapht-core-0.9.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jsf2components-2.0.7.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/javax.faces-2.2.8.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/javax.el-api-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.el-2.2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.el-api-2.2.4.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
