@@ -88,7 +88,7 @@
   <!-- =============================================== FILTERS ===================================================== -->
 
   <filter>
-    <filter-name>wrappingFilter</filter-name>
+    <filter-name>eagerParsingFilter</filter-name>
     <filter-class>mobi.eyeline.ips.web.RequestEagerParsingFilter</filter-class>
   </filter>
 
@@ -113,7 +113,7 @@
   </filter-mapping>
 
   <filter-mapping>
-    <filter-name>wrappingFilter</filter-name>
+    <filter-name>eagerParsingFilter</filter-name>
     <servlet-name>faces</servlet-name>
   </filter-mapping>
 

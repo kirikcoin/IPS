@@ -53,6 +53,8 @@ public class RequestEagerParsingFilter implements Filter {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
         final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        httpRequest.setCharacterEncoding("UTF-8");
+
         try {
             tryParsingIfApplicable(httpRequest);
 
