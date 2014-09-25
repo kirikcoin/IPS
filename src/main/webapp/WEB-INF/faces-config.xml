@@ -31,13 +31,6 @@
 
   </application>
 
-  <!-- COMPONENTS=================================================================================================== -->
-
-  <component>
-    <component-type>mobi.eyeline.ips.components.tree</component-type>
-    <component-class>mobi.eyeline.ips.components.tree.Tree</component-class>
-  </component>
-
   <!-- BEANS ======================================================================================================= -->
 
   <managed-bean>

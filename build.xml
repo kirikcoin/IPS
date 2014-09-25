@@ -10,9 +10,10 @@
             description="Either 'production' or 'development'"/>
   <property name="war.name"           value="${project.name}-${release.version}"/>
 
-  <property name="build.dir"  location="${basedir}/.build"/>
-  <property name="distr.dir"  location="${build.dir}/distr"/>
-  <property name="lib.dir"    location="${basedir}/lib"/>
+  <property name="build.dir"    location="${basedir}/.build"/>
+  <property name="distr.dir"    location="${build.dir}/distr"/>
+  <property name="lib.dir"      location="${basedir}/lib"/>
+  <property name="lib.dir.dev"  location="${basedir}/libdev"/>
 
   <property name="gen.dir"    location="${build.dir}/generated"/>
   <property name="esdp.dir"   location="${build.dir}/generated-esdp"/>
@@ -30,7 +31,8 @@
   <property name="test.res.dir" location="${basedir}/src/test/resources"/>
 
   <path id="classpath">
-    <fileset dir="${lib.dir}" includes="*.jar"/>
+    <fileset dir="${lib.dir}"     includes="*.jar"/>
+    <fileset dir="${lib.dir.dev}" includes="*.jar"/>
   </path>
 
   <target name="build" depends="build-war, test, liquibase-schema" description="Build WAR artifact"/>
@@ -44,15 +46,22 @@
     <ivy:settings file="${user.home}/.ivy2/ivysettings.xml"/>
     <ivy:resolve/>
     <ivy:report/>
-    <delete dir="${lib.dir}"/>
+
+    <delete dir="${lib.dir}" failonerror="false"/>
     <mkdir dir="${lib.dir}"/>
     <ivy:retrieve type="jar,bundle" pattern="${lib.dir}/[artifact]-[revision].[ext]" conf="site"/>
+
+    <delete dir="${lib.dir.dev}" failonerror="false"/>
+    <mkdir dir="${lib.dir.dev}"/>
+    <ivy:retrieve type="jar,bundle" pattern="${lib.dir.dev}/[artifact]-[revision].[ext]" conf="site_dev"/>
+
     <ivy:retrieve type="js" pattern="${web.dir}/js/[artifact].[ext]" conf="site"/>
   </target>
 
   <target name="clean" description="Clean output directories and resolved dependencies">
     <delete dir="${build.dir}" failonerror="false"/>
     <delete dir="${lib.dir}" failonerror="false"/>
+    <delete dir="${lib.dir.dev}" failonerror="false"/>
   </target>
 
   <target name="init" depends="clean">
@@ -121,20 +130,22 @@
     <mkdir dir="${build.dir}/web/WEB-INF/lib"/>
     <copy todir="${build.dir}/web/WEB-INF/lib/">
       <fileset dir="${lib.dir}">
-
-        <!-- Provided -->
-        <exclude name="servlet-api*.jar"/>
-        <exclude name="jsp-api*.jar"/>
-        <exclude name="javax.el*.jar"/>
-
-        <!-- Test -->
-        <exclude name="junit*.jar"/>
-        <exclude name="org.jacoco*.jar"/>
-        <exclude name="hsqldb*.jar"/>
-        <exclude name="hamcrest*.jar"/>
-
         <include name="*.jar"/>
       </fileset>
+
+        <!--&lt;!&ndash; Provided &ndash;&gt;-->
+        <!--<exclude name="servlet-api*.jar"/>-->
+        <!--<exclude name="jsp-api*.jar"/>-->
+        <!--<exclude name="javax.el*.jar"/>-->
+
+        <!--&lt;!&ndash; Test &ndash;&gt;-->
+        <!--<exclude name="junit*.jar"/>-->
+        <!--<exclude name="org.jacoco*.jar"/>-->
+        <!--<exclude name="hsqldb*.jar"/>-->
+        <!--<exclude name="hamcrest*.jar"/>-->
+
+        <!--<include name="*.jar"/>-->
+      <!--</fileset>-->
     </copy>
   </target>
 
