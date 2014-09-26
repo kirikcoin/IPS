@@ -1,9 +1,11 @@
 package mobi.eyeline.ips.web.controllers
 
-class LogoBean extends BaseController{
-    byte[] logo;
+import mobi.eyeline.ips.model.UiProfile
 
-    LogoBean() {
-        request.session.setAttribute("logoBean",this)
-    }
+import static mobi.eyeline.ips.model.UiProfile.Skin as Skin
+
+class LogoBean {
+    byte[] logo
+    mobi.eyeline.ips.model.UiProfile.Skin skin
+
 }

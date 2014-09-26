@@ -23,14 +23,7 @@ public class LocationService {
     }
 
     public String getLoginUrl() {
-        try {
-            final StringBuffer requestURL = getRequest().getRequestURL();
-            return requestURL.substring(0, requestURL.lastIndexOf(getRequest().getRequestURI()));
-
-        } catch (Exception e) {
-            logger.error("Could not determine login url", e);
-            return defaultLoginUrl;
-        }
+        return defaultLoginUrl;
     }
 
     public UiProfile.Skin getSkin() {
@@ -41,10 +34,4 @@ public class LocationService {
         this.skin = skin;
     }
 
-
-    private HttpServletRequest getRequest() {
-        final ExternalContext externalContext =
-                FacesContext.getCurrentInstance().getExternalContext();
-        return (HttpServletRequest) externalContext.getRequest();
-    }
 }

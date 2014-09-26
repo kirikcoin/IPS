@@ -315,8 +315,8 @@ public class User implements Serializable {
         this.manager = manager;
     }
 
-    @AssertTrue(message = "{settings.validation.user}")
-    private boolean isValid() {
+    @AssertTrue(message = "Only manager must uiProfile")
+    private boolean isValidUiProfile() {
         if(role == Role.MANAGER){
             return (uiProfile != null);
         }
@@ -325,7 +325,7 @@ public class User implements Serializable {
     }
 
     @AssertTrue(message = "Manager must have manager field equals null")
-    private boolean isValid2() {
+    private boolean isValidManager() {
         if(role == Role.MANAGER){
             return (manager == null);
         }

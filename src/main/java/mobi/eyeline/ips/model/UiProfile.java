@@ -63,6 +63,12 @@ public class UiProfile {
 
     public static enum Skin {
         MOBAK,
-        ARAKS
+        ARAKS;
+
+        public static Skin getDefault() { return Skin.MOBAK; }
+
+        public String getUrlPath() {
+            return name().toLowerCase();
+        }
     }
 }

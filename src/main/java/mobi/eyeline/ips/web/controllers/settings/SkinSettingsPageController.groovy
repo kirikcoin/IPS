@@ -19,20 +19,21 @@ import static mobi.eyeline.ips.web.controllers.BaseController.getStrings
 
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
-class SettingsPageController extends BaseController {
+class SkinSettingsPageController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
     private final  HttpSession session = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getSession()
     User user
     UploadedFile imageFile
     Boolean error
+    LogoBean logoBean
 
 
     final List<SelectItem> skins = UiProfile.Skin.values().collect {
         UiProfile.Skin skin -> new SelectItem(skin.toString(), nameOf(skin))
     }
 
-    SettingsPageController() {
+    SkinSettingsPageController() {
         user = getCurrentUser()
         session.setAttribute("updatedUser", user)
         if (user.uiProfile == null) {
@@ -49,9 +50,8 @@ class SettingsPageController extends BaseController {
 
     void save() {
         userRepository.update(user)
-        LogoBean skinController = (LogoBean)session.getAttribute("logoBean")
-        skinController.logo = user.uiProfile.icon
-        Services.instance().locationService.skin = user.uiProfile.skin
+        logoBean.logo = user.uiProfile.icon
+        logoBean.skin = user.uiProfile.skin
         error = false
     }
 

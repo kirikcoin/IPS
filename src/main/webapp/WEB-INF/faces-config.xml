@@ -49,7 +49,7 @@
   </managed-bean>
 
   <managed-bean>
-    <managed-bean-name>skinController</managed-bean-name>
+    <managed-bean-name>logoBean</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.LogoBean</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
@@ -64,7 +64,7 @@
     <managed-bean-name>resources</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.ResourceController</managed-bean-class>
     <managed-bean-scope>application</managed-bean-scope>
-  </managed-bean>
+   </managed-bean>
 
   <managed-bean>
     <managed-bean-name>baseSurveyController</managed-bean-name>
@@ -140,8 +140,12 @@
 
   <managed-bean>
     <managed-bean-name>settingsPageController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.settings.SettingsPageController</managed-bean-class>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.settings.SkinSettingsPageController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
+    <managed-property>
+      <property-name>logoBean</property-name>
+      <value>#{logoBean}</value>
+    </managed-property>
   </managed-bean>
 
 
@@ -161,6 +165,10 @@
     <managed-bean-name>enterController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.EnterController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
+    <managed-property>
+      <property-name>logoBean</property-name>
+      <value>#{logoBean}</value>
+    </managed-property>
   </managed-bean>
 
   <!-- VALIDATION ================================================================================================== -->

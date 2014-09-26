@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession
 class EnterController extends BaseController {
     private final UserRepository userRepository = Services.instance().userRepository
     private final  HttpSession session = request.session
-    private final LogoBean logoBean = new LogoBean();
+    LogoBean logoBean;
 
     Object getRunOnLogin() {
         init()
@@ -44,8 +44,9 @@ class EnterController extends BaseController {
             redirect '/pages/surveys/index.faces'
 
         } else if (request.isUserInRole('admin')) {
-            throw new AssertionError()
             logger.error("There no admin role in ips")
+            throw new AssertionError()
+
 
         } else {
             redirect '/login.faces'
