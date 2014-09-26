@@ -298,7 +298,7 @@
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>Manager settings</web-resource-name>
-      <url-pattern>/settings.faces</url-pattern>
+      <url-pattern>/skinsettings.faces</url-pattern>
     </web-resource-collection>
     <auth-constraint>
       <role-name>admin</role-name>

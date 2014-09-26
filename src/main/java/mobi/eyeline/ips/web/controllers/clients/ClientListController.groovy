@@ -49,9 +49,10 @@ class ClientListController extends BaseController {
             @Override
             List getRows(int offset,
                          int limit,
-                         DataTableSortOrder sortOrder){
+                         DataTableSortOrder sortOrder) {
                 def list = userRepository.list(
                         search,
+                        currentUser,
                         sortOrder.columnId,
                         sortOrder.asc,
                         limit,
@@ -72,18 +73,18 @@ class ClientListController extends BaseController {
 
             @Override
             int getRowsCount() {
-                userRepository.count(search)
+                userRepository.count(search, currentUser)
             }
         }
     }
 
-    void fillUserForEdit(){
+    void fillUserForEdit() {
         modifiedUserId = getParamValue("userForEditId").asInteger()
-        if(modifiedUserId != null) {
+        if (modifiedUserId != null) {
             userForEdit = userRepository.get(modifiedUserId)
             dialogForEdit = true
         } else {
-            userForEdit= new User()
+            userForEdit = new User()
             dialogForEdit = false
         }
     }
@@ -131,7 +132,7 @@ class ClientListController extends BaseController {
                 }
 
                 if (oldEmail != user.email) {
-                    mailService.sendUserModified(user,oldEmail)
+                    mailService.sendUserModified(user, oldEmail)
                 }
             }
         }
@@ -140,10 +141,10 @@ class ClientListController extends BaseController {
     private boolean validate(User user) {
         modifiedUserDataValidationError =
                 renderViolationMessage(validator.validate(user), [
-                        'fullName':     'clientSettingsFullName',
-                        'company':      'clientSettingsCompany',
-                        'login':        'clientSettingsLogin',
-                        'email':        'clientSettingsEmail',
+                        'fullName': 'clientSettingsFullName',
+                        'company': 'clientSettingsCompany',
+                        'login': 'clientSettingsLogin',
+                        'email': 'clientSettingsEmail',
                 ])
 
         if (!userService.isLoginAllowed(user)) {

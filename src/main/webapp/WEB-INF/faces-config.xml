@@ -217,10 +217,10 @@
   </navigation-rule>
 
   <navigation-rule>
-    <description>Страница профиля</description>
+    <description>Страница настройки скинов</description>
     <navigation-case>
-      <from-outcome>MANAGER_SETTINGS</from-outcome>
-      <to-view-id>/settings.xhtml</to-view-id>
+      <from-outcome>SKIN_SETTINGS</from-outcome>
+      <to-view-id>/skinsettings.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

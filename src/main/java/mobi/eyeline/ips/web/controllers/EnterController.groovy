@@ -26,21 +26,23 @@ class EnterController extends BaseController {
         User user = getCurrentUser()
         new LocaleController().changeLocale(user)
 
-//        session.setAttribute("currentUser",user)
-//        LogoBean logoBean= new LogoBean()
-
         if (request.isUserInRole('manager') ) {
-            logoBean.logo = user.uiProfile.icon
 
-            Services.instance().locationService.skin = user.uiProfile.skin
+            if(user.uiProfile !=null){
+                Services.instance().locationService.skin = user.uiProfile.skin
+                logoBean.logo = user.uiProfile.icon
+            }
             redirect '/pages/surveys/index.faces'
 
         } else if (request.isUserInRole('client')) {
-            logoBean.logo = user.manager.uiProfile.icon
 
-            Services.instance().locationService.skin = user.manager.uiProfile.skin
+            if(user.manager.uiProfile != null) {
+                logoBean.logo = user.manager.uiProfile.icon
+                Services.instance().locationService.skin = user.manager.uiProfile.skin
+            }
 
             redirect '/pages/surveys/index.faces'
+
         } else if (request.isUserInRole('admin')) {
             throw new AssertionError()
             logger.error("There no admin role in ips")

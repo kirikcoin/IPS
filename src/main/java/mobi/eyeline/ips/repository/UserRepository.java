@@ -92,6 +92,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
     }
 
     public List<User> list(String filter,
+                           User manager,
                            String orderColumn,
                            boolean orderAsc,
                            int limit,
@@ -113,6 +114,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
         }
 
         criteria.add(Restrictions.eq("role", Role.CLIENT));
+        criteria.add(Restrictions.eq("manager", manager));
         criteria.setFirstResult(offset).setMaxResults(limit);
 
         // TODO: may be in controller too
@@ -135,7 +137,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
         return (List<User>) criteria.list();
     }
 
-    public int count(String filter) {
+    public int count(String filter, User manager) {
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(User.class);
 
@@ -153,6 +155,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
         }
 
         criteria.add(Restrictions.eq("role", Role.CLIENT));
+        criteria.add(Restrictions.eq("manager", manager));
         criteria.setProjection(Projections.rowCount());
 
         return ((Number) criteria.uniqueResult()).intValue();
