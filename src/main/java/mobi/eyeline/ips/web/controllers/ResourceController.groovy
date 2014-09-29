@@ -1,7 +1,6 @@
 package mobi.eyeline.ips.web.controllers
 
 import groovy.transform.CompileStatic
-import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
@@ -31,34 +30,33 @@ class ResourceController implements Serializable {
     @SuppressWarnings("GrMethodMayBeStatic")
     String getVersion() { BUILD_VERSION }
 
-    /**
-     * Skin-specific stylesheets are located under a skin-specific path.
-     * Common stylesheets are referenced by skin-specific ones.
-     *
-     * @return Skin-specific stylesheet path part value.
-     */
     @SuppressWarnings("GrMethodMayBeStatic")
     String getSkin() {
-        def userPrincipal = FacesContext.currentInstance.externalContext.userPrincipal as WebUser
-        if (!userPrincipal) {
+        if (currentUiProfile == null) {
             return UiProfile.Skin.default.urlPath
-        }
-        def user = userRepository.load(userPrincipal.id)
-
-        switch (user.role) {
-            case MANAGER:  return user.uiProfile.skin.urlPath
-            case CLIENT:   return user.manager.uiProfile.skin.urlPath
-            default:
-                throw new IllegalArgumentException("Unsupported role: " + user.role)
+        } else {
+            return currentUiProfile.skin.urlPath
         }
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
     boolean isLogoSet() {
-        HttpSession session = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getSession()
+        return (currentUiProfile?.icon != null)
+    }
 
-        LogoBean logoBean = (LogoBean) session.getAttribute("logoBean");
+    private UiProfile getCurrentUiProfile() {
+        def userPrincipal = FacesContext.currentInstance.externalContext.userPrincipal as WebUser
+        if (!userPrincipal) {
+            return null
+        }
 
-        return logoBean.logo != null
+        def user = userRepository.load(userPrincipal.id)
+
+        switch (user.role) {
+            case MANAGER:  return user.uiProfile
+            case CLIENT:   return user.manager.uiProfile
+            default:
+                throw new IllegalArgumentException("Unsupported role: " + user.role)
+        }
     }
 }

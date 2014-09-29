@@ -294,7 +294,7 @@ class UserTest extends ValidationTestCase {
                 manager: null)
 
         assertThat violations, hasSize(1)
-        assertEquals "valid2", violations[0].propertyPath.first().name
+        assertEquals "validManager", violations[0].propertyPath.first().name
     }
 
 }

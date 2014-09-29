@@ -1,6 +1,9 @@
 package mobi.eyeline.ips.web.servlets;
 
-import mobi.eyeline.ips.model.User;
+import mobi.eyeline.ips.repository.UserRepository;
+import mobi.eyeline.ips.service.Services;
+import mobi.eyeline.ips.web.controllers.LogoBean;
+import org.apache.http.HttpStatus;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -9,18 +12,37 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ImageViewServlet extends HttpServlet {
-    //TODO: dont forget any exceptions here
-//    private final UserRepository userRepository = Services.instance().getUserRepository();
+
+    private final UserRepository userRepository = Services.instance().getUserRepository();
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        Integer userId = Integer.valueOf(request.getPathInfo().substring(1));
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        final String[] pathParts = request.getPathInfo().split("/");
 
-        User user = (User) request.getSession().getAttribute("updatedUser");
-        response.setHeader("Content-Type", getServletContext().getMimeType("logoImage"));
-        response.setHeader("Content-Disposition", "inline; filename=\"" + "logoImage" + "\"");
+        if ("logo".equals(pathParts[1])) {
+            try {
+                final int userId = Integer.parseInt(pathParts[2]);
+                returnImage(response, userRepository.load(userId).getUiProfile().getIcon());
 
+            } catch (Exception e) {
+                response.setStatus(HttpStatus.SC_BAD_REQUEST);
+            }
 
-        response.getOutputStream().write(user.getUiProfile().getIcon());
+        } else if ("preview".equals(pathParts[1])) {
+            final LogoBean logoBean = (LogoBean) request.getSession().getAttribute("logoBean");
 
+            returnImage(response, logoBean.getBytes());
+
+        } else {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+        }
+    }
+
+    private void returnImage(HttpServletResponse response,
+                             byte[] image) throws IOException {
+        response.setHeader("Content-Type", getServletContext().getMimeType("image"));
+//        response.setHeader("Content-Disposition", "inline; filename=\"" + "logo" + "\"");
+        response.getOutputStream().write(image);
     }
 }

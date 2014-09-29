@@ -20,8 +20,8 @@ class MailServiceTest extends GroovyTestCase {
     @SuppressWarnings("GroovyMissingReturnStatement")
     static class StubTemplateService extends TemplateService {
 
-        StubTemplateService(Config properties, LocationService locationService) {
-            super(properties, locationService)
+        StubTemplateService(Config properties, String loginUrl) {
+            super(properties, loginUrl)
         }
 
         String formatUserRegistration(User user, String rawPassword) { fail() }

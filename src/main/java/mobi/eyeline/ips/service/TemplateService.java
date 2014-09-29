@@ -40,12 +40,12 @@ public class TemplateService {
     private final Configuration configuration;
 
     private final Config properties;
-    private final LocationService locationService;
+    private final String loginUrl;
 
     public TemplateService(Config properties,
-                           LocationService locationService) {
+                           String loginUrl) {
         this.properties = properties;
-        this.locationService = locationService;
+        this.loginUrl = loginUrl;
 
         configuration = new Configuration() {{
             setOutputEncoding(ENCODING);
@@ -118,7 +118,7 @@ public class TemplateService {
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
             put("password", rawPassword);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
@@ -129,7 +129,7 @@ public class TemplateService {
 
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
@@ -140,7 +140,7 @@ public class TemplateService {
 
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
@@ -151,7 +151,7 @@ public class TemplateService {
 
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
@@ -164,7 +164,7 @@ public class TemplateService {
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
             put("password", rawNewPassword);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);

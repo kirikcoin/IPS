@@ -27,8 +27,8 @@ class UserServiceTest extends DbTestCase {
     @SuppressWarnings("GroovyMissingReturnStatement")
     static class StubTemplateService extends TemplateService {
 
-        StubTemplateService(Config properties, LocationService locationService) {
-            super(properties, locationService)
+        StubTemplateService(Config properties, String loginUrl) {
+            super(properties, loginUrl)
         }
 
         String formatUserRegistration(User u, String s) { fail() }

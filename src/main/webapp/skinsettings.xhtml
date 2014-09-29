@@ -22,6 +22,12 @@
         if ("#{settingsPageController.error}" == 'false') {
           ips.message.info("#{bundle['settings.saved']}");
         }
+
+        if ("#{settingsPageController.error}" == 'true') {
+            $("#logo").addClass("validationError");
+            page.onLogoModifyDialogShow();
+        }
+
         //    ]]>
       </script>
     </ui:define>
@@ -30,7 +36,7 @@
 
       <div id="settingsPage">
         <h:form enctype="multipart/form-data" id="content" prependId="false">
-          <eye:saveState value="#{settingsPageController.user.uiProfile}"/>
+          <eye:saveState value="#{settingsPageController.viewSavedLogo}"/>
 
           <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -41,6 +47,7 @@
             <h:panelGroup id="settingsPageBody" layout="block" styleClass="page-body">
               <div style="margin:10px"></div>
 
+
               <h:panelGrid columns="2" columnClasses="col1,col2">
 
                 <h:outputLabel value="#{bundle['settings.skin']}"
@@ -49,7 +56,6 @@
                   <f:selectItems value="#{settingsPageController.skins}"/>
                 </h:selectOneMenu>
               </h:panelGrid>
-
 
               <eye:collapsingGroup opened="true" id="logoSettings">
                 <f:facet name="header">
@@ -67,22 +73,28 @@
 
                   <div style="margin:10px"></div>
 
-                  <h:graphicImage rendered="#{settingsPageController.user.uiProfile.icon != null}" value="images/#{settingsPageController.user.id}"/>
-                  <h:outputText rendered="#{settingsPageController.user.uiProfile.icon == null}" value="#{bundle['settings.logo.no']}"/>
+                  <h:graphicImage rendered="#{settingsPageController.previewLogoSet}"
+                                  value="/images/preview"/>
+                  <h:outputText rendered="#{!settingsPageController.previewLogoSet}"
+                                value="#{bundle['settings.logo.no']}"/>
                 </h:panelGroup>
 
                 <h:panelGroup id="logoModifyDialog" style="display: none">
+
+
                   <h:panelGrid columns="2">
                     <h:outputLabel value="#{bundle['settings.logo']}"
                                    for="logo"/>
                     <eye:inputFile id="logo" value="#{settingsPageController.imageFile}"/>
                   </h:panelGrid>
+                  <div style="margin:10px"></div>
+                  <h:outputText style="font-style: italic" value="#{bundle['settings.logo.modify.dialog.text']}"/>
 
                   <eye:buttons>
                     <eye:button>
                       <h:commandLink styleClass="button-green"
                                      value="#{bundle['settings.logo.modify.dialog.save']}"
-                                     action="#{settingsPageController.saveLogo}"/>
+                                     action="#{settingsPageController.uploadLogo}"/>
                     </eye:button>
                     <eye:button>
                       <h:commandLink styleClass="button-green"

@@ -16,7 +16,6 @@ class UserSessionController extends BaseController {
 
     String logout() {
         getHttpSession(false)?.invalidate()
-        Services.instance().locationService.skin = UiProfile.Skin.MOBAK
         return 'LOGIN'
     }
 

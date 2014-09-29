@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession
 class EnterController extends BaseController {
     private final UserRepository userRepository = Services.instance().userRepository
     private final  HttpSession session = request.session
-    LogoBean logoBean;
 
     Object getRunOnLogin() {
         init()
@@ -27,32 +26,18 @@ class EnterController extends BaseController {
         new LocaleController().changeLocale(user)
 
         if (request.isUserInRole('manager') ) {
-
-            if(user.uiProfile !=null){
-                Services.instance().locationService.skin = user.uiProfile.skin
-                logoBean.logo = user.uiProfile.icon
-            }
             redirect '/pages/surveys/index.faces'
 
         } else if (request.isUserInRole('client')) {
-
-            if(user.manager.uiProfile != null) {
-                logoBean.logo = user.manager.uiProfile.icon
-                Services.instance().locationService.skin = user.manager.uiProfile.skin
-            }
-
             redirect '/pages/surveys/index.faces'
 
         } else if (request.isUserInRole('admin')) {
             logger.error("There no admin role in ips")
             throw new AssertionError()
 
-
         } else {
             redirect '/login.faces'
         }
-
-
     }
 
     private void redirect(String target) {

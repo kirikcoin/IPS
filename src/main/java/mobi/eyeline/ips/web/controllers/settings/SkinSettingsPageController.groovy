@@ -10,10 +10,8 @@ import mobi.eyeline.ips.web.controllers.LogoBean
 import mobi.eyeline.ips.web.validators.ImageValidator
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
-import javax.faces.context.FacesContext
+import javax.annotation.PostConstruct
 import javax.faces.model.SelectItem
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpSession
 
 import static mobi.eyeline.ips.web.controllers.BaseController.getStrings
 
@@ -22,12 +20,15 @@ import static mobi.eyeline.ips.web.controllers.BaseController.getStrings
 class SkinSettingsPageController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
-    private final  HttpSession session = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getSession()
+
     User user
     UploadedFile imageFile
     Boolean error
-    LogoBean logoBean
 
+    /** Stored in session */
+    LogoBean previewLogo
+
+    LogoBean viewSavedLogo
 
     final List<SelectItem> skins = UiProfile.Skin.values().collect {
         UiProfile.Skin skin -> new SelectItem(skin.toString(), nameOf(skin))
@@ -35,10 +36,15 @@ class SkinSettingsPageController extends BaseController {
 
     SkinSettingsPageController() {
         user = getCurrentUser()
-        session.setAttribute("updatedUser", user)
-        if (user.uiProfile == null) {
-            user.uiProfile = new UiProfile()
+    }
+
+    @PostConstruct
+    void initBeans() {
+        if (!viewSavedLogo || !viewSavedLogo.bytes) {
+            viewSavedLogo = new LogoBean(bytes: user.uiProfile.icon)
         }
+
+        getPreviewLogo().bytes = viewSavedLogo.bytes
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
@@ -47,40 +53,44 @@ class SkinSettingsPageController extends BaseController {
         strings["settings.skin.$skin".toString()]
     }
 
-
     void save() {
+        user.uiProfile.icon = viewSavedLogo.bytes
+
         userRepository.update(user)
-        logoBean.logo = user.uiProfile.icon
-        logoBean.skin = user.uiProfile.skin
+
+        previewLogo.bytes = viewSavedLogo.bytes
         error = false
     }
 
     String cancelSave() {
-        session.setAttribute("updatedUser", null)
-        return "LOGIN"
+        viewSavedLogo = new LogoBean(bytes: user.uiProfile.icon)
+        return 'LOGIN'
     }
 
-    void saveLogo() {
+    void uploadLogo() {
         if (validate()) {
-            user.uiProfile.icon = imageFile.inputStream.bytes
+            viewSavedLogo = new LogoBean(bytes: imageFile.inputStream.bytes)
+            previewLogo.bytes = viewSavedLogo.bytes
+
         } else {
             addErrorMessage(strings['settings.validation.logo'], 'logo')
         }
     }
 
     void deleteLogo() {
-        user.uiProfile.icon = null
+        viewSavedLogo = new LogoBean(bytes: null as byte[])
+    }
+
+    boolean isPreviewLogoSet() {
+        viewSavedLogo.bytes != null
     }
 
     boolean validate() {
-        if (imageFile == null) {
+        if (!imageFile || !ImageValidator.validate(imageFile.filename)) {
             error = true
             return false
-        }
-        if(ImageValidator.validate(imageFile.filename)){
+        } else {
             return true
         }
-        error = true
-        return false
     }
 }

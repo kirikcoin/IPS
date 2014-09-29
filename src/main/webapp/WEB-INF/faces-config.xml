@@ -48,7 +48,7 @@
     <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
 
-  <managed-bean>
+  <managed-bean eager="true">
     <managed-bean-name>logoBean</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.LogoBean</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
@@ -143,7 +143,7 @@
     <managed-bean-class>mobi.eyeline.ips.web.controllers.settings.SkinSettingsPageController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
     <managed-property>
-      <property-name>logoBean</property-name>
+      <property-name>previewLogo</property-name>
       <value>#{logoBean}</value>
     </managed-property>
   </managed-bean>
@@ -165,10 +165,6 @@
     <managed-bean-name>enterController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.EnterController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
-    <managed-property>
-      <property-name>logoBean</property-name>
-      <value>#{logoBean}</value>
-    </managed-property>
   </managed-bean>
 
   <!-- VALIDATION ================================================================================================== -->
