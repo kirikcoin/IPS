@@ -59,7 +59,7 @@
 
     <!-- JSF components -->
     <dependency org="org.glassfish" name="javax.faces" rev="2.2.8" conf="site->default"/>
-    <dependency org="mobi.eyeline.util" name="jsf2components" rev="2.0.10" conf="site->components"
+    <dependency org="mobi.eyeline.util" name="jsf2components" rev="2.0.11" conf="site->components"
             transitive="false"/>
 
     <!-- Utils -->
