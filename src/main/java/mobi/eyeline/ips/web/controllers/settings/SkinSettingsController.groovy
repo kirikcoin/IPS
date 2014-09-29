@@ -13,11 +13,9 @@ import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 import javax.annotation.PostConstruct
 import javax.faces.model.SelectItem
 
-import static mobi.eyeline.ips.web.controllers.BaseController.getStrings
-
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
-class SkinSettingsPageController extends BaseController {
+class SkinSettingsController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
 
@@ -31,20 +29,20 @@ class SkinSettingsPageController extends BaseController {
     LogoBean viewSavedLogo
 
     final List<SelectItem> skins = UiProfile.Skin.values().collect {
-        UiProfile.Skin skin -> new SelectItem(skin.toString(), nameOf(skin))
+        UiProfile.Skin skin -> new SelectItem(skin, nameOf(skin))
     }
 
-    SkinSettingsPageController() {
+    SkinSettingsController() {
         user = getCurrentUser()
     }
 
     @PostConstruct
     void initBeans() {
-        if (!viewSavedLogo || !viewSavedLogo.bytes) {
+        if (!viewSavedLogo?.bytes) {
             viewSavedLogo = new LogoBean(bytes: user.uiProfile.icon)
         }
 
-        getPreviewLogo().bytes = viewSavedLogo.bytes
+        previewLogo.bytes = viewSavedLogo.bytes
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
@@ -63,8 +61,8 @@ class SkinSettingsPageController extends BaseController {
     }
 
     String cancelSave() {
-        viewSavedLogo = new LogoBean(bytes: user.uiProfile.icon)
-        return 'LOGIN'
+//        viewSavedLogo = new LogoBean(bytes: user.uiProfile.icon)
+        'LOGIN'
     }
 
     void uploadLogo() {
@@ -85,12 +83,11 @@ class SkinSettingsPageController extends BaseController {
         viewSavedLogo.bytes != null
     }
 
-    boolean validate() {
+    private boolean validate() {
         if (!imageFile || !ImageValidator.validate(imageFile.filename)) {
             error = true
-            return false
-        } else {
-            return true
         }
+
+        return !error
     }
 }

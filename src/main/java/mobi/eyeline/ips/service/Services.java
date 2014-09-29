@@ -66,7 +66,6 @@ public class Services {
 
     private final CsvParseService csvParseService;
     private final TimeZoneService timeZoneService;
-    private final String loginUrl;
 
     private Services(Config config) {
         db = new DB(config.getDatabaseProperties());
@@ -96,9 +95,7 @@ public class Services {
                 surveyInvitationRepository,
                 invitationDeliveryRepository);
 
-        loginUrl = config.getLoginUrl();
-
-        templateService = new TemplateService(config, loginUrl);
+        templateService = new TemplateService(config.getLoginUrl());
         mailService = new MailService(templateService,
                 new SmtpSender(
                         config.getSmtpHost(),
@@ -280,9 +277,5 @@ public class Services {
 
     public TimeZoneService getTimeZoneService() {
         return timeZoneService;
-    }
-
-    public String getLoginUrl() {
-        return loginUrl;
     }
 }

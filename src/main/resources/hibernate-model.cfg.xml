@@ -6,6 +6,8 @@
 <hibernate-configuration>
     <session-factory>
         <mapping class="mobi.eyeline.ips.model.User"/>
+        <mapping class="mobi.eyeline.ips.model.UiProfile"/>
+
         <mapping class="mobi.eyeline.ips.model.Respondent"/>
         <mapping class="mobi.eyeline.ips.model.SurveyStats"/>
         <mapping class="mobi.eyeline.ips.model.AccessNumber"/>
@@ -20,6 +22,5 @@
         <mapping class="mobi.eyeline.ips.model.InvitationDelivery"/>
         <mapping class="mobi.eyeline.ips.model.DeliverySubscriber"/>
         <mapping class="mobi.eyeline.ips.model.SurveyPattern"/>
-        <mapping class="mobi.eyeline.ips.model.UiProfile"/>
     </session-factory>
 </hibernate-configuration>

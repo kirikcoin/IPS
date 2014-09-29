@@ -13,7 +13,7 @@ class MockMailService extends MailService {
     }
 
     private static TemplateService newTemplateService() {
-        new TemplateService(new DefaultMockConfig(), null)
+        new TemplateService(null)
     }
 
     private static SmtpSender newSmtpSender() {

@@ -19,7 +19,7 @@ import static java.util.concurrent.TimeUnit.HOURS
 import static java.util.concurrent.TimeUnit.MILLISECONDS
 
 @CompileStatic
-class ProfilePageController extends BaseController {
+class ProfileController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
     private final UserService userService = Services.instance().userService
@@ -34,7 +34,7 @@ class ProfilePageController extends BaseController {
 
     boolean updateOk
 
-    ProfilePageController() {
+    ProfileController() {
         user = getCurrentUser()
         localeController = new LocaleController()
     }

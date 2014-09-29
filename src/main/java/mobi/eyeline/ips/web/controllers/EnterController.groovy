@@ -13,8 +13,6 @@ import javax.servlet.http.HttpSession
 @CompileStatic
 @Slf4j('logger')
 class EnterController extends BaseController {
-    private final UserRepository userRepository = Services.instance().userRepository
-    private final  HttpSession session = request.session
 
     Object getRunOnLogin() {
         init()
@@ -25,10 +23,7 @@ class EnterController extends BaseController {
         User user = getCurrentUser()
         new LocaleController().changeLocale(user)
 
-        if (request.isUserInRole('manager') ) {
-            redirect '/pages/surveys/index.faces'
-
-        } else if (request.isUserInRole('client')) {
+        if (request.isUserInRole('manager') || request.isUserInRole('client')) {
             redirect '/pages/surveys/index.faces'
 
         } else if (request.isUserInRole('admin')) {

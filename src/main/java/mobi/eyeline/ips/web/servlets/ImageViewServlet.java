@@ -26,7 +26,7 @@ public class ImageViewServlet extends HttpServlet {
                 returnImage(response, userRepository.load(userId).getUiProfile().getIcon());
 
             } catch (Exception e) {
-                response.setStatus(HttpStatus.SC_BAD_REQUEST);
+                response.sendError(HttpStatus.SC_BAD_REQUEST);
             }
 
         } else if ("preview".equals(pathParts[1])) {
@@ -35,13 +35,13 @@ public class ImageViewServlet extends HttpServlet {
             returnImage(response, logoBean.getBytes());
 
         } else {
-            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            response.sendError(HttpStatus.SC_NOT_FOUND);
         }
     }
 
     private void returnImage(HttpServletResponse response,
                              byte[] image) throws IOException {
-        response.setHeader("Content-Type", getServletContext().getMimeType("image"));
+        response.setHeader("Content-Type", "application/octet-stream");
 //        response.setHeader("Content-Disposition", "inline; filename=\"" + "logo" + "\"");
         response.getOutputStream().write(image);
     }

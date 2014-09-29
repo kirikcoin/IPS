@@ -315,22 +315,14 @@ public class User implements Serializable {
         this.manager = manager;
     }
 
-    @AssertTrue(message = "Only manager must uiProfile")
+    @AssertTrue(message = "uiProfile set for non-manager role")
     private boolean isValidUiProfile() {
-        if(role == Role.MANAGER){
-            return (uiProfile != null);
-        }
-
-        return (uiProfile == null);
+        return (role == Role.MANAGER) ? (uiProfile != null) : (uiProfile == null);
     }
 
-    @AssertTrue(message = "Manager must have manager field equals null")
-    private boolean isValidManager() {
-        if(role == Role.MANAGER){
-            return (manager == null);
-        }
-
-        return (manager != null);
+    @AssertTrue(message = "Manager must have 'manager' field unset")
+    private boolean isValidManagerLink() {
+        return role == Role.MANAGER ? manager == null : manager != null;
     }
 
     @Override

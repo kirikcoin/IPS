@@ -19,7 +19,7 @@ class TemplateServiceTest extends GroovyTestCase {
         configClass = new MockFor(Config)
 
         config = configClass.proxyDelegateInstance() as Config
-        templateService = new TemplateService(config, "http://example.com")
+        templateService = new TemplateService('http://example.com')
     }
 
     void tearDown() {
@@ -28,22 +28,22 @@ class TemplateServiceTest extends GroovyTestCase {
 
     void testFormatUserRegistration() {
         def user = new User(
-                login: "admin",
-                password: "ignored",
-                email: "username@example.com",
-                fullName: "John Doe")
+                login: 'admin',
+                password: 'ignored',
+                email: 'username@example.com',
+                fullName: 'John Doe')
 
-        def text = templateService.formatUserRegistration(user, "pw\$!jFo22/=")
+        def text = templateService.formatUserRegistration(user, 'pw\$!jFo22/=')
 
         assertThat text, not(isEmptyString())
     }
 
     void testFormatUserDeactivation() {
         def user = new User(
-                login: "admin",
-                password: "ignored",
-                email: "username@example.com",
-                fullName: "John Doe")
+                login: 'admin',
+                password: 'ignored',
+                email: 'username@example.com',
+                fullName: 'John Doe')
 
         def text = templateService.formatUserDeactivation(user)
 
@@ -52,12 +52,12 @@ class TemplateServiceTest extends GroovyTestCase {
 
     void testFormatPasswordRestore() {
         def user = new User(
-                login: "admin",
-                password: "ignored",
-                email: "username@example.com",
-                fullName: "John Doe")
+                login: 'admin',
+                password: 'ignored',
+                email: 'username@example.com',
+                fullName: 'John Doe')
 
-        def text = templateService.formatPasswordRestore(user, "pw\$!jFo22/=")
+        def text = templateService.formatPasswordRestore(user, 'pw\$!jFo22/=')
 
         assertThat text, not(isEmptyString())
     }

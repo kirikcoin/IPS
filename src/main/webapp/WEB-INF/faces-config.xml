@@ -134,13 +134,13 @@
 
   <managed-bean>
     <managed-bean-name>profilePageController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.profile.ProfilePageController</managed-bean-class>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.profile.ProfileController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
 
   <managed-bean>
-    <managed-bean-name>settingsPageController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.settings.SkinSettingsPageController</managed-bean-class>
+    <managed-bean-name>skinSettingsController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.settings.SkinSettingsController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
     <managed-property>
       <property-name>previewLogo</property-name>

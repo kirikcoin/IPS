@@ -24,35 +24,20 @@ class UserServiceTest extends DbTestCase {
     def user
     def manager
 
-    @SuppressWarnings("GroovyMissingReturnStatement")
-    static class StubTemplateService extends TemplateService {
-
-        StubTemplateService(Config properties, String loginUrl) {
-            super(properties, loginUrl)
-        }
-
-        String formatUserRegistration(User u, String s) { fail() }
-        String formatUserDeactivation(User u) { fail() }
-        String formatUserActivation(User u) { fail() }
-        String formatPasswordRestore(User u, String s) { fail() }
-    }
-
     void setUp() {
         super.setUp()
-
-
 
         configClass = new MockFor(Config)
         config = configClass.proxyDelegateInstance() as Config
         senderProxy = new SmtpSender("-", 0, "-", "-", "-") {
             void send(MailService.Message message) {
-                assertEquals "username@example.com", message.targetEmail
+                assertEquals 'username@example.com', message.targetEmail
                 assertThat message.subject, not(isEmptyString())
             }
         }
         userRepository = new UserRepository(db)
 
-        def templateService = new StubTemplateService(config, null) {
+        def templateService = new MockTemplateService(null) {
             String formatPasswordRestore(User u, String s) { '' }
             String formatUserDeactivation(User u) { '' }
             String formatUserActivation(User u) { '' }
@@ -62,89 +47,88 @@ class UserServiceTest extends DbTestCase {
 
         manager = new User(
                 login: 'testManager',
-                password: "testManagerPassw".pw(),
+                password: 'testManagerPassw'.pw(),
                 email: 'manager@example.com',
                 fullName: 'John Doe',
                 role: Role.MANAGER,
                 uiProfile: new UiProfile())
 
         userRepository.save(manager)
-
     }
 
     void testRestorePassword() {
 
-        user =  new User(
-                login: "user",
-                password: "password".pw(),
-                email: "username@example.com",
-                fullName: "John Doe",
+        user = new User(
+                login: 'user',
+                password: 'password'.pw(),
+                email: 'username@example.com',
+                fullName: 'John Doe',
                 role: Role.CLIENT,
                 manager: manager)
 
         userRepository.save(user)
-        userService.resetPassword("username@example.com")
-        user = userRepository.getByEmail("username@example.com")
-        assertFalse user.password.equals("password".pw())
+        userService.resetPassword('username@example.com')
+        user = userRepository.getByEmail('username@example.com')
+        assertFalse user.password.equals('password'.pw())
 
     }
 
     void testDeActivate() {
-        user =  new User(
-                login: "user",
-                password: "password".pw(),
-                email: "username@example.com",
-                fullName: "John Doe",
+        user = new User(
+                login: 'user',
+                password: 'password'.pw(),
+                email: 'username@example.com',
+                fullName: 'John Doe',
                 blocked: false,
                 role: Role.CLIENT,
                 manager: manager)
 
         userRepository.save(user)
         userService.deActivate(user)
-        user = userRepository.getByLogin("user")
+        user = userRepository.getByLogin('user')
         assertTrue(user.blocked)
     }
 
     void testActivate() {
-        user =  new User(
-                login: "user",
-                password: "password".pw(),
-                email: "username@example.com",
-                fullName: "John Doe",
+        user = new User(
+                login: 'user',
+                password: 'password'.pw(),
+                email: 'username@example.com',
+                fullName: 'John Doe',
                 blocked: true,
                 role: Role.CLIENT,
                 manager: manager)
 
         userRepository.save(user)
         userService.activate(user)
-        user = userRepository.getByLogin("user")
+        user = userRepository.getByLogin('user')
         assertFalse(user.blocked)
     }
 
     void testLoginEmailAllowed() {
-        User user1 =  new User(
-                login: "user1",
-                password: "password".pw(),
-                email: "username1@example.com",
-                fullName: "John Doe1",
+        User user1 = new User(
+                login: 'user1',
+                password: 'password'.pw(),
+                email: 'username1@example.com',
+                fullName: 'John Doe1',
                 blocked: false,
                 role: Role.CLIENT,
                 manager: manager)
 
-        User user2 =  new User(
-                login: "user2",
-                password: "password".pw(),
-                email: "username2@example.com",
-                fullName: "John Doe2",
+        User user2 = new User(
+                login: 'user2',
+                password: 'password'.pw(),
+                email: 'username2@example.com',
+                fullName: 'John Doe2',
                 blocked: false,
                 role: Role.CLIENT,
                 manager: manager)
 
-        User user3 =  new User(
-                login: "user1",
-                password: "password".pw(),
-                email: "username1@example.com",
-                fullName: "John Doe2",
+        User user3 = new User(
+                login: 'user1',
+                password: 'password'.pw(),
+                email: 'username1@example.com',
+                fullName: 'John Doe2',
                 blocked: false,
                 role: Role.CLIENT,
                 manager: manager)
@@ -163,22 +147,20 @@ class UserServiceTest extends DbTestCase {
     }
 
     void testCheckPassword() {
-        User user =  new User(
-                login: "user",
-                password: "password".pw(),
-                email: "username1@example.com",
-                fullName: "John Doe1",
+        def user = new User(
+                login: 'user',
+                password: 'password'.pw(),
+                email: 'username1@example.com',
+                fullName: 'John Doe1',
                 blocked: false,
                 role: Role.CLIENT,
                 manager: manager)
 
         userRepository.save(user)
-        user = userRepository.getByLogin("user")
-        assertTrue(userService.checkPassword(user,"password"))
-        assertFalse(userService.checkPassword(user,"wrongPassword"))
+        user = userRepository.getByLogin('user')
+        assertTrue(userService.checkPassword(user,'password'))
+        assertFalse(userService.checkPassword(user,'wrongPassword'))
 
     }
-
-
 
 }

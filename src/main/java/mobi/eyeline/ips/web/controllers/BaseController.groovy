@@ -29,7 +29,7 @@ public abstract class BaseController implements Serializable {
     private final UserRepository userRepository = Services.instance().userRepository
 
     BaseController() {
-        logger.trace("Controller instantiated: [" + this.class.name + "]")
+        logger.trace("Controller instantiated: [${this.class.name}]")
     }
 
     //

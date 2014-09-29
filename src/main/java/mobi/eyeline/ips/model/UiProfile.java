@@ -67,6 +67,9 @@ public class UiProfile {
 
         public static Skin getDefault() { return Skin.MOBAK; }
 
+        /**
+         * Path part relative to {@code resources/skins}.
+         */
         public String getUrlPath() {
             return name().toLowerCase();
         }

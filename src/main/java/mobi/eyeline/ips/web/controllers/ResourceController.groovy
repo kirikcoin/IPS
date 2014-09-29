@@ -4,18 +4,15 @@ import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
-import mobi.eyeline.ips.web.auth.WebUser
 
 import javax.faces.context.FacesContext
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpSession
 
 import static mobi.eyeline.ips.model.Role.CLIENT
 import static mobi.eyeline.ips.model.Role.MANAGER
 import static mobi.eyeline.ips.web.BuildVersion.BUILD_VERSION
 
 @CompileStatic
-class ResourceController implements Serializable {
+class ResourceController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
 
@@ -44,8 +41,10 @@ class ResourceController implements Serializable {
         return (currentUiProfile?.icon != null)
     }
 
+    /**
+     * @return {@linkplain UiProfile} of the current user or {@code null} if no user logged in.
+     */
     private UiProfile getCurrentUiProfile() {
-        def userPrincipal = FacesContext.currentInstance.externalContext.userPrincipal as WebUser
         if (!userPrincipal) {
             return null
         }

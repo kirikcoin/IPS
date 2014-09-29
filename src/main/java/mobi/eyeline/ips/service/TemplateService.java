@@ -5,7 +5,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
-import mobi.eyeline.ips.properties.Config;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -39,12 +38,9 @@ public class TemplateService {
 
     private final Configuration configuration;
 
-    private final Config properties;
     private final String loginUrl;
 
-    public TemplateService(Config properties,
-                           String loginUrl) {
-        this.properties = properties;
+    public TemplateService(String loginUrl) {
         this.loginUrl = loginUrl;
 
         configuration = new Configuration() {{
