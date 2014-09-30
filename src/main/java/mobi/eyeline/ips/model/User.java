@@ -146,10 +146,12 @@ public class User implements Serializable {
 
     @OneToOne(cascade = ALL)
     @JoinColumn(name = "ui_profile_id")
+    @Cache(usage = READ_WRITE)
     private UiProfile uiProfile;
 
     @JoinColumn(name = "manager_id")
     @ManyToOne
+    @Cache(usage = READ_WRITE)
     private User manager;
 
     public User() {

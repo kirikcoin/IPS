@@ -10,6 +10,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -111,6 +112,7 @@ public class Survey implements Serializable {
             inverseJoinColumns = {
                     @JoinColumn(name = "user_id")
             })
+    @Cache(usage = READ_WRITE)
     private User client;
 
     /**
@@ -119,6 +121,7 @@ public class Survey implements Serializable {
      */
     @JoinColumn(name = "owner_id")
     @ManyToOne(optional = true, cascade = CascadeType.ALL)
+    @Cache(usage = READ_WRITE)
     private User owner;
 
     @OneToMany(mappedBy = "survey", cascade = ALL, orphanRemoval = true)
