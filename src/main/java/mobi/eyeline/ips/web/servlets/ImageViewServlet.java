@@ -24,11 +24,15 @@ public class ImageViewServlet extends HttpServlet {
         if ("logo".equals(pathParts[1])) {
             try {
                 final int userId = Integer.parseInt(pathParts[2]);
-                User user = userRepository.load(userId);
+                final User user = userRepository.load(userId);
 
                 switch (user.getRole()) {
-                    case MANAGER:   returnImage(response, user.getUiProfile().getIcon());
-                    case CLIENT:    returnImage(response, user.getManager().getUiProfile().getIcon());
+                    case MANAGER:
+                        returnImage(response, user.getUiProfile().getIcon());
+                        break;
+                    case CLIENT:
+                        returnImage(response, user.getManager().getUiProfile().getIcon());
+                        break;
                     default:
                         throw new IllegalArgumentException("Unsupported role: " + user.getRole());
                 }
