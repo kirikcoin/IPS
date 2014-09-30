@@ -23,7 +23,7 @@
 
     <!-- Shared test DB. -->
 
-    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8&amp;rewriteBatchedStatements=true&amp;allowMultiQueries=true</param>
+    <param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips_skins?useUnicode=true&amp;characterEncoding=UTF-8&amp;rewriteBatchedStatements=true&amp;allowMultiQueries=true</param>
     <param name="hibernate.connection.username" type="string">user</param>
     <param name="hibernate.connection.password" type="string">password</param>
 

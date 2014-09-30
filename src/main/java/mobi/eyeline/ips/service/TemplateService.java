@@ -5,7 +5,6 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
-import mobi.eyeline.ips.properties.Config;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -39,13 +38,10 @@ public class TemplateService {
 
     private final Configuration configuration;
 
-    private final Config properties;
-    private final LocationService locationService;
+    private final String loginUrl;
 
-    public TemplateService(Config properties,
-                           LocationService locationService) {
-        this.properties = properties;
-        this.locationService = locationService;
+    public TemplateService(String loginUrl) {
+        this.loginUrl = loginUrl;
 
         configuration = new Configuration() {{
             setOutputEncoding(ENCODING);
@@ -118,7 +114,7 @@ public class TemplateService {
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
             put("password", rawPassword);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
@@ -129,7 +125,7 @@ public class TemplateService {
 
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
@@ -140,7 +136,7 @@ public class TemplateService {
 
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
@@ -151,7 +147,7 @@ public class TemplateService {
 
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);
@@ -164,7 +160,7 @@ public class TemplateService {
         final Map<String, Object> data = new HashMap<String, Object>() {{
             put("user", user);
             put("password", rawNewPassword);
-            put("loginUrl", locationService.getLoginUrl());
+            put("loginUrl", loginUrl);
         }};
 
         return processEmailTemplate(user.getLocale().asLocale(), template, data);

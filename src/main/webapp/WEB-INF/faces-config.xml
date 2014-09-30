@@ -45,6 +45,12 @@
     <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
 
+  <managed-bean eager="true">
+    <managed-bean-name>logoBean</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.LogoBean</managed-bean-class>
+    <managed-bean-scope>session</managed-bean-scope>
+  </managed-bean>
+
   <managed-bean>
     <managed-bean-name>dateController</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.DateController</managed-bean-class>
@@ -55,7 +61,7 @@
     <managed-bean-name>resources</managed-bean-name>
     <managed-bean-class>mobi.eyeline.ips.web.controllers.ResourceController</managed-bean-class>
     <managed-bean-scope>application</managed-bean-scope>
-  </managed-bean>
+   </managed-bean>
 
   <managed-bean>
     <managed-bean-name>baseSurveyController</managed-bean-name>
@@ -125,9 +131,20 @@
 
   <managed-bean>
     <managed-bean-name>profilePageController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.profile.ProfilePageController</managed-bean-class>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.profile.ProfileController</managed-bean-class>
     <managed-bean-scope>request</managed-bean-scope>
   </managed-bean>
+
+  <managed-bean>
+    <managed-bean-name>skinSettingsController</managed-bean-name>
+    <managed-bean-class>mobi.eyeline.ips.web.controllers.settings.SkinSettingsController</managed-bean-class>
+    <managed-bean-scope>request</managed-bean-scope>
+    <managed-property>
+      <property-name>previewLogo</property-name>
+      <value>#{logoBean}</value>
+    </managed-property>
+  </managed-bean>
+
 
   <managed-bean>
     <managed-bean-name>clientListController</managed-bean-name>
@@ -184,6 +201,15 @@
     <navigation-case>
       <from-outcome>PROFILE</from-outcome>
       <to-view-id>/profilepage.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Страница настройки скинов</description>
+    <navigation-case>
+      <from-outcome>SKIN_SETTINGS</from-outcome>
+      <to-view-id>/skinsettings.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

@@ -22,8 +22,6 @@ class FailingMockConfig implements Config {
     int getSadsMaxSessions() { fail() }
     String getBaseSurveyUrl() { fail() }
 
-    List<LocationProperties> getLocationProperties() { fail() }
-
     int getPushThreadsNumber() { fail() }
     int getMessageQueueBaseline() { fail() }
     int getStateUpdateBatchSize() { fail() }

@@ -1,16 +1,18 @@
 package mobi.eyeline.ips.web.controllers
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
 
 import javax.faces.context.FacesContext
+import javax.servlet.http.HttpSession
 
 
 @CompileStatic
+@Slf4j('logger')
 class EnterController extends BaseController {
-    private final UserRepository userRepository = Services.instance().userRepository
 
     Object getRunOnLogin() {
         init()
@@ -25,7 +27,8 @@ class EnterController extends BaseController {
             redirect '/pages/surveys/index.faces'
 
         } else if (request.isUserInRole('admin')) {
-            redirect '/pages/admin/accessNumbers.faces'
+            logger.error("There no admin role in ips")
+            throw new AssertionError()
 
         } else {
             redirect '/login.faces'

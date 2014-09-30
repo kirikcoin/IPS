@@ -3,9 +3,9 @@
 /* Стили главного меню */
 
 .ipsLogo {
-    width: 191px;
-    height: 69px;
-    background: url(../images/logoinoma.png);
+    /*width: 191px;*/
+    /*height: 69px;*/
+    /*background: url(../images/logoinoma.png);*/
     background-size: 191px 69px;
     margin-right: 20px;
 }

@@ -49,7 +49,6 @@ public class Services {
     private final MadvSoapApi madvSoapApi;
     private final MadvService madvService;
     private final SurveyService surveyService;
-    private final LocationService locationService;
     private final TemplateService templateService;
     private final MailService mailService;
     private final EsdpServiceSupport esdpServiceSupport;
@@ -96,10 +95,7 @@ public class Services {
                 surveyInvitationRepository,
                 invitationDeliveryRepository);
 
-        locationService =
-                new LocationService(config.getLocationProperties(), config.getLoginUrl());
-
-        templateService = new TemplateService(config, locationService);
+        templateService = new TemplateService(config.getLoginUrl());
         mailService = new MailService(templateService,
                 new SmtpSender(
                         config.getSmtpHost(),
@@ -227,10 +223,6 @@ public class Services {
         return surveyService;
     }
 
-    public LocationService getLocationService() {
-        return locationService;
-    }
-
     public MailService getMailService() {
         return mailService;
     }
@@ -286,5 +278,4 @@ public class Services {
     public TimeZoneService getTimeZoneService() {
         return timeZoneService;
     }
-
 }

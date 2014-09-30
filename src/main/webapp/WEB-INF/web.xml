@@ -155,6 +155,17 @@
     <url-pattern>/inform/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <description>Servlet for logo images view</description>
+    <servlet-name>imageViewServlet</servlet-name>
+    <servlet-class>mobi.eyeline.ips.web.servlets.ImageViewServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>imageViewServlet</servlet-name>
+    <url-pattern>/images/*</url-pattern>
+  </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>faces</servlet-name>
     <url-pattern>*.faces</url-pattern>
@@ -229,6 +240,20 @@
       <role-name>admin</role-name>
       <role-name>manager</role-name>
       <role-name>client</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Manager settings</web-resource-name>
+      <url-pattern>/skinsettings.faces</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+      <role-name>manager</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>
