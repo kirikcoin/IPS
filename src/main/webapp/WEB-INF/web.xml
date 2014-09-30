@@ -90,6 +90,12 @@
     <param-value>true</param-value>
   </context-param>
 
+  <context-param>
+    <param-name>com.sun.faces.defaultResourceMaxAge</param-name>
+    <!-- 3 hours = 3 * 60 * 60 * 1000 -->
+    <param-value>10800000</param-value>
+  </context-param>
+
   <!-- =============================================== FILTERS ===================================================== -->
 
   <filter>
