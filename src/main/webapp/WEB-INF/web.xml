@@ -1,17 +1,15 @@
 <?xml version = '1.0' encoding = 'utf-8'?>
 
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-         version="2.4">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
 
   <listener>
     <listener-class>mobi.eyeline.ips.web.InitListener</listener-class>
   </listener>
 
-  <listener>
-    <listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
-  </listener>
 
   <session-config>
     <session-timeout>1000</session-timeout>
@@ -20,43 +18,29 @@
   <!-- ===================================== CONTEXT INITIALIZATION ======================================== -->
 
   <context-param>
+    <param-name>javax.faces.PROJECT_STAGE</param-name>
+    <param-value>Development</param-value>
+  </context-param>
+
+  <context-param>
     <param-name>facelets.DEVELOPMENT</param-name>
     <param-value>${ips.force.resource.reload}</param-value>
   </context-param>
 
   <context-param>
-    <param-name>facelets.REFRESH_PERIOD</param-name>
+    <param-name>javax.faces.CONFIG_FILES</param-name>
+    <param-value>/WEB-INF/faces-config.xml</param-value>
+  </context-param>
+
+
+  <context-param>
+    <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
     <param-value>0</param-value>
   </context-param>
 
   <context-param>
-    <param-name>org.apache.myfaces.ERROR_HANDLING</param-name>
-    <param-value>false</param-value>
-  </context-param>
-
-  <context-param>
-    <param-name>facelets.LIBRARIES</param-name>
+    <param-name>javax.faces.FACELETS_LIBRARIES</param-name>
     <param-value>/WEB-INF/ips.taglib.xml</param-value>
-  </context-param>
-
-  <context-param>
-    <description>Maximum memory per request (in bytes)</description>
-    <param-name>org.apache.myfaces.trinidad.UPLOAD_MAX_MEMORY</param-name>
-    <!-- 5Mb -->
-    <param-value>5242880</param-value>
-  </context-param>
-
-  <context-param>
-    <description>Maximum disk space per request (in bytes)</description>
-    <param-name>org.apache.myfaces.trinidad.UPLOAD_MAX_DISK_SPACE</param-name>
-    <!-- 100Mb -->
-    <param-value>104857600</param-value>
-  </context-param>
-
-  <context-param>
-    <description>FaceletViewHandler configuration</description>
-    <param-name>org.apache.myfaces.trinidad.ALTERNATE_VIEW_HANDLER</param-name>
-    <param-value>mobi.eyeline.ips.web.IPSViewHandler</param-value>
   </context-param>
 
   <context-param>
@@ -66,7 +50,7 @@
   </context-param>
 
   <context-param>
-    <param-name>facelets.VIEW_MAPPINGS</param-name>
+    <param-name>javax.faces.VIEW_MAPPINGS</param-name>
     <param-value>*.xhtml</param-value>
   </context-param>
 
@@ -81,51 +65,36 @@
   </context-param>
 
   <context-param>
-    <param-name>org.apache.myfaces.trinidad.CACHE_VIEW_ROOT</param-name>
-    <param-value>false</param-value>
-  </context-param>
-
-  <context-param>
-    <description>Use client-side state saving</description>
+    <description>Use server-side state saving</description>
     <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-    <param-value>client</param-value>
+    <param-value>server</param-value>
   </context-param>
 
   <context-param>
-    <param-name>org.apache.myfaces.trinidad.USE_APPLICATION_VIEW_CACHE</param-name>
-    <param-value>false</param-value>
-  </context-param>
-
-  <context-param>
-    <param-name>facelets.SKIP_COMMENTS</param-name>
+    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
     <param-value>true</param-value>
   </context-param>
 
   <context-param>
-    <description>
-      If this parameter is enabled, Trinidad will automatically
-      check the modification date of your JSPs, and discard saved
-      state when they change
-    </description>
-    <param-name>org.apache.myfaces.trinidad.CHECK_FILE_MODIFICATION</param-name>
+    <param-name>javax.faces.VALIDATE_EMPTY_FIELDS</param-name>
     <param-value>false</param-value>
   </context-param>
 
   <context-param>
-    <param-name>org.apache.myfaces.trinidad.CHANGE_PERSISTENCE</param-name>
-    <param-value>request</param-value>
+    <param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>javax.faces.validator.DISABLE_DEFAULT_BEAN_VALIDATOR</param-name>
+    <param-value>true</param-value>
   </context-param>
 
   <!-- =============================================== FILTERS ===================================================== -->
 
   <filter>
-    <filter-name>trinidad</filter-name>
-    <filter-class>org.apache.myfaces.trinidad.webapp.TrinidadFilter</filter-class>
-  </filter>
-
-  <filter>
-    <filter-name>extensionsFilter</filter-name>
-    <filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
+    <filter-name>eagerParsingFilter</filter-name>
+    <filter-class>mobi.eyeline.ips.web.RequestEagerParsingFilter</filter-class>
   </filter>
 
   <filter>
@@ -139,21 +108,6 @@
   </filter>
 
   <filter-mapping>
-    <filter-name>trinidad</filter-name>
-    <servlet-name>faces</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>extensionsFilter</filter-name>
-    <servlet-name>faces</servlet-name>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>extensionsFilter</filter-name>
-    <url-pattern>/faces/myFacesExtensionResource/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
     <filter-name>lessFilter</filter-name>
     <url-pattern>*.less</url-pattern>
   </filter-mapping>
@@ -163,18 +117,31 @@
     <url-pattern>*</url-pattern>
   </filter-mapping>
 
+  <filter-mapping>
+    <filter-name>eagerParsingFilter</filter-name>
+    <servlet-name>faces</servlet-name>
+  </filter-mapping>
+
   <!-- =============================================== SERVLETS ==================================================== -->
 
   <servlet>
     <description>Faces servlet</description>
     <servlet-name>faces</servlet-name>
     <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-  </servlet>
+    <load-on-startup>1</load-on-startup>
+    <multipart-config>
+      <location>/tmp</location>
 
-  <servlet>
-    <description>Resource loader servlet</description>
-    <servlet-name>resources</servlet-name>
-    <servlet-class>org.apache.myfaces.trinidad.webapp.ResourceServlet</servlet-class>
+      <!-- ~1Gb -->
+      <max-file-size>1048576000</max-file-size>
+
+      <!-- Note: `max-request-size' is unlimited, so request will get processed as multipart/form-data
+           regardless of the overall size of uploaded files. -->
+      <max-request-size>-1</max-request-size>
+
+      <!-- 5Mb -->
+      <file-size-threshold>5242880</file-size-threshold>
+    </multipart-config>
   </servlet>
 
   <servlet>
@@ -193,10 +160,6 @@
     <url-pattern>*.faces</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>resources</servlet-name>
-    <url-pattern>/adf/*</url-pattern>
-  </servlet-mapping>
 
   <!-- ======================================= PAGES =============================================================== -->
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite">
+<head>
+  <title>Date range</title>
+</head>
+<body>
+
+<composite:interface>
+
+  <composite:attribute name="textBefore"  required="true" type="java.lang.String"/>
+  <composite:attribute name="textInRange" required="true" type="java.lang.String"/>
+  <composite:attribute name="textAfter"   required="true" type="java.lang.String"/>
+
+  <composite:attribute name="dateStart"   required="true" type="java.util.Date"/>
+  <composite:attribute name="date"        required="true" type="java.util.Date"/>
+  <composite:attribute name="dateEnd"     required="true" type="java.util.Date"/>
+
+</composite:interface>
+
+<composite:implementation>
+  <h:panelGroup>
+    <h:outputText value="#{cc.attrs.textBefore}"
+                  styleClass="dateRange_before"
+                  rendered="#{cc.attrs.date.time lt cc.attrs.dateStart.time}"/>
+
+    <h:outputText value="#{cc.attrs.textInRange}"
+                  styleClass="dateRange_in_range"
+                  rendered="#{cc.attrs.date.time ge cc.attrs.dateStart.time and cc.attrs.date.time le cc.attrs.dateEnd.time}"/>
+
+    <h:outputText value="#{cc.attrs.textAfter}"
+                  styleClass="dateRange_after"
+                  rendered="#{cc.attrs.date.time gt cc.attrs.dateEnd.time}"/>
+  </h:panelGroup>
+</composite:implementation>
+
+</body>
+</html>

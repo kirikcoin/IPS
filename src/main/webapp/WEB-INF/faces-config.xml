@@ -5,8 +5,11 @@
 
 <faces-config xmlns="http://java.sun.com/xml/ns/javaee"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_2.xsd"
               version="2.0">
+  <factory>
+    <partial-view-context-factory>mobi.eyeline.utils.partial.EyePartialViewContextFactory</partial-view-context-factory>
+  </factory>
 
   <lifecycle>
     <phase-listener>mobi.eyeline.ips.web.SessionPhaseListener</phase-listener>
@@ -24,15 +27,9 @@
       <var>bundle</var>
     </resource-bundle>
 
-    <message-bundle>external</message-bundle>
+    <view-handler>mobi.eyeline.ips.web.IPSViewHandler</view-handler>
+
   </application>
-
-  <!-- COMPONENTS=================================================================================================== -->
-
-  <component>
-    <component-type>mobi.eyeline.ips.components.tree</component-type>
-    <component-class>mobi.eyeline.ips.components.tree.Tree</component-class>
-  </component>
 
   <!-- BEANS ======================================================================================================= -->
 
@@ -174,24 +171,12 @@
   </navigation-rule>
 
   <navigation-rule>
-     <description>Восстановление пароля</description>
-     <navigation-case>
-       <from-outcome>RECOVERY_PASSWORD</from-outcome>
-       <to-view-id>/passwordreset.xhtml</to-view-id>
-       <redirect/>
-      </navigation-case>
-
-      <navigation-case>
-        <from-outcome>RETRY_RECOVERY</from-outcome>
-        <to-view-id>/passwordreset.faces?recovery=false</to-view-id>
-        <redirect/>
-      </navigation-case>
-
-      <navigation-case>
-        <from-outcome>DONE_RECOVERY</from-outcome>
-        <to-view-id>/login.faces?recovery=true</to-view-id>
-        <redirect/>
-      </navigation-case>
+    <description>Восстановление пароля</description>
+    <navigation-case>
+      <from-outcome>RECOVERY_PASSWORD</from-outcome>
+      <to-view-id>/passwordreset.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
   </navigation-rule>
 
   <navigation-rule>

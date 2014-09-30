@@ -8,6 +8,8 @@ import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.EmailValidator
 
+import javax.faces.context.FacesContext
+
 @CompileStatic
 @Slf4j('logger')
 public class PasswordResetController extends BaseController {
@@ -16,19 +18,18 @@ public class PasswordResetController extends BaseController {
 
     String email
 
-    String resetPassword() {
+    void resetPassword() {
         if (!EmailValidator.isValid(email)) {
             addErrorMessage(strings['passwrecovery.form.incorrectemail'], 'email')
-            return null
         }
 
         try {
-            userService.resetPassword((String) email)
-            return 'DONE_RECOVERY'
+            userService.resetPassword(email)
+            FacesContext.currentInstance.externalContext.redirect '/login.faces?recovery=true'
 
         } catch (LoginException e) {
-            logger.warn(e.getMessage(), e)
-            return 'RETRY_RECOVERY'
+            logger.warn(e.message, e)
+            FacesContext.currentInstance.externalContext.redirect '/passwordreset.faces?recovery=false'
         }
     }
 

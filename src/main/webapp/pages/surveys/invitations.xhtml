@@ -3,8 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-    >
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc">
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -31,7 +30,7 @@
 
           }
 
-          $('#content').attr('action',
+          $('form').attr('action',
               '/pages/surveys/invitations.faces?id=#{surveyInvitesController.surveyId}');
 
           if ("#{surveyInvitesController.inviteError}" == "true"
@@ -166,17 +165,14 @@
                   <h:outputText id="number" value="#{surveyInvitesController.survey.statistics.sentCount}"/>
 
                   <!-- Last update time -->
-                  <h:outputLabel value="#{bundle['invitations.block.advertising.company.lastupdate']}"
-                                 for="lastUpdate"/>
+                  <h:outputLabel
+                      value="#{bundle['invitations.block.advertising.company.lastupdate']}"/>
                   <h:outputText
-                      id="lastUpdate"
                       value="#{surveyInvitesController.survey.statistics.lastUpdate}"
                       rendered="#{surveyInvitesController.survey.statistics.lastUpdate != null}">
                     <f:convertDateTime type="both" dateStyle="short" timeZone="#{userSession.timeZone}"/>
                   </h:outputText>
-
                   <h:outputText
-                      id="lastUpdate"
                       value="#{bundle['invitations.block.advertising.company.lastupdate.never']}"
                       rendered="#{surveyInvitesController.survey.statistics.lastUpdate == null}"/>
 
@@ -443,14 +439,14 @@
           </div>
           <h:panelGrid columns="2">
 
-            <h:outputLabel for="deliveryReceivers"
-                           value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
+            <!-- 100Mb maximal upload size -->
+            <h:outputLabel value="#{bundle['invitations.deliveries.dialog.receiversfile']}"/>
             <eye:inputFile id="deliveryReceivers"
                            value="#{invitationDeliveryController.inputFile}"
-                           rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"/>
+                           rendered="#{invitationDeliveryController.modifiedDeliveryId==null}"
+                           maxSize="104857600"/>
 
-            <h:outputText id ="deliveryReceivers"
-                          value="#{invitationDeliveryController.modifiedDeliveryFilename}"
+            <h:outputText value="#{invitationDeliveryController.modifiedDeliveryFilename}"
                           rendered="#{invitationDeliveryController.modifiedDeliveryId!=null}"/>
 
             <h:outputLabel for="deliverySpeed"
@@ -520,26 +516,22 @@
         <ips:confirmDialog id="removeBindingDialog"
                            title="#{bundle['invitations.block.advertising.company.remove.title']}"
                            text="#{bundle['invitations.block.advertising.company.remove.text']}"
-                           actionBean="#{surveyInvitesController}"
-                           actionName="clearMadvId"/>
+                           action="#{surveyInvitesController.clearMadvId}"/>
 
         <ips:confirmDialog id="removeInviteDialog"
                            title="#{bundle['invitations.block.invitations.delivery.remove.title']}"
                            text="#{bundle['invitations.block.invitations.delivery.remove.text']}"
-                           actionBean="#{surveyInvitesController}"
-                           actionName="deleteInvite"/>
+                           action="#{surveyInvitesController.deleteInvite}"/>
 
         <ips:confirmDialog id="deliveryActivateDialog"
                            text="#{bundle['invitations.deliveries.table.status.activate.dialog.text']}"
                            title="#{bundle['invitations.deliveries.table.status.activate.dialog.title']}"
-                           actionBean="#{invitationDeliveryController}"
-                           actionName="activateDelivery"/>
+                           action="#{invitationDeliveryController.activateDelivery}"/>
 
         <ips:confirmDialog id="deliveryPauseDialog"
                            text="#{bundle['invitations.deliveries.table.status.pause.dialog.text']}"
                            title="#{bundle['invitations.deliveries.table.status.pause.dialog.title']}"
-                           actionBean="#{invitationDeliveryController}"
-                           actionName="pauseDelivery"/>
+                           action="#{invitationDeliveryController.pauseDelivery}"/>
       </h:form>
 
     </ui:define>

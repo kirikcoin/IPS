@@ -1,11 +1,12 @@
 package mobi.eyeline.ips.components.tree;
 
-import mobi.eyeline.util.jsf.components.base.UIPanelImpl;
 
-import javax.el.ValueExpression;
+import mobi.eyeline.utils.base.UIPanelImpl;
+
+import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.render.Renderer;
 
+@FacesComponent("mobi.eyeline.ips.Tree")
 public class Tree extends UIPanelImpl {
 
     private int height;
@@ -15,22 +16,8 @@ public class Tree extends UIPanelImpl {
 
     private TreeNode value;
 
-
-    protected Renderer getRenderer(FacesContext facesContext) {
-        return new TreeRenderer();
-    }
-
-    public String getRendererType() {
-        return "mobi.eyeline.ips.components.tree";
-    }
-
     public int getHeight() {
-        final ValueExpression exp = getValueExpression("height");
-        if (exp == null) {
-            return height;
-        } else {
-            return (Integer) exp.getValue(getFacesContext().getELContext());
-        }
+        return valueExpression("height", height);
     }
 
     public void setHeight(int height) {
@@ -38,12 +25,7 @@ public class Tree extends UIPanelImpl {
     }
 
     public int getWidth() {
-        final ValueExpression exp = getValueExpression("width");
-        if (exp == null) {
-            return width;
-        } else {
-            return (Integer) exp.getValue(getFacesContext().getELContext());
-        }
+        return valueExpression("height", width);
     }
 
     public void setWidth(int width) {
@@ -51,12 +33,7 @@ public class Tree extends UIPanelImpl {
     }
 
     public TreeDirection getDirection() {
-        final ValueExpression exp = getValueExpression("direction");
-        if (exp == null) {
-            return direction;
-        } else {
-            return (TreeDirection) exp.getValue(getFacesContext().getELContext());
-        }
+        return valueExpression("direction", direction);
     }
 
     public void setDirection(TreeDirection direction) {
@@ -64,12 +41,7 @@ public class Tree extends UIPanelImpl {
     }
 
     public TreeNode getValue() {
-        final ValueExpression exp = getValueExpression("value");
-        if (exp == null) {
-            return value;
-        } else {
-            return (TreeNode) exp.getValue(getFacesContext().getELContext());
-        }
+        return valueExpression("value", value);
     }
 
     public void setValue(TreeNode value) {

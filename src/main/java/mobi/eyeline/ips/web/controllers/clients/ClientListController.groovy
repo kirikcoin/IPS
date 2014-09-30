@@ -14,8 +14,7 @@ import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+
 
 import javax.faces.model.SelectItem
 

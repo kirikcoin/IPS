@@ -10,6 +10,7 @@ import mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
+
 @CompileStatic
 @Slf4j('logger')
 class AccessNumbersController extends BaseController {
@@ -51,8 +52,8 @@ class AccessNumbersController extends BaseController {
         }
     }
 
-    void goToSurvey() {
-        def surveyId = getParamValue('surveyId').asInteger()
+    @SuppressWarnings("GrMethodMayBeStatic")
+    void goToSurvey(int surveyId) {
         SurveySettingsController.goToSurvey(surveyId)
     }
 

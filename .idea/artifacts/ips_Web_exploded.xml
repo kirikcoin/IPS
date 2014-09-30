@@ -8,7 +8,7 @@
           <element id="module-output" name="ips" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="ips-compile" />
+          <element id="library" level="project" name="ips-bundled" />
         </element>
       </element>
     </root>

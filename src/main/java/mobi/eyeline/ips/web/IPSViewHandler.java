@@ -1,29 +1,35 @@
 package mobi.eyeline.ips.web;
 
 
-import mobi.eyeline.util.jsf.components.TrinidadAlternateViewHandler;
-
 import javax.faces.application.ViewHandler;
+import javax.faces.application.ViewHandlerWrapper;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Locale;
 
-/**
- * author: Denis Enenko
- * date: 22.01.2014
- */
-public class IPSViewHandler extends TrinidadAlternateViewHandler
-{
-  public final static String LOCALE_PARAMETER = "ips_user_locale";
+public class IPSViewHandler extends ViewHandlerWrapper {
 
+    public final static String LOCALE_PARAMETER = "ips_user_locale";
 
-  public IPSViewHandler(ViewHandler parent) {
-    super(parent);
-  }
+    private final ViewHandler delegate;
 
-  @Override
-  public Locale calculateLocale(FacesContext context) {
-    Locale locale = (Locale) ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getSession().getAttribute(LOCALE_PARAMETER);
-    return locale != null ? locale : super.calculateLocale(context);
-  }
+    public IPSViewHandler(ViewHandler delegate) {
+        this.delegate = delegate;
+    }
+
+    @Override
+    public ViewHandler getWrapped() {
+        return delegate;
+    }
+
+    @Override
+    public Locale calculateLocale(FacesContext context) {
+        final FacesContext ctx = FacesContext.getCurrentInstance();
+        final HttpSession session =
+                ((HttpServletRequest) ctx.getExternalContext().getRequest()).getSession();
+        final Locale locale = (Locale) session.getAttribute(LOCALE_PARAMETER);
+
+        return (locale != null) ? locale : super.calculateLocale(context);
+    }
 }

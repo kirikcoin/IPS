@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="mobi.eyeline.ips.messages.MissingParameterException" %>
 <%@ page import="mobi.eyeline.ips.messages.UssdResponseModel" %>
 <%@ page import="mobi.eyeline.ips.service.Services" %>

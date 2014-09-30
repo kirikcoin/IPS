@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:composite="http://java.sun.com/jsf/composite"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:eye="http://jsfcomponents.eyeline.mobi">
+<head>
+  <title>Confirmation dialog</title>
+</head>
+<body>
+
+<composite:interface>
+
+  <composite:attribute name="text"
+                       required="true"
+                       type="java.lang.String"
+                       shortDescription="Текст сообщения"/>
+
+  <composite:attribute name="width"
+                       required="false"
+                       type="java.lang.Integer"
+                       shortDescription="Ширина диалога"/>
+
+  <composite:attribute name="action"
+                       required="true"
+                       targets="confirmButton"
+                       shortDescription="Действие при нажатии кнопки 'Подтвердить"/>
+
+  <composite:attribute name="title"
+                       required="true"
+                       type="java.lang.String"
+                       shortDescription="Заголовок диалога"/>
+
+  <composite:attribute name="isDuplicateText"
+                       required="false"
+                       type="java.lang.Boolean"
+                       default="false"
+                       shortDescription="Флаг наличия скрытого дубликата текста"/>
+
+</composite:interface>
+
+<composite:implementation>
+  <eye:dialog id="#{cc.id}"
+              title="#{cc.attrs.title}"
+              width="#{cc.attrs.width == null ? '500' : cc.attrs.width}">
+
+    <ui:insert name="dialog_content"/>
+
+    <h:panelGroup styleClass="confirmDialog_content"
+                  layout="block"
+                  style="white-space: pre">
+      <h:outputText value="#{cc.attrs.text}" escape="false"/>
+    </h:panelGroup>
+    <h:panelGroup style="display: none"
+                  class="dialog_hiddenText"
+                  rendered="#{cc.attrs.isDuplicateText}">
+      <h:outputText value="#{cc.attrs.text}" escape="false"/>
+    </h:panelGroup>
+    <h:panelGroup layout="block" style="margin:10px"/>
+    <eye:buttons>
+      <eye:button>
+
+        <h:commandLink id="confirmButton"
+                       styleClass="button-green btnSubmit"
+                       value="#{bundle['dialog.confirm']}">
+        </h:commandLink>
+
+      </eye:button>
+      <eye:button>
+        <h:commandLink id="cancelButton"
+                       styleClass="button-green"
+                       value="#{bundle['dialog.cancel']}"
+                       onclick="jsfc('#{cc.id}').hide(); return false;"/>
+      </eye:button>
+      <eye:space/>
+    </eye:buttons>
+  </eye:dialog>
+</composite:implementation>
+
+</body>
+</html>
