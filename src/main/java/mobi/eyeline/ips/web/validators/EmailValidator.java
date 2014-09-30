@@ -3,11 +3,13 @@ package mobi.eyeline.ips.web.validators;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+@FacesValidator("email")
 public class EmailValidator implements Validator {
 
     @Override

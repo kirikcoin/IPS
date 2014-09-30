@@ -2,16 +2,12 @@ package mobi.eyeline.ips.web.controllers.login
 
 import groovy.transform.CompileStatic
 import groovy.transform.Memoized
-import mobi.eyeline.ips.model.UiProfile
-import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 
-/**
- * author: Denis Enenko
- * date: 20.01.2014
- */
+import javax.faces.bean.ManagedBean
+
 @CompileStatic
+@ManagedBean(name = "userSession")
 class UserSessionController extends BaseController {
 
     String logout() {

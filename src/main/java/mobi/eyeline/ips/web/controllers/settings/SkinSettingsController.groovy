@@ -11,10 +11,13 @@ import mobi.eyeline.ips.web.validators.ImageValidator
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
 import javax.annotation.PostConstruct
+import javax.faces.bean.ManagedBean
+import javax.faces.bean.ManagedProperty
 import javax.faces.model.SelectItem
 
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
+@ManagedBean(name = "skinSettingsController")
 class SkinSettingsController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
@@ -24,6 +27,7 @@ class SkinSettingsController extends BaseController {
     Boolean error
 
     /** Stored in session */
+    @ManagedProperty(value = "#{logoBean}")
     LogoBean previewLogo
 
     LogoBean viewSavedLogo

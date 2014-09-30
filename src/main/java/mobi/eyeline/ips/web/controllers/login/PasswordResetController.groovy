@@ -8,11 +8,13 @@ import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.EmailValidator
 
+import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
 
 @CompileStatic
 @Slf4j('logger')
-public class PasswordResetController extends BaseController {
+@ManagedBean(name = "passwordResetController")
+class PasswordResetController extends BaseController {
 
     private final UserService userService = Services.instance().userService
 

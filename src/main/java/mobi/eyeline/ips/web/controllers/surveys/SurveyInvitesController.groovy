@@ -12,11 +12,14 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
 
+import javax.faces.bean.ManagedBean
+
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "surveyInvitesController")
 class SurveyInvitesController extends BaseController {
 
     private final SurveyInvitationRepository surveyInvitationRepository =

@@ -24,7 +24,7 @@ import static java.util.Collections.emptyMap
 
 @CompileStatic
 @Slf4j('logger')
-public abstract class BaseController implements Serializable {
+abstract class BaseController implements Serializable {
 
     private final UserRepository userRepository = Services.instance().userRepository
 

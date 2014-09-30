@@ -8,10 +8,12 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
+import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
 
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "surveyResultsController")
 class SurveyResultsController extends BaseSurveyReadOnlyController {
 
     private final AnswerRepository answerRepository = Services.instance().answerRepository

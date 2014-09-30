@@ -1,7 +1,5 @@
 package mobi.eyeline.ips.web.controllers.surveys
 
-import groovy.time.TimeCategory
-import groovy.time.TimeDuration
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Survey
@@ -14,14 +12,16 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
+
+import javax.faces.bean.ManagedBean
 
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "surveyListController")
 class SurveyListController extends BaseController {
 
     private final SurveyRepository surveyRepository = Services.instance().surveyRepository

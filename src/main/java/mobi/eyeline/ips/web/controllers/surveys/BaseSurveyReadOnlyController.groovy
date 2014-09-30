@@ -6,9 +6,11 @@ import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 
+import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
 
 @CompileStatic
+@ManagedBean(name = "baseSurveyReadOnlyController")
 class BaseSurveyReadOnlyController extends BaseController {
     protected final SurveyRepository surveyRepository = Services.instance().surveyRepository
 

@@ -3,15 +3,13 @@ package mobi.eyeline.ips.web.controllers
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.User
-import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.Services
 
+import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
-import javax.servlet.http.HttpSession
-
 
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "enterController")
 class EnterController extends BaseController {
 
     Object getRunOnLogin() {

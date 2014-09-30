@@ -14,10 +14,10 @@ import mobi.eyeline.util.jsf.components.chart.bar.BarModel
 import mobi.eyeline.util.jsf.components.chart.pie.PieModel
 
 import javax.faces.bean.ManagedBean
-import javax.faces.bean.RequestScoped
 
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "surveyStatsController")
 class SurveyStatsController extends BaseSurveyReadOnlyController {
 
     private final AnswerRepository answerRepository = Services.instance().answerRepository
@@ -71,7 +71,6 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
     // Need this inner bean to manage AJAX requests. Survey ID is not passed in this case,
     // thus any survey-specific controller fails to instantiate.
     @ManagedBean(name = "surveyStatsHelpers")
-    @RequestScoped
     static class SurveyStatsHelpers extends BaseController {
 
         private final AnswerRepository answerRepository = Services.instance().answerRepository

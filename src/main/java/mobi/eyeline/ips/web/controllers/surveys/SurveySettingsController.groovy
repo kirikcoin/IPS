@@ -23,6 +23,7 @@ import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 
+import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
@@ -35,6 +36,7 @@ import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "surveySettingsController")
 class SurveySettingsController extends BaseSurveyController {
 
     private final QuestionRepository questionRepository = Services.instance().questionRepository

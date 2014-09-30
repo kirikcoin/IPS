@@ -3,8 +3,12 @@ package mobi.eyeline.ips.web.controllers
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.web.IPSViewHandler
 
+import javax.faces.bean.ManagedBean
+import javax.faces.bean.SessionScoped
 import javax.faces.context.FacesContext
 
+@ManagedBean(name = "localeController")
+@SessionScoped
 class LocaleController extends BaseController {
 
     void changeLocale(String localeName) {

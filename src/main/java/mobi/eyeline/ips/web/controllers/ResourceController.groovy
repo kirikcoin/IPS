@@ -5,6 +5,8 @@ import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
 
+import javax.faces.bean.ApplicationScoped
+import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
 
 import static mobi.eyeline.ips.model.Role.CLIENT
@@ -12,6 +14,8 @@ import static mobi.eyeline.ips.model.Role.MANAGER
 import static mobi.eyeline.ips.web.BuildVersion.BUILD_VERSION
 
 @CompileStatic
+@ManagedBean(name = "resources")
+@ApplicationScoped
 class ResourceController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository

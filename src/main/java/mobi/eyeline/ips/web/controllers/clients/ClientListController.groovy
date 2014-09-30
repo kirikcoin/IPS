@@ -15,11 +15,12 @@ import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
-
+import javax.faces.bean.ManagedBean
 import javax.faces.model.SelectItem
 
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "clientListController")
 class ClientListController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
