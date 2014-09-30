@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.servlets;
 
+import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.repository.UserRepository;
 import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.web.controllers.LogoBean;
@@ -23,7 +24,14 @@ public class ImageViewServlet extends HttpServlet {
         if ("logo".equals(pathParts[1])) {
             try {
                 final int userId = Integer.parseInt(pathParts[2]);
-                returnImage(response, userRepository.load(userId).getUiProfile().getIcon());
+                User user = userRepository.load(userId);
+
+                switch (user.getRole()) {
+                    case MANAGER:   returnImage(response, user.getUiProfile().getIcon());
+                    case CLIENT:    returnImage(response, user.getManager().getUiProfile().getIcon());
+                    default:
+                        throw new IllegalArgumentException("Unsupported role: " + user.getRole());
+                }
 
             } catch (Exception e) {
                 response.sendError(HttpStatus.SC_BAD_REQUEST);
