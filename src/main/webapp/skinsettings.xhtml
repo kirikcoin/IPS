@@ -19,11 +19,11 @@
     <ui:define name="scripts">
       <script type="text/javascript">
         //    <![CDATA[
-        if ("#{settingsPageController.error}" == 'false') {
+        if ("#{skinSettingsController.error}" == 'false') {
           ips.message.info("#{bundle['settings.saved']}");
         }
 
-        if ("#{settingsPageController.error}" == 'true') {
+        if ("#{skinSettingsController.error}" == 'true') {
             $("#logo").addClass("validationError");
             page.onLogoModifyDialogShow();
         }
@@ -64,7 +64,7 @@
 
                     <h:commandLink value="#{bundle['settings.logo.modify.button']}"
                                    onclick="return page.onLogoModifyDialogShow()"
-                                   styleClass="modify-left"
+                                   styleClass="modify-left displayed"
                                    rendered="true"/>
                   </h:panelGroup>
                 </f:facet>

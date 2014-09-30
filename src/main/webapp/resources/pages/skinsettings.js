@@ -15,6 +15,7 @@ var page = {
   onLogoModifyDialogHide: function() {
     $('#logoModifyDialog').hide();
     $('.displayed').show();
+
    // jsfc('logoModifyDialog').hide();
     return false;
   }
