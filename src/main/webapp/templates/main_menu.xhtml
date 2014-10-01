@@ -16,7 +16,6 @@
                             styleClass="ipsLogo"
                             rendered="#{view.viewId != '/login.xhtml'}" >
                 <h:graphicImage value="/images/logo/#{userSession.currentUser.id}"
-                                height="49"
                                 rendered="#{resources.logoSet}"/>
               </h:panelGroup>
           </td>
@@ -32,14 +31,14 @@
                 <h:panelGrid columns="8">
 
                   <h:commandLink value="#{bundle['settings.profile.button']}"
-                                 action="PROFILE"
+                                 action="/profilepage"
                                  rendered="#{userSession.authenticated}"
                                  styleClass="#{profile ? 'exitButtonSelected' : 'exitButton'}"/>
 
                   <h:outputText value=" | " rendered="#{userSession.authenticated }" styleClass="settingsSeparator"/>
 
                   <h:commandLink value="#{bundle['settings.managersettings.button']}"
-                                 action="SKIN_SETTINGS"
+                                 action="/skinsettings"
                                  rendered="#{userSession.authenticated and userSession.managerRole}"
                                  styleClass="#{settings ? 'exitButtonSelected' : 'exitButton'}"/>
 
