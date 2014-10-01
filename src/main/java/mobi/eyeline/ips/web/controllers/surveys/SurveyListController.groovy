@@ -148,6 +148,7 @@ class SurveyListController extends BaseController {
                         'details.title': 'newSurveyTitle',
                         'startDate': 'newSurveyStartDate',
                         'endDate': 'newSurveyEndDate',
+                        'endDateAfterStartDate': 'newSurveyEndDate'
                 ])
 
         if (newSurveyValidationError) {
@@ -173,8 +174,8 @@ class SurveyListController extends BaseController {
         }
     }
 
-  @SuppressWarnings("GrMethodMayBeStatic")
-  void surveyClickHandler(int surveyId) {
+    @SuppressWarnings("GrMethodMayBeStatic")
+    void surveyClickHandler(int surveyId) {
         SurveySettingsController.goToSurvey(surveyId)
     }
 

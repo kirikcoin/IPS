@@ -224,6 +224,7 @@ class SurveySettingsController extends BaseSurveyController {
                         'details.title': 'newSurveyTitle',
                         'startDate': 'newSurveyStartDate',
                         'endDate': 'newSurveyEndDate',
+                        'endDateAfterStartDate': 'newSurveyEndDate',
                         'statistics.accessNumber': 'newAccessNumber'
                 ])
 
