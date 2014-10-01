@@ -92,7 +92,7 @@
         Test
     -->
 
-    <dependency org="junit" name="junit" rev="4.7" conf="site_dev->default"/>
+    <dependency org="junit" name="junit" rev="4.11" conf="site_dev->default"/>
     <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.7.0.201403182114" conf="site_dev->default"/>
     <dependency org="org.hsqldb" name="hsqldb" rev="2.3.1" conf="site_dev->default"/>
     <dependency org="org.codehaus.groovy" name="groovy-all" rev="2.3.6" conf="site->default">
