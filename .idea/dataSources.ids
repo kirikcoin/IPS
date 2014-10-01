@@ -8,98 +8,98 @@
     <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
     <schema name="" catalog="ips"/>
     <table name="DATABASECHANGELOG" schema="" catalog="ips" type="TABLE">
-      <column name="ID" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="AUTHOR" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="FILENAME" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="DATEEXECUTED" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93"/>
-      <column name="ORDEREXECUTED" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="EXECTYPE" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
-      <column name="MD5SUM" sqlType="VARCHAR" length="35" precision="0" nullable="true" jdbcType="12"/>
-      <column name="DESCRIPTION" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="COMMENTS" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="TAG" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="LIQUIBASE" sqlType="VARCHAR" length="20" precision="0" nullable="true" jdbcType="12"/>
+      <column name="ID" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="AUTHOR" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="FILENAME" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="DATEEXECUTED" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="ORDEREXECUTED" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="EXECTYPE" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="MD5SUM" sqlType="VARCHAR" precision="35" scale="0" nullable="true" jdbcType="12"/>
+      <column name="DESCRIPTION" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="COMMENTS" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="TAG" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="LIQUIBASE" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
     </table>
     <table name="DATABASECHANGELOGLOCK" schema="" catalog="ips" type="TABLE">
-      <column name="ID" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="LOCKED" sqlType="BIT" length="1" precision="0" nullable="false" jdbcType="-7"/>
-      <column name="LOCKGRANTED" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93"/>
-      <column name="LOCKEDBY" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
+      <column name="ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="LOCKED" sqlType="BIT" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="LOCKGRANTED" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="LOCKEDBY" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="ID"/>
     </table>
     <table name="access_numbers" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="number" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="number" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <exported-key name="survey_stats_ibfk_1" table="survey_stats" schema="" catalog="ips" columns="number_id"/>
       <index name="UK_access_numbers_number" unique="true" columns="number"/>
     </table>
     <table name="answers" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="respondent_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="question_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="option_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="timestamp" sqlType="TIMESTAMP" length="19" precision="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="respondent_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="question_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="timestamp" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_answers_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_answers_question_options" columns="option_id" ref-table="question_options" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_answers_respondents" columns="respondent_id" ref-table="respondents" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
     </table>
     <table name="deliveries" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="date" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93"/>
-      <column name="type" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="state" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" def="J0lOQUNUSVZFJw=="/>
-      <column name="current_position" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="text" sqlType="TEXT" length="65535" precision="0" nullable="true" jdbcType="-1"/>
-      <column name="speed" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" def="MQ=="/>
-      <column name="input_file_name" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="date" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="type" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="state" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0lOQUNUSVZFJw=="/>
+      <column name="current_position" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="speed" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" def="MQ=="/>
+      <column name="input_file_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_deliveries_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_delivery_subscribers_deliveries" table="delivery_subscribers" schema="" catalog="ips" columns="delivery_id"/>
     </table>
     <table name="delivery_subscribers" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="delivery_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="msisdn" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="state" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" def="J05FVyc="/>
-      <column name="last_update" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="delivery_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="msisdn" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="state" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J05FVyc="/>
+      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_delivery_subscribers_deliveries" columns="delivery_id" ref-table="deliveries" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="state_idx" unique="false" columns="state"/>
     </table>
     <table name="question_options" schema="" catalog="ips" type="TABLE">
-      <column name="question_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="answer" sqlType="TEXT" length="65535" precision="0" nullable="false" jdbcType="-1"/>
-      <column name="option_order" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="terminal" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="question_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="answer" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="option_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="terminal" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_question_options_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_question_options" table="answers" schema="" catalog="ips" columns="option_id"/>
     </table>
     <table name="questions" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="title" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="question_order" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="sent_count" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="title" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="question_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="sent_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_questions_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_questions" table="answers" schema="" catalog="ips" columns="question_id"/>
       <exported-key name="FK_question_options_questions" table="question_options" schema="" catalog="ips" columns="question_id"/>
     </table>
     <table name="respondents" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="MSISDN" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="registered" sqlType="TIMESTAMP" length="19" precision="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
-      <column name="answer_count" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="finished" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="coupon" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="MSISDN" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="registered" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
+      <column name="answer_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="finished" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="coupon" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_respondents_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_respondents" table="answers" schema="" catalog="ips" columns="respondent_id"/>
@@ -107,44 +107,44 @@
       <index name="registered_idx" unique="false" columns="registered"/>
     </table>
     <table name="survey_invitations" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="date" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93"/>
-      <column name="value" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="last_update" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="date" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="value" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_survey_invitations_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
     </table>
     <table name="survey_pattern" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="position" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="length" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="mode" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="position" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="length" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="mode" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_survey_pattern_survey" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
     </table>
     <table name="survey_stats" schema="" catalog="ips" type="TABLE">
-      <column name="answeredCount" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="campaign" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="registeredCount" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="sent" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="update_status" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" def="J3VuZGVmaW5lZCc="/>
-      <column name="last_update" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93"/>
-      <column name="number_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4"/>
+      <column name="answeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="campaign" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="registeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="sent" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="update_status" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J3VuZGVmaW5lZCc="/>
+      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="number_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="survey_id"/>
       <foreign-key name="survey_stats_ibfk_1" columns="number_id" ref-table="access_numbers" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_survey_stats_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="FK_survey_stats_number" unique="false" columns="number_id"/>
     </table>
     <table name="surveys" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MQ=="/>
-      <column name="expires" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93"/>
-      <column name="startdate" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93"/>
-      <column name="owner_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="expires" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="startdate" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="owner_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="surveys_ibfk_1" columns="owner_id" ref-table="users" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_deliveries_surveys" table="deliveries" schema="" catalog="ips" columns="survey_id"/>
@@ -158,40 +158,40 @@
       <index name="surveys_owner_id" unique="false" columns="owner_id"/>
     </table>
     <table name="surveys_text" schema="" catalog="ips" type="TABLE">
-      <column name="end_text" sqlType="TEXT" length="65535" precision="0" nullable="true" jdbcType="-1"/>
-      <column name="title" sqlType="VARCHAR" length="200" precision="0" nullable="true" jdbcType="12"/>
-      <column name="welcome_text" sqlType="TEXT" length="65535" precision="0" nullable="true" jdbcType="-1"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="end_sms_enabled" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="end_sms_text" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="end_sms_from" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
+      <column name="end_text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="title" sqlType="VARCHAR" precision="200" scale="0" nullable="true" jdbcType="12"/>
+      <column name="welcome_text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="end_sms_enabled" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="end_sms_text" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="end_sms_from" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="survey_id"/>
       <foreign-key name="FK_surveys_text_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
     </table>
     <table name="surveys_users" schema="" catalog="ips" type="TABLE">
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="user_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="user_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="survey_id,user_id"/>
       <foreign-key name="FK_surveys_users_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_surveys_users_users" columns="user_id" ref-table="users" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
     </table>
     <table name="users" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="email" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="full_name" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="users_name" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="password" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="blocked" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="role" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="company" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="phone_number" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="locale" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" def="J0VOJw=="/>
-      <column name="only_own_surveys" sqlType="TINYINT" length="3" precision="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="can_send_invitations" sqlType="TINYINT" length="3" precision="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="esdp_login" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="esdp_password" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="show_c2s" sqlType="TINYINT" length="3" precision="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="esdp_provider" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="email" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="full_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="users_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="blocked" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="role" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="company" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="phone_number" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="locale" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0VOJw=="/>
+      <column name="only_own_surveys" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
+      <column name="can_send_invitations" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
+      <column name="esdp_login" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="esdp_password" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="show_c2s" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
+      <column name="esdp_provider" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <exported-key name="surveys_ibfk_1" table="surveys" schema="" catalog="ips" columns="owner_id"/>
       <exported-key name="FK_surveys_users_users" table="surveys_users" schema="" catalog="ips" columns="user_id"/>
@@ -208,142 +208,154 @@
     <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
     <schema name="" catalog="ips_migration_test"/>
     <table name="DATABASECHANGELOG" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="ID" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="AUTHOR" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="FILENAME" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="DATEEXECUTED" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93"/>
-      <column name="ORDEREXECUTED" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="EXECTYPE" sqlType="VARCHAR" length="10" precision="0" nullable="false" jdbcType="12"/>
-      <column name="MD5SUM" sqlType="VARCHAR" length="35" precision="0" nullable="true" jdbcType="12"/>
-      <column name="DESCRIPTION" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="COMMENTS" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="TAG" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="LIQUIBASE" sqlType="VARCHAR" length="20" precision="0" nullable="true" jdbcType="12"/>
+      <column name="ID" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="AUTHOR" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="FILENAME" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="DATEEXECUTED" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="ORDEREXECUTED" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="EXECTYPE" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
+      <column name="MD5SUM" sqlType="VARCHAR" precision="35" scale="0" nullable="true" jdbcType="12"/>
+      <column name="DESCRIPTION" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="COMMENTS" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="TAG" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="LIQUIBASE" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
     </table>
     <table name="DATABASECHANGELOGLOCK" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="ID" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="LOCKED" sqlType="BIT" length="1" precision="0" nullable="false" jdbcType="-7"/>
-      <column name="LOCKGRANTED" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93"/>
-      <column name="LOCKEDBY" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
+      <column name="ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="LOCKED" sqlType="BIT" precision="1" scale="0" nullable="false" jdbcType="-7"/>
+      <column name="LOCKGRANTED" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="LOCKEDBY" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="ID"/>
     </table>
     <table name="access_numbers" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="number" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="number" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <exported-key name="survey_stats_ibfk_1" table="survey_stats" schema="" catalog="ips_migration_test" columns="number_id"/>
       <index name="UK_access_numbers_number" unique="true" columns="number"/>
     </table>
     <table name="answers" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="respondent_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="question_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="option_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="timestamp" sqlType="TIMESTAMP" length="19" precision="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="respondent_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="question_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="timestamp" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_answers_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_answers_question_options" columns="option_id" ref-table="question_options" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_answers_respondents" columns="respondent_id" ref-table="respondents" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_answers_question_options" unique="false" columns="option_id"/>
+      <index name="FK_answers_questions" unique="false" columns="question_id"/>
+      <index name="FK_answers_respondents" unique="false" columns="respondent_id"/>
     </table>
     <table name="deliveries" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="date" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93"/>
-      <column name="type" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="text" sqlType="TEXT" length="65535" precision="0" nullable="true" jdbcType="-1"/>
-      <column name="speed" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" def="MQ=="/>
-      <column name="input_file_name" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="state" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" def="J0lOQUNUSVZFJw=="/>
-      <column name="current_position" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="date" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="type" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="speed" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" def="MQ=="/>
+      <column name="input_file_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="state" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0lOQUNUSVZFJw=="/>
+      <column name="current_position" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_deliveries_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_delivery_abonents_deliveries" table="delivery_subscribers" schema="" catalog="ips_migration_test" columns="delivery_id"/>
+      <index name="FK_deliveries_surveys" unique="false" columns="survey_id"/>
     </table>
     <table name="delivery_subscribers" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="delivery_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="msisdn" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="state" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" def="J05FVyc="/>
-      <column name="last_update" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="delivery_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="msisdn" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="state" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J05FVyc="/>
+      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_delivery_abonents_deliveries" columns="delivery_id" ref-table="deliveries" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_delivery_abonents_deliveries" unique="false" columns="delivery_id"/>
       <index name="state_idx" unique="false" columns="state"/>
     </table>
     <table name="question_options" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="question_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="answer" sqlType="TEXT" length="65535" precision="0" nullable="false" jdbcType="-1"/>
-      <column name="option_order" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="terminal" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="question_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="answer" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
+      <column name="option_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="next_question" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_question_options_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="question_options_ibfk_1" columns="next_question" ref-table="questions" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_question_options" table="answers" schema="" catalog="ips_migration_test" columns="option_id"/>
+      <index name="FK_question_options_questions" unique="false" columns="question_id"/>
+      <index name="next_question_id" unique="false" columns="next_question"/>
     </table>
     <table name="questions" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="title" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="question_order" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="sent_count" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="title" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="question_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="sent_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_questions_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_questions" table="answers" schema="" catalog="ips_migration_test" columns="question_id"/>
       <exported-key name="FK_question_options_questions" table="question_options" schema="" catalog="ips_migration_test" columns="question_id"/>
+      <exported-key name="question_options_ibfk_1" table="question_options" schema="" catalog="ips_migration_test" columns="next_question"/>
+      <index name="FK_questions_surveys" unique="false" columns="survey_id"/>
     </table>
     <table name="respondents" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="MSISDN" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="registered" sqlType="TIMESTAMP" length="19" precision="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
-      <column name="answer_count" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="finished" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="coupon" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="MSISDN" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="registered" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
+      <column name="answer_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="finished" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="coupon" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_respondents_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_respondents" table="answers" schema="" catalog="ips_migration_test" columns="respondent_id"/>
       <index name="survey_id" unique="true" columns="coupon"/>
     </table>
     <table name="survey_invitations" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="date" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93"/>
-      <column name="value" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="last_update" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="date" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="value" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_survey_invitations_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_survey_invitations_surveys" unique="false" columns="survey_id"/>
     </table>
     <table name="survey_pattern" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="position" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="length" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="mode" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="position" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="length" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="mode" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_survey_pattern_survey" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_survey_pattern_survey" unique="false" columns="survey_id"/>
     </table>
     <table name="survey_stats" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="answeredCount" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="campaign" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="registeredCount" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="sent" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="update_status" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" def="J3VuZGVmaW5lZCc="/>
-      <column name="last_update" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93"/>
-      <column name="number_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4"/>
+      <column name="answeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="campaign" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="registeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="sent" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="update_status" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J3VuZGVmaW5lZCc="/>
+      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
+      <column name="number_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="survey_id"/>
-      <foreign-key name="survey_stats_ibfk_1" columns="number_id" ref-table="access_numbers" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_survey_stats_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="survey_stats_ibfk_1" columns="number_id" ref-table="access_numbers" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="FK_survey_stats_number" unique="false" columns="number_id"/>
     </table>
     <table name="surveys" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="active" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MQ=="/>
-      <column name="expires" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93"/>
-      <column name="startdate" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93"/>
-      <column name="owner_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="expires" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="startdate" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
+      <column name="owner_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="surveys_ibfk_1" columns="owner_id" ref-table="users" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_deliveries_surveys" table="deliveries" schema="" catalog="ips_migration_test" columns="survey_id"/>
@@ -356,56 +368,72 @@
       <exported-key name="FK_surveys_users_surveys" table="surveys_users" schema="" catalog="ips_migration_test" columns="survey_id"/>
     </table>
     <table name="surveys_text" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="end_text" sqlType="TEXT" length="65535" precision="0" nullable="true" jdbcType="-1"/>
-      <column name="title" sqlType="VARCHAR" length="200" precision="0" nullable="true" jdbcType="12"/>
-      <column name="welcome_text" sqlType="TEXT" length="65535" precision="0" nullable="true" jdbcType="-1"/>
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="end_sms_enabled" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="end_sms_text" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="end_sms_from" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
+      <column name="end_text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="title" sqlType="VARCHAR" precision="200" scale="0" nullable="true" jdbcType="12"/>
+      <column name="welcome_text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="end_sms_enabled" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="end_sms_text" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="end_sms_from" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <primary-key name="PRIMARY" columns="survey_id"/>
       <foreign-key name="FK_surveys_text_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
     </table>
     <table name="surveys_users" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="survey_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
-      <column name="user_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4"/>
+      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
+      <column name="user_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="survey_id,user_id"/>
       <foreign-key name="FK_surveys_users_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_surveys_users_users" columns="user_id" ref-table="users" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_surveys_users_users" unique="false" columns="user_id"/>
+    </table>
+    <table name="ui_profiles" schema="" catalog="ips_migration_test" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="icon" sqlType="BLOB" precision="65535" scale="0" nullable="true" jdbcType="-4"/>
+      <column name="skin" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="users_ibfk_1" table="users" schema="" catalog="ips_migration_test" columns="ui_profile_id"/>
     </table>
     <table name="users" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="email" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="full_name" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="users_name" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="password" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="blocked" sqlType="TINYINT" length="3" precision="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="role" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12"/>
-      <column name="company" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="phone_number" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="locale" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" def="J0VOJw=="/>
-      <column name="only_own_surveys" sqlType="TINYINT" length="3" precision="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="can_send_invitations" sqlType="TINYINT" length="3" precision="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="esdp_password" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="esdp_login" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
-      <column name="show_c2s" sqlType="TINYINT" length="3" precision="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="esdp_provider" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12"/>
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="email" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="full_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="users_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="blocked" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
+      <column name="role" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <column name="company" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="phone_number" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="locale" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0VOJw=="/>
+      <column name="only_own_surveys" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
+      <column name="can_send_invitations" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
+      <column name="esdp_password" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="esdp_login" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="show_c2s" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
+      <column name="esdp_provider" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="time_zone_id" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0V1cm9wZS9Nb3Njb3cn"/>
+      <column name="ui_profile_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="manager_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="users_ibfk_2" columns="manager_id" ref-table="users" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="users_ibfk_1" columns="ui_profile_id" ref-table="ui_profiles" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="surveys_ibfk_1" table="surveys" schema="" catalog="ips_migration_test" columns="owner_id"/>
       <exported-key name="FK_surveys_users_users" table="surveys_users" schema="" catalog="ips_migration_test" columns="user_id"/>
+      <exported-key name="users_ibfk_2" table="users" schema="" catalog="ips_migration_test" columns="manager_id"/>
       <index name="email" unique="true" columns="email"/>
       <index name="users_name" unique="true" columns="users_name"/>
+      <index name="FK_user_manager" unique="false" columns="manager_id"/>
+      <index name="FK_users_ui_profiles" unique="false" columns="ui_profile_id"/>
       <index name="role_id" unique="false" columns="role"/>
     </table>
     <procedure name="fill_messages" schema="" catalog="ips_migration_test" type="1">
       <prototype>
-        <parameter name="delivery" sqlType="INT" length="10" precision="10" nullable="true" jdbcType="4" type="1" index="1"/>
+        <parameter name="delivery" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" type="1" index="1"/>
       </prototype>
     </procedure>
     <procedure name="fill_subscribers" schema="" catalog="ips_migration_test" type="1">
       <prototype>
-        <parameter name="delivery" sqlType="INT" length="10" precision="10" nullable="true" jdbcType="4" type="1" index="1"/>
-        <parameter name="subscribers" sqlType="INT" length="10" precision="10" nullable="true" jdbcType="4" type="1" index="2"/>
+        <parameter name="delivery" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" type="1" index="1"/>
+        <parameter name="subscribers" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" type="1" index="2"/>
       </prototype>
     </procedure>
   </data-source>

@@ -78,7 +78,7 @@ class SkinSettingsController extends BaseController {
             error = true
             addErrorMessage(strings['settings.validation.logo.heavy'], 'logo')
 
-        } else if (!ImageValidator.validate(imageFile.filename)) {
+        } else if (!new ImageValidator().validate(imageFile.filename)) {
             error = true
             addErrorMessage(strings['settings.validation.logo'], 'logo')
 
