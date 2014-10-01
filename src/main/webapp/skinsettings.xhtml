@@ -53,7 +53,10 @@
                 <h:outputLabel value="#{bundle['settings.skin']}"
                                for="skin"/>
                 <h:selectOneMenu id="skin" value="#{skinSettingsController.user.uiProfile.skin}">
-                  <f:selectItems value="#{skinSettingsController.skins}"/>
+                    <f:selectItems value="#{skinSettingsController.skins}"
+                                   var="skin"
+                                   itemValue="#{skin}"
+                                   itemLabel="#{bundle['settings.skin.'.concat(skin.name())]}" />
                 </h:selectOneMenu>
               </h:panelGrid>
 

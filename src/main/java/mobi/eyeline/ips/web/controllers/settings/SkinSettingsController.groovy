@@ -32,9 +32,7 @@ class SkinSettingsController extends BaseController {
 
     LogoBean viewSavedLogo
 
-    final List<SelectItem> skins = UiProfile.Skin.values().collect {
-        UiProfile.Skin skin -> new SelectItem(skin, nameOf(skin))
-    }
+    List<UiProfile.Skin> getSkins() { UiProfile.Skin.values() as List }
 
     SkinSettingsController() {
         user = getCurrentUser()
@@ -47,12 +45,6 @@ class SkinSettingsController extends BaseController {
         }
 
         previewLogo.bytes = viewSavedLogo.bytes
-    }
-
-    @SuppressWarnings("GrMethodMayBeStatic")
-    String nameOf(UiProfile.Skin skin) {
-        //noinspection UnnecessaryQualifiedReference
-        strings["settings.skin.$skin".toString()]
     }
 
     void save() {
