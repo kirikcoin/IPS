@@ -85,10 +85,14 @@
                   <h:panelGrid columns="2">
                     <h:outputLabel value="#{bundle['settings.logo']}"
                                    for="logo"/>
-                    <eye:inputFile id="logo" value="#{skinSettingsController.imageFile}"/>
+                    <!-- maxSize = 64K due to database BLOB type size. -->
+                    <eye:inputFile id="logo"
+                                   value="#{skinSettingsController.imageFile}"
+                                   maxSize="65535"/>
                   </h:panelGrid>
                   <div style="margin:10px"></div>
-                  <h:outputText style="font-style: italic" value="#{bundle['settings.logo.modify.dialog.text']}"/>
+                  <h:outputText style="font-style: italic"
+                                value="#{bundle['settings.logo.modify.dialog.text']}"/>
 
                   <eye:buttons>
                     <eye:button>

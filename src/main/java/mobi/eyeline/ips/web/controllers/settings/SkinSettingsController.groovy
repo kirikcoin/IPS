@@ -70,12 +70,21 @@ class SkinSettingsController extends BaseController {
     }
 
     void uploadLogo() {
-        if (validate()) {
-            viewSavedLogo = new LogoBean(bytes: imageFile.inputStream.bytes)
-            previewLogo.bytes = viewSavedLogo.bytes
+        if (!imageFile) {
+            error = true
+            addErrorMessage(strings['settings.validation.logo.missing'], 'logo')
+
+        } else if (imageFile.length < 0) {
+            error = true
+            addErrorMessage(strings['settings.validation.logo.heavy'], 'logo')
+
+        } else if (!ImageValidator.validate(imageFile.filename)) {
+            error = true
+            addErrorMessage(strings['settings.validation.logo'], 'logo')
 
         } else {
-            addErrorMessage(strings['settings.validation.logo'], 'logo')
+            viewSavedLogo = new LogoBean(bytes: imageFile.inputStream.bytes)
+            previewLogo.bytes = viewSavedLogo.bytes
         }
     }
 
@@ -85,13 +94,5 @@ class SkinSettingsController extends BaseController {
 
     boolean isPreviewLogoSet() {
         viewSavedLogo.bytes != null
-    }
-
-    private boolean validate() {
-        if (!imageFile || !ImageValidator.validate(imageFile.filename)) {
-            error = true
-        }
-
-        return !error
     }
 }
