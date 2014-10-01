@@ -10,7 +10,6 @@ import mobi.eyeline.ips.model.Survey
 
 @CompileStatic
 @Slf4j('logger')
-@JmxResource(domainName = "mobi.eyeline.ips")
 class SurveyTreeUtil {
 
     private static TreeNode addQuestion(Question q,

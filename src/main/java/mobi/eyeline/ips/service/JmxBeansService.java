@@ -67,7 +67,6 @@ public class JmxBeansService {
             jmxServer.register(services.getDeliveryService());
             jmxServer.register(services.getNotificationService());
             jmxServer.register(services.getEsdpService());
-            jmxServer.register(new SurveyTreeUtil());
 
         } catch (JMException e) {
             logger.error("JMX initialization failed", e);
