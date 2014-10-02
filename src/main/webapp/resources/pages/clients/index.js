@@ -13,10 +13,12 @@ var page = {
     ips.$byId("search").focus();
   },
 
-  replaceName: function(dialogId, login, fullName) {
-    var $content = $('#'+dialogId+'_div').find('.confirmDialog_content');
-    var text = ips.$byId(dialogId+'_hiddenText').text();
-    $content.text(text.replace('{username}', login).replace('{fullName}', fullName));
+  replaceName: function (dialogId, login, fullName) {
+    var $wrapper = $('#' + dialogId + '_div');
+
+    var text = $wrapper.find('.dialog_hiddenText').text();
+    $wrapper.find('.confirmDialog_content')
+        .text(text.replace('{username}', login).replace('{fullName}', fullName));
   },
 
   showBlockDialog: function (dialogId, id, login, fullName) {

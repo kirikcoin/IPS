@@ -14,13 +14,13 @@ import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
+import javax.faces.bean.ManagedBean
 import javax.faces.model.SelectItem
 
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "clientListController")
 class ClientListController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
@@ -100,7 +100,8 @@ class ClientListController extends BaseController {
                     password: HashUtils.hashPassword(password),
                     locale: userForEdit.locale,
                     timeZoneId: userForEdit.timeZoneId,
-                    role: Role.CLIENT)
+                    role: Role.CLIENT,
+                    manager: currentUser)
 
             if (validate(user)) {
                 userRepository.save(user)

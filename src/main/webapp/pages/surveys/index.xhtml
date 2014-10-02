@@ -3,8 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-    >
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc">
 
   <ui:composition template="/templates/main.xhtml">
 
@@ -62,15 +61,13 @@
             <eye:row>
               <eye:column name="id" title="#{bundle['survey.list.table.id']}"
                           sortable="true" defaultSortOrder="desc">
-                <h:commandLink value="#{row.id}" action="#{surveyListController.surveyClickHandler}">
-                  <f:param name="surveyId" value="#{row.id}"/>
-                </h:commandLink>
+                <h:commandLink value="#{row.id}"
+                               action="#{surveyListController.surveyClickHandler(row.id)}"/>
               </eye:column>
               <eye:column name="title" title="#{bundle['survey.list.table.title']}"
                           sortable="true">
-                <h:commandLink value="#{row.title}" action="#{surveyListController.surveyClickHandler}">
-                  <f:param name="surveyId" value="#{row.id}"/>
-                </h:commandLink>
+                <h:commandLink value="#{row.title}"
+                               action="#{surveyListController.surveyClickHandler(row.id)}"/>
               </eye:column>
               <eye:column name="client" title="#{bundle['survey.list.table.client']}"
                           sortable="true" visible="#{userSession.managerRole}">
@@ -78,7 +75,7 @@
               </eye:column>
               <eye:column name="state" title="#{bundle['survey.list.table.state']}"
                           sortable="true">
-                <ips:dateRange id="progressState"
+                <ips:dateRange
                                dateStart="#{row.startDate}"
                                date="#{dateController.now}"
                                dateEnd="#{row.endDate}"

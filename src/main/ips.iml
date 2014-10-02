@@ -31,7 +31,6 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$/../..">
-      <sourceFolder url="file://$MODULE_DIR$/../utils/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../test/resources" type="java-test-resource" />
@@ -48,9 +47,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="ips-compile" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="ips-provided" level="project" />
-    <orderEntry type="library" scope="TEST" name="ips-test" level="project" />
+    <orderEntry type="library" name="ips-bundled" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="ips-dev" level="project" />
   </component>
 </module>
 

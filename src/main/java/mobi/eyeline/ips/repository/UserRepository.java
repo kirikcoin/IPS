@@ -37,6 +37,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
             final String providedHash = HashUtils.hashPassword(password);
             final User user = (User) session
                     .createCriteria(User.class)
+                    .setCacheable(true)
                     .add(eq("login", login))
                     .add(eq("password", providedHash).ignoreCase())
                     .uniqueResult();
@@ -87,6 +88,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
         //noinspection unchecked
         return (List<User>) session
                 .createCriteria(User.class)
+                .setCacheable(true)
                 .add(eq("role", role))
                 .list();
     }
@@ -97,7 +99,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
                            int limit,
                            int offset) {
         final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(User.class);
+        final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
 
         if (isNotBlank(filter)) {
             filter = filter.trim();
@@ -137,7 +139,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
 
     public int count(String filter) {
         final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(User.class);
+        final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
 
         if (isNotBlank(filter)) {
             filter = filter.trim();

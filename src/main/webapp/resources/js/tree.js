@@ -1,21 +1,24 @@
 "use strict";
 
 //noinspection JSUnusedGlobalSymbols
-function createTree(contentId, options) {
-  var c = new Tree(contentId, options);
+function createTree(clientId, parentId, options) {
+  var c = new Tree(clientId, options);
 
-  registerJsfComponent(contentId, c);
+  jsfcomponents.addPageComponent(c, parentId);
 }
 
 /**
  * Renders a directed graph.
  *
- * @param contentId   Containing element identifier.
+ * @param clientId   Containing element identifier.
  * @param options
  * @constructor
  */
-function Tree(contentId, options) {
-  var $divElement = $("#" + contentId);
+function Tree(clientId, options) {
+
+  this.id = jsfcomponents.clientId2Id(clientId);
+
+  var $divElement = $("#" + this.id);
 
   var $events = $({});
 
@@ -87,17 +90,25 @@ function Tree(contentId, options) {
     _zoomReset();
   };
 
-  this.init = function () {
-    init();
+  this.init = function (force) {
+    init(force);
   };
 
   function _drawNodes(renderer) {
     var oldDrawNodes = renderer.drawNodes();
     renderer.drawNodes(function (graph, root) {
+      $.each(graph._nodes, function (i, e) {
+        var node = e.value;
+        node.label = node.label.replace(/\\r\\n/g, '\n');
+      });
+
       var svgNodes = oldDrawNodes(graph, root);
       svgNodes.attr('data-id', function (d) { return d; });
       svgNodes.append("svg:title").text(function (d) {
-        return graph.node(d).detail.replace(/\\n/g, ' ');
+        return graph.node(d).detail
+            .replace(/\\r\\n/g, ' ')
+            .replace(/\\r/g, ' ')
+            .replace(/\\n/g, ' ');
       });
       svgNodes.attr('class', function (d) {
         var styleClass = graph.node(d).styleClass ? graph.node(d).styleClass : '';
@@ -374,7 +385,11 @@ function Tree(contentId, options) {
     $toolbar.find('.zoom_reset').on('click', function () { _zoomReset(); });
   }
 
-  var init = function () {
+  var init = function (force) {
+    if (!initOnLoad && !force) {
+      // Called by JSFc library
+      return;
+    }
 
     /**
      * Copy nodes and edges from graph to d3Graph.
@@ -414,14 +429,8 @@ function Tree(contentId, options) {
     _bindToolbar();
 
     renderer = renderer.layout(layout);
-    renderer.run(d3Graph, d3.select("#" + contentId + " svg g"));
+    renderer.run(d3Graph, d3.select("#" + jsfcomponents.clientId2Id(clientId) + " svg g"));
 
     _postRender(d3Graph);
   };
-
-  $(function () {
-    if (initOnLoad) {
-      init();
-    }
-  });
 }

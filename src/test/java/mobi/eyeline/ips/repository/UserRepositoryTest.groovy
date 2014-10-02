@@ -1,11 +1,14 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.Role
+import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.utils.HashUtilsSupport
 import org.junit.Assert
 
 import javax.validation.ConstraintViolationException
+
+import static mobi.eyeline.ips.model.UiProfile.Skin.ARAKS
 
 class UserRepositoryTest extends DbTestCase {
 
@@ -13,11 +16,23 @@ class UserRepositoryTest extends DbTestCase {
 
     private DB db
 
+    def manager
+
     void setUp() {
         db = new DB(new Properties())
         HashUtilsSupport.init()
 
         userRepository = new UserRepository(db)
+
+        manager = new User(
+                login: 'testManager',
+                password: "testManagerPassw".pw(),
+                email: 'manager@example.com',
+                fullName: 'John Doe',
+                role: Role.MANAGER,
+                uiProfile: new UiProfile())
+
+        userRepository.save(manager)
     }
 
     void tearDown() {
@@ -30,7 +45,8 @@ class UserRepositoryTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         def savedId = userRepository.save(user)
         def fetched = userRepository.getUser("user", "password")
@@ -44,7 +60,8 @@ class UserRepositoryTest extends DbTestCase {
                 password: "fake",
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.ADMIN)
+                role: Role.ADMIN,
+                manager: manager)
 
         userRepository.save(user)
 
@@ -57,7 +74,9 @@ class UserRepositoryTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.MANAGER)
+                role: Role.MANAGER,
+                uiProfile: new UiProfile()
+        )
 
         userRepository.save(user)
 
@@ -70,7 +89,8 @@ class UserRepositoryTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         def savedId = userRepository.save(user)
         def fetched = userRepository.getByLogin("user")
@@ -84,7 +104,8 @@ class UserRepositoryTest extends DbTestCase {
                 password: "password".pw(),
                 email: "username@example.com",
                 fullName: "John Doe",
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager)
 
         def savedId = userRepository.save(user)
         def fetched = userRepository.getByEmail("username@example.com")
@@ -117,4 +138,23 @@ class UserRepositoryTest extends DbTestCase {
             userRepository.save(users[3])
         }
     }
+    
+    void testUiProfile1() {
+        def user = new User(
+                login: 'user',
+                password: 'password'.pw(),
+                email: 'username@example.com',
+                fullName: 'John Doe',
+                role: Role.MANAGER,
+                uiProfile: new UiProfile(
+                        icon: new byte[10],
+                        skin: ARAKS
+                ))
+
+        def savedId = userRepository.save user
+
+        user = userRepository.load savedId
+        assertEquals ARAKS, user.uiProfile.skin
+    }
+
 }

@@ -5,8 +5,11 @@
 
 <faces-config xmlns="http://java.sun.com/xml/ns/javaee"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_2.xsd"
               version="2.0">
+  <factory>
+    <partial-view-context-factory>mobi.eyeline.utils.partial.EyePartialViewContextFactory</partial-view-context-factory>
+  </factory>
 
   <lifecycle>
     <phase-listener>mobi.eyeline.ips.web.SessionPhaseListener</phase-listener>
@@ -17,6 +20,7 @@
       <default-locale>ru</default-locale>
       <supported-locale>ru</supported-locale>
       <supported-locale>en</supported-locale>
+      <supported-locale>sk</supported-locale>
     </locale-config>
 
     <resource-bundle>
@@ -24,143 +28,9 @@
       <var>bundle</var>
     </resource-bundle>
 
-    <message-bundle>external</message-bundle>
+    <view-handler>mobi.eyeline.ips.web.IPSViewHandler</view-handler>
+
   </application>
-
-  <!-- COMPONENTS=================================================================================================== -->
-
-  <component>
-    <component-type>mobi.eyeline.ips.components.tree</component-type>
-    <component-class>mobi.eyeline.ips.components.tree.Tree</component-class>
-  </component>
-
-  <!-- BEANS ======================================================================================================= -->
-
-  <managed-bean>
-    <managed-bean-name>userSession</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.login.UserSessionController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>localeController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.LocaleController</managed-bean-class>
-    <managed-bean-scope>session</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>dateController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.DateController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>resources</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.ResourceController</managed-bean-class>
-    <managed-bean-scope>application</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>baseSurveyController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.BaseSurveyController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>baseSurveyReadOnlyController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.BaseSurveyReadOnlyController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>login</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.login.LoginPageController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>passwordResetController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.login.PasswordResetController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>surveyListController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyListController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>surveySettingsController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>surveyResultsController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyResultsController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>surveyStatsController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyStatsController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>surveyInvitesController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.SurveyInvitesController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>invitationDeliveryController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.surveys.InvitationDeliveryController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>clientController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.clients.ClientController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>profilePageController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.profile.ProfilePageController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>clientListController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.clients.ClientListController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>accessNumberController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.c2s.AccessNumbersController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <managed-bean>
-    <managed-bean-name>enterController</managed-bean-name>
-    <managed-bean-class>mobi.eyeline.ips.web.controllers.EnterController</managed-bean-class>
-    <managed-bean-scope>request</managed-bean-scope>
-  </managed-bean>
-
-  <!-- VALIDATION ================================================================================================== -->
-
-  <validator>
-    <validator-id>email</validator-id>
-    <validator-class>mobi.eyeline.ips.web.validators.EmailValidator</validator-class>
-  </validator>
-
-  <validator>
-    <validator-id>loginPasswordValidator</validator-id>
-    <validator-class>mobi.eyeline.ips.web.validators.LoginPasswordValidator</validator-class>
-  </validator>
 
   <!-- NAVIGATION ================================================================================================== -->
 
@@ -174,24 +44,12 @@
   </navigation-rule>
 
   <navigation-rule>
-     <description>Восстановление пароля</description>
-     <navigation-case>
-       <from-outcome>RECOVERY_PASSWORD</from-outcome>
-       <to-view-id>/passwordreset.xhtml</to-view-id>
-       <redirect/>
-      </navigation-case>
-
-      <navigation-case>
-        <from-outcome>RETRY_RECOVERY</from-outcome>
-        <to-view-id>/passwordreset.faces?recovery=false</to-view-id>
-        <redirect/>
-      </navigation-case>
-
-      <navigation-case>
-        <from-outcome>DONE_RECOVERY</from-outcome>
-        <to-view-id>/login.faces?recovery=true</to-view-id>
-        <redirect/>
-      </navigation-case>
+    <description>Восстановление пароля</description>
+    <navigation-case>
+      <from-outcome>RECOVERY_PASSWORD</from-outcome>
+      <to-view-id>/passwordreset.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
   </navigation-rule>
 
   <navigation-rule>
@@ -199,6 +57,15 @@
     <navigation-case>
       <from-outcome>PROFILE</from-outcome>
       <to-view-id>/profilepage.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <description>Страница настройки скинов</description>
+    <navigation-case>
+      <from-outcome>SKIN_SETTINGS</from-outcome>
+      <to-view-id>/skinsettings.xhtml</to-view-id>
       <redirect/>
     </navigation-case>
   </navigation-rule>

@@ -218,6 +218,15 @@ class SurveyRepositoryTest extends DbTestCase {
     }
 
     private void fillTestData() {
+        def manager = new User(
+                login: 'testManager',
+                password: "testManagerPassw".pw(),
+                email: 'manager@example.com',
+                fullName: 'John Doe',
+                role: Role.MANAGER,
+                uiProfile: new UiProfile())
+
+        userRepository.save(manager)
         [
             user1 = new User(login: 'user1', fullName: 'F B', email: 'mail@mail.ru'),
             user2 = new User(login: 'user2', fullName: 'D C', email: 'mail2@mail.ru'),
@@ -225,6 +234,7 @@ class SurveyRepositoryTest extends DbTestCase {
             user4 = new User(login: 'user4', fullName: 'F C', email: 'mail4@mail.ru'),
         ].each { u ->
             u.role = Role.CLIENT
+            u.manager = manager
             u.password = '123'.pw()
             userRepository.save u
         }
@@ -241,11 +251,11 @@ class SurveyRepositoryTest extends DbTestCase {
 
         userRepository.save user5 = new User(
                 login: 'user5', fullName: 'F C', email: 'mail5@mail.ru',
-                role: MANAGER, password: '123'.pw())
+                role: MANAGER, password: '123'.pw(), uiProfile: new UiProfile())
 
         userRepository.save user6 = new User(
                 login: 'user6', fullName: 'F C', email: 'mail6@mail.ru',
-                role: MANAGER, password: '123'.pw(), onlyOwnSurveysVisible: true)
+                role: MANAGER, password: '123'.pw(), uiProfile: new UiProfile(), onlyOwnSurveysVisible: true)
 
         [
             survey(id: 1, client: user1, startDate: new Date() + 2, endDate: new Date() + 4) {

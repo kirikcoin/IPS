@@ -1,0 +1,150 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi" >
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="head">
+      <link rel="STYLESHEET" type="text/css"
+            href="#{resources.path}/resources/pages/skinsettings.less"/>
+
+      <script type="text/javascript"
+              src="#{resources.path}/resources/pages/skinsettings.js#{resources.version}">
+      </script>
+    </ui:define>
+
+
+    <ui:define name="scripts">
+      <script type="text/javascript">
+        //    <![CDATA[
+        if ("#{skinSettingsController.error}" == 'false') {
+          ips.message.info("#{bundle['settings.saved']}");
+        }
+
+        if ("#{skinSettingsController.error}" == 'true') {
+            $("#logo").addClass("validationError");
+            page.onLogoModifyDialogShow();
+        }
+
+        //    ]]>
+      </script>
+    </ui:define>
+
+    <ui:define name="content">
+
+      <div id="settingsPage">
+        <h:form enctype="multipart/form-data" id="content" prependId="false">
+          <eye:saveState value="#{skinSettingsController.viewSavedLogo}"/>
+
+          <h:panelGroup layout="block" styleClass="border-shadow">
+
+            <h:panelGrid columns="2" styleClass="page-header">
+              <h:outputText value="#{bundle['settings.title']}"/>
+            </h:panelGrid>
+
+            <h:panelGroup id="settingsPageBody" layout="block" styleClass="page-body">
+              <div style="margin:10px"></div>
+
+
+              <h:panelGrid columns="2" columnClasses="col1,col2">
+
+                <h:outputLabel value="#{bundle['settings.skin']}"
+                               for="skin"/>
+                <h:selectOneMenu id="skin" value="#{skinSettingsController.user.uiProfile.skin}">
+                    <f:selectItems value="#{skinSettingsController.skins}"
+                                   var="skin"
+                                   itemValue="#{skin}"
+                                   itemLabel="#{bundle['settings.skin.'.concat(skin.name())]}" />
+                </h:selectOneMenu>
+              </h:panelGrid>
+
+              <eye:collapsingGroup opened="true" id="logoSettings">
+                <f:facet name="header">
+                  <h:panelGroup>
+                    <h:outputText value="#{bundle['settings.logo']}"/>
+
+                    <h:commandLink value="#{bundle['settings.logo.modify.button']}"
+                                   onclick="return page.onLogoModifyDialogShow()"
+                                   styleClass="modify-left displayed"
+                                   rendered="true"/>
+                  </h:panelGroup>
+                </f:facet>
+                <div style="margin:10px"></div>
+                <h:panelGroup styleClass="displayed">
+
+                  <div style="margin:10px"></div>
+
+                  <h:graphicImage rendered="#{skinSettingsController.previewLogoSet}"
+                                  value="/images/preview"/>
+                  <h:outputText rendered="#{!skinSettingsController.previewLogoSet}"
+                                value="#{bundle['settings.logo.no']}"/>
+                </h:panelGroup>
+
+                <h:panelGroup id="logoModifyDialog" style="display: none">
+
+
+                  <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle['settings.logo']}"
+                                   for="logo"/>
+                    <!-- maxSize = 64K due to database BLOB type size. -->
+                    <eye:inputFile id="logo"
+                                   value="#{skinSettingsController.imageFile}"
+                                   maxSize="65535"/>
+                  </h:panelGrid>
+
+                  <h:outputText style="font-style: italic"
+                                value="#{bundle['settings.logo.modify.dialog.text']}"/>
+                  <div style="margin:10px"></div>
+
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['settings.logo.modify.dialog.save']}"
+                                     action="#{skinSettingsController.uploadLogo}"/>
+                    </eye:button>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['settings.logo.modify.dialog.delete']}"
+                                     action="#{skinSettingsController.deleteLogo}"/>
+                    </eye:button>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green"
+                                     value="#{bundle['settings.logo.modify.dialog.cancel']}"
+                                     onclick="return page.onLogoModifyDialogHide();"/>
+                    </eye:button>
+                    <eye:space/>
+                  </eye:buttons>
+                </h:panelGroup>
+              </eye:collapsingGroup>
+
+              <div style="margin:10px"></div>
+              <h:panelGroup styleClass="displayed">
+                <eye:buttons>
+                  <eye:button>
+                    <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.save.btn']}"
+                                   action="#{skinSettingsController.save}" />
+                  </eye:button>
+                  <eye:button>
+                    <h:commandLink styleClass="button-green" value="#{bundle['profile.edit.cancel.btn']}"
+                                   action="#{skinSettingsController.cancelSave}"/>
+                  </eye:button>
+                  <eye:space/>
+                </eye:buttons>
+              </h:panelGroup>
+            </h:panelGroup>
+
+
+            <h:panelGroup layout="block" styleClass="page-footer"/>
+
+          </h:panelGroup>
+
+        </h:form>
+      </div>
+
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

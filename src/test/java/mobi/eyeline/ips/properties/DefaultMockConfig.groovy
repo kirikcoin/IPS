@@ -19,8 +19,6 @@ class DefaultMockConfig extends FailingMockConfig {
     int getSadsMaxSessions() { 1 }
     String getBaseSurveyUrl() { '' }
 
-    List<LocationProperties> getLocationProperties() { null }
-
     int getPushThreadsNumber() { 2 }
     int getMessageQueueBaseline() { 10 }
     int getStateUpdateBatchSize() { 0 }

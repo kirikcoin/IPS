@@ -10,8 +10,11 @@ import mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
+import javax.faces.bean.ManagedBean
+
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "accessNumberController")
 class AccessNumbersController extends BaseController {
 
     private final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
@@ -51,8 +54,8 @@ class AccessNumbersController extends BaseController {
         }
     }
 
-    void goToSurvey() {
-        def surveyId = getParamValue('surveyId').asInteger()
+    @SuppressWarnings("GrMethodMayBeStatic")
+    void goToSurvey(int surveyId) {
         SurveySettingsController.goToSurvey(surveyId)
     }
 

@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="ips-dev">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/libdev" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.ideaLibSources/tomcat-servlet-api-7.0.52-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/tomcat-catalina-7.0.52-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.ideaLibSources/tomcat-coyote-7.0.52-sources.jar!/" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/libdev" recursive="false" />
+  </library>
+</component>

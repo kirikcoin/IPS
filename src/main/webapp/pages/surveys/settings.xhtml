@@ -3,8 +3,8 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
-        >
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc"
+        xmlns:ipsc="http://ips.eyeline.mobi">
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -46,7 +46,7 @@
             ips.message.info("#{bundle['survey.settings.preview.success']}");
           }
 
-          $('#content').attr('action',
+          $('form').attr('action',
               '/pages/surveys/settings.faces?id=#{surveySettingsController.surveyId}');
 
           page.setTreeLabels(
@@ -240,17 +240,15 @@
                         <f:param name="errorId" value="settingsDialog"/>
                       </h:commandLink>
                     </eye:button>
-
                     <eye:button>
-                      <h:commandLink styleClass="button-green"
-                                     id="settingsCancel"
-                                     action="#{surveySettingsController.onCancel}"
-                                     value="#{bundle['survey.create.button.cancel']}"/>
+                      <h:outputLink styleClass="button-green"
+                                    value="#"
+                                    onclick="return page.onEditSettingsCancel();">
+                        <h:outputText value="#{bundle['survey.create.button.cancel']}"/>
+                      </h:outputLink>
                     </eye:button>
-
                     <eye:space/>
                   </eye:buttons>
-
                 </h:panelGroup>
 
               </h:panelGroup>
@@ -286,26 +284,18 @@
                             <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
                               <h:commandLink value="#{bundle['survey.details.delete']}"
                                              styleClass="modify"
-                                             action="#{surveySettingsController.beforeDeleteQuestion}">
-                                <f:param name="questionId" value="${question.id}"/>
-                              </h:commandLink>
+                                             action="#{surveySettingsController.beforeDeleteQuestion(question.id)}"/>
                               <h:commandLink value="#{bundle['survey.settings.modify']}"
-                                             action="#{surveySettingsController.modifyQuestion}"
-                                             styleClass="modify">
-                                <f:param name="questionId" value="${question.id}"/>
-                              </h:commandLink>
+                                             action="#{surveySettingsController.modifyQuestion(question.id)}"
+                                             styleClass="modify"/>
                               <!--<h:commandLink value="#{bundle['survey.settings.question.move.down']}"-->
                                              <!--styleClass="modify"-->
                                              <!--rendered="#{not question.last}"-->
-                                             <!--action="#{surveySettingsController.moveUp}">-->
-                                <!--<f:param name="questionId" value="#{question.id}"/>-->
-                              <!--</h:commandLink>-->
+                                             <!--action="#{surveySettingsController.moveUp(question.id)}"/>-->
                               <!--<h:commandLink value="#{bundle['survey.settings.question.move.up']}"-->
                                              <!--styleClass="modify"-->
                                              <!--rendered="#{not question.first}"-->
-                                             <!--action="#{surveySettingsController.moveDown}">-->
-                                <!--<f:param name="questionId" value="#{question.id}"/>-->
-                              <!--</h:commandLink>-->
+                                             <!--action="#{surveySettingsController.moveDown(question.id)}"/>-->
                             </h:panelGroup>
                           </h:panelGrid>
                         </f:facet>
@@ -360,7 +350,7 @@
                   </h:panelGroup>
                 </eye:tab>
                 <eye:tab label="#{bundle['survey.settings.questions.tabs.graphs']}">
-                  <ips:tree id="questionsTree"
+                  <ipsc:tree id="questionsTree"
                             value="#{surveySettingsController.questionsGraph}"
                             height="600"
                             width="1162"
@@ -372,11 +362,9 @@
                 <eye:buttons>
                   <eye:button>
                     <h:commandLink value="#{bundle['survey.settings.question.add']}"
-                                   action="#{surveySettingsController.modifyQuestion}"
+                                   action="#{surveySettingsController.modifyQuestion(null)}"
                                    styleClass="button-green"
-                                   rendered="#{userSession.surveyModificationAllowed}">
-                      <f:param name="questionId" value=""/>
-                    </h:commandLink>
+                                   rendered="#{userSession.surveyModificationAllowed}"/>
                   </eye:button>
                   <eye:space/>
                 </eye:buttons>
@@ -552,9 +540,11 @@
                       </h:commandLink>
                     </eye:button>
                     <eye:button>
-                      <h:commandLink styleClass="button-green"
-                                     id="endMessageCancel"
-                                     value="#{bundle['survey.create.button.cancel']}"/>
+                      <h:outputLink styleClass="button-green"
+                                    value="#"
+                                    onclick="return page.onEditEndMessageCancel();">
+                        <h:outputText value="#{bundle['survey.create.button.cancel']}"/>
+                      </h:outputLink>
                     </eye:button>
                     <eye:space/>
                   </eye:buttons>
@@ -575,10 +565,7 @@
         <ips:confirmDialog id="deleteDialog"
                            text="#{bundle['survey.settings.delete.prompt']}"
                            title="#{bundle['survey.settings.delete.title']}"
-                           actionBean="#{surveySettingsController}"
-                           actionName="deleteSurvey"
-                           paramKey="errorId"
-                           paramValue="deleteDialog"
+                           action="#{surveySettingsController.deleteSurvey}"
                            width="450"/>
 
 

@@ -58,7 +58,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
         final Session session = getSessionFactory().getCurrentSession();
 
-        final Criteria criteria = session.createCriteria(Survey.class);
+        final Criteria criteria = session.createCriteria(Survey.class).setCacheable(true);
 
         criteria.createAlias("details", "details");
         criteria.createAlias("statistics", "statistics");

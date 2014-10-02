@@ -1,14 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
 
-<f:view xmlns="http://www.w3.org/1999/xhtml"
-        xmlns:f="http://java.sun.com/jsf/core"
-        xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:h="http://java.sun.com/jsf/html">
+<f:view contentType="text/html">
 
-  <html xmlns="http://www.w3.org/1999/xhtml">
-
-  <head>
+  <h:head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="CACHE-CONTROL" content="NO-CACHE"/>
 
     <title>#{bundle['app.title']}</title>
@@ -33,8 +34,6 @@
     <script type="text/javascript" language="javascript"
             src="#{resources.path}/resources/js/jquery.tablednd.js#{resources.version}"></script>
     <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/jsf-components.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
                 src="#{resources.path}/resources/js/ui.datepicker-ru.js#{resources.version}"></script>
     <script type="text/javascript" language="javascript"
             src="#{resources.path}/resources/js/d3.js#{resources.version}"></script>
@@ -50,7 +49,7 @@
     <link rel="STYLESHEET" type="text/css"
           href="#{resources.path}/resources/skins/#{resources.skin}/styles/pages.less"/>
 
-  </head>
+  </h:head>
 
   <body>
 
@@ -74,7 +73,9 @@
                   <tr>
                     <td width="49%"></td>
                     <td>
-                      <h:messages id="jsf_messages" errorClass="error-message" infoClass="info-message"/>
+                      <h:panelGroup style="#{empty facesContext.messageList ? 'display:none' : 'display:block'}">
+                      <h:messages id="jsf_messages" errorClass="error-message" infoClass="info-message" />
+                      </h:panelGroup>
                       <ul id="page_messages" style="display:none"></ul>
                     </td>
                     <td width="49%"></td>
@@ -96,6 +97,6 @@
 
 
   </body>
+  </f:view>
   </html>
 
-</f:view>

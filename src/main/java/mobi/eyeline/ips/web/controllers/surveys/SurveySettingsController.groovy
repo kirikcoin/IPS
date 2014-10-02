@@ -19,16 +19,14 @@ import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
-import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.ips.web.validators.PhoneValidator
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
-import mobi.eyeline.util.jsf.components.input_date.InputDateRenderer
 
+import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
-import java.text.SimpleDateFormat
 
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.COUPON
@@ -38,6 +36,7 @@ import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "surveySettingsController")
 class SurveySettingsController extends BaseSurveyController {
 
     private final QuestionRepository questionRepository = Services.instance().questionRepository
@@ -119,7 +118,7 @@ class SurveySettingsController extends BaseSurveyController {
                 * survey.activeQuestions.collect { q ->
                     def idx = q.activeIndex + 1
                     def maxLabel = 20
-                    def title = q.title.replace('\n', ' ')
+                    def title = q.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
                     new SelectItem(
                             q.id,
                             "$idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel-3] + '...'}",
@@ -225,6 +224,7 @@ class SurveySettingsController extends BaseSurveyController {
                         'details.title': 'newSurveyTitle',
                         'startDate': 'newSurveyStartDate',
                         'endDate': 'newSurveyEndDate',
+                        'endDateAfterStartDate': 'newSurveyEndDate',
                         'statistics.accessNumber': 'newAccessNumber'
                 ])
 
@@ -268,7 +268,7 @@ class SurveySettingsController extends BaseSurveyController {
         } catch (Exception e) {
             logger.error(e.message, e)
             addErrorMessage strings['esdp.error.survey.deletion']
-            errorId = FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
+            errorId = 'deleteDialog'
 
             return null
         }
@@ -278,25 +278,23 @@ class SurveySettingsController extends BaseSurveyController {
         return 'SURVEY_LIST'
     }
 
-    void moveUp() {
-        int questionId = getParamValue('questionId').asInteger()
+    void moveUp(int questionId) {
         persistedSurvey.moveUp(questionRepository.load(questionId))
         surveyRepository.update(persistedSurvey)
 
         persistedSurvey = surveyRepository.load(surveyId)
     }
 
-    void moveDown() {
-        int questionId = getParamValue('questionId').asInteger()
+    void moveDown(int questionId) {
         persistedSurvey.moveDown(questionRepository.load(questionId))
         surveyRepository.update(persistedSurvey)
 
         persistedSurvey = surveyRepository.load(surveyId)
     }
 
-    void beforeDeleteQuestion() {
-        int questionId = getParamValue('questionId').asInteger()
+    void beforeDeleteQuestion(int questionId) {
         def question = questionRepository.load(questionId)
+        this.questionId = questionId
 
         def refs = surveyService.getReferencesTo(question)
         if (refs.empty) {
@@ -323,8 +321,8 @@ class SurveySettingsController extends BaseSurveyController {
         updateQuestionsGraph()
     }
 
-    String modifyQuestion() {
-        Integer questionId = getParamValue('questionId').asInteger()
+    String modifyQuestion(Integer questionId) {
+        this.questionId = questionId
 
         if (questionId) {
             question = questionRepository.load(questionId)
@@ -352,7 +350,7 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     void saveQuestion() {
-        def persistedQuestion = (questionId != null) ?
+        def persistedQuestion = questionId ?
                 questionRepository.load(questionId) : new Question(survey: persistedSurvey)
 
         updateQuestionModel(persistedQuestion)
@@ -365,7 +363,7 @@ class SurveySettingsController extends BaseSurveyController {
             return
         }
 
-        if (questionId == null) {
+        if (!questionId) {
             persistedSurvey.questions.add(persistedQuestion)
             surveyRepository.update(persistedSurvey)
 

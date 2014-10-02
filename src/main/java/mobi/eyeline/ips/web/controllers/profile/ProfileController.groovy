@@ -1,25 +1,21 @@
 package mobi.eyeline.ips.web.controllers.profile
 
 import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.Services
-import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.LocaleController
 import mobi.eyeline.ips.web.controllers.TimeZoneHelper
-import org.apache.commons.lang3.tuple.Pair
 
+import javax.faces.bean.ManagedBean
 import javax.faces.model.SelectItem
 
-import static java.util.concurrent.TimeUnit.HOURS
-import static java.util.concurrent.TimeUnit.MILLISECONDS
-
 @CompileStatic
-class ProfilePageController extends BaseController {
+@ManagedBean(name = "profilePageController")
+class ProfileController extends BaseController {
 
     private final UserRepository userRepository = Services.instance().userRepository
     private final UserService userService = Services.instance().userService
@@ -34,7 +30,7 @@ class ProfilePageController extends BaseController {
 
     boolean updateOk
 
-    ProfilePageController() {
+    ProfileController() {
         user = getCurrentUser()
         localeController = new LocaleController()
     }

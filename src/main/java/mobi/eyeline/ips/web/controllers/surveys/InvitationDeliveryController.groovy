@@ -15,6 +15,7 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
+import javax.faces.bean.ManagedBean
 import javax.faces.model.SelectItem
 import java.text.MessageFormat
 import java.util.regex.Pattern
@@ -25,6 +26,7 @@ import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 
 @CompileStatic
 @Slf4j('logger')
+@ManagedBean(name = "invitationDeliveryController")
 class InvitationDeliveryController extends BaseController {
 
     private static final int DEFAULT_SPEED = 10
@@ -159,7 +161,6 @@ class InvitationDeliveryController extends BaseController {
                 editedDelivery.text = invitationDelivery.text
                 editedDelivery.speed = invitationDelivery.speed
             }
-
 
             if (validate(editedDelivery)) {
                 invitationDeliveryRepository.update(editedDelivery)

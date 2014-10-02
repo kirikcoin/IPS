@@ -3,16 +3,16 @@ package mobi.eyeline.ips.web.controllers
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.web.IPSViewHandler
 
+import javax.faces.bean.ManagedBean
+import javax.faces.bean.SessionScoped
 import javax.faces.context.FacesContext
-import javax.servlet.http.HttpServletRequest
 
+@ManagedBean(name = "localeController")
+@SessionScoped
 class LocaleController extends BaseController {
 
-    void changeLocale() {
-        Locale locale = new Locale(getParamValue('lang').asString())
-        setLocaleAttributes(locale)
-
-        FacesContext.currentInstance.externalContext.redirect(getFullUrl())
+    void changeLocale(String localeName) {
+        setLocaleAttributes(new Locale(localeName))
     }
 
     private void setLocaleAttributes(Locale locale) {
@@ -22,17 +22,5 @@ class LocaleController extends BaseController {
 
     void changeLocale(User user) {
         setLocaleAttributes(user.locale.asLocale())
-    }
-
-    @SuppressWarnings("GrMethodMayBeStatic")
-    private String getFullUrl() {
-        def context = FacesContext.currentInstance.externalContext
-
-        def id = (context.request as HttpServletRequest)
-                .getParameter("param")
-                .split('\\{|\\}|, ')
-                .find {it.startsWith('id=')}
-
-        return context.requestServletPath + ((id != null) ? "?${id}" : '')
     }
 }

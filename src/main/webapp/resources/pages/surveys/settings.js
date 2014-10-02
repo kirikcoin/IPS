@@ -21,9 +21,7 @@ var page = {
     $(function () {
       $.each(['groupEndMessage', 'groupSettings', 'questionsList'], function(i, e) {
         wireModificationLink(e);
-
       });
-
 
       jsfc('questionOptions').addListener(function (event) {
         if (event.type == 'added') {
@@ -41,20 +39,15 @@ var page = {
       $('#tabs > div').show();
       if ($('.ui-tabs-nav li:nth-child(2)').hasClass('ui-state-active')) {
         treeInitialized = true;
-        jsfc('questionsTree').init();
+        jsfc('questionsTree').init(true);
       }
       $('#tabs').on('tabsshow', function (event, ui) {
         if ((ui.index == 1) && !treeInitialized) {
           treeInitialized = true;
-          jsfc('questionsTree').init();
+          jsfc('questionsTree').init(true);
         }
       });
     });
-
-    // TODO: Why do we replace attributes here? If the links need to be handled on the client side
-    // (i.e. with no form submit) seems better to use different link type.
-    $("#settingsCancel").attr("onclick", "page.onEditSettingsCancel();");
-    $("#endMessageCancel").attr("onclick", "page.onEditEndMessageCancel();");
 
   },
 

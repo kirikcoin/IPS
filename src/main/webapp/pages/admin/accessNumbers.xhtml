@@ -3,7 +3,7 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:ips="http://ips.eyeline.mobi/jsf/facelets"
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc"
         >
 
   <ui:composition template="/templates/main.xhtml">
@@ -69,10 +69,7 @@
                           sortable="true">
 
                 <h:commandLink value="#{row.surveyTitle}"
-                               action="#{accessNumberController.goToSurvey}"
-                               rendered="#{row.surveyId != null}">
-                  <f:param name="surveyId" value="#{row.surveyId}"/>
-                </h:commandLink>
+                               action="#{accessNumberController.goToSurvey(row.surveyId)}"/>
               </eye:column>
 
               <eye:column name="action"
@@ -124,13 +121,11 @@
 
         </eye:dialog>
 
-
         <ips:confirmDialog id="deleteNumberDialog"
                            text="#{bundle['accessnumbers.delete.text']}"
                            width="300"
                            title="#{bundle['accessnumbers.delete.title']}"
-                           actionBean="#{accessNumberController}"
-                           actionName="deleteNumber"/>
+                           action="#{accessNumberController.deleteNumber}"/>
 
       </h:form>
 

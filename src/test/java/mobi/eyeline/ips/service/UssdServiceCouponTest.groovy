@@ -5,6 +5,7 @@ import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyPattern
+import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.properties.DefaultMockConfig
@@ -172,13 +173,23 @@ class UssdServiceCouponTest extends DbTestCase {
         survey.patterns.clear()
         surveyRepository.update survey
 
+        User manager = new User(login: 'jdoe',
+                                password: '123'.pw(),
+                                email: 'username@example.com',
+                                fullName: 'John Doe',
+                                role: Role.MANAGER,
+                                uiProfile: new UiProfile())
+
         User client = new User(
                 id: 1,
                 password: '123',
                 login: 'client',
                 fullName: 'client',
                 email: 'client@example.com',
-                role: Role.CLIENT)
+                role: Role.CLIENT,
+                manager: manager )
+
+        userRepository.save manager
         userRepository.save client
         survey.client = client
 
