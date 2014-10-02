@@ -21,5 +21,6 @@ class ImageValidatorTest extends GroovyTestCase {
         assertFalse imageValidator.validate('z m en iť.P N G')
         assertFalse imageValidator.validate('abc')
         assertFalse imageValidator.validate('')
+        assertFalse imageValidator.validate(null)
     }
 }
