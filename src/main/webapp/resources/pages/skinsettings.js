@@ -6,20 +6,22 @@ var page = {
   onLogoModifyDialogShow: function() {
     $('#logoModifyDialog').show();
     $('.displayed').hide();
-  //  jsfc('logoModifyDialog').show();
 
     return false;
   },
-
 
   onLogoModifyDialogHide: function() {
     $('#logoModifyDialog').hide();
     $('.displayed').show();
 
-   // jsfc('logoModifyDialog').hide();
+    this.resetFormElement($('#logo'));
+
     return false;
+  },
+
+  resetFormElement: function (e) {
+    e.wrap('<form>').closest('form').get(0).reset();
+    e.unwrap();
   }
-
-
 
 };
