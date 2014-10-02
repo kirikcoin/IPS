@@ -1,23 +1,24 @@
 package mobi.eyeline.ips.web.validators;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.common.io.Files;
+
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class ImageValidator {
 
-    private static final String IMAGE_REGEXP = "[^\\s]+(\\.(?i)(jpg|jpeg|png))$";
-
-    private final Pattern pattern = Pattern.compile(IMAGE_REGEXP);
+    private static final List<String> SUPPORTED_EXTENSIONS = asList("jpg", "jpeg", "png");
 
     /**
      * @return {@code true} iff considered valid.
      */
     public boolean validate(String imageName) {
-        if (imageName == null) {
-            return false;
-        }
+        final String ext = Files.getFileExtension(imageName);
+        final String name = Files.getNameWithoutExtension(imageName);
 
-        final Matcher matcher = pattern.matcher(imageName);
-        return matcher.matches();
+        return isNotEmpty(ext) && isNotEmpty(name) &&
+                SUPPORTED_EXTENSIONS.contains(ext.toLowerCase());
     }
 }
