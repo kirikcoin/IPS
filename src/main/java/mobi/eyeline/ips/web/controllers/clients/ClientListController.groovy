@@ -43,14 +43,20 @@ class ClientListController extends BaseController {
         userForEdit = new User()
     }
 
-    public DataTableModel getTableModel() {
+    DataTableModel getTableModel() {
         return new DataTableModel() {
+
+            private User getOwner() {
+                assert getCurrentUser().role == Role.MANAGER
+                return getCurrentUser().showAllClients ? null : getCurrentUser()
+            }
 
             @Override
             List getRows(int offset,
                          int limit,
                          DataTableSortOrder sortOrder){
                 def list = userRepository.list(
+                        this.owner,
                         search,
                         sortOrder.columnId,
                         sortOrder.asc,
@@ -72,7 +78,7 @@ class ClientListController extends BaseController {
 
             @Override
             int getRowsCount() {
-                userRepository.count(search)
+                userRepository.count(this.owner, search)
             }
         }
     }

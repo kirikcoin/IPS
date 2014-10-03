@@ -93,7 +93,24 @@ public class UserRepository extends BaseRepository<User, Integer> {
                 .list();
     }
 
-    public List<User> list(String filter,
+    public List<User> listClients(User manager) {
+        final Session session = getSessionFactory().getCurrentSession();
+        if (manager == null) {
+            return listByRole(Role.CLIENT);
+
+        } else {
+            //noinspection unchecked
+            return (List<User>) session
+                    .createCriteria(User.class)
+                    .setCacheable(true)
+                    .add(eq("role", Role.CLIENT))
+                    .add(eq("manager", manager))
+                    .list();
+        }
+    }
+
+    public List<User> list(User manager,
+                           String filter,
                            String orderColumn,
                            boolean orderAsc,
                            int limit,
@@ -112,6 +129,10 @@ public class UserRepository extends BaseRepository<User, Integer> {
             );
 
             criteria.add(filters);
+        }
+
+        if (manager != null) {
+            criteria.add(Restrictions.eq("manager", manager));
         }
 
         criteria.add(Restrictions.eq("role", Role.CLIENT));
@@ -137,7 +158,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
         return (List<User>) criteria.list();
     }
 
-    public int count(String filter) {
+    public int count(User manager, String filter) {
         final Session session = getSessionFactory().getCurrentSession();
         final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
 
@@ -152,6 +173,10 @@ public class UserRepository extends BaseRepository<User, Integer> {
             );
 
             criteria.add(filters);
+        }
+
+        if (manager != null) {
+            criteria.add(Restrictions.eq("manager", manager));
         }
 
         criteria.add(Restrictions.eq("role", Role.CLIENT));
