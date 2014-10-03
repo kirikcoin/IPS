@@ -11,6 +11,7 @@ import mobi.eyeline.ips.service.CsvParseService.InvalidMsisdnFormatException
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.deliveries.DeliveryService
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.validators.SimpleConstraintViolation
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
@@ -156,6 +157,7 @@ class InvitationDeliveryController extends BaseController {
 
             if(editedDelivery.state == ACTIVE){
                 editedDelivery.speed = invitationDelivery.speed
+
             } else {
                 editedDelivery.type = invitationDelivery.type
                 editedDelivery.text = invitationDelivery.text
@@ -177,30 +179,34 @@ class InvitationDeliveryController extends BaseController {
     }
 
     private boolean validate(InvitationDelivery invitationDelivery) {
+        final def pattern = Pattern.compile('^[1-9]\\d{0,2}+$')
 
-        Pattern pattern = Pattern.compile('^[1-9]\\d{0,2}+$')
+        def errorMessages = []
 
         if (speedString != null && pattern.matcher(speedString).matches()) {
             invitationDelivery.speed = Integer.parseInt(speedString)
+
         } else {
-            addErrorMessage(strings['invitations.deliveries.dialog.speed.max'], 'deliverySpeed')
+            errorMessages << new SimpleConstraintViolation('deliverySpeed',
+                    strings['invitations.deliveries.dialog.speed.max'])
             deliveryModifyError = true
         }
 
-        if(invitationDelivery.type != NI_DIALOG) {
-            if(invitationDelivery.text == null){
-                addErrorMessage(strings['invitations.deliveries.dialog.text'], 'invitationText')
-                deliveryModifyError = true
-            }
+        if (invitationDelivery.type != NI_DIALOG || !invitationDelivery.text) {
+            errorMessages << new SimpleConstraintViolation('invitationText',
+                    strings['invitations.deliveries.dialog.text'])
+            deliveryModifyError = true
         }
 
-        deliveryModifyError |=
-                renderViolationMessage(validator.validate(invitationDelivery), [
+        deliveryModifyError |= renderViolationMessage(
+                (validator.validate(invitationDelivery) + errorMessages) as Set,
+                [
                         'text': 'invitationText',
                         'speed': 'deliverySpeed',
                         'inputFile': 'deliveryReceivers',
-                ])
-        if(invitationDelivery.inputFile == null){
+                ],
+                ['text', 'inputFile', 'speed'])
+        if (!invitationDelivery.inputFile) {
             deliveryReceiversError = true
         }
 
