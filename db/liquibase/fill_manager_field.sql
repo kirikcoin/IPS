@@ -1,1 +1,0 @@
-UPDATE users SET manager_id = '4' WHERE role != 'manager';
