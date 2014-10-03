@@ -150,7 +150,7 @@ class ClientListController extends BaseController {
                         'company':      'clientSettingsCompany',
                         'login':        'clientSettingsLogin',
                         'email':        'clientSettingsEmail',
-                ])
+                ], ['fullName', 'company', 'login', 'email'])
 
         if (!userService.isLoginAllowed(user)) {
             addErrorMessage(strings['client.dialog.validation.login.exists'], 'clientSettingsLogin')
