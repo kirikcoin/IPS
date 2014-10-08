@@ -54,6 +54,8 @@ class SurveySettingsController extends BaseSurveyController {
     String settingsStartDate
     String settingsEndDate
 
+    boolean openedGraph
+
     int newSurveyClientId
 
     Integer questionId
@@ -110,6 +112,7 @@ class SurveySettingsController extends BaseSurveyController {
 
         settingsStartDate = formatDateTime(survey.startDate, getTimeZone())
         settingsEndDate = formatDateTime(survey.endDate, getTimeZone())
+
     }
 
     List<SelectItem> getQuestions() {
@@ -164,7 +167,6 @@ class SurveySettingsController extends BaseSurveyController {
         copyCoupons()
 
         surveyRepository.update(persistedSurvey)
-        goToSurvey(surveyId)
     }
 
     private void copyEndMessage() {
