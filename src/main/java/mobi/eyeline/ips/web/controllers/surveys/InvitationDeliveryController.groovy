@@ -192,7 +192,7 @@ class InvitationDeliveryController extends BaseController {
             deliveryModifyError = true
         }
 
-        if (invitationDelivery.type != NI_DIALOG || !invitationDelivery.text) {
+        if (invitationDelivery.type != NI_DIALOG && !invitationDelivery.text) {
             errorMessages << new SimpleConstraintViolation('invitationText',
                     strings['invitations.deliveries.dialog.text'])
             deliveryModifyError = true
