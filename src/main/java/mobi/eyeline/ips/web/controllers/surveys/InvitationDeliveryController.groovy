@@ -18,6 +18,7 @@ import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
 import javax.faces.bean.ManagedBean
 import javax.faces.model.SelectItem
+import javax.validation.ConstraintViolation
 import java.text.MessageFormat
 import java.util.regex.Pattern
 
@@ -52,6 +53,8 @@ class InvitationDeliveryController extends BaseController {
     List<String> msisdnList
     UploadedFile inputFile
     String progress
+
+    List<ConstraintViolation> errorMessages = []
 
     @Delegate
     BaseSurveyReadOnlyController surveys =
@@ -139,7 +142,7 @@ class InvitationDeliveryController extends BaseController {
             invitationDelivery.date = new Date()
             invitationDelivery.inputFile = inputFile?.filename
 
-            if (validate(inputFile, invitationDelivery) && validate(inputFile)) {
+            if (validate(inputFile, invitationDelivery)) {
                 invitationDeliveryRepository.saveWithSubscribers(invitationDelivery, msisdnList)
 
                 if (invitationDelivery.state == ACTIVE) {
@@ -181,7 +184,7 @@ class InvitationDeliveryController extends BaseController {
     private boolean validate(InvitationDelivery invitationDelivery) {
         final def pattern = Pattern.compile('^[1-9]\\d{0,2}+$')
 
-        def errorMessages = []
+
 
         if (speedString != null && pattern.matcher(speedString).matches()) {
             invitationDelivery.speed = Integer.parseInt(speedString)
@@ -216,14 +219,25 @@ class InvitationDeliveryController extends BaseController {
     private boolean validate(UploadedFile inputFile,
                              InvitationDelivery invitationDelivery) {
 
+
         if (inputFile && inputFile.length < 0) {
-            addErrorMessage(
-                    strings['invitations.deliveries.dialog.file.error.upload'],
-                    'deliveryReceivers')
+//            addErrorMessage(
+//                    strings['invitations.deliveries.dialog.file.error.upload'],
+//                    'deliveryReceivers')
+            errorMessages << new SimpleConstraintViolation('inputFile',
+                    strings['invitations.deliveries.dialog.file.error.upload'])
             deliveryModifyError = true
         }
 
+        if(inputFile){
+            validate(inputFile)
+        }
+
+
+
         validate(invitationDelivery)
+
+
 
         return !deliveryModifyError
     }
@@ -231,7 +245,9 @@ class InvitationDeliveryController extends BaseController {
     private boolean validate(UploadedFile file) {
         FileValidationResult result = validateFile(file)
         if (result.error) {
-            addErrorMessage(result.errorMessage, 'deliveryReceivers')
+//            addErrorMessage(result.errorMessage, 'deliveryReceivers')
+            errorMessages << new SimpleConstraintViolation('inputFile',
+                    result.errorMessage)
             deliveryModifyError = true
         }
 
