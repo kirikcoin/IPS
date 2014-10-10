@@ -187,13 +187,13 @@ class InvitationDeliveryController extends BaseController {
             invitationDelivery.speed = Integer.parseInt(speedString)
 
         } else {
-            errorMessages << new SimpleConstraintViolation('deliverySpeed',
+            errorMessages << new SimpleConstraintViolation('speed',
                     strings['invitations.deliveries.dialog.speed.max'])
             deliveryModifyError = true
         }
 
         if (invitationDelivery.type != NI_DIALOG && !invitationDelivery.text) {
-            errorMessages << new SimpleConstraintViolation('invitationText',
+            errorMessages << new SimpleConstraintViolation('text',
                     strings['invitations.deliveries.dialog.text'])
             deliveryModifyError = true
         }
