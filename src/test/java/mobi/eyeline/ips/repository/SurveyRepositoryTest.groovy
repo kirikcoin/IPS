@@ -223,7 +223,7 @@ class SurveyRepositoryTest extends DbTestCase {
                 password: "testManagerPassw".pw(),
                 email: 'manager@example.com',
                 fullName: 'John Doe',
-                role: Role.MANAGER,
+                role: MANAGER,
                 uiProfile: new UiProfile())
 
         userRepository.save(manager)

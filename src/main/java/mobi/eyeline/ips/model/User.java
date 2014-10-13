@@ -132,6 +132,10 @@ public class User implements Serializable {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean showC2s = false;
 
+    @Column(name = "show_all_clients", columnDefinition = "BIT", nullable = false)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean showAllClients = false;
+
     @Column(name = "esdp_provider")
     private String esdpProvider;
 
@@ -275,6 +279,14 @@ public class User implements Serializable {
 
     public void setShowC2s(boolean showC2s) {
         this.showC2s = showC2s;
+    }
+
+    public boolean isShowAllClients() {
+        return showAllClients;
+    }
+
+    public void setShowAllClients(boolean showAllClients) {
+        this.showAllClients = showAllClients;
     }
 
     public String getEsdpProvider() {

@@ -162,9 +162,13 @@ abstract class BaseController implements Serializable {
     }
 
     boolean renderViolationMessage(Set<ConstraintViolation<?>> violations,
-                                   Map<String, String> fieldNamesMapping) {
+                                   Map<String, String> fieldNamesMapping,
+                                   List<String> fieldOrder = []) {
 
-        violations.each { addFacesMessage(it, fieldNamesMapping) }
+        def rank = { ConstraintViolation v -> fieldOrder.indexOf(v.propertyPath as String) }
+        violations.toList()
+                .sort { v1, v2 -> rank(v1) <=> rank(v2) }
+                .each { addFacesMessage(it, fieldNamesMapping) }
     }
 
     boolean renderViolationMessage(Set<ConstraintViolation<?>> violations) {

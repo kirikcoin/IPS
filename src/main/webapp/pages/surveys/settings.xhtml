@@ -220,7 +220,7 @@
                     <h:selectOneMenu id="clients"
                                      value="#{surveySettingsController.newSurveyClientId}"
                                      style="margin-left: 0; margin-right: 0">
-                      <f:selectItems value="#{clientController.clients}" />
+                      <f:selectItems value="#{clientController.getClients(userSession.currentUser)}" />
                     </h:selectOneMenu>
 
                     <h:outputLabel value="#{bundle['survey.list.table.access.number']}:"

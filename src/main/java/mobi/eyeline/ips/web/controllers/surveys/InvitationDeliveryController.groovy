@@ -11,12 +11,14 @@ import mobi.eyeline.ips.service.CsvParseService.InvalidMsisdnFormatException
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.deliveries.DeliveryService
 import mobi.eyeline.ips.web.controllers.BaseController
+import mobi.eyeline.ips.web.validators.SimpleConstraintViolation
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
 import javax.faces.bean.ManagedBean
 import javax.faces.model.SelectItem
+import javax.validation.ConstraintViolation
 import java.text.MessageFormat
 import java.util.regex.Pattern
 
@@ -51,6 +53,8 @@ class InvitationDeliveryController extends BaseController {
     List<String> msisdnList
     UploadedFile inputFile
     String progress
+
+    List<ConstraintViolation> errorMessages = []
 
     @Delegate
     BaseSurveyReadOnlyController surveys =
@@ -138,7 +142,7 @@ class InvitationDeliveryController extends BaseController {
             invitationDelivery.date = new Date()
             invitationDelivery.inputFile = inputFile?.filename
 
-            if (validate(inputFile, invitationDelivery) && validate(inputFile)) {
+            if (validate(inputFile, invitationDelivery)) {
                 invitationDeliveryRepository.saveWithSubscribers(invitationDelivery, msisdnList)
 
                 if (invitationDelivery.state == ACTIVE) {
@@ -156,6 +160,7 @@ class InvitationDeliveryController extends BaseController {
 
             if(editedDelivery.state == ACTIVE){
                 editedDelivery.speed = invitationDelivery.speed
+
             } else {
                 editedDelivery.type = invitationDelivery.type
                 editedDelivery.text = invitationDelivery.text
@@ -177,30 +182,34 @@ class InvitationDeliveryController extends BaseController {
     }
 
     private boolean validate(InvitationDelivery invitationDelivery) {
+        final def pattern = Pattern.compile('^[1-9]\\d{0,2}+$')
 
-        Pattern pattern = Pattern.compile('^[1-9]\\d{0,2}+$')
+
 
         if (speedString != null && pattern.matcher(speedString).matches()) {
             invitationDelivery.speed = Integer.parseInt(speedString)
+
         } else {
-            addErrorMessage(strings['invitations.deliveries.dialog.speed.max'], 'deliverySpeed')
+            errorMessages << new SimpleConstraintViolation('speed',
+                    strings['invitations.deliveries.dialog.speed.max'])
             deliveryModifyError = true
         }
 
-        if(invitationDelivery.type != NI_DIALOG) {
-            if(invitationDelivery.text == null){
-                addErrorMessage(strings['invitations.deliveries.dialog.text'], 'invitationText')
-                deliveryModifyError = true
-            }
+        if (invitationDelivery.type != NI_DIALOG && !invitationDelivery.text) {
+            errorMessages << new SimpleConstraintViolation('text',
+                    strings['invitations.deliveries.dialog.text'])
+            deliveryModifyError = true
         }
 
-        deliveryModifyError |=
-                renderViolationMessage(validator.validate(invitationDelivery), [
+        deliveryModifyError |= renderViolationMessage(
+                (validator.validate(invitationDelivery) + errorMessages) as Set,
+                [
                         'text': 'invitationText',
                         'speed': 'deliverySpeed',
                         'inputFile': 'deliveryReceivers',
-                ])
-        if(invitationDelivery.inputFile == null){
+                ],
+                ['text', 'inputFile', 'speed'])
+        if (!invitationDelivery.inputFile) {
             deliveryReceiversError = true
         }
 
@@ -210,14 +219,25 @@ class InvitationDeliveryController extends BaseController {
     private boolean validate(UploadedFile inputFile,
                              InvitationDelivery invitationDelivery) {
 
+
         if (inputFile && inputFile.length < 0) {
-            addErrorMessage(
-                    strings['invitations.deliveries.dialog.file.error.upload'],
-                    'deliveryReceivers')
+//            addErrorMessage(
+//                    strings['invitations.deliveries.dialog.file.error.upload'],
+//                    'deliveryReceivers')
+            errorMessages << new SimpleConstraintViolation('inputFile',
+                    strings['invitations.deliveries.dialog.file.error.upload'])
             deliveryModifyError = true
         }
 
+        if(inputFile){
+            validate(inputFile)
+        }
+
+
+
         validate(invitationDelivery)
+
+
 
         return !deliveryModifyError
     }
@@ -225,7 +245,9 @@ class InvitationDeliveryController extends BaseController {
     private boolean validate(UploadedFile file) {
         FileValidationResult result = validateFile(file)
         if (result.error) {
-            addErrorMessage(result.errorMessage, 'deliveryReceivers')
+//            addErrorMessage(result.errorMessage, 'deliveryReceivers')
+            errorMessages << new SimpleConstraintViolation('inputFile',
+                    result.errorMessage)
             deliveryModifyError = true
         }
 

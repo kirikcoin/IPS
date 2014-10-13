@@ -828,8 +828,9 @@ div.eyeline_selectManyShuttle table.select_buttons input {
 }
 
 /*Стиль div с диалогом*/
+
 .eyeline_dialog {
-    display: inline-block;
+    /*display: inline-block;*/
     z-index: 9998;
     background-color: #FFFFFF;
     text-align: left;

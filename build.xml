@@ -54,8 +54,6 @@
     <delete dir="${lib.dir.dev}" failonerror="false"/>
     <mkdir dir="${lib.dir.dev}"/>
     <ivy:retrieve type="jar,bundle" pattern="${lib.dir.dev}/[artifact]-[revision].[ext]" conf="site_dev"/>
-
-    <ivy:retrieve type="js" pattern="${web.dir}/js/[artifact].[ext]" conf="site"/>
   </target>
 
   <target name="clean" description="Clean output directories and resolved dependencies">

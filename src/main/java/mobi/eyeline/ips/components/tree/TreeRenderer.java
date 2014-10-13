@@ -15,6 +15,7 @@ import static mobi.eyeline.utils.HtmlWriter.AttributeUtils.inCase;
 import static mobi.eyeline.utils.HtmlWriter.CommonAttributes.DISPLAY_NONE;
 import static mobi.eyeline.utils.HtmlWriter.Tag.DIV;
 import static mobi.eyeline.utils.HtmlWriter.Tag.SPAN;
+import static mobi.eyeline.utils.HtmlWriter.Tag.SVG;
 import static mobi.eyeline.utils.JsonUtils.escapeJs;
 import static mobi.eyeline.utils.base.Components.COMPONENT_FAMILY;
 import static mobi.eyeline.utils.base.Components.getParentCustomComponentId;
@@ -45,16 +46,14 @@ public class TreeRenderer extends RendererImpl<Tree> {
 
         renderToolbar(tree, w);
 
-        // TODO: add SVG tag to HtmlWriter and replace with proper tag creation.
-        w.a("\n<svg" +
-                " class='eyeline_tree'" +
-                " width='" + tree.getWidth() + "'" +
-                " height='" + tree.getHeight() + "'" +
-                ">");
+        w.begin(SVG,
+                "class", "eyeline_tree",
+                "width", tree.getWidth(),
+                "height", tree.getHeight());
 
         w.a("\n<g transform='translate(0, 0)'/>");
 
-        w.a("\n</svg>");
+        w.end(SVG);
         w.end(DIV);
 
         renderJs(tree, w);

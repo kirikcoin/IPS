@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="dataSourceStorage">
   <data-source source="LOCAL" name="ips PRODUCTION" uuid="f8c5509d-e2a3-4f91-bf92-c16f95f8ac3d">
-    <database-info product="MySQL" version="5.6.10-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.26 ( Revision: ${bzr.revision-id} )">
-      <extra-name-characters>#@</extra-name-characters>
-      <identifier-quote-string>`</identifier-quote-string>
-    </database-info>
-    <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
+    <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
     <schema name="" catalog="ips"/>
     <table name="DATABASECHANGELOG" schema="" catalog="ips" type="TABLE">
       <column name="ID" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
@@ -44,6 +40,9 @@
       <foreign-key name="FK_answers_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_answers_question_options" columns="option_id" ref-table="question_options" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_answers_respondents" columns="respondent_id" ref-table="respondents" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_answers_question_options" unique="false" columns="option_id"/>
+      <index name="FK_answers_questions" unique="false" columns="question_id"/>
+      <index name="FK_answers_respondents" unique="false" columns="respondent_id"/>
     </table>
     <table name="deliveries" schema="" catalog="ips" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -58,6 +57,7 @@
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_deliveries_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_delivery_subscribers_deliveries" table="delivery_subscribers" schema="" catalog="ips" columns="delivery_id"/>
+      <index name="FK_deliveries_surveys" unique="false" columns="survey_id"/>
     </table>
     <table name="delivery_subscribers" schema="" catalog="ips" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -67,6 +67,7 @@
       <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_delivery_subscribers_deliveries" columns="delivery_id" ref-table="deliveries" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_delivery_subscribers_deliveries" unique="false" columns="delivery_id"/>
       <index name="state_idx" unique="false" columns="state"/>
     </table>
     <table name="question_options" schema="" catalog="ips" type="TABLE">
@@ -74,11 +75,14 @@
       <column name="answer" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
       <column name="option_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="terminal" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
       <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
+      <column name="next_question" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_question_options_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="question_options_ibfk_1" columns="next_question" ref-table="questions" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_question_options" table="answers" schema="" catalog="ips" columns="option_id"/>
+      <index name="FK_next_question_id" unique="false" columns="next_question"/>
+      <index name="FK_question_options_questions" unique="false" columns="question_id"/>
     </table>
     <table name="questions" schema="" catalog="ips" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -91,6 +95,8 @@
       <foreign-key name="FK_questions_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_questions" table="answers" schema="" catalog="ips" columns="question_id"/>
       <exported-key name="FK_question_options_questions" table="question_options" schema="" catalog="ips" columns="question_id"/>
+      <exported-key name="question_options_ibfk_1" table="question_options" schema="" catalog="ips" columns="next_question"/>
+      <index name="FK_questions_surveys" unique="false" columns="survey_id"/>
     </table>
     <table name="respondents" schema="" catalog="ips" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -104,6 +110,7 @@
       <foreign-key name="FK_respondents_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="FK_answers_respondents" table="answers" schema="" catalog="ips" columns="respondent_id"/>
       <index name="survey_coupon_key" unique="true" columns="survey_id,coupon"/>
+      <index name="FK_respondents_surveys" unique="false" columns="survey_id"/>
       <index name="registered_idx" unique="false" columns="registered"/>
     </table>
     <table name="survey_invitations" schema="" catalog="ips" type="TABLE">
@@ -114,6 +121,7 @@
       <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_survey_invitations_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_survey_invitations_surveys" unique="false" columns="survey_id"/>
     </table>
     <table name="survey_pattern" schema="" catalog="ips" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -124,6 +132,7 @@
       <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
       <primary-key name="PRIMARY" columns="id"/>
       <foreign-key name="FK_survey_pattern_survey" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_survey_pattern_survey" unique="false" columns="survey_id"/>
     </table>
     <table name="survey_stats" schema="" catalog="ips" type="TABLE">
       <column name="answeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
@@ -135,8 +144,8 @@
       <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
       <column name="number_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="survey_id"/>
-      <foreign-key name="survey_stats_ibfk_1" columns="number_id" ref-table="access_numbers" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_survey_stats_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="survey_stats_ibfk_1" columns="number_id" ref-table="access_numbers" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <index name="FK_survey_stats_number" unique="false" columns="number_id"/>
     </table>
     <table name="surveys" schema="" catalog="ips" type="TABLE">
@@ -174,6 +183,14 @@
       <primary-key name="PRIMARY" columns="survey_id,user_id"/>
       <foreign-key name="FK_surveys_users_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="FK_surveys_users_users" columns="user_id" ref-table="users" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <index name="FK_surveys_users_users" unique="false" columns="user_id"/>
+    </table>
+    <table name="ui_profiles" schema="" catalog="ips" type="TABLE">
+      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
+      <column name="icon" sqlType="BLOB" precision="65535" scale="0" nullable="true" jdbcType="-4"/>
+      <column name="skin" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
+      <primary-key name="PRIMARY" columns="id"/>
+      <exported-key name="users_ibfk_1" table="users" schema="" catalog="ips" columns="ui_profile_id"/>
     </table>
     <table name="users" schema="" catalog="ips" type="TABLE">
       <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
@@ -192,11 +209,19 @@
       <column name="esdp_password" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
       <column name="show_c2s" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
       <column name="esdp_provider" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
+      <column name="time_zone_id" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0V1cm9wZS9Nb3Njb3cn"/>
+      <column name="ui_profile_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="manager_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <primary-key name="PRIMARY" columns="id"/>
+      <foreign-key name="users_ibfk_2" columns="manager_id" ref-table="users" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="users_ibfk_1" columns="ui_profile_id" ref-table="ui_profiles" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="surveys_ibfk_1" table="surveys" schema="" catalog="ips" columns="owner_id"/>
       <exported-key name="FK_surveys_users_users" table="surveys_users" schema="" catalog="ips" columns="user_id"/>
+      <exported-key name="users_ibfk_2" table="users" schema="" catalog="ips" columns="manager_id"/>
       <index name="email" unique="true" columns="email"/>
       <index name="users_name" unique="true" columns="users_name"/>
+      <index name="FK_user_manager" unique="false" columns="manager_id"/>
+      <index name="FK_users_ui_profiles" unique="false" columns="ui_profile_id"/>
       <index name="role_id" unique="false" columns="role"/>
     </table>
   </data-source>
@@ -413,9 +438,10 @@
       <column name="time_zone_id" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0V1cm9wZS9Nb3Njb3cn"/>
       <column name="ui_profile_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
       <column name="manager_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
+      <column name="show_all_clients" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
       <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="users_ibfk_2" columns="manager_id" ref-table="users" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <foreign-key name="users_ibfk_1" columns="ui_profile_id" ref-table="ui_profiles" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
+      <foreign-key name="users_ibfk_2" columns="manager_id" ref-table="users" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
       <exported-key name="surveys_ibfk_1" table="surveys" schema="" catalog="ips_migration_test" columns="owner_id"/>
       <exported-key name="FK_surveys_users_users" table="surveys_users" schema="" catalog="ips_migration_test" columns="user_id"/>
       <exported-key name="users_ibfk_2" table="users" schema="" catalog="ips_migration_test" columns="manager_id"/>

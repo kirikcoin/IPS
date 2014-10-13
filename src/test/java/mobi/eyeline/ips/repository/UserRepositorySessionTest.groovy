@@ -1,12 +1,17 @@
 package mobi.eyeline.ips.repository
 
-import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.model.User
 
+import static mobi.eyeline.ips.model.Role.ADMIN
+import static mobi.eyeline.ips.model.Role.CLIENT
+import static mobi.eyeline.ips.model.Role.MANAGER
+
 @Mixin(RepositoryMock)
 class UserRepositorySessionTest extends DbTestCase {
-    def manager
+    
+    User manager1, manager2
+    
     void setUp() {
         super.setUp()
 
@@ -15,57 +20,65 @@ class UserRepositorySessionTest extends DbTestCase {
 
     void testListByRole() {
 
-        manager = new User(
+        def manager = new User(
                 login: 'testManager',
-                password: "testManagerPassw".pw(),
+                password: 'testManagerPassw'.pw(),
                 email: 'manager@example.com',
                 fullName: 'John Doe',
-                role: Role.MANAGER,
+                role: MANAGER,
                 uiProfile: new UiProfile())
 
         userRepository.save(manager)
 
         [
-                new User(
-                        login: "user1", fullName: "User", password: "123".pw(), email: "mail@mail.ru", role: Role.CLIENT, manager: manager),
-                new User(
-                        login: "user2", fullName: "User", password: "123".pw(), email: "mail2@mail.ru", role: Role.ADMIN, manager: manager),
-                new User(
-                        login: "user3", fullName: "User", password: "123".pw(), email: "mail3@mail.ru",uiProfile: new UiProfile(), role: Role.MANAGER),
-                new User(
-                        login: "user4", fullName: "User", password: "123".pw(), email: "mail4@mail.ru", uiProfile: new UiProfile(), role: Role.MANAGER),
-                new User(
-                        login: "user5", fullName: "User", password: "123".pw(), email: "mail5@mail.ru", role: Role.CLIENT, manager: manager),
-                new User(
-                        login: "user6", fullName: "User", password: "123".pw(), email: "mail6@mail.ru", role: Role.CLIENT, manager: manager)
-        ].each {u -> userRepository.save u}
+                new User(login: 'user1', email: 'mail@mail.ru', role: CLIENT, manager: manager),
+                new User(login: 'user2', email: 'mail2@mail.ru', role: ADMIN, manager: manager),
+                new User(login: 'user3', email: 'mail3@mail.ru', uiProfile: new UiProfile(), role: MANAGER),
+                new User(login: 'user4', email: 'mail4@mail.ru', uiProfile: new UiProfile(), role: MANAGER),
+                new User(login: 'user5', email: 'mail5@mail.ru', role: CLIENT, manager: manager),
+                new User(login: 'user6', email: 'mail6@mail.ru', role: CLIENT, manager: manager)
+        ].each { u ->
+            u.fullName = 'User'
+            u.password = 'bagel'.pw()
+            userRepository.save u
+        }
 
-        assertEquals 3, userRepository.listByRole(Role.CLIENT).size()
-        assertEquals 3, userRepository.listByRole(Role.MANAGER).size()
-        assertEquals 1, userRepository.listByRole(Role.ADMIN).size()
+        assertEquals 3, userRepository.listByRole(CLIENT).size()
+        assertEquals 3, userRepository.listByRole(MANAGER).size()
+        assertEquals 1, userRepository.listByRole(ADMIN).size()
     }
 
     void fillTestData() {
+        [
+                new User(
+                        login: 'manager1',
+                        fullName: 'John Doe',
+                        role: MANAGER,
+                        uiProfile: new UiProfile()),
+                new User(
+                        login: 'manager2',
+                        fullName: 'John Doe Jr.',
+                        role: MANAGER,
+                        showAllClients: true,
+                        uiProfile: new UiProfile())
+        ].each {
+            it.email = "$it.login@example.com"
+            it.password = 'bagel'.pw()
+            userRepository.save it
+        }
 
-        manager = new User(
-                login: 'testManager',
-                password: "testManagerPassw".pw(),
-                email: 'manager@example.com',
-                fullName: 'John Doe',
-                role: Role.MANAGER,
-                uiProfile: new UiProfile())
-
-        userRepository.save(manager)
+        manager1 = userRepository.load 1
+        manager2 = userRepository.load 2
 
         [
-                new User(login: 'a', email: 'b@a.com', fullName: 'A B_', company: 'D\\%'),
-                new User(login: 'b', email: 'c@a.com', fullName: 'D C', company: 'A%'),
-                new User(login: 'c', email: 'd@a.com', fullName: 'D A', company: 'B_'),
-                new User(login: 'd', email: 'a@a.com', fullName: 'A C_', company: 'C\\', blocked: true)
+                new User(login: 'a', email: 'b@a.com', fullName: 'A B_',    company: 'D\\%', manager: manager1),
+                new User(login: 'b', email: 'c@a.com', fullName: 'D C',     company: 'A%', manager: manager2),
+                new User(login: 'c', email: 'd@a.com', fullName: 'D A',     company: 'B_', manager: manager1),
+                new User(login: 'd', email: 'a@a.com', fullName: 'A C_',    company: 'C\\', blocked: true, manager: manager1)
         ].each { user ->
             user.password = '12'.pw();
-            user.role = Role.CLIENT;
-            user.manager = manager;
+            user.role = CLIENT;
+            user.manager = manager1;
             userRepository.save user
         }
     }
@@ -75,11 +88,11 @@ class UserRepositorySessionTest extends DbTestCase {
 
         def assertIds = { expected, users -> assertEquals(expected, users.collect { it.id }) }
 
-        assertIds([2, 3, 4, 5], userRepository.list('a', null, true, Integer.MAX_VALUE, 0))
-        assertIds([2, 3, 4], userRepository.list('b', null, true, Integer.MAX_VALUE, 0))
-        assertIds([2, 4, 3], userRepository.list('b', 'fullName', true, Integer.MAX_VALUE, 0))
-        assertIds([2, 5, 4], userRepository.list('a.com', 'company', false, 3, 0))
-        assertIds([5, 2, 3, 4], userRepository.list('c', 'status', false, Integer.MAX_VALUE, 0))
+        assertIds([3, 4, 5, 6], userRepository.list(null, 'a', null, true, Integer.MAX_VALUE, 0))
+        assertIds([3, 4, 5], userRepository.list(null, 'b', null, true, Integer.MAX_VALUE, 0))
+        assertIds([3, 5, 4], userRepository.list(null, 'b', 'fullName', true, Integer.MAX_VALUE, 0))
+        assertIds([3, 6, 5], userRepository.list(null, 'a.com', 'company', false, 3, 0))
+        assertIds([6, 3, 4, 5], userRepository.list(null, 'c', 'status', false, Integer.MAX_VALUE, 0))
     }
 
     void testListWithSymbols(){
@@ -89,17 +102,17 @@ class UserRepositorySessionTest extends DbTestCase {
 
         def list = userRepository.&list
 
-        assertIds([2, 4, 5], list('_', null, true, Integer.MAX_VALUE, 0))
-        assertIds([2, 3], list('%', null, true, Integer.MAX_VALUE, 0))
-        assertIds([2, 5], list('\\', null, true, Integer.MAX_VALUE, 0))
+        assertIds([3, 5, 6], list(null, '_', null, true, Integer.MAX_VALUE, 0))
+        assertIds([3, 4], list(manager1, '%', null, true, Integer.MAX_VALUE, 0))
+        assertIds([], list(manager2, '\\', null, true, Integer.MAX_VALUE, 0))
     }
 
     void testCount() {
         fillTestData()
 
-        assertEquals(4, userRepository.count('a'))
-        assertEquals(4, userRepository.count('c'))
-        assertEquals(3, userRepository.count('b'))
-        assertEquals(4, userRepository.count(''))
+        assertEquals(4, userRepository.count(null, 'a'))
+        assertEquals(4, userRepository.count(null, 'c'))
+        assertEquals(3, userRepository.count(manager1, 'b'))
+        assertEquals(4, userRepository.count(null, ''))
     }
 }

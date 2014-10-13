@@ -9,6 +9,7 @@ import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.LocaleController
 import mobi.eyeline.ips.web.controllers.TimeZoneHelper
+import mobi.eyeline.ips.web.validators.SimpleConstraintViolation
 
 import javax.faces.bean.ManagedBean
 import javax.faces.model.SelectItem
@@ -37,12 +38,14 @@ class ProfileController extends BaseController {
 
     void saveProfile() {
         updateOk = true
-        if (!isPasswordIntact()) {
-            // Update user password if corresponding fields are filled in.
-            updateOk = updatePassword()
-        }
 
         updateOk &= validateModel()
+
+        if (!isPasswordIntact()) {
+            // Update user password if corresponding fields are filled in.
+            updateOk &= updatePassword()
+        }
+
         if (updateOk) {
             userRepository.update(user)
         }
@@ -79,16 +82,13 @@ class ProfileController extends BaseController {
     }
 
     private boolean validateModel() {
-        if (renderViolationMessage(validator.validate(user))) {
-            return false
-        }
-
+        def messages = validator.validate(user)
         if (!userService.isEmailAllowed(user)) {
-            addErrorMessage(strings['client.dialog.validation.email.exists'], 'email')
-            return false
+            messages << new SimpleConstraintViolation<User>('email',
+                    strings['client.dialog.validation.email.exists'])
         }
 
-        return true
+        return !renderViolationMessage(messages as Set, [:], ['fullName', 'email', 'phoneNumber'])
     }
 
     List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(getLocale()) }
