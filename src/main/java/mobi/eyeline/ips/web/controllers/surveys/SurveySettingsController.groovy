@@ -14,18 +14,21 @@ import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.CouponService
 import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.EsdpServiceSupport
+import mobi.eyeline.ips.service.MobilizerSegmentation
 import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
+import mobi.eyeline.ips.web.validators.SimpleConstraintViolation
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 
 import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
+import javax.validation.ConstraintViolation
 import java.text.MessageFormat
 
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
@@ -357,8 +360,14 @@ class SurveySettingsController extends BaseSurveyController {
 
         updateQuestionModel(persistedQuestion)
 
-        boolean validationError = renderViolationMessage(
-                validator.validate(persistedQuestion), getPropertyMap(persistedQuestion))
+        Set<ConstraintViolation> violations = validator.validate(persistedQuestion)
+        def segmentationFailures = checkSegmentation(persistedQuestion)
+        if (segmentationFailures) {
+            violations = new HashSet<>(violations)
+            violations.addAll(segmentationFailures)
+        }
+
+        boolean validationError = renderViolationMessage(violations, getPropertyMap(persistedQuestion))
         if (validationError) {
             errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
@@ -375,6 +384,22 @@ class SurveySettingsController extends BaseSurveyController {
 
         updateQuestionsGraph()
         goToSurvey(surveyId)
+    }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    private Collection<ConstraintViolation<Question>> checkSegmentation(
+            Question persistedQuestion) {
+
+        final Integer failedOption = MobilizerSegmentation.checkOptionLength(persistedQuestion)
+        if (failedOption == null) {
+            return []
+
+        } else {
+            def opt = persistedQuestion.activeOptions[failedOption]
+            return [new SimpleConstraintViolation<>(
+                    "options[${opt.order}].answer",
+                    strings['mobi.eyeline.constraints.size.max'])]
+        }
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")

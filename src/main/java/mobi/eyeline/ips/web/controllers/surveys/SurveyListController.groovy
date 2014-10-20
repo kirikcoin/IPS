@@ -64,7 +64,7 @@ class SurveyListController extends BaseController {
         newSurveyEndDateOrig = formatDateTime(newSurveyEndDate, getTimeZone())
     }
 
-    public DataTableModel getTableModel() {
+    DataTableModel getTableModel() {
 
         return new DataTableModel() {
             @Override

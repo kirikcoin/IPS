@@ -54,7 +54,7 @@ public class SegmentationService {
     }
 
 
-    private static int getSegmentLength(String text) {
+    public static int getSegmentLength(String text) {
         int length = MAX_LENGTH_7BIT;
         for (char c : text.toCharArray()) {
             if (c > 255) length = Math.min(length, MAX_LENGTH_16BIT);
