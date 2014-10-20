@@ -4,7 +4,8 @@
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
         xmlns:ips="http://java.sun.com/jsf/composite/ipsc"
-        xmlns:ipsc="http://ips.eyeline.mobi">
+        xmlns:ipsc="http://ips.eyeline.mobi"
+        xmlns:c="http://java.sun.com/jsp/jstl/core">
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -59,6 +60,10 @@
           if (treeComponent) {
             treeComponent.show();
           }
+
+          $('#tabs li a').click(function() {
+              page.setOpenedTab($(this).attr("href"));
+          });
         });
         //    ]]>
       </script>
@@ -73,6 +78,7 @@
 
         <h:inputHidden id="settingsStartDate" value="#{surveySettingsController.settingsStartDate}"/>
         <h:inputHidden id="settingsEndDate" value="#{surveySettingsController.settingsEndDate}"/>
+        <h:inputHidden id="openedGraph" value="#{surveySettingsController.openedGraph}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
 
@@ -265,8 +271,8 @@
                               value="#{bundle['survey.settings.no.questions']}"
                               styleClass="placeholder"/>
               </h:panelGroup>
-              <eye:tabs id="tabs" rendered="#{!empty surveySettingsController.persistedSurvey.activeQuestions}">
-                <eye:tab label="#{bundle['survey.settings.questions.tabs.questions']}">
+              <eye:tabs id="tabs" autoSelectClass="opened" rendered="#{!empty surveySettingsController.persistedSurvey.activeQuestions}">
+                <eye:tab id="questions" label="#{bundle['survey.settings.questions.tabs.questions']}">
                   <h:panelGroup>
 
                     <ui:repeat value="#{surveySettingsController.persistedSurvey.activeQuestions}"
@@ -349,13 +355,19 @@
                     </ui:repeat>
                   </h:panelGroup>
                 </eye:tab>
-                <eye:tab label="#{bundle['survey.settings.questions.tabs.graphs']}">
-                  <ipsc:tree id="questionsTree"
-                            value="#{surveySettingsController.questionsGraph}"
-                            height="600"
-                            width="1162"
-                            direction="TB"/>
-                </eye:tab>
+
+                  <eye:tab id="graph" label="#{bundle['survey.settings.questions.tabs.graphs']}">
+                      <ipsc:tree id="questionsTree"
+                                 value="#{surveySettingsController.questionsGraph}"
+                                 height="600"
+                                 width="1162"
+                                 direction="TB"/>
+                      <c:if test="#{surveySettingsController.openedGraph}">
+                          <!-- Marks that last active tab is the graph. -->
+                          <span id="graphFlag" class="opened"/>
+                      </c:if>
+                  </eye:tab>
+
               </eye:tabs>
 
               <h:panelGrid columns="2" columnClasses="previewLeft,previewRight">
