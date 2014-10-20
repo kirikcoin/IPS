@@ -89,24 +89,4 @@
 
     <param name="port" type="int">10998</param>
   </section>
-
-  <section name="locations">
-    <!-- Patterns are checked in section declaration order. Section naming is ignored. -->
-    <section name="mobak">
-      <param name="pattern" type="string">.*mobak.*</param>
-      <param name="skin" type="string">mobak</param>
-    </section>
-    <section name="eyeline">
-      <param name="pattern" type="string">[^\.]*eyeline.*</param>
-      <param name="skin" type="string">eyeline</param>
-    </section>
-    <section name="inomanet">
-      <param name="pattern" type="string">[^\.]*inomanet.*</param>
-      <param name="skin" type="string">inomanet</param>
-    </section>
-    <section name="default">
-      <param name="pattern" type="string">.*</param>
-      <param name="skin" type="string">araks</param>
-    </section>
-  </section>
 </config>
