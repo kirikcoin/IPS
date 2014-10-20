@@ -61,8 +61,8 @@
             treeComponent.show();
           }
 
-          $('#tabs li a').click(function() {
-              page.setOpenedTab($(this).attr("href"));
+          jsfc('tabs').bind('activate', function (event, data) {
+            ips.$byId('openedGraph').val(data.index == 1);
           });
         });
         //    ]]>

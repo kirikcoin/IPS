@@ -62,11 +62,6 @@ var page = {
     return false;
   },
 
-  setOpenedTab: function (href) {
-    ips.$byId('openedGraph').val(href == "#graph" ? "true" : "false");
-    return false;
-  },
-
   lookup: function(id) {
     var elem = jsfc(id);
     if (!elem) {
