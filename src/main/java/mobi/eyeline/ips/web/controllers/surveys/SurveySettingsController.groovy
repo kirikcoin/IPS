@@ -369,7 +369,14 @@ class SurveySettingsController extends BaseSurveyController {
             }
         }
 
-        boolean validationError = renderViolationMessage(violations, getPropertyMap(persistedQuestion))
+        final List<String> fieldOrder = [
+                'title',
+                'activeOptions',
+                (0..<persistedQuestion.options.size()).collect { "options[$it].answer".toString() }
+        ].flatten() as List<String>
+
+        final boolean validationError = renderViolationMessage(
+                violations, getPropertyMap(persistedQuestion), fieldOrder)
         if (validationError) {
             errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
