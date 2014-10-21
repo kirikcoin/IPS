@@ -75,7 +75,8 @@ public class MobilizerSegmentation {
 
     /**
      * @return {@linkplain mobi.eyeline.ips.model.QuestionOption#getActiveIndex() Index}
-     * of the failing option, or {@code null} if all is OK.
+     * of the failing option, or {@code -1} in case of an error in question title,
+     * or {@code null} if all is OK.
      */
     public static Integer checkOptionLength(Question question) {
 
@@ -98,7 +99,7 @@ public class MobilizerSegmentation {
             return e.getOptionIdx() - 1;    // Actual `activeIndex'.
 
         } catch (Exception e) {
-            return 0;
+            return -1;  // Consider it question title.
         }
     }
 

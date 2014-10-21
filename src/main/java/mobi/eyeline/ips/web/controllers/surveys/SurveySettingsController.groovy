@@ -394,6 +394,11 @@ class SurveySettingsController extends BaseSurveyController {
         if (failedOption == null) {
             return []
 
+        } else if (failedOption < 0) {
+            return [new SimpleConstraintViolation<>(
+                    "title",
+                    strings['mobi.eyeline.constraints.size.max'])]
+
         } else {
             def opt = persistedQuestion.activeOptions[failedOption]
             return [new SimpleConstraintViolation<>(
