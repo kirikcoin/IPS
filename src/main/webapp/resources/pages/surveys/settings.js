@@ -164,6 +164,11 @@ var page = {
           isFormValid = false;
         });
 
+    if (!isFormValid) {
+      var $btn = $('#saveQuestionLink');
+      $btn.attr('onclick', $btn.data('oldclick'));
+    }
+
     return isFormValid;
   },
 

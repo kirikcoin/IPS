@@ -361,10 +361,12 @@ class SurveySettingsController extends BaseSurveyController {
         updateQuestionModel(persistedQuestion)
 
         Set<ConstraintViolation> violations = validator.validate(persistedQuestion)
-        def segmentationFailures = checkSegmentation(persistedQuestion)
-        if (segmentationFailures) {
-            violations = new HashSet<>(violations)
-            violations.addAll(segmentationFailures)
+        if (!violations) {
+            def segmentationFailures = checkSegmentation(persistedQuestion)
+            if (segmentationFailures) {
+                violations = new HashSet<>(violations)
+                violations.addAll(segmentationFailures)
+            }
         }
 
         boolean validationError = renderViolationMessage(violations, getPropertyMap(persistedQuestion))
@@ -400,9 +402,8 @@ class SurveySettingsController extends BaseSurveyController {
                     strings['mobi.eyeline.constraints.size.max'])]
 
         } else {
-            def opt = persistedQuestion.activeOptions[failedOption]
             return [new SimpleConstraintViolation<>(
-                    "options[${opt.order}].answer",
+                    "options[${failedOption}].answer",
                     strings['mobi.eyeline.constraints.size.max'])]
         }
     }
