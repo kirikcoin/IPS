@@ -114,7 +114,10 @@
                          rendered="#{userSession.surveyModificationAllowed}"/>
         </h:panelGroup>
 
-        <eye:dialog id="newSurveyDialog" title="#{bundle['survey.create.dialog.title']}" width="630">
+        <eye:dialog rendered="#{userSession.surveyModificationAllowed}"
+                    id="newSurveyDialog"
+                    title="#{bundle['survey.create.dialog.title']}"
+                    width="630">
 
           <h:panelGrid columns="2" id="newSurveyTable">
             <h:outputLabel value="#{bundle['survey.properties.title']}" for="newSurveyTitle"/>

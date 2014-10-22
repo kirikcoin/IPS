@@ -195,7 +195,9 @@
                                 value="#{bundle['survey.settings.end.message.coupon.exhausted']}"/>
                 </h:panelGroup>
 
-                <h:panelGroup id="settingsDialog" style="display: none">
+                <h:panelGroup id="settingsDialog"
+                              style="display: none"
+                              rendered="#{userSession.surveyModificationAllowed}">
                   <h:panelGrid columns="2" columnClasses="settings-left,none" >
                     <h:outputLabel value="#{bundle['survey.properties.title']}"
                                    for="newSurveyTitle"/>
