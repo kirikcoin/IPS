@@ -133,6 +133,7 @@ var ips = new (function() {
       var $elem = $(elem);
 
       var oldClick = $elem.attr('onclick');
+      $elem.data('oldclick', oldClick);
       $elem.attr('onclick',
           '$(this).attr("onclick", "return false;").unbind("click"); ' + oldClick);
     });

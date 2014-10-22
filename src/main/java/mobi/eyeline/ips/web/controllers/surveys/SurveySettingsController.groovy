@@ -14,18 +14,21 @@ import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.CouponService
 import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.EsdpServiceSupport
+import mobi.eyeline.ips.service.MobilizerSegmentation
 import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
+import mobi.eyeline.ips.web.validators.SimpleConstraintViolation
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 
 import javax.faces.bean.ManagedBean
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
+import javax.validation.ConstraintViolation
 import java.text.MessageFormat
 
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
@@ -53,6 +56,8 @@ class SurveySettingsController extends BaseSurveyController {
 
     String settingsStartDate
     String settingsEndDate
+
+    boolean openedGraph
 
     int newSurveyClientId
 
@@ -110,6 +115,7 @@ class SurveySettingsController extends BaseSurveyController {
 
         settingsStartDate = formatDateTime(survey.startDate, getTimeZone())
         settingsEndDate = formatDateTime(survey.endDate, getTimeZone())
+
     }
 
     List<SelectItem> getQuestions() {
@@ -164,7 +170,6 @@ class SurveySettingsController extends BaseSurveyController {
         copyCoupons()
 
         surveyRepository.update(persistedSurvey)
-        goToSurvey(surveyId)
     }
 
     private void copyEndMessage() {
@@ -355,8 +360,23 @@ class SurveySettingsController extends BaseSurveyController {
 
         updateQuestionModel(persistedQuestion)
 
-        boolean validationError = renderViolationMessage(
-                validator.validate(persistedQuestion), getPropertyMap(persistedQuestion))
+        Set<ConstraintViolation> violations = validator.validate(persistedQuestion)
+        if (!violations) {
+            def segmentationFailures = checkSegmentation(persistedQuestion)
+            if (segmentationFailures) {
+                violations = new HashSet<>(violations)
+                violations.addAll(segmentationFailures)
+            }
+        }
+
+        final List<String> fieldOrder = [
+                'title',
+                'activeOptions',
+                (0..<persistedQuestion.options.size()).collect { "options[$it].answer".toString() }
+        ].flatten() as List<String>
+
+        final boolean validationError = renderViolationMessage(
+                violations, getPropertyMap(persistedQuestion), fieldOrder)
         if (validationError) {
             errorId =
                     FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
@@ -373,6 +393,26 @@ class SurveySettingsController extends BaseSurveyController {
 
         updateQuestionsGraph()
         goToSurvey(surveyId)
+    }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    private Collection<ConstraintViolation<Question>> checkSegmentation(
+            Question persistedQuestion) {
+
+        final Integer failedOption = MobilizerSegmentation.checkOptionLength(persistedQuestion)
+        if (failedOption == null) {
+            return []
+
+        } else if (failedOption < 0) {
+            return [new SimpleConstraintViolation<>(
+                    "title",
+                    strings['mobi.eyeline.constraints.size.max'])]
+
+        } else {
+            return [new SimpleConstraintViolation<>(
+                    "options[${failedOption}].answer",
+                    strings['mobi.eyeline.constraints.size.max'])]
+        }
     }
 
     @SuppressWarnings("GrMethodMayBeStatic")
