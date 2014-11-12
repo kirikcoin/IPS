@@ -130,7 +130,7 @@ public class UssdService implements MessageHandler {
         if (request == null) {
             // Respondent just loaded the start page.
             // It might be either an unregistered msisdn (new respondent),
-            // survey surveyStart or resumption.
+            // survey restart or resumption.
             final int surveyId = getInt(parameters, PARAM_SURVEY_ID);
             final boolean skipValidation = getBoolean(parameters, PARAM_SKIP_VALIDATION, false);
             return handleStartPage(msisdn, surveyId, skipValidation);
@@ -158,7 +158,8 @@ public class UssdService implements MessageHandler {
         final Respondent respondent =
                 respondentRepository.findOrCreate(msisdn, survey);
 
-        final Answer lastAnswer =
+        // Never resume the survey (ips-280).
+        /*final Answer lastAnswer =
                 answerRepository.getLast(survey, respondent);
 
         if (!respondent.isFinished() && lastAnswer != null) {
@@ -167,7 +168,7 @@ public class UssdService implements MessageHandler {
                 // There are unanswered questions, so render the next one.
                 return question(next, skipValidation);
             }
-        }
+        }*/
 
         return surveyStart(survey, respondent, skipValidation);
     }
