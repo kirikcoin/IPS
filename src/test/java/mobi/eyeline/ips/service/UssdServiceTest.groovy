@@ -344,16 +344,38 @@ class UssdServiceTest extends DbTestCase {
         ])
         answer page1.options.first()
 
+        // Accessing start page again.
         def page1Again = request([
                 (PARAM_MSISDN):    msisdn,
                 (PARAM_SURVEY_ID): sid
         ])
 
+        assertEquals 0, respondentRepository.countFinishedBySurvey(survey())
+        assertNull 'Stats should be cleared',
+                answerRepository.getLast(survey(), respondentRepository.load(1))
+
+        //noinspection GroovyAccessibility
+        assertThat 'Stats should be cleared',
+                answerRepository.list(respondentRepository.load(1)), hasSize(0)
+
+        def surveySessions = answerRepository.list(
+                survey(),
+                survey().startDate,
+                survey().endDate,
+                null,
+                null,
+                false,
+                Integer.MAX_VALUE,
+                0)
+        assertThat surveySessions, hasSize(1)
+        assertThat 'Survey session should be cleared', surveySessions.first().answers, hasSize(0)
+
         page1Again.with {
-            assertEquals 'Second one', text
-            assertEquals 'type=ANSWER&survey_id=1&skip_validation=false&questionId=2&answerId=2',
+            assertEquals 'First one', text
+            assertEquals 'type=ANSWER&survey_id=1&skip_validation=false&questionId=1&answerId=1',
                     options[0].uri
-            assertEquals 'O2', options[0].text
+            assertThat options, hasSize(1)
+            assertEquals 'O1', options[0].text
         }
     }
 
@@ -394,6 +416,7 @@ class UssdServiceTest extends DbTestCase {
 
     void testBadCommand() {
         createTestSurvey()
+        //noinspection GroovyUnusedAssignment
         def page1 = request([
                 (PARAM_SURVEY_ID):      1,
                 (PARAM_MSISDN):         '79131234567',
