@@ -77,6 +77,19 @@ public class InvitationDelivery implements Serializable {
     @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('UNDELIVERED'))")
     private Integer errorsCount;
 
+    @Column(name = "retriesEnabled")
+    private Boolean retriesEnabled;
+
+    @Max(value = 50, message = "{invitations.deliveries.retries.number.max}")
+    @Min(value = 1, message = "{invitations.deliveries.retries.number.min}")
+    @Column(name = "retriesNumber")
+    private Integer retriesNumber = 1;
+
+    @Max(value = 60, message = "{invitations.deliveries.retries.interval.max}")
+    @Min(value = 1, message = "{invitations.deliveries.retries.interval.min}")
+    @Column(name = "retriesInterval")
+    private Integer retriesInterval = 1;
+
     public InvitationDelivery() {
     }
 
