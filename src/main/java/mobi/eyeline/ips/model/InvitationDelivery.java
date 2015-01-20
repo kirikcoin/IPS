@@ -177,6 +177,30 @@ public class InvitationDelivery implements Serializable {
         return errorsCount;
     }
 
+    public Boolean getRetriesEnabled() {
+        return retriesEnabled;
+    }
+
+    public void setRetriesEnabled(Boolean retriesEnabled) {
+        this.retriesEnabled = retriesEnabled;
+    }
+
+    public Integer getRetriesNumber() {
+        return retriesNumber;
+    }
+
+    public void setRetriesNumber(Integer retriesNumber) {
+        this.retriesNumber = retriesNumber;
+    }
+
+    public Integer getRetriesInterval() {
+        return retriesInterval;
+    }
+
+    public void setRetriesInterval(Integer retriesInterval) {
+        this.retriesInterval = retriesInterval;
+    }
+
     public static enum State {
 
         /**
