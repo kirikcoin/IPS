@@ -1,8 +1,8 @@
 package mobi.eyeline.ips.components.tree;
 
 
-import mobi.eyeline.utils.HtmlWriter;
-import mobi.eyeline.utils.base.RendererImpl;
+import mobi.eyeline.util.jsf.components.utils.HtmlWriter;
+import mobi.eyeline.util.jsf.components.utils.base.RendererImpl;
 
 import javax.faces.context.FacesContext;
 import javax.faces.render.FacesRenderer;
@@ -11,14 +11,15 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static mobi.eyeline.utils.HtmlWriter.AttributeUtils.inCase;
-import static mobi.eyeline.utils.HtmlWriter.CommonAttributes.DISPLAY_NONE;
-import static mobi.eyeline.utils.HtmlWriter.Tag.DIV;
-import static mobi.eyeline.utils.HtmlWriter.Tag.SPAN;
-import static mobi.eyeline.utils.HtmlWriter.Tag.SVG;
-import static mobi.eyeline.utils.JsonUtils.escapeJs;
-import static mobi.eyeline.utils.base.Components.COMPONENT_FAMILY;
-import static mobi.eyeline.utils.base.Components.getParentCustomComponentId;
+import static mobi.eyeline.util.jsf.components.utils.HtmlWriter.AttributeUtils.inCase;
+import static mobi.eyeline.util.jsf.components.utils.HtmlWriter.CommonAttributes.DISPLAY_NONE;
+import static mobi.eyeline.util.jsf.components.utils.HtmlWriter.Tag.DIV;
+import static mobi.eyeline.util.jsf.components.utils.HtmlWriter.Tag.SPAN;
+import static mobi.eyeline.util.jsf.components.utils.HtmlWriter.Tag.SVG;
+import static mobi.eyeline.util.jsf.components.utils.JsonUtils.escapeJs;
+import static mobi.eyeline.util.jsf.components.utils.base.Components.COMPONENT_FAMILY;
+import static mobi.eyeline.util.jsf.components.utils.base.Components.getParentCustomComponentId;
+
 
 /**
  * The component depends on:

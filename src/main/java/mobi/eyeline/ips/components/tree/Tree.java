@@ -1,7 +1,8 @@
 package mobi.eyeline.ips.components.tree;
 
 
-import mobi.eyeline.utils.base.UIPanelImpl;
+
+import mobi.eyeline.util.jsf.components.utils.base.UIPanelImpl;
 
 import javax.faces.component.FacesComponent;
 import javax.faces.context.FacesContext;
