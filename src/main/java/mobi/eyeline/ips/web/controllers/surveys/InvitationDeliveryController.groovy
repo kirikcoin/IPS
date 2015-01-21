@@ -169,6 +169,9 @@ class InvitationDeliveryController extends BaseController {
             if (persistedDelivery.state == INACTIVE) {
                 persistedDelivery.type = invitationDelivery.type
                 persistedDelivery.text = invitationDelivery.text
+                persistedDelivery.retriesEnabled = invitationDelivery.retriesEnabled
+                persistedDelivery.retriesNumber = invitationDelivery.retriesNumber
+                persistedDelivery.retriesIntervalMinutes = invitationDelivery.retriesIntervalMinutes
             }
 
             persistedDelivery.speed = invitationDelivery.speed
