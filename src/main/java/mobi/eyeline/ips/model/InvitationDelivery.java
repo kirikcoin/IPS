@@ -7,6 +7,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -80,7 +81,7 @@ public class InvitationDelivery implements Serializable {
     @Max(value = 60, message = "{invitations.deliveries.retries.interval.max}")
     @Min(value = 1, message = "{invitations.deliveries.retries.interval.min}")
     @Column(name = "retriesInterval")
-    private Integer retriesInterval = 1;
+    private Integer retriesIntervalMinutes = 1;
 
     public InvitationDelivery() {
     }
@@ -169,11 +170,11 @@ public class InvitationDelivery implements Serializable {
         return errorsCount;
     }
 
-    public Boolean getRetriesEnabled() {
+    public boolean getRetriesEnabled() {
         return retriesEnabled;
     }
 
-    public void setRetriesEnabled(Boolean retriesEnabled) {
+    public void setRetriesEnabled(boolean retriesEnabled) {
         this.retriesEnabled = retriesEnabled;
     }
 
@@ -185,14 +186,18 @@ public class InvitationDelivery implements Serializable {
         this.retriesNumber = retriesNumber;
     }
 
-    public Integer getRetriesInterval() {
-        return retriesInterval;
+    public Integer getRetriesIntervalMinutes() {
+        return retriesIntervalMinutes;
     }
 
-    public void setRetriesInterval(Integer retriesInterval) {
-        this.retriesInterval = retriesInterval;
+    public void setRetriesIntervalMinutes(Integer retriesInterval) {
+        this.retriesIntervalMinutes = retriesInterval;
     }
 
+    @AssertTrue(message = "Interval and number of retries must be not empty.")
+    private boolean isValidRetriesFields() {
+        return (retriesEnabled) ? (retriesNumber != null && retriesIntervalMinutes!=null) : true;
+    }
     public static enum State {
 
         /**
