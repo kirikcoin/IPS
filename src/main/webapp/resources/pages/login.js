@@ -33,7 +33,7 @@ var page = {
 
     $('<input>', {
       name: "j_password",
-      value: $('#j_password').val()
+      value: $.trim($('#j_password').val())
     }).appendTo($form);
 
     $form.appendTo($('body'));
