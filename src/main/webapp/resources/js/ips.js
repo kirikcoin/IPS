@@ -122,6 +122,20 @@ var ips = new (function() {
    */
   this.pages = {};
 
+  /**
+   * Performs an action on all the matched page components.
+   *
+   * @param {function} matches  Predicate on a component object.
+   * @param {function} action   Called on each matched component, takes one as an argument.
+   */
+  this.forEachPageComponent = function (matches, action) {
+    for (var name in jsfcomponents.pageComponents) {
+      if (jsfcomponents.pageComponents.hasOwnProperty(name)) {
+        if (matches(jsfc(name)))  action(jsfc(name));
+      }
+    }
+  }
+
 })();
 
 
