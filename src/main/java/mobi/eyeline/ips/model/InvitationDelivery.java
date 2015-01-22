@@ -73,13 +73,13 @@ public class InvitationDelivery implements Serializable {
     @org.hibernate.annotations.Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean retriesEnabled;
 
-    @Max(value = 50, message = "{invitations.deliveries.retries.number.max}")
-    @Min(value = 1, message = "{invitations.deliveries.retries.number.min}")
+    @Max(value = 50, message = "{invitations.deliveries.retries.number.interval}")
+    @Min(value = 1, message = "{invitations.deliveries.retries.number.interval}")
     @Column(name = "retriesNumber")
     private Integer retriesNumber = 1;
 
-    @Max(value = 60, message = "{invitations.deliveries.retries.interval.max}")
-    @Min(value = 1, message = "{invitations.deliveries.retries.interval.min}")
+    @Max(value = 60, message = "{invitations.deliveries.retries.interval.interval}")
+    @Min(value = 1, message = "{invitations.deliveries.retries.interval.interval}")
     @Column(name = "retriesInterval")
     private Integer retriesIntervalMinutes = 1;
 

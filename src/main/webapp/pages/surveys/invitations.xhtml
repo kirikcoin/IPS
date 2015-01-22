@@ -465,14 +465,16 @@
                            value="#{bundle['invitations.deliveries.dialog.retries.number']}"/>
             <eye:inputText id="retriesNumber" maxlength="3" size="9"
                            styleClass="retries"
-                           value="#{invitationDeliveryController.invitationDelivery.retriesNumber}"/>
+                           readonly="#{!invitationDeliveryController.invitationDelivery.state.editable}"
+                           value="#{invitationDeliveryController.retriesNumberString}"/>
 
             <h:outputLabel for="retriesIntervalMinutes"
                            styleClass="retries"
                            value="#{bundle['invitations.deliveries.dialog.retries.interval']}"/>
             <eye:inputText id="retriesIntervalMinutes" maxlength="3" size="9"
                            styleClass="retries"
-                           value="#{invitationDeliveryController.invitationDelivery.retriesIntervalMinutes}"/>
+                           readonly="#{!invitationDeliveryController.invitationDelivery.state.editable}"
+                           value="#{invitationDeliveryController.retriesIntervalString}"/>
 
           </h:panelGrid>
 
