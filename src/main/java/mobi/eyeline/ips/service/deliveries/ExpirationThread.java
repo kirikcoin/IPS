@@ -26,7 +26,7 @@ public class ExpirationThread extends LoopThread {
     @Override
     protected void loop() throws InterruptedException {
         try {
-            final int count = deliverySubscriberRepository.expire(expirationDelaySeconds);
+            final int count = deliverySubscriberRepository.expireSent(expirationDelaySeconds);
             logger.debug("Stale deliveries: entries expired: " + count);
 
         } catch (Exception e) {

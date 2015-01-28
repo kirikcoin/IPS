@@ -46,7 +46,7 @@ public class DeliveryService {
     private final BlockingQueue<DeliveryWrapper.Message> toMark =
             new LinkedBlockingQueue<>();
 
-    private final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
 
     private final List<Thread> allThreads = new ArrayList<>();
 
@@ -189,7 +189,6 @@ public class DeliveryService {
             deliveries.put(delivery.getId(), wrapper);
         }
 
-        delivery.setCurrentPosition(0);
         invitationDeliveryRepository.update(delivery);
 
         toSend.put(DeliveryWrapper.DelayedDeliveryWrapper.forSent(timeSource, wrapper));
@@ -213,4 +212,5 @@ public class DeliveryService {
     public void updateSpeed(InvitationDelivery delivery) {
         updateSpeed(delivery.getId(), delivery.getSpeed());
     }
+
 }

@@ -57,9 +57,6 @@ public class InvitationDelivery implements Serializable {
     @Column(name = "input_file_name")
     private String inputFile;
 
-    @Column(name = "current_position")
-    private int currentPosition;
-
     @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('SENT', 'DELIVERED', 'UNDELIVERED'))")
     private Integer processedCount;
 
@@ -148,14 +145,6 @@ public class InvitationDelivery implements Serializable {
 
     public void setInputFile(String inputFile) {
         this.inputFile = inputFile;
-    }
-
-    public int getCurrentPosition() {
-        return currentPosition;
-    }
-
-    public void setCurrentPosition(int currentPosition) {
-        this.currentPosition = currentPosition;
     }
 
     public Integer getProcessedCount() {

@@ -147,17 +147,25 @@ class PushThread extends LoopThread {
             case USSD_PUSH:
                 deliveryPushService.pushUssd(
                         msgId, survey, msisdn, delivery.getModel().getText(), listener);
+                incAttempts(delivery,msisdn);
                 break;
             case SMS:
                 deliveryPushService.pushSms(
                         msgId, survey, msisdn, delivery.getModel().getText(), listener);
+                incAttempts(delivery,msisdn);
                 break;
             case NI_DIALOG:
                 deliveryPushService.niDialog(msgId, survey, msisdn, listener);
+                incAttempts(delivery,msisdn);
                 break;
             default:
                 throw new AssertionError("Unknown delivery type: " + type);
         }
+    }
+
+    private void incAttempts(DeliveryWrapper deliveryWrapper, String msisdn) {
+        Integer oldValue = deliveryWrapper.getRespondentAttemptsNumber().get(msisdn);
+        deliveryWrapper.getRespondentAttemptsNumber().put(msisdn, oldValue + 1);
     }
 
     private void onSentAttempt(DeliveryWrapper deliveryWrapper,

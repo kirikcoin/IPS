@@ -95,17 +95,24 @@ public class DeliverySubscriber implements Serializable {
         /**
          * Initial state.
          *
-         * From this we can get to either {@linkplain #SENT} or {@linkplain #UNDELIVERED}.
+         * From this we can get to either {@linkplain #FETCHED}.
          */
         NEW,
 
         /**
+         * Fetched from DB to push.
+         *
+         * From this we can get either {@linkplain #SENT} or {@linkplain #UNDELIVERED}
+         */
+        FETCHED,
+
+        /**
          * Assigned once an entry has been successfully sent.
          *
-         * From this we can get to either {@linkplain #DELIVERED} or {@linkplain #UNDELIVERED}.
+         * From this we can get to either {@linkplain #DELIVERED} or {@linkplain #UNDELIVERED}
+         * or {@linkplain #NEW}.
          */
         SENT,
-
 
         /**
          * Assigned once an entry has been successfully delivered (i.e. we've got a confirmation).

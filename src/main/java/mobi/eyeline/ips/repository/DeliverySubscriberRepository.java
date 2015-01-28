@@ -86,7 +86,7 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
     }
 
     // TODO: this is untested due to missing `time_to_sec' and `timediff' routines in HSQL.
-    public int expire(long expirationDelaySeconds) {
+    public int expireSent(long expirationDelaySeconds) {
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
@@ -120,4 +120,5 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
             session.close();
         }
     }
+
 }

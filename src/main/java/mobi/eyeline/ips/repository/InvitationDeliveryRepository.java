@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.FETCHED;
 import static org.hibernate.criterion.Restrictions.and;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.gt;
@@ -131,14 +132,6 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         try {
             transaction = session.beginTransaction();
 
-            // Update current position as passed in entity might not be attached or out of date.
-            final int currentPos = ((Number) session.createQuery(
-                    "SELECT d.currentPosition" +
-                    " FROM InvitationDelivery d" +
-                    " WHERE d = :delivery")
-                    .setEntity("delivery", delivery)
-                    .uniqueResult()).intValue();
-
             // Get next chunk of messages.
             final List<DeliverySubscriber> results;
             {
@@ -146,24 +139,19 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
                 criteria.add(
                         and(
                                 eq("invitationDelivery", delivery),
-                                eq("state", DeliverySubscriber.State.NEW),
-                                gt("id", currentPos)));
+                                eq("state", DeliverySubscriber.State.NEW)));
                 criteria.setMaxResults(limit);
 
                 //noinspection unchecked
                 results = (List<DeliverySubscriber>) criteria.list();
             }
 
+            // change state to FETCHED for all results
             if (!results.isEmpty()) {
-                // Set current position to the maximal ID
-                final int maxId = Collections.max(results, DeliverySubscriber.ID_COMPARATOR).getId();
-                session.createQuery(
-                        "UPDATE InvitationDelivery" +
-                        " SET currentPosition = :maxId" +
-                        " WHERE id = :id")
-                        .setParameter("maxId", maxId)
-                        .setParameter("id", delivery.getId())
-                        .executeUpdate();
+                for(DeliverySubscriber subscriber:results){
+                    subscriber.setState(FETCHED);
+                    session.update(subscriber);
+                }
             }
 
             transaction.commit();
