@@ -78,7 +78,8 @@ public class DeliveryService {
                 "push-state", config, toMark, deliverySubscriberRepository));
         allThreads.add(new ExpirationThread(
                 "push-expire",
-                config.getExpirationDelaySeconds(),
+                config.getSentExpirationDelaySeconds(),
+                config.getFetchedExpirationDelaySeconds(),
                 deliverySubscriberRepository));
     }
 

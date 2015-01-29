@@ -72,6 +72,6 @@ class FetchThread extends LoopThread {
     }
 
     private void onCompleted(DeliveryWrapper delivery) {
-        delivery.setEmpty();
+        delivery.setEmpty(true);
     }
 }

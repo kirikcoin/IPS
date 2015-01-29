@@ -59,7 +59,7 @@ public class NotificationService {
         DeliveryWrapper deliveryWrapper = DeliveryService.deliveries.get(delivery.getId());
 
         int attemptsCount = deliveryWrapper.getRespondentAttemptsNumber().get(deliverySubscriber.getMsisdn());
-
+         // todo: update map
         if (notification.asState() == UNDELIVERED) {
             if (!notification.isDelivered()) {
                 if (delivery.getRetriesNumber() > attemptsCount) {
@@ -70,11 +70,10 @@ public class NotificationService {
                             TimeUnit.MINUTES.toSeconds(delivery.getRetriesIntervalMinutes()))
                     );
                 } else {
-                    toUpdate.put(DelayedNotification.forDelay(
-                            timeSource,
-                            notification,
-                            TimeUnit.MINUTES.toSeconds(delivery.getRetriesIntervalMinutes()))
-                    );  // with some flag?
+                    toUpdate.put(DelayedNotification.forSent(timeSource, notification));
+                    //update retries map for correct hasMessagesToRetry method work
+                    // what if map will updated early?
+                    deliveryWrapper.getRespondentAttemptsNumber().remove(deliverySubscriber.getMsisdn());
                 }
             }
 
@@ -82,6 +81,7 @@ public class NotificationService {
         }
 
         toUpdate.put(DelayedNotification.forSent(timeSource, notification));
+        deliveryWrapper.getRespondentAttemptsNumber().remove(deliverySubscriber.getMsisdn());
         return true;
     }
 

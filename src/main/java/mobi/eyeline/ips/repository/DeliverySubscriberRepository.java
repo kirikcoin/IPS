@@ -121,4 +121,39 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
         }
     }
 
+    public int expireFetched(long expirationDelaySeconds) {
+        final Session session = getSessionFactory().openSession();
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+
+            final int count = session.createSQLQuery(
+                    "update delivery_subscribers ds " +
+                    "set state = 'NEW' " +
+                    "where " +
+                    " ds.state = 'FETCHED' and time_to_sec(timedeff(now(), ds.last_update)) > :diff")
+                    .setParameter("diff", expirationDelaySeconds)
+                    .executeUpdate();
+
+            transaction.commit();
+
+            getSessionFactory().getCache().evictEntityRegion(DeliverySubscriber.class);
+
+            return count;
+
+        } catch (HibernateException e) {
+            if((transaction != null) && transaction.isActive()) {
+                try {
+                    transaction.rollback();
+                } catch (HibernateException ee) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+            throw  e;
+
+        } finally {
+            session.close();
+        }
+    }
+
 }

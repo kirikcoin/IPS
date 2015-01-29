@@ -74,7 +74,8 @@
     <param name="push.update.batch.size" type="int">10</param>
 
     <param name="retry.attempts" type="int">3</param>
-    <param name="expiration.delay.seconds" type="int">300</param>
+    <param name="sent.expiration.delay.seconds" type="int">300</param>
+    <param name="fetched.expiration.delay.seconds" type="int">300</param>
   </section>
 
   <section name="esdp">

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Delayed;
@@ -86,8 +87,8 @@ public class DeliveryWrapper {
         return empty;
     }
 
-    public void setEmpty() {
-        this.empty = true;
+    public void setEmpty(boolean isEmpty) {
+        this.empty = isEmpty;
     }
 
     @Override
@@ -203,6 +204,10 @@ public class DeliveryWrapper {
                                                       long millis) {
             return new DelayedDeliveryWrapper(timeSource, wrapper, millis);
         }
+    }
+
+    public boolean hasMessagesToRetry() {
+        return respondentAttemptsNumber.size() != 0;
     }
 
     public HashMap<String, Integer> getRespondentAttemptsNumber() {

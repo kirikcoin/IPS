@@ -55,11 +55,20 @@ public class DeliveryNotificationServlet extends HttpServlet {
     private NotificationService.Notification parse(HttpServletRequest req) {
         @SuppressWarnings("unchecked")
         final Map<String, String[]> params = (Map<String, String[]>) req.getParameterMap();
+        boolean isDelivered;
+        try {
+            isDelivered = RequestParseUtils.getBoolean(params,"is-delivered");
+        } catch (MissingParameterException e) {
+            isDelivered = false;
+            if (logger.isDebugEnabled()) {
+                logger.debug("Notification: is-delivered parameter");
+            }
+        }
 
         try {
             return new NotificationService.Notification(
                     RequestParseUtils.getInt(params, "resource_id"),
-                    RequestParseUtils.getInt(params, "status"));
+                    RequestParseUtils.getInt(params, "status"), isDelivered);
 
         } catch (MissingParameterException e) {
             if (logger.isDebugEnabled()) {

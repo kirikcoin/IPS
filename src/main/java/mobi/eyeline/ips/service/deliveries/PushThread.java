@@ -87,6 +87,15 @@ class PushThread extends LoopThread {
         }
 
         if (delivery.isEmpty()) {
+            if (delivery.hasMessagesToRetry()) {
+                delivery.setEmpty(false);
+                toSend.put(DelayedDeliveryWrapper.forDelay(timeSource,
+                        delivery,
+                        TimeUnit.MINUTES.toMillis(delivery.getModel().getRetriesIntervalMinutes())
+                ));
+                return;
+            }
+
             // Fetch process marked this one as having no more entries in DB,
             // so just update the state accordingly.
             final InvitationDelivery dbModel =
