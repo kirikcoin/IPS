@@ -454,6 +454,28 @@
             <eye:inputText id="deliverySpeed" maxlength="3" size="9"
                            value="#{invitationDeliveryController.speedString}"/>
 
+            <h:outputLabel for="retriesEnabled"
+                           value="#{bundle['invitations.deliveries.dialog.retries.implement']}"/>
+            <h:selectBooleanCheckbox disabled="#{!invitationDeliveryController.invitationDelivery.state.editable}"
+                                     id="retriesEnabled"
+                                     value="#{invitationDeliveryController.invitationDelivery.retriesEnabled}"/>
+
+            <h:outputLabel for="retriesNumber"
+                           styleClass="retries"
+                           value="#{bundle['invitations.deliveries.dialog.retries.number']}"/>
+            <eye:inputText id="retriesNumber" maxlength="3" size="9"
+                           styleClass="retries"
+                           readonly="#{!invitationDeliveryController.invitationDelivery.state.editable}"
+                           value="#{invitationDeliveryController.retriesNumberString}"/>
+
+            <h:outputLabel for="retriesIntervalMinutes"
+                           styleClass="retries"
+                           value="#{bundle['invitations.deliveries.dialog.retries.interval']}"/>
+            <eye:inputText id="retriesIntervalMinutes" maxlength="3" size="9"
+                           styleClass="retries"
+                           readonly="#{!invitationDeliveryController.invitationDelivery.state.editable}"
+                           value="#{invitationDeliveryController.retriesIntervalString}"/>
+
           </h:panelGrid>
 
           <eye:buttons>

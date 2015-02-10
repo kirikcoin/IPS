@@ -23,7 +23,8 @@ class DefaultMockConfig extends FailingMockConfig {
     int getMessageQueueBaseline() { 10 }
     int getStateUpdateBatchSize() { 0 }
     int getRetryAttempts() { 3 }
-    long getExpirationDelaySeconds() { 600 }
+    long getSentExpirationDelaySeconds() { 600 }
+    long getFetchedExpirationDelaySeconds() { 600 }
 
     String getEsdpEndpointUrl() { '' }
 

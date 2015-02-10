@@ -32,19 +32,21 @@ class FetchThread extends LoopThread {
             doProcess(delivery);
 
         } catch (Exception e) {
-            logger.error("Delivery processing failed: [" + delivery + "]", e);
+            logger.error("Delivery-" + delivery.getModel().getId() + ": process failed. Cause: " + e.getMessage(), e);
             toFetch.put(delivery);
         }
     }
 
     private void doProcess(DeliveryWrapper delivery) throws InterruptedException {
         if (!delivery.shouldBeFilled()) {
-            logger.debug("Skipping [" + delivery + "] as already full");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Delivery-" + delivery.getModel().getId() + ": delivery is full, no messages fetched");
+            }
             return;
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("Processing [" + delivery + "], size = [" + delivery.size() + "]");
+            logger.debug("Delivery-" + delivery.getModel().getId() + ": Trying to fetch messages...");
         }
 
         final List<DeliverySubscriber> subscribers =
@@ -53,16 +55,27 @@ class FetchThread extends LoopThread {
                         delivery.getMessagesQueueSize());
 
         if (subscribers.isEmpty()) {
-            logger.info("All messages in delivery = [" + delivery + "] are processed");
+            if (logger.isDebugEnabled()) {
+                logger.debug("Delivery-" + delivery.getModel().getId() + ": no messages fetched. Delivery market as empty.");
+            }
             onCompleted(delivery);
 
         } else {
+
+            StringBuilder sb = new StringBuilder();
+
             for (DeliverySubscriber subscriber : subscribers) {
                 final DeliveryWrapper.Message message =
                         new DeliveryWrapper.Message(subscriber.getId(), subscriber.getMsisdn());
+                if (sb.length() > 0)
+                    sb.append(",");
+                sb.append(subscriber.getId());
                 delivery.put(message);
             }
 
+            if(logger.isDebugEnabled()) {
+                logger.debug("Delivery-" + delivery.getModel().getId() + ": " + subscribers.size() + " messages fetched. [" + sb.toString() + "]");
+            }
             onAfterFetch(delivery);
         }
     }
@@ -72,6 +85,6 @@ class FetchThread extends LoopThread {
     }
 
     private void onCompleted(DeliveryWrapper delivery) {
-        delivery.setEmpty();
+        delivery.setEmpty(true);
     }
 }

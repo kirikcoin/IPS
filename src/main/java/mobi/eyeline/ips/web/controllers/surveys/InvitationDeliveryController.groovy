@@ -47,6 +47,8 @@ class InvitationDeliveryController extends BaseController {
     InvitationDelivery invitationDelivery
     String speedString
     String typeString
+    String retriesNumberString
+    String retriesIntervalString
     Boolean dialogForEdit
     Integer modifiedDeliveryId
     String modifiedDeliveryFilename
@@ -127,11 +129,15 @@ class InvitationDeliveryController extends BaseController {
             modifiedDeliveryFilename = invitationDelivery.inputFile
             speedString = invitationDelivery.speed
             typeString = nameOf(invitationDelivery.type)
+            retriesNumberString = invitationDelivery.retriesNumber
+            retriesIntervalString = invitationDelivery.retriesIntervalMinutes
             dialogForEdit = true
 
         } else {
             invitationDelivery = new InvitationDelivery()
             speedString = DEFAULT_SPEED
+            retriesNumberString = invitationDelivery.retriesNumber
+            retriesIntervalString = invitationDelivery.retriesIntervalMinutes
             dialogForEdit = false
         }
     }
@@ -169,6 +175,9 @@ class InvitationDeliveryController extends BaseController {
             if (persistedDelivery.state == INACTIVE) {
                 persistedDelivery.type = invitationDelivery.type
                 persistedDelivery.text = invitationDelivery.text
+                persistedDelivery.retriesEnabled = invitationDelivery.retriesEnabled
+                persistedDelivery.retriesNumber = invitationDelivery.retriesNumber
+                persistedDelivery.retriesIntervalMinutes = invitationDelivery.retriesIntervalMinutes
             }
 
             persistedDelivery.speed = invitationDelivery.speed
@@ -210,6 +219,37 @@ class InvitationDeliveryController extends BaseController {
             deliveryModifyError = true
         }
 
+        if (retriesNumberString != null) {
+            try {
+                invitationDelivery.retriesNumber = Integer.parseInt(retriesNumberString)
+            } catch (NumberFormatException e){
+              errorMessages << new SimpleConstraintViolation('retriesNumber',
+                      strings['invitations.deliveries.retries.number.interval'])
+              deliveryModifyError = true
+
+            }
+        } else {
+            errorMessages << new SimpleConstraintViolation('retriesNumber',
+                    strings['invitations.deliveries.retries.number.interval'])
+            deliveryModifyError = true
+        }
+
+        if (retriesIntervalString != null) {
+            try {
+                invitationDelivery.retriesIntervalMinutes = Integer.parseInt(retriesIntervalString)
+            } catch (NumberFormatException e){
+                errorMessages << new SimpleConstraintViolation('retriesIntervalMinutes',
+                        strings['invitations.deliveries.retries.interval.interval'])
+                deliveryModifyError = true
+
+            }
+        } else {
+            errorMessages << new SimpleConstraintViolation('retriesIntervalMinutes',
+                    strings['invitations.deliveries.retries.interval.interval'])
+            deliveryModifyError = true
+        }
+
+
         if (invitationDelivery.type != NI_DIALOG && !invitationDelivery.text) {
             errorMessages << new SimpleConstraintViolation('text',
                     strings['invitations.deliveries.dialog.text'])
@@ -221,9 +261,12 @@ class InvitationDeliveryController extends BaseController {
                 [
                         'text': 'invitationText',
                         'speed': 'deliverySpeed',
-                        'inputFile': 'deliveryReceivers'
+                        'inputFile': 'deliveryReceivers',
+                        'retriesNumber': 'retriesNumber',
+                        'retriesIntervalMinutes': 'retriesIntervalMinutes'
+
                 ],
-                ['text', 'inputFile', 'speed'])
+                ['text', 'inputFile', 'speed', 'retriesNumber', 'retriesIntervalMinutes' ])
         if (!invitationDelivery.inputFile) {
             deliveryReceiversError = true
         }

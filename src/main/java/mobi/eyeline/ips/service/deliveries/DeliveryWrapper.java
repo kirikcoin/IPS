@@ -7,10 +7,10 @@ import mobi.eyeline.ips.util.TimeSource;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
@@ -22,6 +22,7 @@ public class DeliveryWrapper {
     private final InvitationDelivery invitationDelivery;
     private final int messagesQueueSize;
     private final Queue<Message> messages = new ConcurrentLinkedQueue<>();
+    private final HashMap<String,Integer> respondentAttemptsNumber = new HashMap<>();
 
     private volatile long proposedDelayMillis;
 
@@ -50,6 +51,10 @@ public class DeliveryWrapper {
 
     public long getProposedDelayMillis() {
         return proposedDelayMillis;
+    }
+
+    public Queue<Message> getMessages() {
+        return messages;
     }
 
     public Message poll() {
@@ -84,8 +89,8 @@ public class DeliveryWrapper {
         return empty;
     }
 
-    public void setEmpty() {
-        this.empty = true;
+    public void setEmpty(boolean isEmpty) {
+        this.empty = isEmpty;
     }
 
     @Override
@@ -201,5 +206,13 @@ public class DeliveryWrapper {
                                                       long millis) {
             return new DelayedDeliveryWrapper(timeSource, wrapper, millis);
         }
+    }
+
+    public boolean hasMessagesToRetry() {
+        return respondentAttemptsNumber.size() != 0;
+    }
+
+    public HashMap<String, Integer> getRespondentAttemptsNumber() {
+        return respondentAttemptsNumber;
     }
 }

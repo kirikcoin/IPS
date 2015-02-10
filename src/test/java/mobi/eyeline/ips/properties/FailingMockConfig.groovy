@@ -26,7 +26,8 @@ class FailingMockConfig implements Config {
     int getMessageQueueBaseline() { fail() }
     int getStateUpdateBatchSize() { fail() }
     int getRetryAttempts() { fail() }
-    long getExpirationDelaySeconds() { fail() }
+    long getSentExpirationDelaySeconds() { fail() }
+    long getFetchedExpirationDelaySeconds() { fail() }
 
     String getEsdpEndpointUrl() { fail() }
 

@@ -6,16 +6,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Proxy;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -65,9 +57,6 @@ public class InvitationDelivery implements Serializable {
     @Column(name = "input_file_name")
     private String inputFile;
 
-    @Column(name = "current_position")
-    private int currentPosition;
-
     @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('SENT', 'DELIVERED', 'UNDELIVERED'))")
     private Integer processedCount;
 
@@ -76,6 +65,20 @@ public class InvitationDelivery implements Serializable {
 
     @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('UNDELIVERED'))")
     private Integer errorsCount;
+
+    @Column(name = "retriesEnabled", columnDefinition = "BIT")
+    @org.hibernate.annotations.Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean retriesEnabled;
+
+    @Max(value = 50, message = "{invitations.deliveries.retries.number.interval}")
+    @Min(value = 1, message = "{invitations.deliveries.retries.number.interval}")
+    @Column(name = "retriesNumber")
+    private Integer retriesNumber = 1;
+
+    @Max(value = 60, message = "{invitations.deliveries.retries.interval.interval}")
+    @Min(value = 1, message = "{invitations.deliveries.retries.interval.interval}")
+    @Column(name = "retriesInterval")
+    private Integer retriesIntervalMinutes = 1;
 
     public InvitationDelivery() {
     }
@@ -144,14 +147,6 @@ public class InvitationDelivery implements Serializable {
         this.inputFile = inputFile;
     }
 
-    public int getCurrentPosition() {
-        return currentPosition;
-    }
-
-    public void setCurrentPosition(int currentPosition) {
-        this.currentPosition = currentPosition;
-    }
-
     public Integer getProcessedCount() {
         return processedCount;
     }
@@ -164,6 +159,34 @@ public class InvitationDelivery implements Serializable {
         return errorsCount;
     }
 
+    public boolean getRetriesEnabled() {
+        return retriesEnabled;
+    }
+
+    public void setRetriesEnabled(boolean retriesEnabled) {
+        this.retriesEnabled = retriesEnabled;
+    }
+
+    public Integer getRetriesNumber() {
+        return retriesNumber;
+    }
+
+    public void setRetriesNumber(Integer retriesNumber) {
+        this.retriesNumber = retriesNumber;
+    }
+
+    public Integer getRetriesIntervalMinutes() {
+        return retriesIntervalMinutes;
+    }
+
+    public void setRetriesIntervalMinutes(Integer retriesInterval) {
+        this.retriesIntervalMinutes = retriesInterval;
+    }
+
+    @AssertTrue(message = "Interval and number of retries must be not empty.")
+    private boolean isValidRetriesFields() {
+        return (retriesEnabled) ? (retriesNumber != null && retriesIntervalMinutes!=null) : true;
+    }
     public static enum State {
 
         /**

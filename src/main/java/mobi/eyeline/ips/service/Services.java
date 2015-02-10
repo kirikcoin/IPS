@@ -137,7 +137,7 @@ public class Services {
                 deliverySubscriberRepository,
                 deliveryPushService,
                 config);
-        notificationService = new NotificationService(deliverySubscriberRepository);
+        notificationService = new NotificationService(timeSource, deliverySubscriberRepository, deliveryService);
 
         csvParseService = new CsvParseService();
         timeZoneService = new TimeZoneService();
