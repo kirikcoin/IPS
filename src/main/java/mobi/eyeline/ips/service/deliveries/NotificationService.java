@@ -70,7 +70,7 @@ public class NotificationService {
             if (attemptsCount < delivery.getRetriesNumber()) {
                 notification.setState(NEW);
                 toUpdate.put(DelayedNotification.forDelay(
-                        timeSource,s
+                        timeSource,
                         notification,
                         TimeUnit.MINUTES.toMillis(delivery.getRetriesIntervalMinutes()))
 
