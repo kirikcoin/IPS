@@ -22,13 +22,13 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
     public void updateState(List<Pair<Integer, DeliverySubscriber.State>> idsAndStates,
                             DeliverySubscriber.State oldState) {
 
-        final Session session = getSessionFactory().getCurrentSession();
+        final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
 
             for (Pair<Integer, DeliverySubscriber.State> idAndState : idsAndStates) {
-                session.createQuery(
+                int count = session.createQuery(
                         "UPDATE DeliverySubscriber" +
                         " SET state = :newState" +
                         " WHERE id = :id AND state = :oldState")
@@ -36,6 +36,10 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
                         .setParameter("oldState", oldState)
                         .setParameter("id", idAndState.getKey())
                         .executeUpdate();
+
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Subscriber-" + idAndState.getKey() + ": new state = " + idAndState.getValue() + ", if old state = " + oldState + ", count=" + count);
+                }
             }
 
             transaction.commit();
@@ -50,24 +54,30 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
             }
             throw e;
 
+        } finally {
+            session.close();
         }
     }
 
     public void updateState(List<Pair<Integer, DeliverySubscriber.State>> idsAndStates) {
 
-        final Session session = getSessionFactory().getCurrentSession();
+        final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
 
             for (Pair<Integer, DeliverySubscriber.State> idAndState : idsAndStates) {
-                session.createQuery(
+                int count = session.createQuery(
                         "UPDATE DeliverySubscriber" +
                         " SET state = :newState" +
                         " WHERE id = :id")
                         .setParameter("newState", idAndState.getValue())
                         .setParameter("id", idAndState.getKey())
                         .executeUpdate();
+
+                if(logger.isDebugEnabled()){
+                    logger.debug("Subscriber-" + idAndState.getKey() + ": new state = " + idAndState.getValue() + ", count=" + count);
+                }
             }
 
             transaction.commit();
@@ -82,6 +92,8 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
             }
             throw e;
 
+        } finally {
+            session.close();
         }
     }
 
@@ -131,7 +143,7 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
                     "update delivery_subscribers ds " +
                     "set state = 'NEW' " +
                     "where " +
-                    " ds.state = 'FETCHED' and time_to_sec(timedeff(now(), ds.last_update)) > :diff")
+                    " ds.state = 'FETCHED' and time_to_sec(timediff(now(), ds.last_update)) > :diff")
                     .setParameter("diff", expirationDelaySeconds)
                     .executeUpdate();
 

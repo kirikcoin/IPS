@@ -19,18 +19,18 @@ public class StateUpdateThread extends LoopThread {
     private static final Logger logger = LoggerFactory.getLogger(StateUpdateThread.class);
 
     private final int batchSize;
-    private final BlockingQueue<Message> toUpdate;
+    private final BlockingQueue<Message> toStateUpdate;
     private final DeliverySubscriberRepository deliverySubscriberRepository;
 
 
     public StateUpdateThread(String name,
                              Config config,
-                             BlockingQueue<Message> toUpdate,
+                             BlockingQueue<Message> toStateUpdate,
                              DeliverySubscriberRepository deliverySubscriberRepository) {
 
         super(name);
 
-        this.toUpdate = toUpdate;
+        this.toStateUpdate = toStateUpdate;
         this.deliverySubscriberRepository = deliverySubscriberRepository;
         this.batchSize = config.getStateUpdateBatchSize();
     }
@@ -43,8 +43,8 @@ public class StateUpdateThread extends LoopThread {
 
     private List<Message> fetchChunk() throws InterruptedException {
         final List<Message> chunk = new ArrayList<>(batchSize);
-        chunk.add(toUpdate.take());
-        toUpdate.drainTo(chunk, batchSize - 1);
+        chunk.add(toStateUpdate.take());
+        toStateUpdate.drainTo(chunk, batchSize - 1);
 
         return chunk;
     }
@@ -55,6 +55,7 @@ public class StateUpdateThread extends LoopThread {
         do {
             try {
                 doUpdateChunk(chunk);
+                return;
             } catch (Exception e) {
                 if (retries == 0) {
                     logger.warn("State update error", e);
@@ -73,21 +74,21 @@ public class StateUpdateThread extends LoopThread {
             if (logger.isDebugEnabled()) {
                 logger.debug("Updating " + chunk.size() + " entries");
             }
-            // Update state only for NEW messages to handle the following scenario:
+            // Update state only for FETCHED messages to handle the following scenario:
             // 1. Message gets sent
             // 2. Notification arrives, state is updated to either DELIVERED or UNDELIVERED
             // 3. Finally comes to updating to SENT after step 1.
             deliverySubscriberRepository.updateState(
                     transform(chunk, Message.AS_PAIR),
-                    DeliverySubscriber.State.NEW);
+                    DeliverySubscriber.State.FETCHED);
         } else {
             logger.debug("Nothing to update");
         }
     }
 
     public void processRemaining() {
-        final List<Message> chunk = new ArrayList<>(toUpdate.size());
-        toUpdate.drainTo(chunk);
+        final List<Message> chunk = new ArrayList<>(toStateUpdate.size());
+        toStateUpdate.drainTo(chunk);
         logger.debug("Updating " + chunk.size() + " entries on shutdown");
 
         updateChunk(chunk);

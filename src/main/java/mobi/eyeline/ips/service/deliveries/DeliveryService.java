@@ -46,7 +46,7 @@ public class DeliveryService {
     private final BlockingQueue<DeliveryWrapper.Message> toMark =
             new LinkedBlockingQueue<>();
 
-    public static final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, DeliveryWrapper> deliveries = new ConcurrentHashMap<>();
 
     private final List<Thread> allThreads = new ArrayList<>();
 
@@ -106,6 +106,10 @@ public class DeliveryService {
     @JmxAttributeMethod
     public String getDeliveryInfo() {
         return deliveries.values().toString();
+    }
+
+    public DeliveryWrapper getDeliveryWrapper(int deliveryId) {
+        return deliveries.get(deliveryId);
     }
 
     //

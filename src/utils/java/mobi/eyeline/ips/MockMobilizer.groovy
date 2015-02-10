@@ -17,7 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue
  * Exposes {@code localhost:8000/push} URL.
  * For each pushed message schedules either erroneous or successful notification.
  */
-@Grab(group = 'org.apache.httpcomponents', module = 'httpclient', version = '4.2.4')
+//@Grab(group = 'org.apache.httpcomponents', module = 'httpclient', version = '4.2.4')
 class Mock {
 
     // private static final String SENDER_URL = 'http://192.168.3.209:8080/inform'
@@ -44,9 +44,6 @@ class Mock {
                 t.split('=').with { m[it[0]] = it.length > 1 ? it[1] : '' }; m
             }
 
-            final long resourceId = map['resource_id'].toLong()
-            messages << new Message(resourceId)
-
             xcg.with {
                 String response = 'Queued'
                 sendResponseHeaders(200, response.length())
@@ -56,11 +53,17 @@ class Mock {
                     close()
                 }
             }
+
+            final long resourceId = map['resource_id'].toLong()
+
+            messages << new Message(resourceId)
+
         }
     }
 
     static class Message {
         final long id
+
         Message(long id) { this.id = id }
     }
 
@@ -71,7 +74,9 @@ class Mock {
             while (!interrupted) {
                 def msg = messages.take()
                 try {
-                    processMessage(msg, 'sms', true, ((msg.id % 2) + 1) as int)
+                    boolean isDelivered = msg.id%2==0
+
+                    processMessage(msg, 'sms', true, 1, isDelivered)
                 } catch (Exception e) {
                     println "${msg.id.toString().padRight(8)}" +
                             " ${System.currentTimeMillis()}" +
@@ -83,9 +88,12 @@ class Mock {
         private void processMessage(Message msg,
                                     String protocol,
                                     boolean isFinal,
-                                    int status) {
+                                    int status,
+                                    boolean isDelivered) {
 
-            def url = "$SENDER_URL?resource_id=${msg.id}&protocol=$protocol&status=$status"
+            def deliveredProperty = isDelivered ? "&is-delivered=true" : ""
+
+            def url = "$SENDER_URL?resource_id=${msg.id}&protocol=$protocol&status=$status" + deliveredProperty
             if (isFinal) {
                 url += '&final=true'
             }

@@ -13,28 +13,33 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.collect.Lists.transform;
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.DELIVERED;
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.NEW;
-import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.*;
 
 @JmxResource(domainName = "mobi.eyeline.ips")
 public class NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
+    private static final int SUCCESS_RESULT = 2;
+
     private final TimeSource timeSource;
 
     private final DelayQueue<DelayedNotification> toUpdate = new DelayQueue<>();
+
+    private final DeliveryService deliveryService;
 
     private NotificationServiceThread thread;
 
     private DeliverySubscriberRepository deliverySubscriberRepository;
 
-    public NotificationService(TimeSource timeSource, DeliverySubscriberRepository deliverySubscriberRepository) {
+    public NotificationService(TimeSource timeSource, DeliverySubscriberRepository deliverySubscriberRepository, DeliveryService deliveryService) {
         this.deliverySubscriberRepository = deliverySubscriberRepository;
         this.timeSource = timeSource;
+        this.deliveryService = deliveryService;
 
         thread = new NotificationServiceThread(
                 "push-notify",
@@ -52,36 +57,32 @@ public class NotificationService {
         thread.start();
     }
 
-    public boolean handleNotification(Notification notification)
-            throws InterruptedException {
+    public boolean handleNotification(Notification notification) throws InterruptedException {
+
         DeliverySubscriber deliverySubscriber = deliverySubscriberRepository.get(notification.getId());
         InvitationDelivery delivery = deliverySubscriber.getInvitationDelivery();
-        DeliveryWrapper deliveryWrapper = DeliveryService.deliveries.get(delivery.getId());
+        DeliveryWrapper deliveryWrapper = deliveryService.getDeliveryWrapper(delivery.getId());
 
-        int attemptsCount = deliveryWrapper.getRespondentAttemptsNumber().get(deliverySubscriber.getMsisdn());
-         // todo: update map
-        if (notification.asState() == UNDELIVERED) {
-            if (!notification.isDelivered()) {
-                if (delivery.getRetriesNumber() > attemptsCount) {
-                    notification.setState(NEW);
-                    toUpdate.put(DelayedNotification.forDelay(
-                            timeSource,
-                            notification,
-                            TimeUnit.MINUTES.toSeconds(delivery.getRetriesIntervalMinutes()))
-                    );
-                } else {
-                    toUpdate.put(DelayedNotification.forSent(timeSource, notification));
-                    //update retries map for correct hasMessagesToRetry method work
-                    // what if map will updated early?
-                    deliveryWrapper.getRespondentAttemptsNumber().remove(deliverySubscriber.getMsisdn());
-                }
+//        logger.debug("Delivery-" + delivery.getId() + ": new notification for: " + deliverySubscriber.getId() + ", state: " + notification.asState() + ", delivered: " + notification.isDelivered());
+        if (delivery.getRetriesEnabled() && notification.asState() == UNDELIVERED) {
+            int attemptsCount = deliveryWrapper.getRespondentAttemptsNumber().get(deliverySubscriber.getMsisdn());
+
+            if (attemptsCount < delivery.getRetriesNumber()) {
+                notification.setState(NEW);
+                toUpdate.put(DelayedNotification.forDelay(
+                        timeSource,s
+                        notification,
+                        TimeUnit.MINUTES.toMillis(delivery.getRetriesIntervalMinutes()))
+
+                );
+//                logger.debug("Delivery-" + delivery.getId() + ": message will be retried: " + deliverySubscriber.getId() + ", attempts: " + attemptsCount);
+                return true;
             }
-
-            return true;
         }
+//        logger.debug("Delivery-" + delivery.getId() + ": message will be finalized: " + deliverySubscriber.getId() + ", state: " + notification.asState());
 
-        toUpdate.put(DelayedNotification.forSent(timeSource, notification));
         deliveryWrapper.getRespondentAttemptsNumber().remove(deliverySubscriber.getMsisdn());
+        toUpdate.put(DelayedNotification.forSent(timeSource, notification));
         return true;
     }
 
@@ -125,7 +126,7 @@ public class NotificationService {
 
         DeliverySubscriber.State asState() {
             if (state != null) return state;
-            return (getResult() == 2 || isDelivered) ? DELIVERED : UNDELIVERED;
+            return (getResult() == SUCCESS_RESULT || isDelivered) ? DELIVERED : UNDELIVERED;
         }
 
         @Override
@@ -225,7 +226,7 @@ public class NotificationService {
             do {
                 try {
                     doUpdateChunk(chunk);
-
+                    return;
                 } catch (Exception e) {
                     if (retries == 0) {
                         logger.warn("State update error", e);

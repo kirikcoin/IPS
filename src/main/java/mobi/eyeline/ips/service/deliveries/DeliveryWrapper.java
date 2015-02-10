@@ -10,9 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
 import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
@@ -53,6 +51,10 @@ public class DeliveryWrapper {
 
     public long getProposedDelayMillis() {
         return proposedDelayMillis;
+    }
+
+    public Queue<Message> getMessages() {
+        return messages;
     }
 
     public Message poll() {
