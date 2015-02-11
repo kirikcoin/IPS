@@ -129,7 +129,6 @@
             <h:panelGrid id="dates" columns="3" cellpadding="0">
               <eye:inputDate id="newSurveyStartDate"
                              inputTime="true"
-                             minDate="#{dateController.now}"
                              converterMessage="#{bundle['survey.validation.date.format']}"
                              value="#{surveyListController.newSurveyStartDate}">
                 <f:convertDateTime timeZone="#{userSession.timeZone}"/>
