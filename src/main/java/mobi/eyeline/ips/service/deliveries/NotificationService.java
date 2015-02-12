@@ -67,7 +67,7 @@ public class NotificationService {
         if (delivery.getRetriesEnabled() && notification.asState() == UNDELIVERED) {
             int attemptsCount = deliveryWrapper.getRespondentAttemptsNumber().get(deliverySubscriber.getMsisdn());
 
-            if (attemptsCount < delivery.getRetriesNumber()) {
+            if (attemptsCount < delivery.getRetriesNumber() + 1) {
                 notification.setState(NEW);
                 toUpdate.put(DelayedNotification.forDelay(
                         timeSource,

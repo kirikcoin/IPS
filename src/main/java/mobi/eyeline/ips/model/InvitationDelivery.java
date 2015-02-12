@@ -57,7 +57,7 @@ public class InvitationDelivery implements Serializable {
     @Column(name = "input_file_name")
     private String inputFile;
 
-    @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('SENT', 'DELIVERED', 'UNDELIVERED'))")
+    @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('DELIVERED', 'UNDELIVERED'))")
     private Integer processedCount;
 
     @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id)")
