@@ -63,7 +63,10 @@ public class NotificationService {
         InvitationDelivery delivery = deliverySubscriber.getInvitationDelivery();
         DeliveryWrapper deliveryWrapper = deliveryService.getDeliveryWrapper(delivery.getId());
 
-//        logger.debug("Delivery-" + delivery.getId() + ": new notification for: " + deliverySubscriber.getId() + ", state: " + notification.asState() + ", delivered: " + notification.isDelivered());
+        if (logger.isDebugEnabled()) {
+            logger.debug("Delivery-" + delivery.getId() + ": new notification for: " + deliverySubscriber.getId() + ", state: " + notification.asState() + ", delivered: " + notification.isDelivered());
+        }
+
         if (delivery.getRetriesEnabled() && notification.asState() == UNDELIVERED) {
             int attemptsCount = deliveryWrapper.getRespondentAttemptsNumber().get(deliverySubscriber.getMsisdn());
 
@@ -75,11 +78,16 @@ public class NotificationService {
                         TimeUnit.MINUTES.toMillis(delivery.getRetriesIntervalMinutes()))
 
                 );
-//                logger.debug("Delivery-" + delivery.getId() + ": message will be retried: " + deliverySubscriber.getId() + ", attempts: " + attemptsCount);
+                if(logger.isDebugEnabled()) {
+                    logger.debug("Delivery-" + delivery.getId() + ": message will be retried: " + deliverySubscriber.getId() + ", attempts: " + attemptsCount);
+                }
                 return true;
             }
         }
-//        logger.debug("Delivery-" + delivery.getId() + ": message will be finalized: " + deliverySubscriber.getId() + ", state: " + notification.asState());
+
+        if(logger.isDebugEnabled() ){
+            logger.debug("Delivery-" + delivery.getId() + ": message will be finalized: " + deliverySubscriber.getId() + ", state: " + notification.asState());
+        }
 
         deliveryWrapper.getRespondentAttemptsNumber().remove(deliverySubscriber.getMsisdn());
         toUpdate.put(DelayedNotification.forSent(timeSource, notification));
@@ -242,7 +250,7 @@ public class NotificationService {
         private void doUpdateChunk(List<DelayedNotification> chunk) {
             if (!chunk.isEmpty()) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("Notifications for " + chunk.size() + " entries");
+                    logger.debug("Update states from notifications for " + chunk.size() + " entries");
                 }
                 deliverySubscriberRepository.updateState(transform(chunk, asPair));
 
