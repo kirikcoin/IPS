@@ -8,7 +8,7 @@
               xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_2.xsd"
               version="2.0">
   <factory>
-    <partial-view-context-factory>mobi.eyeline.utils.partial.EyePartialViewContextFactory</partial-view-context-factory>
+    <partial-view-context-factory>mobi.eyeline.util.jsf.components.utils.partial.EyePartialViewContextFactory</partial-view-context-factory>
   </factory>
 
   <lifecycle>

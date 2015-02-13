@@ -10,30 +10,46 @@ public class ExpirationThread extends LoopThread {
 
     private static final Logger logger = LoggerFactory.getLogger(ExpirationThread.class);
 
-    private final long expirationDelaySeconds;
+    private final long sentExpirationDelaySeconds;
+    private final long fetchedExpirationDelaySeconds;
     private final DeliverySubscriberRepository deliverySubscriberRepository;
 
     public ExpirationThread(String name,
-                            long expirationDelaySeconds,
+                            long sentExpirationDelaySeconds,
+                            long fetchedExpirationDelaySeconds,
                             DeliverySubscriberRepository deliverySubscriberRepository) {
 
         super(name);
 
-        this.expirationDelaySeconds = expirationDelaySeconds;
+        this.sentExpirationDelaySeconds = sentExpirationDelaySeconds;
+        this.fetchedExpirationDelaySeconds = fetchedExpirationDelaySeconds;
         this.deliverySubscriberRepository = deliverySubscriberRepository;
     }
 
     @Override
     protected void loop() throws InterruptedException {
         try {
-            final int count = deliverySubscriberRepository.expire(expirationDelaySeconds);
-            logger.debug("Stale deliveries: entries expired: " + count);
+            try {
+                final int count = deliverySubscriberRepository.expireSent(sentExpirationDelaySeconds);
+                logger.debug("Stale sent deliveries: entries expired: " + count);
 
-        } catch (Exception e) {
-            logger.error("Stale deliveries expiration failure", e);
+            } catch (Exception e) {
+                logger.error("Stale sent deliveries expiration failure", e);
+
+            }
+
+            try {
+                final int count = deliverySubscriberRepository.expireFetched(fetchedExpirationDelaySeconds);
+                logger.debug("Stale fetched deliveries: entries expired: " + count);
+
+            } catch (Exception e) {
+                logger.error("Stale fetched deliveries expiration failure", e);
+            }
 
         } finally {
-            sleep(TimeUnit.SECONDS.toMillis(expirationDelaySeconds));
+            sleep(TimeUnit.SECONDS.toMillis(
+                    Math.min(sentExpirationDelaySeconds,fetchedExpirationDelaySeconds))
+            );
         }
     }
 }

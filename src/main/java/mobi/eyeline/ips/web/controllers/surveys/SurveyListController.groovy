@@ -116,22 +116,10 @@ class SurveyListController extends BaseController {
             return false
         }
 
-        def checkStartInTheFuture = {
-            if (newSurveyStartDate != null && newSurveyStartDate.before(new Date())) {
-                addErrorMessage(
-                        strings['survey.validation.start.date.future'],
-                        'newSurveyStartDate')
-                return true
-            }
-            return false
-        }
-
         newSurveyValidationError = checkClientIdUnset()
         if (newSurveyValidationError) {
             return  // Can't check further
         }
-
-        newSurveyValidationError |= checkStartInTheFuture()
 
         def survey = new Survey(
                 startDate: newSurveyStartDate,

@@ -3,6 +3,10 @@ var page = {
   init: function () {
     var self = this;
 
+    $('#retriesEnabled').click(function () {
+      $(".retries").toggle(this.checked);
+    });
+
     $('#deliveryType').change(function () {
       self.handleDeliveryTypeChange();
       $('#invitationText').val('');
@@ -97,6 +101,13 @@ var page = {
 
   onNewDeliveryShow: function() {
     jsfc('newDeliveryDialog').show();
+
+    if($('#retriesEnabled').attr('checked')) {
+      $(".retries").show();
+    } else {
+      $(".retries").hide();
+    }
+
     return false;
   },
 

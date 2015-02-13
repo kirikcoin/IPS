@@ -42,4 +42,57 @@ class InvitationDeliveryTest extends ValidationTestCase {
         assertEquals 'speed', violations[0].propertyPath.first().name
     }
 
+    void test4(){
+        def delivery = new InvitationDelivery(
+                type: NI_DIALOG,
+                state: ACTIVE,
+                inputFile: 'txt.txt',
+                speed: 50,
+                text: 'a',
+                retriesIntervalMinutes: 0,
+                retriesNumber: 0)
+        def violations = validate delivery
+        assertThat violations, hasSize(2)
+
+        delivery = new InvitationDelivery(
+                type: NI_DIALOG,
+                state: ACTIVE,
+                inputFile: 'txt.txt',
+                speed: 50,
+                text: 'a',
+                retriesIntervalMinutes: 70,
+                retriesNumber: 60)
+        violations = validate delivery
+        assertThat violations, hasSize(2)
+    }
+
+    void test5() {
+        def delivery = new InvitationDelivery(
+                type: NI_DIALOG,
+                state: ACTIVE,
+                inputFile: 'txt.txt',
+                speed: 50,
+                text: 'a',
+                retriesEnabled: false,
+                retriesIntervalMinutes: null,
+                retriesNumber: null)
+
+        def violations = validate delivery
+        assertThat violations, hasSize(0)
+
+        delivery = new InvitationDelivery(
+                type: NI_DIALOG,
+                state: ACTIVE,
+                inputFile: 'txt.txt',
+                speed: 50,
+                text: 'a',
+                retriesEnabled: true,
+                retriesIntervalMinutes: null,
+                retriesNumber: null)
+
+        violations = validate delivery
+        assertThat violations, hasSize(1)
+
+    }
+
 }

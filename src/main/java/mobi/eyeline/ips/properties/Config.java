@@ -4,8 +4,6 @@ import com.eyeline.utils.config.ConfigException;
 import com.eyeline.utils.config.xml.XmlConfig;
 import com.eyeline.utils.config.xml.XmlConfigSection;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 public interface Config {
@@ -32,7 +30,8 @@ public interface Config {
     public int getMessageQueueBaseline();
     public int getStateUpdateBatchSize();
     public int getRetryAttempts();
-    public long getExpirationDelaySeconds();
+    public long getSentExpirationDelaySeconds();
+    public long getFetchedExpirationDelaySeconds();
 
     public String getEsdpEndpointUrl();
 
@@ -66,7 +65,8 @@ public interface Config {
         private final int messageQueueBaseline;
         private final int stateUpdateBatchSize;
         private final int retryAttempts;
-        private final long expirationDelaySeconds;
+        private final long sentExpirationDelaySeconds;
+        private final long fetchedExpirationDelaySeconds;
 
         private final String esdpEndpointUrl;
 
@@ -110,7 +110,8 @@ public interface Config {
                 messageQueueBaseline = deliveries.getInt("push.message.queue");
                 stateUpdateBatchSize = deliveries.getInt("push.update.batch.size");
                 retryAttempts = deliveries.getInt("retry.attempts");
-                expirationDelaySeconds = deliveries.getLong("expiration.delay.seconds");
+                sentExpirationDelaySeconds = deliveries.getLong("sent.expiration.delay.seconds");
+                fetchedExpirationDelaySeconds= deliveries.getLong("fetched.expiration.delay.seconds");
             }
 
             final XmlConfigSection esdp = xmlConfig.getSection("esdp");
@@ -217,8 +218,13 @@ public interface Config {
         }
 
         @Override
-        public long getExpirationDelaySeconds() {
-            return expirationDelaySeconds;
+        public long getSentExpirationDelaySeconds() {
+            return sentExpirationDelaySeconds;
+        }
+
+        @Override
+        public long getFetchedExpirationDelaySeconds() {
+            return fetchedExpirationDelaySeconds;
         }
 
         @Override

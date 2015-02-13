@@ -78,7 +78,8 @@ public class DeliveryService {
                 "push-state", config, toMark, deliverySubscriberRepository));
         allThreads.add(new ExpirationThread(
                 "push-expire",
-                config.getExpirationDelaySeconds(),
+                config.getSentExpirationDelaySeconds(),
+                config.getFetchedExpirationDelaySeconds(),
                 deliverySubscriberRepository));
     }
 
@@ -105,6 +106,10 @@ public class DeliveryService {
     @JmxAttributeMethod
     public String getDeliveryInfo() {
         return deliveries.values().toString();
+    }
+
+    public DeliveryWrapper getDeliveryWrapper(int deliveryId) {
+        return deliveries.get(deliveryId);
     }
 
     //
@@ -189,7 +194,6 @@ public class DeliveryService {
             deliveries.put(delivery.getId(), wrapper);
         }
 
-        delivery.setCurrentPosition(0);
         invitationDeliveryRepository.update(delivery);
 
         toSend.put(DeliveryWrapper.DelayedDeliveryWrapper.forSent(timeSource, wrapper));
@@ -213,4 +217,5 @@ public class DeliveryService {
     public void updateSpeed(InvitationDelivery delivery) {
         updateSpeed(delivery.getId(), delivery.getSpeed());
     }
+
 }
