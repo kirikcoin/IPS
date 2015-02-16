@@ -54,7 +54,7 @@ public class DeliveryNotificationServlet extends HttpServlet {
 
     private NotificationService.Notification parse(HttpServletRequest req) {
         @SuppressWarnings("unchecked")
-        final Map<String, String[]> params = (Map<String, String[]>) req.getParameterMap();
+        final Map<String, String[]> params =  req.getParameterMap();
         boolean isDelivered;
         try {
             isDelivered = RequestParseUtils.getBoolean(params,"is-delivered");

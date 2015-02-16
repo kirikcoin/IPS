@@ -1,11 +1,6 @@
 package mobi.eyeline.ips.repository;
 
-import mobi.eyeline.ips.model.Answer;
-import mobi.eyeline.ips.model.Question;
-import mobi.eyeline.ips.model.QuestionOption;
-import mobi.eyeline.ips.model.Respondent;
-import mobi.eyeline.ips.model.Survey;
-import mobi.eyeline.ips.model.SurveySession;
+import mobi.eyeline.ips.model.*;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -94,10 +89,19 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
     public void save(Respondent respondent, QuestionOption option) {
 
-        final Answer answer = new Answer();
+        final OptionAnswer answer = new OptionAnswer();
         answer.setRespondent(respondent);
         answer.setQuestion(option.getQuestion());
         answer.setOption(option);
+
+        save(answer);
+    }
+
+    public void save(Respondent respondent, String answerText, Question question) {
+        final TextAnswer answer = new TextAnswer();
+        answer.setRespondent(respondent);
+        answer.setQuestion(question);
+        answer.setText(answerText);
 
         save(answer);
     }
@@ -249,7 +253,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         try {
             final Number count = (Number) session.createQuery(
                     "select count(answer)" +
-                    " from Answer answer" +
+                    " from OptionAnswer answer" +
                     " where answer.option = :option")
                     .setEntity("option", option)
                     .uniqueResult();

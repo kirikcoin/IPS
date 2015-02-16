@@ -19,7 +19,7 @@ class AnswerRepositoryTest extends DbTestCase {
 
     void testCount1() {
         fillTestData()
-        assertEquals([3, 2, 2], questionRepository.list().collect {answerRepository.count it})
+        assertEquals([3, 3, 3], questionRepository.list().collect {answerRepository.count it})
     }
 
     void testCount2() {
@@ -47,13 +47,13 @@ class AnswerRepositoryTest extends DbTestCase {
         results[0].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(2).id, respondent.id
-            assertIds([2, 5, 7], answers)
+            assertIds([2, 5, 6, 8, 9], answers)
         }
 
         results[1].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(1).id, respondent.id
-            assertIds([1, 4, 6], answers)
+            assertIds([1, 4, 7], answers)
         }
     }
 
@@ -68,7 +68,7 @@ class AnswerRepositoryTest extends DbTestCase {
         results[0].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(2).id, respondent.id
-            assertIds([2, 5, 7], answers)
+            assertIds([2, 5, 6, 8, 9], answers)
         }
     }
 
@@ -83,13 +83,13 @@ class AnswerRepositoryTest extends DbTestCase {
         results[0].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(1).id, respondent.id
-            assertIds([1, 4, 6], answers)
+            assertIds([1, 4, 7], answers)
         }
 
         results[1].with {
             assertEquals this.survey(1).id, survey.id
             assertEquals this.respondent(2).id, respondent.id
-            assertIds([2, 5, 7], answers)
+            assertIds([2, 5, 6, 8, 9], answers)
         }
     }
 
@@ -116,5 +116,4 @@ class AnswerRepositoryTest extends DbTestCase {
         assertThat notRemoved, empty()
         assertEquals([4, 4], survey(1).questions.collect { it.sentCount })
     }
-
 }

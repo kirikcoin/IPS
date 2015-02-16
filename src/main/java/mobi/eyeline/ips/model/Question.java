@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.model;
 
 import com.google.common.base.Predicate;
+import com.sun.istack.internal.Nullable;
 import mobi.eyeline.ips.service.SegmentationService;
 import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.util.ListUtils;
@@ -12,18 +13,7 @@ import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,6 +77,13 @@ public class Question implements Serializable {
      */
     @Column(name = "sent_count")
     private int sentCount;
+
+    /**
+     * Опция для ответа по умолчанию. Если введён некорректный вариант ответа, этот вариант будет выбран автоматически.
+     */
+    @OneToOne(optional = true)
+    @JoinColumn(name = "default_option_id")
+    private QuestionOption defaultOption;
 
     @PrePersist
     @PreUpdate
@@ -178,6 +175,14 @@ public class Question implements Serializable {
 
     public boolean isLast() {
         return ListUtils.isLast(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+    }
+
+    public QuestionOption getDefaultOption() {
+        return defaultOption;
+    }
+
+    public void setDefaultOption(QuestionOption defaultOption) {
+        this.defaultOption = defaultOption;
     }
 
     // TODO: seems to be the only way to access this data from page markup.

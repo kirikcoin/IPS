@@ -6,7 +6,6 @@ import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
 import mobi.eyeline.ips.messages.UssdOption;
 import mobi.eyeline.ips.messages.UssdResponseModel;
-import mobi.eyeline.ips.model.Answer;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Respondent;

@@ -48,7 +48,6 @@ class SampleAnswers {
 
         allSurveys.collect { surveyRepository.save it; it }
 
-
         [
                 new Respondent(id: 1, startDate: now + 1, survey: allSurveys[0], finished: false),
                 new Respondent(id: 2, startDate: now + 2, survey: allSurveys[0], finished: false),
@@ -61,20 +60,25 @@ class SampleAnswers {
 
         [
                 answers(question: survey(1).questions[0]) {
-                    answer(date: now + 1, option: survey(1).questions[0].options[0], respondent: respondent(1))
-                    answer(date: now + 2, option: survey(1).questions[0].options[0], respondent: respondent(2))
-                    answer(date: now + 3, option: survey(1).questions[0].options[1], respondent: respondent(3))
+                    optionAnswer(date: now + 1, option: survey(1).questions[0].options[0], respondent: respondent(1))
+                    optionAnswer(date: now + 2, option: survey(1).questions[0].options[0], respondent: respondent(2))
+                    optionAnswer(date: now + 3, option: survey(1).questions[0].options[1], respondent: respondent(3))
                 },
 
                 answers(question: survey(1).questions[1]) {
-                    answer(date: now + 4, option: survey(1).questions[1].options[0], respondent: respondent(1))
-                    answer(date: now + 5, option: survey(1).questions[1].options[2], respondent: respondent(2))
+                    optionAnswer(date: now + 4, option: survey(1).questions[1].options[0], respondent: respondent(1))
+                    optionAnswer(date: now + 5, option: survey(1).questions[1].options[2], respondent: respondent(2))
+                    textAnswer(date: now + 7, text: 'someText', respondent: respondent(2))
                 },
 
                 answers(question: survey(2).questions[0]) {
-                    answer(date: now + 6, option: survey(2).questions[0].options[2], respondent: respondent(1))
-                    answer(date: now + 7, option: survey(2).questions[0].options[1], respondent: respondent(2))
+
+                    optionAnswer(date: now + 6, option: survey(2).questions[0].options[2], respondent: respondent(1))
+                    optionAnswer(date: now + 7, option: survey(2).questions[0].options[1], respondent: respondent(2))
+                    textAnswer(date: now + 9, text: 'someText', respondent: respondent(2))
                 },
         ].flatten().each { answerRepository.save it }
     }
+
+    void fill
 }
