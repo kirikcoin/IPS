@@ -80,5 +80,4 @@ class SampleAnswers {
         ].flatten().each { answerRepository.save it }
     }
 
-    void fill
 }

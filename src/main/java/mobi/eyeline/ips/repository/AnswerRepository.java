@@ -18,9 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.hibernate.criterion.Restrictions.ilike;
-import static org.hibernate.criterion.Restrictions.isNotNull;
-import static org.hibernate.criterion.Restrictions.isNull;
+import static org.hibernate.criterion.Restrictions.*;
 
 public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
@@ -273,6 +271,21 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                     " where answer.question = :question")
                     .setEntity("question", question)
                     .uniqueResult();
+            return count.intValue();
+
+        } finally {
+            session.close();
+        }
+    }
+
+    public int countTextAnswers(Question question) {
+        final Session session = getSessionFactory().openSession();
+        try {
+            final Number count = (Number) session
+                    .createCriteria(TextAnswer.class)
+                    .add(eq("question",question))
+                    .setProjection(Projections.rowCount()).uniqueResult();
+
             return count.intValue();
 
         } finally {
