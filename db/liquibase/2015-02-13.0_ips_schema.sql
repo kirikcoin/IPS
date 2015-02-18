@@ -1,11 +1,13 @@
 -- liquibase formatted SQL
 -- changeset nedenzel:16
 
-ALTER TABLE `questions` ADD `default_option_id` int(11) DEFAULT NULL;
+ALTER TABLE `questions` ADD `default_question_id` int(11) DEFAULT NULL;
 
 ALTER TABLE `questions`
-ADD CONSTRAINT FK_questions_question_options
-FOREIGN KEY (`default_option_id`) REFERENCES `question_options` (`id`);
+ADD CONSTRAINT FK_questions_question
+FOREIGN KEY (`default_question_id`) REFERENCES `questions` (`id`);
+
+ALTER TABLE `questions` ADD `enabled_default_answer` BOOLEAN DEFAULT FALSE;
 
 ALTER TABLE `answers` ADD `type` varchar(255) NOT NULL;
 ALTER TABLE `answers` MODIFY column `option_id` int(11) DEFAULT NULL;

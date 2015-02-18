@@ -15,6 +15,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.AssertTrue;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,11 +80,18 @@ public class Question implements Serializable {
     private int sentCount;
 
     /**
-     * Опция для ответа по умолчанию. Если введён некорректный вариант ответа, этот вариант будет выбран автоматически.
+     *  Разрешить ответ по-умолчанию.
      */
-    @OneToOne(optional = true)
-    @JoinColumn(name = "default_option_id")
-    private QuestionOption defaultOption;
+    @Column(name = "enabled_default_answer", columnDefinition = "BIT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean enabledDefaultAnswer;
+
+    /**
+     * Опция для вопроса по умолчанию. Если введён некорректный вариант ответа, следующим будет данный вопрос.
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "default_question_id")
+    private Question defaultQuestion = this;
 
     @PrePersist
     @PreUpdate
@@ -177,18 +185,32 @@ public class Question implements Serializable {
         return ListUtils.isLast(getSurvey().getQuestions(), this, SKIP_INACTIVE);
     }
 
-    public QuestionOption getDefaultOption() {
-        return defaultOption;
+    public Question getDefaultQuestion() {
+        return defaultQuestion;
     }
 
-    public void setDefaultOption(QuestionOption defaultOption) {
-        this.defaultOption = defaultOption;
+    public void setDefaultQuestion(Question defaultQuestion) {
+        this.defaultQuestion = defaultQuestion;
+    }
+
+    public boolean isEnabledDefaultAnswer() {
+        return enabledDefaultAnswer;
+    }
+
+    public void setEnabledDefaultAnswer(boolean enabledDefaultAnswer) {
+        this.enabledDefaultAnswer = enabledDefaultAnswer;
     }
 
     // TODO: seems to be the only way to access this data from page markup.
     // Is there another option?
     public SegmentationService.SegmentationInfo getSegmentationInfo() {
         return Services.instance().getSegmentationService().getSegmentationInfo(this);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @AssertTrue(message = "Incorrect default question")
+    private boolean isCorrectDefaultQuestion() {
+         return isEnabledDefaultAnswer() || (!isEnabledDefaultAnswer() && getDefaultQuestion() == null);
     }
 
     @Override

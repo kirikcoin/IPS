@@ -287,7 +287,7 @@
                             <h:panelGroup>
                               <h:outputText value="#{question.activeIndex + 1}. "
                                             style="padding-right: 5px"/>
-                              <h:outputText value="#{question.title}"/>
+                              <h:outputText value="#{question.title} "/>
                             </h:panelGroup>
                             <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
                               <h:commandLink value="#{bundle['survey.details.delete']}"
@@ -311,8 +311,22 @@
                         <!-- Question body -->
                         <h:panelGrid columns="2" columnClasses="columnOptionsList,columnSegmentation">
 
-                          <!-- Options list -->
-                          <h:outputText rendered="#{empty question.options}"
+                            <!-- Options list -->
+                            <h:panelGroup styleClass="defaultOption" layout="block">
+                                <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultQuestion != null}"
+                                              value="#{bundle['survey.settings.question.default.question']} &#8594; #{question.defaultQuestion.activeIndex + 1}"
+                                              styleClass="option-label"/>
+                                <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultQuestion == null}"
+                                              value="#{bundle['survey.settings.question.default.question']} &#8594; #{bundle['question.option.terminal.list.label']}"
+                                              styleClass="option-label"/>
+                                <h:outputText rendered="#{!question.enabledDefaultAnswer}"
+                                              value="#{bundle['survey.settings.question.default.question']} #{bundle['survey.settings.question.default.question.disabled']}"
+                                              styleClass="option-label"/>
+
+                            </h:panelGroup>
+                            <h:panelGroup layout="block"></h:panelGroup>
+
+                            <h:outputText rendered="#{empty question.options}"
                                         value="#{bundle['survey.settings.not.specified']}"
                                         styleClass="placeholder"/>
 
@@ -329,10 +343,12 @@
                               <h:outputText value="&#8594; #{option.nextQuestion.activeIndex+1}"
                                             rendered="#{option.nextQuestion != null}"
                                             styleClass="option-label"/>
+
                             </h:column>
                           </h:dataTable>
 
-                          <!-- Segmentation -->
+
+                            <!-- Segmentation -->
                           <h:panelGroup layout="block" id="segmentation">
                             <h:panelGrid columns="2">
                               <h:outputLabel for="symbols"
@@ -633,7 +649,14 @@
                          maxlength="70"
                          value="#{surveySettingsController.question.title}"/>
 
-          <br/>
+          <h:outputLabel value="#{bundle['survey.settings.question.modify.default.question']}: "
+                         for="defaultQuestion"/>
+
+          <h:selectOneMenu id="defaultQuestion" value="#{surveySettingsController.defaultQuestionId}">
+              <f:selectItems value="#{surveySettingsController.questionsItems}"/>
+          </h:selectOneMenu>
+
+          <br/> <br/>
 
           <h:panelGroup id="headerBlock" layout="block">
             <h:panelGrid columns="5"
