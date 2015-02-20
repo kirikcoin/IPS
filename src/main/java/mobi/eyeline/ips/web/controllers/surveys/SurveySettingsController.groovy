@@ -157,7 +157,9 @@ class SurveySettingsController extends BaseSurveyController {
                 survey,
                 strings['survey.settings.questions.tabs.graphs.end.label'],
                 strings['survey.settings.questions.tabs.graphs.end.description'],
-                strings['survey.settings.questions.option.unused'])
+                strings['survey.settings.questions.option.unused'],
+                strings['survey.settings.question.modify.default.question.label'],
+                strings['survey.settings.question.modify.default.question.description'])
 
         def start = new TreeNode(-2,
                 strings['survey.settings.questions.tabs.graphs.start.label'],

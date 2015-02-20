@@ -91,7 +91,7 @@ public class Question implements Serializable {
      */
     @ManyToOne(optional = true)
     @JoinColumn(name = "default_question_id")
-    private Question defaultQuestion = this;
+    private Question defaultQuestion;
 
     @PrePersist
     @PreUpdate

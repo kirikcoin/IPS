@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.utils
 
+import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.util.SurveyTreeUtil
 
 import static SurveyBuilder.survey
@@ -23,6 +24,48 @@ class SurveyTreeUtilTest extends GroovyTestCase {
                     option(id: 0, nextQuestion: ref(id: 1))
                     option(id: 1, nextQuestion: ref(id: 1))
                 }
+                question(id: 1, defaultQuestion: ref(id: 1)) {
+                    option(id: 0, nextQuestion: ref(id: 2))
+                    option(id: 1, nextQuestion: ref(id: 2))
+                }
+                question(id: 2) {
+                    option(id: 0, nextQuestion: ref(id: 3))
+                    option(id: 1, nextQuestion: ref(id: 3))
+                }
+                question(id: 3) {
+                    option(id: 0, nextQuestion: null)
+                    option(id: 1, nextQuestion: null)
+                }
+            }
+        }
+
+
+        def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '')
+        assertThat tree.describe(), equalToIgnoringWhiteSpace('''
+            Root: [0]
+
+            [0] --0--> [1]
+            [0] --1--> [1]
+
+            [1] --0--> [2]
+            [1] --1--> [2]
+
+            [2] --0--> [3]
+            [2] --1--> [3]
+
+            [3] --0--> [-1]
+            [3] --1--> [-1]
+            ''')
+    }
+
+    void test2() {
+
+        def survey = survey([:]) {
+            questions {
+                question(id: 0, defaultQuestion: ref(id:1)) {
+                    option(id: 0, nextQuestion: ref(id: 1))
+                    option(id: 1, nextQuestion: ref(id: 1))
+                }
                 question(id: 1) {
                     option(id: 0, nextQuestion: ref(id: 2))
                     option(id: 1, nextQuestion: ref(id: 2))
@@ -38,21 +81,31 @@ class SurveyTreeUtilTest extends GroovyTestCase {
             }
         }
 
-        def tree = SurveyTreeUtil.asTree(survey, '', '', '')
+        survey.questions.each { Question q ->
+            q.enabledDefaultAnswer = true;
+
+        }
+
+        def tree = SurveyTreeUtil.asTree(survey,'','', '', '', '')
         assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
+            [0] --default--> [1]
             [0] --0--> [1]
             [0] --1--> [1]
 
+            [1] --default--> [-1]
             [1] --0--> [2]
             [1] --1--> [2]
 
+            [2] --default--> [-1]
             [2] --0--> [3]
             [2] --1--> [3]
 
+            [3] --default--> [-1]
             [3] --0--> [-1]
             [3] --1--> [-1]
+
             ''')
     }
 
@@ -74,7 +127,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
             }
         }
 
-        def tree = SurveyTreeUtil.asTree(survey, '', '', '')
+        def tree = SurveyTreeUtil.asTree(survey, '', '', '', '' , '')
         assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
