@@ -1,7 +1,6 @@
 package mobi.eyeline.ips.model;
 
 import com.google.common.base.Predicate;
-import com.sun.istack.internal.Nullable;
 import mobi.eyeline.ips.service.SegmentationService;
 import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.util.ListUtils;
