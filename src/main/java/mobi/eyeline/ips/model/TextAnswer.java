@@ -14,9 +14,8 @@ public class TextAnswer extends Answer {
     /**
      * Текст ответа на вопрос.
      */
-    //TODO: any additional restrictions here?
     @Column(name = "answer_text")
-    @NotNull
+    @NotNull(message = "{answer.validation.text.empty}")
     private String text;
 
     public String getText() {

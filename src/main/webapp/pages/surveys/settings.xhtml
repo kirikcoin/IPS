@@ -384,6 +384,9 @@
                           <!-- Marks that last active tab is the graph. -->
                           <span id="graphFlag" class="opened"/>
                       </c:if>
+                      <h:panelGroup layout="block" styleClass="italicStyle">
+                          <h:outputText value="#{bundle['survey.settings.questions.tabs.graphs.legend']}"/>
+                      </h:panelGroup>
                   </eye:tab>
 
               </eye:tabs>
@@ -649,16 +652,9 @@
                          maxlength="70"
                          value="#{surveySettingsController.question.title}"/>
 
-          <h:outputLabel value="#{bundle['survey.settings.question.modify.default.question']}: "
-                         for="defaultQuestion"/>
+            <br/>
 
-          <h:selectOneMenu id="defaultQuestion" value="#{surveySettingsController.defaultQuestionId}">
-              <f:selectItems value="#{surveySettingsController.questionsItems}"/>
-          </h:selectOneMenu>
-
-          <br/> <br/>
-
-          <h:panelGroup id="headerBlock" layout="block">
+            <h:panelGroup id="headerBlock" layout="block">
             <h:panelGrid columns="5"
                          columnClasses="questionColDrag, questionColId, questionColTitle, questionColNext, questionColAdd">
               <h:outputText value=" "/>
@@ -669,6 +665,7 @@
               <h:outputText value=" "/>
             </h:panelGrid>
           </h:panelGroup>
+
 
           <h:panelGroup id="scrollableVariants" layout="block">
 
@@ -693,6 +690,16 @@
 
             </eye:dynamicTable>
           </h:panelGroup>
+
+            <br/>
+
+            <h:outputLabel value="#{bundle['survey.settings.question.modify.default.question']}: "
+                           for="defaultQuestion"/>
+
+            <h:selectOneMenu id="defaultQuestion" value="#{surveySettingsController.defaultQuestionId}">
+                <f:selectItems value="#{surveySettingsController.questionsItems}"/>
+            </h:selectOneMenu>
+
           <eye:buttons>
             <eye:button>
               <h:commandLink id="saveQuestionLink"

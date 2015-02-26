@@ -207,7 +207,7 @@ public class Question implements Serializable {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    @AssertTrue(message = "Incorrect default question")
+    @AssertTrue(message = "{question.validation.default}")
     private boolean isCorrectDefaultQuestion() {
          return isEnabledDefaultAnswer() || (!isEnabledDefaultAnswer() && getDefaultQuestion() == null);
     }

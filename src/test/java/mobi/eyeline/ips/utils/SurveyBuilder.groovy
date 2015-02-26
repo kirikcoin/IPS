@@ -96,7 +96,6 @@ class SurveyBuilder {
             super.invoke closure
 
             // Resolve deferred references.
-
             list.collectMany { it.options }
                     .findAll { QuestionOption opt -> opt.nextQuestion instanceof DeferredReference }
                     .each { QuestionOption opt ->

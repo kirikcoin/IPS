@@ -5,10 +5,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +100,22 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
         save(answer);
     }
+
+//    public Answer lastAnswer(Respondent respondent) {
+//        final Session session = getSessionFactory().openSession();
+//        try {
+//            return (Answer) session.createCriteria(Answer.class)
+//                    .add(Property.forName("id").eq(
+//                            DetachedCriteria.forClass(Answer.class)
+//                                    .add(eq("respondent", respondent))
+//                                    .addOrder(Order.desc("id"))
+//                                    .setProjection(Property.forName("id").max())
+//                    )).uniqueResult();
+//
+//        } finally {
+//            session.close();
+//        }
+//    }
 
     public Answer getLast(Survey survey, Respondent respondent) {
         final Session session = getSessionFactory().openSession();

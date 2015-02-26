@@ -18,7 +18,7 @@ public class OptionAnswer extends Answer {
      */
     @JoinColumn(name = "option_id")
     @ManyToOne(optional = true)
-    @NotNull
+    @NotNull(message = "{answer.validation.option.empty}")
     private QuestionOption option;
 
     public QuestionOption getOption() {
