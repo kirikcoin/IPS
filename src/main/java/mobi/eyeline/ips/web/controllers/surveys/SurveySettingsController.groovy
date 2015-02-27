@@ -138,7 +138,7 @@ class SurveySettingsController extends BaseSurveyController {
         [
                 //TODO: add support in UssdService
                 // -1 - disabled default answer
-                new SelectItem(-1, strings['survey.settings.question.modify.default.question.disabled'] as String),
+                new SelectItem(-1, strings['survey.settings.question.default.question.disabled'] as String),
                 new SelectItem(null, strings['question.option.terminal.inlist'] as String),
                 * survey.activeQuestions.collect { q ->
                     def idx = q.activeIndex + 1
