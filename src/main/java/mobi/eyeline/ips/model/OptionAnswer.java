@@ -28,4 +28,9 @@ public class OptionAnswer extends Answer {
     public void setOption(QuestionOption option) {
         this.option = option;
     }
+
+    @Override
+    public String getAnswer() {
+        return option.getAnswer();
+    }
 }

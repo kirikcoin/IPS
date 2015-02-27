@@ -28,6 +28,8 @@ public abstract class Answer implements Serializable {
     @Column(name = "timestamp")
     private Date date;
 
+    public abstract String getAnswer();
+
     public Integer getId() {
         return id;
     }

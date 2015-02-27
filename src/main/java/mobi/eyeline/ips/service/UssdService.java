@@ -252,7 +252,6 @@ public class UssdService implements MessageHandler {
                 return question(nextQuestion, request.isSkipValidation());
             }
         }
-
     }
 
     private Question getNextQuestion(Answer lastAnswer) {
