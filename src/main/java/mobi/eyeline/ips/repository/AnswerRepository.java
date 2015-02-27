@@ -1,19 +1,11 @@
 package mobi.eyeline.ips.repository;
 
-import mobi.eyeline.ips.model.Answer;
-import mobi.eyeline.ips.model.Question;
-import mobi.eyeline.ips.model.QuestionOption;
-import mobi.eyeline.ips.model.Respondent;
-import mobi.eyeline.ips.model.Survey;
-import mobi.eyeline.ips.model.SurveySession;
+import mobi.eyeline.ips.model.*;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.hibernate.criterion.Restrictions.ilike;
-import static org.hibernate.criterion.Restrictions.isNotNull;
-import static org.hibernate.criterion.Restrictions.isNull;
+import static org.hibernate.criterion.Restrictions.*;
 
 public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
@@ -94,13 +84,38 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
     public void save(Respondent respondent, QuestionOption option) {
 
-        final Answer answer = new Answer();
+        final OptionAnswer answer = new OptionAnswer();
         answer.setRespondent(respondent);
         answer.setQuestion(option.getQuestion());
         answer.setOption(option);
 
         save(answer);
     }
+
+    public void save(Respondent respondent, String answerText, Question question) {
+        final TextAnswer answer = new TextAnswer();
+        answer.setRespondent(respondent);
+        answer.setQuestion(question);
+        answer.setText(answerText);
+
+        save(answer);
+    }
+
+//    public Answer lastAnswer(Respondent respondent) {
+//        final Session session = getSessionFactory().openSession();
+//        try {
+//            return (Answer) session.createCriteria(Answer.class)
+//                    .add(Property.forName("id").eq(
+//                            DetachedCriteria.forClass(Answer.class)
+//                                    .add(eq("respondent", respondent))
+//                                    .addOrder(Order.desc("id"))
+//                                    .setProjection(Property.forName("id").max())
+//                    )).uniqueResult();
+//
+//        } finally {
+//            session.close();
+//        }
+//    }
 
     public Answer getLast(Survey survey, Respondent respondent) {
         final Session session = getSessionFactory().openSession();
@@ -249,7 +264,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         try {
             final Number count = (Number) session.createQuery(
                     "select count(answer)" +
-                    " from Answer answer" +
+                    " from OptionAnswer answer" +
                     " where answer.option = :option")
                     .setEntity("option", option)
                     .uniqueResult();
@@ -269,6 +284,21 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                     " where answer.question = :question")
                     .setEntity("question", question)
                     .uniqueResult();
+            return count.intValue();
+
+        } finally {
+            session.close();
+        }
+    }
+
+    public int countTextAnswers(Question question) {
+        final Session session = getSessionFactory().openSession();
+        try {
+            final Number count = (Number) session
+                    .createCriteria(TextAnswer.class)
+                    .add(eq("question",question))
+                    .setProjection(Projections.rowCount()).uniqueResult();
+
             return count.intValue();
 
         } finally {

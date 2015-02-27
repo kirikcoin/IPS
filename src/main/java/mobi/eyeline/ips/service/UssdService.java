@@ -6,12 +6,7 @@ import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
 import mobi.eyeline.ips.messages.UssdOption;
 import mobi.eyeline.ips.messages.UssdResponseModel;
-import mobi.eyeline.ips.model.Answer;
-import mobi.eyeline.ips.model.Question;
-import mobi.eyeline.ips.model.QuestionOption;
-import mobi.eyeline.ips.model.Respondent;
-import mobi.eyeline.ips.model.Survey;
-import mobi.eyeline.ips.model.SurveyDetails;
+import mobi.eyeline.ips.model.*;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
@@ -209,12 +204,86 @@ public class UssdService implements MessageHandler {
 
     @Override
     public UssdResponseModel handle(String msisdn, BadCommandOption request) {
-        final QuestionOption option =
-                questionOptionRepository.load(request.getAnswerId());
+        final Survey survey =
+                surveyService.findSurvey(request.getSurveyId(), request.isSkipValidation());
 
-        final Question next = option.getQuestion().getNext();
-        assert next!=null;
-        return question(next, request.isSkipValidation());
+        if (survey == null) {
+            return surveyNotFound();
+        }
+
+        final Respondent respondent =
+                respondentRepository.findOrCreate(msisdn, survey);
+
+        final Answer lastAnswer = answerRepository.getLast(survey, respondent);
+
+        // if its first question
+        if (request.getQuestionId() == -1) {
+            assert request.getAnswerId() == -1;
+            // todo: add assert for type parameter
+
+            if(lastAnswer == null) {
+                return processFirstQuestion(request, survey, respondent);
+            }
+
+            Question lastAnsweredQuestion = lastAnswer.getQuestion();
+            Question next = lastAnsweredQuestion.getDefaultQuestion();
+
+            if (lastAnsweredQuestion.isEnabledDefaultAnswer()) {
+                return processDefaultQuestion(request, survey, respondent, next);
+            } else {
+                return question(next, request.isSkipValidation());
+            }
+        } else {
+            assert request.getAnswerId() != -1;
+            // todo: add assert for type parameter
+
+            Question next;
+            next = getNextQuestion(lastAnswer);
+
+            if (next.isEnabledDefaultAnswer()) {
+                return processDefaultQuestion(request, survey, respondent, next);
+            } else {
+
+                final QuestionOption option =
+                        questionOptionRepository.load(request.getAnswerId());
+
+                final Question nextQuestion = option.getQuestion().getNext();
+                assert nextQuestion != null;
+                return question(nextQuestion, request.isSkipValidation());
+            }
+        }
+    }
+
+    private Question getNextQuestion(Answer lastAnswer) {
+        Question lastAnsweredQuestion = lastAnswer.getQuestion();
+        Question next;
+        if(lastAnswer instanceof TextAnswer) {
+            next = lastAnsweredQuestion.getDefaultQuestion();
+        } else {
+            next = ((OptionAnswer) lastAnswer).getOption().getNextQuestion();
+        }
+        return next;
+    }
+
+    private UssdResponseModel processFirstQuestion(BadCommandOption request, Survey survey, Respondent respondent) {
+        final Question firstQuestion = survey.getFirstQuestion();
+
+        if(firstQuestion.isEnabledDefaultAnswer()){
+            return processDefaultQuestion(request, survey, respondent, firstQuestion);
+        } else {
+            return question(firstQuestion, request.isSkipValidation());
+        }
+    }
+
+    private UssdResponseModel processDefaultQuestion(BadCommandOption request, Survey survey, Respondent respondent, Question question) {
+        UssdResponseModel returnValue;
+
+        Question next = question.getDefaultQuestion();
+        returnValue = (next == null) ?
+                surveyFinish(respondent, survey) : question(next, request.isSkipValidation());
+        answerRepository.save(respondent, request.getAnswerText(), question);
+
+        return returnValue;
     }
 
     @Override
@@ -318,7 +387,7 @@ public class UssdService implements MessageHandler {
         for (QuestionOption option : question.getActiveOptions()) {
             final boolean isExitLink =
                     (option.getNextQuestion() == null) &&
-                    (question.getSurvey().getDetails().getEndText() == null);
+                            (question.getSurvey().getDetails().getEndText() == null);
 
             renderedOptions.add(
                     new AnswerOption(option.getActiveIndex() + 1, option, skipValidation, isExitLink)

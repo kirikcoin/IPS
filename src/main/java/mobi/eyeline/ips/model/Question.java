@@ -12,19 +12,9 @@ import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.AssertTrue;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +77,20 @@ public class Question implements Serializable {
      */
     @Column(name = "sent_count")
     private int sentCount;
+
+    /**
+     *  Разрешить ответ по-умолчанию.
+     */
+    @Column(name = "enabled_default_answer", columnDefinition = "BIT")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private boolean enabledDefaultAnswer;
+
+    /**
+     * Опция для вопроса по умолчанию. Если введён некорректный вариант ответа, следующим будет данный вопрос.
+     */
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "default_question_id")
+    private Question defaultQuestion;
 
     @PrePersist
     @PreUpdate
@@ -180,10 +184,32 @@ public class Question implements Serializable {
         return ListUtils.isLast(getSurvey().getQuestions(), this, SKIP_INACTIVE);
     }
 
+    public Question getDefaultQuestion() {
+        return defaultQuestion;
+    }
+
+    public void setDefaultQuestion(Question defaultQuestion) {
+        this.defaultQuestion = defaultQuestion;
+    }
+
+    public boolean isEnabledDefaultAnswer() {
+        return enabledDefaultAnswer;
+    }
+
+    public void setEnabledDefaultAnswer(boolean enabledDefaultAnswer) {
+        this.enabledDefaultAnswer = enabledDefaultAnswer;
+    }
+
     // TODO: seems to be the only way to access this data from page markup.
     // Is there another option?
     public SegmentationService.SegmentationInfo getSegmentationInfo() {
         return Services.instance().getSegmentationService().getSegmentationInfo(this);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @AssertTrue(message = "{question.validation.default}")
+    private boolean isCorrectDefaultQuestion() {
+         return isEnabledDefaultAnswer() || (!isEnabledDefaultAnswer() && getDefaultQuestion() == null);
     }
 
     @Override

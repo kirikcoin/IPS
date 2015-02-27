@@ -65,6 +65,7 @@ class SurveySettingsController extends BaseSurveyController {
 
     // Question modification
     Question question = new Question()
+    Integer defaultQuestionId
     DynamicTableModel questionOptions = new DynamicTableModel()
 
     // Phone number for survey preview.
@@ -133,12 +134,32 @@ class SurveySettingsController extends BaseSurveyController {
         ]  as List<SelectItem>
     }
 
+    List<SelectItem> getQuestionsItems() {
+        [
+                //TODO: add support in UssdService
+                // -1 - disabled default answer
+                new SelectItem(-1, strings['survey.settings.question.modify.default.question.disabled'] as String),
+                new SelectItem(null, strings['question.option.terminal.inlist'] as String),
+                * survey.activeQuestions.collect { q ->
+                    def idx = q.activeIndex + 1
+                    def maxLabel = 20
+                    def title = q.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
+                    new SelectItem(
+                            q.id,
+                            "$idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel-3] + '...'}",
+                            "$idx. ${q.title} ")
+                }
+        ]  as List<SelectItem>
+    }
+
     private void updateQuestionsGraph() {
         def tree = SurveyTreeUtil.asTree(
                 survey,
                 strings['survey.settings.questions.tabs.graphs.end.label'],
                 strings['survey.settings.questions.tabs.graphs.end.description'],
-                strings['survey.settings.questions.option.unused'])
+                strings['survey.settings.questions.option.unused'],
+                strings['survey.settings.question.modify.default.question.label'],
+                strings['survey.settings.question.modify.default.question.description'])
 
         def start = new TreeNode(-2,
                 strings['survey.settings.questions.tabs.graphs.start.label'],
@@ -331,6 +352,7 @@ class SurveySettingsController extends BaseSurveyController {
 
         if (questionId) {
             question = questionRepository.load(questionId)
+            defaultQuestionId = question.enabledDefaultAnswer ? question.defaultQuestion?.id : -1
 
             questionOptions = new DynamicTableModel()
             question.options
@@ -451,6 +473,9 @@ class SurveySettingsController extends BaseSurveyController {
         def index = { DynamicTableRow row -> questionOptions.rows.indexOf(row) }
 
         persistedQuestion.title = question.title
+        persistedQuestion.enabledDefaultAnswer = (defaultQuestionId != -1)
+        def defaultQuestion = (defaultQuestionId == null) ? null : questionRepository.get(defaultQuestionId)
+        persistedQuestion.defaultQuestion = (defaultQuestionId == -1) ? null : defaultQuestion
 
         def handleRemoved = {
             def retainedOptionIds = questionOptions.rows

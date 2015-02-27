@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.components.tree;
 
 
+import mobi.eyeline.ips.web.controllers.BaseController;
 import mobi.eyeline.util.jsf.components.utils.HtmlWriter;
 import mobi.eyeline.util.jsf.components.utils.base.RendererImpl;
 
@@ -73,6 +74,7 @@ public class TreeRenderer extends RendererImpl<Tree> {
 
         w.end(DIV);
     }
+
 
     private void renderJs(Tree tree, HtmlWriter w) throws IOException {
         w.a("\n<script language=\"javascript\" type=\"text/javascript\">");

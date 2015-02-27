@@ -7,6 +7,7 @@ import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.Survey
+import mobi.eyeline.ips.web.controllers.BaseController
 
 @CompileStatic
 @Slf4j('logger')
@@ -14,16 +15,35 @@ class SurveyTreeUtil {
 
     private static TreeNode addQuestion(Question q,
                                         TreeNode terminal,
+                                        String defaultLabel,
+                                        String defaultDescription,
                                         Map<Integer, TreeNode> target = new LinkedHashMap<>()) {
         new TreeNode(q.id, "${q.activeIndex + 1}. $q.title" as String, q.title).with { node ->
             if (!target.containsKey(node.id)) {
                 target.put(node.id, node)
-                node.edges.addAll(q.activeOptions.collect { opt -> new TreeEdge(
+
+                // id of default question edge should be not equal to normal edge id,
+                // for example <0 and equals to question id +1
+                if(q.enabledDefaultAnswer){
+                    if(q.defaultQuestion == null){
+                        node.edges << new TreeEdge(-(q.id+1),
+                                defaultLabel,
+                                defaultDescription,
+                                terminal)
+                    } else {
+                        node.edges << new TreeEdge(-(q.id+1),
+                                defaultLabel,
+                                defaultDescription,
+                                addQuestion(q.defaultQuestion, terminal, defaultLabel, defaultDescription, target))
+                    }
+                }
+                node.edges.addAll(q.activeOptions.collect { opt ->
+                    new TreeEdge(
                         opt.id,
                         opt.activeIndex + 1 as String,
                         "${opt.activeIndex + 1}. $opt.answer" as String,
                         opt.nextQuestion ?
-                                addQuestion(opt.nextQuestion, terminal, target) :
+                                addQuestion(opt.nextQuestion, terminal, defaultLabel, defaultDescription, target) :
                                 terminal)
                 })
                 node
@@ -46,11 +66,13 @@ class SurveyTreeUtil {
     static TreeNode asTree(Survey survey,
                            String terminalLabel,
                            String terminalDescription,
-                           String unusedLabel) {
+                           String unusedLabel,
+                           String defaultLabel,
+                           String defaultDescription) {
 
         if (survey.firstQuestion) {
             def terminal = new TreeNode(-1, terminalLabel, terminalDescription)
-            TreeNode tree = addQuestion(survey.firstQuestion, terminal)
+            TreeNode tree = addQuestion(survey.firstQuestion, terminal, defaultLabel, defaultDescription)
 
             int maxEdgeId = listEdges(tree).max { TreeEdge e -> e.id }.id
 
@@ -64,6 +86,7 @@ class SurveyTreeUtil {
                     new TreeEdge(++maxEdgeId, null, null, 'treeInvisible',
                             new TreeNode(q.id, title as String, q.title, 'treeUnused')) }
             }
+
 
             return tree
 

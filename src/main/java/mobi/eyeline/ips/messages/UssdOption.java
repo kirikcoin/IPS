@@ -113,12 +113,13 @@ public abstract class UssdOption {
     public static UssdOption parse(Map<String, String[]> options)
             throws MissingParameterException {
 
-        if (options.get(PARAM_MESSAGE_TYPE) == null) {
-            return null;
-        }
 
         if(options.get(PARAM_BAD_COMMAND) != null) {
             return BadCommandOption.parse(options);
+        }
+
+        if (options.get(PARAM_MESSAGE_TYPE) == null) {
+            return null;
         }
 
         final UssdOptionType type =

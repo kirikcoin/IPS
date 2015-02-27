@@ -6,8 +6,10 @@ import groovy.transform.stc.ClosureParams
 import groovy.transform.stc.SimpleType
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Answer
+import mobi.eyeline.ips.model.OptionAnswer
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveySession
+import mobi.eyeline.ips.model.TextAnswer
 import mobi.eyeline.ips.repository.AnswerRepository
 
 import java.text.DateFormat
@@ -69,12 +71,20 @@ public class ResultsExportService {
 
         sessions.each { session ->
             session.answers.each { answer ->
-                csvWriter.writeNext([
+                String answerOptionText;
+                int answerOptionNumber
+
+                answerOptionText =
+                        (answer instanceof OptionAnswer) ? ((OptionAnswer)answer).option.answer : ((TextAnswer)answer).text
+                answerOptionNumber =
+                        (answer instanceof OptionAnswer) ? ((OptionAnswer)answer).option.activeIndex + 1 : -1
+
+                   csvWriter.writeNext([
                         session.respondent.msisdn,
                         answer.question.activeIndex + 1,
                         answer.question.title,
-                        answer.option.activeIndex + 1,
-                        answer.option.answer,
+                        answerOptionNumber,
+                        answerOptionText,
                         df.format(answer.date)
                 ] as String[])
             }
