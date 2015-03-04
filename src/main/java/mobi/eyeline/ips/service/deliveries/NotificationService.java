@@ -24,8 +24,6 @@ import static mobi.eyeline.ips.model.DeliverySubscriber.State.*;
 public class NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
-    private static final int SUCCESS_RESULT = 2;
-
     private final TimeSource timeSource;
 
     private final DelayQueue<DelayedNotification> toUpdate = new DelayQueue<>();
@@ -63,12 +61,12 @@ public class NotificationService {
         InvitationDelivery delivery = deliverySubscriber.getInvitationDelivery();
         DeliveryWrapper deliveryWrapper = deliveryService.getDeliveryWrapper(delivery.getId());
 
-        if (logger.isDebugEnabled()) {
+        if (logger.isTraceEnabled()) {
             logger.debug("Delivery-" + delivery.getId() + ": new notification for: " + deliverySubscriber.getId() + ", state: " + notification.asState() + ", delivered: " + notification.isDelivered());
         }
 
         if (delivery.getRetriesEnabled() && notification.asState() == UNDELIVERED) {
-            int attemptsCount = deliveryWrapper.getRespondentAttemptsNumber().get(deliverySubscriber.getMsisdn());
+            int attemptsCount = deliveryWrapper.getRespondentCommittedAttemptsNumber().get(deliverySubscriber.getMsisdn());
 
             if (attemptsCount < delivery.getRetriesNumber() + 1) {
                 notification.setState(NEW);
@@ -78,19 +76,19 @@ public class NotificationService {
                         TimeUnit.MINUTES.toMillis(delivery.getRetriesIntervalMinutes()))
 
                 );
-                if(logger.isDebugEnabled()) {
+                if(logger.isTraceEnabled()) {
                     logger.debug("Delivery-" + delivery.getId() + ": message will be retried: " + deliverySubscriber.getId() + ", attempts: " + attemptsCount);
                 }
                 return true;
             }
         }
 
-        if(logger.isDebugEnabled() ){
+        if(logger.isTraceEnabled() ){
             logger.debug("Delivery-" + delivery.getId() + ": message will be finalized: " + deliverySubscriber.getId() + ", state: " + notification.asState());
         }
 
-        deliveryWrapper.getRespondentAttemptsNumber().remove(deliverySubscriber.getMsisdn());
-        toUpdate.put(DelayedNotification.forSent(timeSource, notification));
+        deliveryWrapper.getRespondentCommittedAttemptsNumber().remove(deliverySubscriber.getMsisdn());
+        toUpdate.put(DelayedNotification.forImmediate(timeSource, notification));
         return true;
     }
 
@@ -105,6 +103,7 @@ public class NotificationService {
         private final int result;
         private final boolean isDelivered;
         private DeliverySubscriber.State state = null;
+        private static final int SUCCESS_RESULT = 2;
 
         public Notification(int id, int result, boolean isDelivered) {
             this.id = id;
@@ -180,7 +179,7 @@ public class NotificationService {
             return notification;
         }
 
-        public static DelayedNotification forSent(TimeSource timeSource, Notification notification) {
+        public static DelayedNotification forImmediate(TimeSource timeSource, Notification notification) {
             return new DelayedNotification(timeSource, notification, 0);
         }
 

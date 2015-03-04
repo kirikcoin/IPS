@@ -183,14 +183,14 @@ class PushThread extends LoopThread {
     }
 
     private void incAttempts(DeliveryWrapper deliveryWrapper, String msisdn, int id) {
-        Integer oldValue = deliveryWrapper.getRespondentAttemptsNumber().get(msisdn);
+        Integer oldValue = deliveryWrapper.getRespondentCommittedAttemptsNumber().get(msisdn);
         if (oldValue == null) {
-            deliveryWrapper.getRespondentAttemptsNumber().put(msisdn, 1);
+            deliveryWrapper.getRespondentCommittedAttemptsNumber().put(msisdn, 1);
         } else {
-            deliveryWrapper.getRespondentAttemptsNumber().put(msisdn, oldValue + 1);
+            deliveryWrapper.getRespondentCommittedAttemptsNumber().put(msisdn, oldValue + 1);
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("Delivery-" + deliveryWrapper.getModel().getId() + ": inc attempts for : " + id + ". New value = " + deliveryWrapper.getRespondentAttemptsNumber().get(msisdn));
+            logger.debug("Delivery-" + deliveryWrapper.getModel().getId() + ": inc attempts for : " + id + ". New value = " + deliveryWrapper.getRespondentCommittedAttemptsNumber().get(msisdn));
         }
     }
 
@@ -198,7 +198,6 @@ class PushThread extends LoopThread {
                                DeliveryWrapper.Message message,
                                boolean success) throws InterruptedException {
 
-        // FIXME
         if (message.incrementAndGet() >= retryAttempts || success) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Delivery-" + deliveryWrapper.getModel().getId() + ": message sent: " + message.getId() + ", state: " + success);

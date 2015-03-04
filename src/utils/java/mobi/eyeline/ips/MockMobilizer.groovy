@@ -44,6 +44,10 @@ class Mock {
                 t.split('=').with { m[it[0]] = it.length > 1 ? it[1] : '' }; m
             }
 
+            final long resourceId = map['resource_id'].toLong()
+
+            messages << new Message(resourceId)
+
             xcg.with {
                 String response = 'Queued'
                 sendResponseHeaders(200, response.length())
@@ -54,9 +58,6 @@ class Mock {
                 }
             }
 
-            final long resourceId = map['resource_id'].toLong()
-
-            messages << new Message(resourceId)
 
         }
     }
