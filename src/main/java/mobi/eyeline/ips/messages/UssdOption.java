@@ -108,11 +108,14 @@ public abstract class UssdOption {
     }
 
     /**
-     * @return {@code null} if the provided options do not match any valid message.
+     * @return {@code null} if the provided options do not match any valid message,
+     *  {@code BadCommandOption} if the provided options have 'bad_command' parameter
+     *  or AnswerOption if options have type parameter equals 'ANSWER'.
+     *  @throws java.lang.AssertionError if type equals another value.
+     *
      */
     public static UssdOption parse(Map<String, String[]> options)
             throws MissingParameterException {
-
 
         if(options.get(PARAM_BAD_COMMAND) != null) {
             return BadCommandOption.parse(options);

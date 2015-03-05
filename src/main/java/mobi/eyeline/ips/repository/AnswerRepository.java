@@ -101,22 +101,6 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
         save(answer);
     }
 
-//    public Answer lastAnswer(Respondent respondent) {
-//        final Session session = getSessionFactory().openSession();
-//        try {
-//            return (Answer) session.createCriteria(Answer.class)
-//                    .add(Property.forName("id").eq(
-//                            DetachedCriteria.forClass(Answer.class)
-//                                    .add(eq("respondent", respondent))
-//                                    .addOrder(Order.desc("id"))
-//                                    .setProjection(Property.forName("id").max())
-//                    )).uniqueResult();
-//
-//        } finally {
-//            session.close();
-//        }
-//    }
-
     public Answer getLast(Survey survey, Respondent respondent) {
         final Session session = getSessionFactory().openSession();
         try {

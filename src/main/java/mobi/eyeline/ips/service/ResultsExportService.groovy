@@ -70,14 +70,13 @@ public class ResultsExportService {
         df.timeZone = timeZone
 
         sessions.each { session ->
-            session.answers.each { answer ->
+            session.answers.each {Answer answer ->
                 String answerOptionText;
                 int answerOptionNumber
 
-                answerOptionText =
-                        (answer instanceof OptionAnswer) ? ((OptionAnswer)answer).option.answer : ((TextAnswer)answer).text
+                answerOptionText = answer.answer
                 answerOptionNumber =
-                        (answer instanceof OptionAnswer) ? ((OptionAnswer)answer).option.activeIndex + 1 : -1
+                        (answer instanceof OptionAnswer) ? (answer as OptionAnswer).option.activeIndex + 1 : -1
 
                    csvWriter.writeNext([
                         session.respondent.msisdn,

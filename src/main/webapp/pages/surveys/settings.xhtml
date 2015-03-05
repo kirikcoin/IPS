@@ -683,7 +683,7 @@
                               maxLength="70"/>
 
               <eye:selectColumn name="nextQuestion"
-                                values="#{surveySettingsController.questions}"
+                                values="#{surveySettingsController.nextQuestionsList}"
                                 var="t2" itemLabel="#{t2.label}" itemValue="#{t2.value}"
                                 allowEditAfterAdd="true"
                                 columnClass="nextColumn"/>
@@ -697,7 +697,7 @@
                            for="defaultQuestion"/>
 
             <h:selectOneMenu id="defaultQuestion" value="#{surveySettingsController.defaultQuestionId}">
-                <f:selectItems value="#{surveySettingsController.questionsItems}"/>
+                <f:selectItems value="#{surveySettingsController.defaultQuestionsList}"/>
             </h:selectOneMenu>
 
           <eye:buttons>

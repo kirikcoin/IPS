@@ -119,37 +119,32 @@ class SurveySettingsController extends BaseSurveyController {
 
     }
 
-    List<SelectItem> getQuestions() {
+    List<SelectItem> getNextQuestionsList() {
         [
                 new SelectItem(-1, strings['question.option.terminal.inlist'] as String),
-                * survey.activeQuestions.collect { q ->
-                    def idx = q.activeIndex + 1
-                    def maxLabel = 20
-                    def title = q.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
-                    new SelectItem(
-                            q.id,
-                            "$idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel-3] + '...'}",
-                            "$idx. ${q.title} ")
-                }
-        ]  as List<SelectItem>
+                * activeQuestions
+        ] as List<SelectItem>
     }
 
-    List<SelectItem> getQuestionsItems() {
+    List<SelectItem> getDefaultQuestionsList() {
         [
-                //TODO: add support in UssdService
                 // -1 - disabled default answer
                 new SelectItem(-1, strings['survey.settings.question.default.question.disabled'] as String),
                 new SelectItem(null, strings['question.option.terminal.inlist'] as String),
-                * survey.activeQuestions.collect { q ->
-                    def idx = q.activeIndex + 1
-                    def maxLabel = 20
-                    def title = q.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
-                    new SelectItem(
-                            q.id,
-                            "$idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel-3] + '...'}",
-                            "$idx. ${q.title} ")
-                }
-        ]  as List<SelectItem>
+                * activeQuestions
+        ] as List<SelectItem>
+    }
+
+    List<SelectItem> getActiveQuestions() {
+        survey.activeQuestions.collect { q ->
+            def idx = q.activeIndex + 1
+            def maxLabel = 20
+            def title = q.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
+            new SelectItem(
+                    q.id,
+                    "$idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel - 3] + '...'}",
+                    "$idx. ${q.title} ")
+        } as List<SelectItem>
     }
 
     private void updateQuestionsGraph() {
@@ -474,8 +469,9 @@ class SurveySettingsController extends BaseSurveyController {
 
         persistedQuestion.title = question.title
         persistedQuestion.enabledDefaultAnswer = (defaultQuestionId != -1)
-        def defaultQuestion = (defaultQuestionId == null) ? null : questionRepository.get(defaultQuestionId)
-        persistedQuestion.defaultQuestion = (defaultQuestionId == -1) ? null : defaultQuestion
+        if (persistedQuestion.enabledDefaultAnswer) {
+            persistedQuestion.defaultQuestion = defaultQuestionId ? questionRepository.get(defaultQuestionId) : null
+        }
 
         def handleRemoved = {
             def retainedOptionIds = questionOptions.rows

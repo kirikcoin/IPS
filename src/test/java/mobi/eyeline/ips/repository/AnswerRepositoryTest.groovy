@@ -39,7 +39,7 @@ class AnswerRepositoryTest extends DbTestCase {
     void testCount4() {
         fillTestData()
 
-        assertEquals([0, 1, 1], questionRepository.list().collect {answerRepository.countTextAnswers it})
+        assertEquals([0, 1, 1], questionRepository.list().collect (answerRepository.&countTextAnswers))
     }
 
     void testList1() {
@@ -120,6 +120,6 @@ class AnswerRepositoryTest extends DbTestCase {
                     it.respondent.id == thisRespondent.id }
 
         assertThat notRemoved, empty()
-        assertEquals([4, 4], survey(1).questions.collect { it.sentCount })
+        assertEquals([4, 4], survey(1).getNextQuestionsList.collect { it.sentCount })
     }
 }
