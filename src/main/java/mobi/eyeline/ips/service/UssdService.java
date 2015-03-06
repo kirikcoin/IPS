@@ -247,6 +247,8 @@ public class UssdService implements MessageHandler {
                                                      Respondent respondent,
                                                      Question question) {
         answerRepository.save(respondent, request.getAnswerText(), question);
+        respondent.setAnswersCount(respondent.getAnswersCount() + 1);
+        respondentRepository.update(respondent);
 
         final Question next = question.getDefaultQuestion();
         return (next == null) ?
