@@ -444,16 +444,16 @@ class UssdServiceTest extends DbTestCase {
 
         testFullCycle()
 
-        assertEquals 'With options',
+        assertEquals 'First one',
                 answerRepository.getLast(survey(), respondent()).question.title
-        assertEquals([1, 1, 1],
+        assertEquals([2, 1, 1, 1, 1],
                 questionRepository.list().sort { it.id }.collect { it.sentCount })
 
         respondent().with {
-            assertEquals 3, it.answersCount
+            assertEquals 6, it.answersCount
             assertTrue it.finished
         }
-        assertThat answerRepository.list(), hasSize(3)
+        assertThat answerRepository.list(), hasSize(6)
 
         // Load the landing page again.
         // We expect the same output as the first time, statistics should be reset.
@@ -466,7 +466,7 @@ class UssdServiceTest extends DbTestCase {
         }
 
         assertNull answerRepository.getLast(survey(), respondent())
-        assertEquals([1, 0, 0],
+        assertEquals([1, 0, 0, 0 , 0],
                 questionRepository.list().sort { it.id }.collect { it.sentCount })
         respondent().with {
             assertEquals 0, it.answersCount
