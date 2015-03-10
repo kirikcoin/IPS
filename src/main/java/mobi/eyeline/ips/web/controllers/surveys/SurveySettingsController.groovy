@@ -318,6 +318,12 @@ class SurveySettingsController extends BaseSurveyController {
         this.questionId = questionId
 
         def refs = surveyService.getReferencesTo(question)
+        def defaultRefs = surveyService.getDefaultReferencesTo(question)
+
+        defaultRefs.each {Question q ->
+            if(!refs.contains(q)) refs << q
+        }
+
         if (refs.empty) {
             questionDeletePrompt = strings['survey.settings.questions.delete.prompt']
 
@@ -388,7 +394,7 @@ class SurveySettingsController extends BaseSurveyController {
 
         final List<String> fieldOrder = [
                 'title',
-                'activeOptions',
+                'validOptions',
                 (0..<persistedQuestion.options.size()).collect { "options[$it].answer".toString() }
         ].flatten() as List<String>
 

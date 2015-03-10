@@ -79,7 +79,7 @@ public class Question implements Serializable {
     private int sentCount;
 
     /**
-     *  Разрешить ответ по-умолчанию.
+     * Разрешить ответ по-умолчанию.
      */
     @Column(name = "enabled_default_answer", columnDefinition = "BIT")
     @Type(type = "org.hibernate.type.NumericBooleanType")
@@ -135,7 +135,7 @@ public class Question implements Serializable {
         return options;
     }
 
-    @NotEmpty(message = "{question.validation.options.empty}")
+
     public List<QuestionOption> getActiveOptions() {
         return newArrayList(filter(getOptions(), not(QuestionOption.SKIP_INACTIVE)));
     }
@@ -209,7 +209,14 @@ public class Question implements Serializable {
     @SuppressWarnings("UnusedDeclaration")
     @AssertTrue(message = "{question.validation.default}")
     private boolean isCorrectDefaultQuestion() {
-         return isEnabledDefaultAnswer() || (!isEnabledDefaultAnswer() && getDefaultQuestion() == null);
+        return isEnabledDefaultAnswer() || (!isEnabledDefaultAnswer() && getDefaultQuestion() == null);
+    }
+
+
+    @SuppressWarnings("UnusedDeclaration")
+    @AssertTrue(message = "{question.validation.options.empty}")
+    public boolean isValidOptions() {
+        return enabledDefaultAnswer || !getActiveOptions().isEmpty();
     }
 
     @Override
