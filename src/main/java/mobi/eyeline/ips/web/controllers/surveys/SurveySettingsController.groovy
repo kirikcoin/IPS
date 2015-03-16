@@ -369,6 +369,7 @@ class SurveySettingsController extends BaseSurveyController {
 
         } else {
             question = new Question()
+            defaultQuestionId = -1
             questionOptions = new DynamicTableModel()
         }
 

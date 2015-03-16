@@ -332,6 +332,7 @@
 
                           <h:dataTable var="option"
                                        value="#{question.activeOptions}"
+                                       rendered="#{not empty question.options}"
                                        style="padding-left: 20px">
                             <h:column>
                               <h:outputText value="#{option.activeIndex + 1}. "
@@ -691,7 +692,7 @@
             </eye:dynamicTable>
           </h:panelGroup>
 
-            <br/>
+
 
             <h:outputLabel value="#{bundle['survey.settings.question.modify.default.question']}: "
                            for="defaultQuestion"/>
@@ -699,6 +700,9 @@
             <h:selectOneMenu id="defaultQuestion" value="#{surveySettingsController.defaultQuestionId}">
                 <f:selectItems value="#{surveySettingsController.defaultQuestionsList}"/>
             </h:selectOneMenu>
+
+            <br/>
+            <br/>
 
           <eye:buttons>
             <eye:button>
