@@ -35,23 +35,33 @@
       <br/>
     </div>
 
-    <c:if test="${not empty model.options}">
-      <navigation>
 
-        <c:forEach items="${model.options}" var="option">
+    <c:choose>
+        <c:when test="${empty model.options}">
+            <navigation>
+                <link/>
+            </navigation>
+        </c:when>
 
-          <link
-            <c:if test="${not empty option.linkType}">
-              type="${option.linkType}"
-            </c:if>
-              accesskey="${option.key}"
-              pageId="index.jsp?${fn:escapeXml(option.uri)}">
-            <c:out value="${option.text}"/>
-          </link>
-        </c:forEach>
+        <c:otherwise>
+            <navigation>
 
-      </navigation>
-    </c:if>
+                <c:forEach items="${model.options}" var="option">
+
+                    <link
+                            <c:if test="${not empty option.linkType}">
+                                type="${option.linkType}"
+                            </c:if>
+                            accesskey="${option.key}"
+                            pageId="index.jsp?${fn:escapeXml(option.uri)}">
+                        <c:out value="${option.text}"/>
+                    </link>
+                </c:forEach>
+
+            </navigation>
+        </c:otherwise>
+    </c:choose>
+
 
   </page>
 </c:if>
