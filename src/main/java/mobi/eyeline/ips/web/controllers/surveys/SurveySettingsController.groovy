@@ -478,6 +478,8 @@ class SurveySettingsController extends BaseSurveyController {
         persistedQuestion.enabledDefaultAnswer = (defaultQuestionId != -1)
         if (persistedQuestion.enabledDefaultAnswer) {
             persistedQuestion.defaultQuestion = defaultQuestionId ? questionRepository.get(defaultQuestionId) : null
+        } else {
+            persistedQuestion.defaultQuestion = null
         }
 
         def handleRemoved = {
