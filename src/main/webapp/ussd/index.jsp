@@ -5,19 +5,24 @@
 <%@ page import="mobi.eyeline.ips.service.Services" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="org.apache.http.HttpStatus" %>
+<%@ page import="static mobi.eyeline.ips.messages.UssdResponseModel.TextUssdResponseModel" %>
 <%@ page language="java"
          trimDirectiveWhitespaces="true"
          contentType="text/xml; charset=utf-8" %>
 
 <%
   final UssdResponseModel model;
-  try {
+  boolean showFinalMessage = false;
+
+    try {
     @SuppressWarnings("unchecked")
     final Map<String, String[]> parameters =
         (Map<String, String[]>) request.getParameterMap();
 
     model = Services.instance().getUssdService().handle(parameters);
+    showFinalMessage = model instanceof TextUssdResponseModel;
     pageContext.setAttribute("model", model);
+    pageContext.setAttribute("showFinalMessage", showFinalMessage);
 
   } catch (MissingParameterException e) {
     response.setStatus(HttpStatus.SC_BAD_REQUEST);      // Avoid displaying HTTP-400 error page.
@@ -37,13 +42,13 @@
 
 
     <c:choose>
-        <c:when test="${empty model.options}">
+        <c:when test="${empty model.options and not showFinalMessage}">
             <navigation>
                 <link/>
             </navigation>
         </c:when>
 
-        <c:otherwise>
+        <c:when test="${not empty model.options and not showFinalMessage}">
             <navigation>
 
                 <c:forEach items="${model.options}" var="option">
@@ -59,7 +64,7 @@
                 </c:forEach>
 
             </navigation>
-        </c:otherwise>
+        </c:when>
     </c:choose>
 
 

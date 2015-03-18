@@ -326,8 +326,8 @@
                             </h:panelGroup>
                             <h:panelGroup layout="block"></h:panelGroup>
 
-                            <h:outputText rendered="#{empty question.options}"
-                                        value="#{bundle['survey.settings.not.specified']}"
+                            <h:outputText rendered="#{empty question.activeOptions}"
+                                        value="#{bundle['survey.settings.question.options.not.specified']}"
                                         styleClass="placeholder"/>
 
                           <h:dataTable var="option"
