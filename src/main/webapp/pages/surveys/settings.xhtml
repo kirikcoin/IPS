@@ -332,7 +332,7 @@
 
                           <h:dataTable var="option"
                                        value="#{question.activeOptions}"
-                                       rendered="#{not empty question.options}"
+                                       rendered="#{not empty question.activeOptions}"
                                        style="padding-left: 20px">
                             <h:column>
                               <h:outputText value="#{option.activeIndex + 1}. "
