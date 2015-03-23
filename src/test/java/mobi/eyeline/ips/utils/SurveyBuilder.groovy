@@ -3,12 +3,14 @@ package mobi.eyeline.ips.utils
 import groovy.transform.InheritConstructors
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Answer
+import mobi.eyeline.ips.model.OptionAnswer
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyInvitation
 import mobi.eyeline.ips.model.SurveyStats
+import mobi.eyeline.ips.model.TextAnswer
 import mobi.eyeline.ips.model.User
 
 import static mobi.eyeline.ips.utils.ModelBuilderUtils.Context
@@ -54,8 +56,12 @@ class SurveyBuilder {
 
     @InheritConstructors static class AnswersContext extends ListContext<Answer> {
 
-        Answer answer(Map _) {
-            add(new Answer(common + _))
+        OptionAnswer optionAnswer(Map _) {
+            add(new OptionAnswer(common + _))
+        }
+
+        TextAnswer textAnswer(Map _) {
+            add(new TextAnswer(common + _))
         }
 
         List<Answer> invoke(@DelegatesTo(AnswersContext) Closure closure) { super.invoke closure }
@@ -94,6 +100,11 @@ class SurveyBuilder {
                     .findAll { QuestionOption opt -> opt.nextQuestion instanceof DeferredReference }
                     .each { QuestionOption opt ->
                 opt.nextQuestion = (opt.nextQuestion as DeferredReference<Question>).resolve(list)
+            }
+
+            list.findAll { Question q -> q.defaultQuestion instanceof DeferredReference }
+                    .each { Question q ->
+                q.defaultQuestion = (q.defaultQuestion as DeferredReference<Question>).resolve(list)
             }
 
             list

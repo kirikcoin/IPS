@@ -5,19 +5,24 @@
 <%@ page import="mobi.eyeline.ips.service.Services" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="org.apache.http.HttpStatus" %>
+<%@ page import="static mobi.eyeline.ips.messages.UssdResponseModel.TextUssdResponseModel" %>
 <%@ page language="java"
          trimDirectiveWhitespaces="true"
          contentType="text/xml; charset=utf-8" %>
 
 <%
   final UssdResponseModel model;
-  try {
+  boolean showFinalMessage = false;
+
+    try {
     @SuppressWarnings("unchecked")
     final Map<String, String[]> parameters =
         (Map<String, String[]>) request.getParameterMap();
 
     model = Services.instance().getUssdService().handle(parameters);
+    showFinalMessage = model instanceof TextUssdResponseModel;
     pageContext.setAttribute("model", model);
+    pageContext.setAttribute("showFinalMessage", showFinalMessage);
 
   } catch (MissingParameterException e) {
     response.setStatus(HttpStatus.SC_BAD_REQUEST);      // Avoid displaying HTTP-400 error page.
@@ -35,23 +40,33 @@
       <br/>
     </div>
 
-    <c:if test="${not empty model.options}">
-      <navigation>
 
-        <c:forEach items="${model.options}" var="option">
+    <c:choose>
+        <c:when test="${empty model.options and not showFinalMessage}">
+            <navigation>
+                <link/>
+            </navigation>
+        </c:when>
 
-          <link
-            <c:if test="${not empty option.linkType}">
-              type="${option.linkType}"
-            </c:if>
-              accesskey="${option.key}"
-              pageId="index.jsp?${fn:escapeXml(option.uri)}">
-            <c:out value="${option.text}"/>
-          </link>
-        </c:forEach>
+        <c:when test="${not empty model.options and not showFinalMessage}">
+            <navigation>
 
-      </navigation>
-    </c:if>
+                <c:forEach items="${model.options}" var="option">
+
+                    <link
+                            <c:if test="${not empty option.linkType}">
+                                type="${option.linkType}"
+                            </c:if>
+                            accesskey="${option.key}"
+                            pageId="index.jsp?${fn:escapeXml(option.uri)}">
+                        <c:out value="${option.text}"/>
+                    </link>
+                </c:forEach>
+
+            </navigation>
+        </c:when>
+    </c:choose>
+
 
   </page>
 </c:if>

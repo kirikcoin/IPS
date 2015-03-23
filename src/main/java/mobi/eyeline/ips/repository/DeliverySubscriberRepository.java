@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static mobi.eyeline.ips.model.DeliverySubscriber.State;
+
 public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscriber, Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(DeliverySubscriberRepository.class);
@@ -19,15 +21,15 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
         super(db);
     }
 
-    public void updateState(List<Pair<Integer, DeliverySubscriber.State>> idsAndStates,
-                            DeliverySubscriber.State oldState) {
+    public void updateState(List<Pair<Integer, State>> idsAndStates,
+                            State oldState) {
 
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
 
-            for (Pair<Integer, DeliverySubscriber.State> idAndState : idsAndStates) {
+            for (Pair<Integer, State> idAndState : idsAndStates) {
                 int count = session.createQuery(
                         "UPDATE DeliverySubscriber" +
                         " SET state = :newState" +
@@ -59,14 +61,14 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
         }
     }
 
-    public void updateState(List<Pair<Integer, DeliverySubscriber.State>> idsAndStates) {
+    public void updateState(List<Pair<Integer, State>> idsAndStates) {
 
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
 
-            for (Pair<Integer, DeliverySubscriber.State> idAndState : idsAndStates) {
+            for (Pair<Integer, State> idAndState : idsAndStates) {
                 int count = session.createQuery(
                         "UPDATE DeliverySubscriber" +
                         " SET state = :newState" +
@@ -98,42 +100,7 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
     }
 
     // TODO: this is untested due to missing `time_to_sec' and `timediff' routines in HSQL.
-    public int expireSent(long expirationDelaySeconds) {
-        final Session session = getSessionFactory().openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-
-            final int count = session.createSQLQuery(
-                    "update delivery_subscribers ds" +
-                    " set state = 'UNDELIVERED'" +
-                    " where" +
-                    " ds.state = 'SENT' and time_to_sec(timediff(now(), ds.last_update)) > :diff")
-                    .setParameter("diff", expirationDelaySeconds)
-                    .executeUpdate();
-
-            transaction.commit();
-
-            getSessionFactory().getCache().evictEntityRegion(DeliverySubscriber.class);
-
-            return count;
-
-        } catch (HibernateException e) {
-            if ((transaction != null) && transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (HibernateException ee) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            throw e;
-
-        } finally {
-            session.close();
-        }
-    }
-
-    public int expireFetched(long expirationDelaySeconds) {
+      public int expire(State from, State to, long expirationDelaySeconds) {
         final Session session = getSessionFactory().openSession();
         Transaction transaction = null;
         try {
@@ -141,15 +108,15 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
 
             final int count = session.createSQLQuery(
                     "update delivery_subscribers ds " +
-                    "set state = 'NEW' " +
-                    "where " +
-                    " ds.state = 'FETCHED' and time_to_sec(timediff(now(), ds.last_update)) > :diff")
+                            "set state = :toState" +
+                            "where " +
+                            " ds.state = :fromState and time_to_sec(timediff(now(), ds.last_update)) > :diff")
                     .setParameter("diff", expirationDelaySeconds)
+                    .setParameter("fromState", from)
+                    .setParameter("toState", to)
                     .executeUpdate();
 
             transaction.commit();
-
-            getSessionFactory().getCache().evictEntityRegion(DeliverySubscriber.class);
 
             return count;
 
@@ -167,5 +134,6 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
             session.close();
         }
     }
+
 
 }

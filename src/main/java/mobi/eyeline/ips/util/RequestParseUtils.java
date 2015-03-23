@@ -22,6 +22,16 @@ public class RequestParseUtils {
         }
     }
 
+    public static int getInt(Map<String, String[]> map, String key, Integer defaultValue)
+            throws MissingParameterException {
+
+        try {
+            return getInt(map, key);
+        } catch (MissingParameterException e) {
+            return defaultValue;
+        }
+    }
+
     /**
      * Treats {@code key} as a required parameter.
      *
@@ -51,6 +61,15 @@ public class RequestParseUtils {
         }
     }
 
+    public static String getString(Map<String, String[]> map,
+                                     String key,
+                                     String defaultValue) {
+        try {
+            return getString(map, key);
+        } catch (MissingParameterException e) {
+            return defaultValue;
+        }
+    }
 
     public static String getString(Map<String, String[]> map, String key)
             throws MissingParameterException {

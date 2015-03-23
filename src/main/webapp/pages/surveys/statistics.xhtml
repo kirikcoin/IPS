@@ -133,9 +133,13 @@
                                   height="500"
                                   width="490">
                       <c:forEach items="#{question.activeOptions}" var="opt">
-                        <eye:pie name="#{opt.answer}"
-                                 color="#{surveyStatsHelpers.colorLoop(opt)}"/>
+                          <eye:pie name="#{opt.answer}"
+                                   color="#{surveyStatsHelpers.colorLoop(opt)}"/>
                       </c:forEach>
+
+                        <eye:pie name="#{bundle['survey.stats.arbitrary.answer']}"
+                                 color="#B3B3B2"/>
+
                     </eye:pieChart>
                     <h:panelGrid>
                       <eye:barChart id="responseRatio_${question.id}"
@@ -162,6 +166,13 @@
                           <h:outputText value="#{opt.answer}"/>
                           <h:outputText value="#{surveyStatsHelpers.count(opt)}"/>
                         </c:forEach>
+                          <c:if test="#{question.enabledDefaultAnswer}">
+                              <h:panelGroup style="background-color: #B3B3B2"
+                                            styleClass="legend-color"
+                                            layout="block"/>
+                              <h:outputText value="#{bundle['survey.stats.arbitrary.answer']}" styleClass="italic"/>
+                              <h:outputText value="#{surveyStatsHelpers.defaultAnswersCount(question)}"/>
+                          </c:if>
                       </h:panelGrid>
                     </h:panelGrid>
                   </h:panelGrid>

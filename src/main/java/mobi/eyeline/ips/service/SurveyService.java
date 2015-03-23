@@ -41,10 +41,10 @@ public class SurveyService {
      * <br/>
      * Returns {@code null} if at least one of these conditions is not met:
      * <ol>
-     *     <li>Survey with this ID exists,</li>
-     *     <li>This survey is running now,
-     *     i.e. current date is between {@link Survey#startDate} and {@link Survey#endDate}</li>
-     *     <li>Survey is not marked as deleted</li>
+     * <li>Survey with this ID exists,</li>
+     * <li>This survey is running now,
+     * i.e. current date is between {@link Survey#startDate} and {@link Survey#endDate}</li>
+     * <li>Survey is not marked as deleted</li>
      * </ol>
      *
      * @param skipValidation if set, the second check is omitted.
@@ -71,9 +71,9 @@ public class SurveyService {
     /**
      * @return Overall invitations count, including:
      * <ul>
-     *     <li>Obtained from MADV,</li>
-     *     <li>Actually performed deliveries,</li>
-     *     <li>Manually specified,</li>
+     * <li>Obtained from MADV,</li>
+     * <li>Actually performed deliveries,</li>
+     * <li>Manually specified,</li>
      * </ul>
      */
     public int countInvitations(Survey survey) {
@@ -96,6 +96,11 @@ public class SurveyService {
             }
         }
 
+        for (Question defRef : getDefaultReferencesTo(question)) {
+            defRef.setDefaultQuestion(null);
+            questionRepository.update(defRef);
+        }
+
         question.setActive(false);
         questionRepository.update(question);
     }
@@ -109,6 +114,19 @@ public class SurveyService {
                     refs.add(currentQuestion);
                     break;
                 }
+            }
+        }
+
+        return refs;
+    }
+
+    public List<Question> getDefaultReferencesTo(Question question) {
+        final List<Question> refs = new ArrayList<>();
+
+        for (Question currentQuestion : question.getSurvey().getActiveQuestions()) {
+            if(currentQuestion.getDefaultQuestion() == null) continue;
+            if (currentQuestion.isEnabledDefaultAnswer() && currentQuestion.getDefaultQuestion().equals(question)) {
+                refs.add(currentQuestion);
             }
         }
 

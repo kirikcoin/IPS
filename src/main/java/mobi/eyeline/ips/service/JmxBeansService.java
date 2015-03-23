@@ -2,7 +2,6 @@ package mobi.eyeline.ips.service;
 
 import com.j256.simplejmx.server.JmxServer;
 import mobi.eyeline.ips.properties.Config;
-import mobi.eyeline.ips.util.SurveyTreeUtil;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.management.ManagementService;
 import org.hibernate.SessionFactory;

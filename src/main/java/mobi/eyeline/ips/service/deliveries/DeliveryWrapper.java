@@ -8,7 +8,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.*;
 
@@ -22,7 +21,8 @@ public class DeliveryWrapper {
     private final InvitationDelivery invitationDelivery;
     private final int messagesQueueSize;
     private final Queue<Message> messages = new ConcurrentLinkedQueue<>();
-    private final HashMap<String,Integer> respondentAttemptsNumber = new HashMap<>();
+    //Number of respondent commited attempts. First attempt number put here on first message sent.
+    private final HashMap<String,Integer> respondentCommittedAttemptsNumber = new HashMap<>();
 
     private volatile long proposedDelayMillis;
 
@@ -89,8 +89,8 @@ public class DeliveryWrapper {
         return empty;
     }
 
-    public void setEmpty(boolean isEmpty) {
-        this.empty = isEmpty;
+    public void setEmpty() {
+        this.empty = true;
     }
 
     @Override
@@ -105,6 +105,7 @@ public class DeliveryWrapper {
 
     // Single thread access
     public static class Message {
+
         private final int id;
         private final String msisdn;
         private DeliverySubscriber.State state;
@@ -209,10 +210,10 @@ public class DeliveryWrapper {
     }
 
     public boolean hasMessagesToRetry() {
-        return respondentAttemptsNumber.size() != 0;
+        return !respondentCommittedAttemptsNumber.isEmpty();
     }
 
-    public HashMap<String, Integer> getRespondentAttemptsNumber() {
-        return respondentAttemptsNumber;
+    public HashMap<String, Integer> getRespondentCommittedAttemptsNumber() {
+        return respondentCommittedAttemptsNumber;
     }
 }

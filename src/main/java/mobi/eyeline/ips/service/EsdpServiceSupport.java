@@ -16,7 +16,8 @@ public class EsdpServiceSupport {
     public String getServiceUrl(Survey survey) {
         try {
             final URIBuilder builder = new URIBuilder(config.getEsdpEndpointUrl());
-            return builder.getScheme() + "://" + builder.getHost() +
+            final String port = builder.getPort() >= 0 ? ":" + builder.getPort() : "";
+            return builder.getScheme() + "://" + builder.getHost() + port +
                     "/push?service=" + getKey(survey);
 
         } catch (URISyntaxException e) {

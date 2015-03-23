@@ -42,7 +42,9 @@ class TreeBuilder {
 
     private static List describeEdges(TreeNode node, Set processed = []) {
         !processed.add(node) ? [] : [
-                node.edges.collect { "[$node.id] --$it.id--> [$it.target.id]\n" },
+                node.edges.collect {
+                    final edgeId = (it.id < 0) ? 'default' : it.id
+                    "[$node.id] --$edgeId--> [$it.target.id]\n" },
                 '\n',
                 node.edges.collect { it.target }.collect { describeEdges(it, processed) }
         ].flatten()

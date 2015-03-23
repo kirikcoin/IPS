@@ -56,25 +56,27 @@ class FetchThread extends LoopThread {
 
         if (subscribers.isEmpty()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("Delivery-" + delivery.getModel().getId() + ": no messages fetched. Delivery market as empty.");
+                logger.debug("Delivery-" + delivery.getModel().getId() + ": no messages fetched. Delivery marked as empty.");
             }
             onCompleted(delivery);
 
         } else {
 
-            StringBuilder sb = new StringBuilder();
 
             for (DeliverySubscriber subscriber : subscribers) {
                 final DeliveryWrapper.Message message =
                         new DeliveryWrapper.Message(subscriber.getId(), subscriber.getMsisdn());
-                if (sb.length() > 0)
-                    sb.append(",");
-                sb.append(subscriber.getId());
                 delivery.put(message);
             }
 
-            if(logger.isDebugEnabled()) {
-                logger.debug("Delivery-" + delivery.getModel().getId() + ": " + subscribers.size() + " messages fetched. [" + sb.toString() + "]");
+            if (logger.isDebugEnabled()) {
+                final StringBuilder fetchedIds = new StringBuilder();
+                for (DeliverySubscriber subscriber : subscribers) {
+                    if (fetchedIds.length() > 0)
+                        fetchedIds.append(",");
+                    fetchedIds.append(subscriber.getId());
+                }
+                logger.debug("Delivery-" + delivery.getModel().getId() + ": " + subscribers.size() + " messages fetched. [" + fetchedIds.toString() + "]");
             }
             onAfterFetch(delivery);
         }
@@ -85,6 +87,6 @@ class FetchThread extends LoopThread {
     }
 
     private void onCompleted(DeliveryWrapper delivery) {
-        delivery.setEmpty(true);
+        delivery.setEmpty();
     }
 }

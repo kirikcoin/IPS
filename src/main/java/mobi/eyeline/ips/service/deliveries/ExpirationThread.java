@@ -1,10 +1,16 @@
 package mobi.eyeline.ips.service.deliveries;
 
+import mobi.eyeline.ips.model.DeliverySubscriber;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
+
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.FETCHED;
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.SENT;
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.UNDELIVERED;
+import static mobi.eyeline.ips.model.DeliverySubscriber.State.NEW;
 
 public class ExpirationThread extends LoopThread {
 
@@ -30,7 +36,7 @@ public class ExpirationThread extends LoopThread {
     protected void loop() throws InterruptedException {
         try {
             try {
-                final int count = deliverySubscriberRepository.expireSent(sentExpirationDelaySeconds);
+                final int count = deliverySubscriberRepository.expire(SENT, UNDELIVERED, sentExpirationDelaySeconds);
                 logger.debug("Stale sent deliveries: entries expired: " + count);
 
             } catch (Exception e) {
@@ -39,7 +45,7 @@ public class ExpirationThread extends LoopThread {
             }
 
             try {
-                final int count = deliverySubscriberRepository.expireFetched(fetchedExpirationDelaySeconds);
+                final int count = deliverySubscriberRepository.expire(FETCHED, NEW, fetchedExpirationDelaySeconds);
                 logger.debug("Stale fetched deliveries: entries expired: " + count);
 
             } catch (Exception e) {

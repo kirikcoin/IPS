@@ -80,6 +80,10 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
                 question.activeOptions.each { QuestionOption opt ->
                     addPart("${opt.answer}", answerRepository.count(opt))
                 }
+
+                addPart(strings['survey.stats.arbitrary.answer'] as String,
+                        answerRepository.countTextAnswers(question) as Number)
+
                 it as PieModel
             }
         }
@@ -105,5 +109,7 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
         }
 
         int count(QuestionOption opt) { answerRepository.count opt }
+
+        int defaultAnswersCount(Question question) {answerRepository.countTextAnswers question}
     }
 }

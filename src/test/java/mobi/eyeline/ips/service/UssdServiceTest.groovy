@@ -83,6 +83,14 @@ class UssdServiceTest extends DbTestCase {
         request(props)
     }
 
+    def textAnswer(option, text) {
+        def props = [:]
+        props.putAll option.properties
+        props.put PARAM_BAD_COMMAND, text
+        props[UssdOption.PARAM_MSISDN] = msisdn
+        request(props)
+    }
+
     void testNullSurveyUrl() {
         shouldFail(NullPointerException) { ussdService.getSurveyUrl(null) }
     }
@@ -166,15 +174,24 @@ class UssdServiceTest extends DbTestCase {
         survey.details = new SurveyDetails(survey: survey, title: 'Foo', endText: 'End text')
         surveyRepository.save survey
 
-        def q1 = new Question(survey: survey, title: 'First one')
+        def q1 = new Question(survey: survey, title: 'First one', enabledDefaultAnswer: true)
         def q2 = new Question(survey: survey, title: 'Second one')
         def q3 = new Question(survey: survey, title: 'With options')
+        def q4 = new Question(survey: survey, title: 'Fourth one', enabledDefaultAnswer: true, defaultQuestion: q3)
+        def q5 = new Question(survey: survey, title: 'Fifth one', enabledDefaultAnswer: true, defaultQuestion: q1)
+
+        q1.with {
+            enabledDefaultAnswer:true
+            defaultQuestion:q3
+        }
 
         q1.options << new QuestionOption(answer: 'O1', question: q1, nextQuestion: q2)
         q2.options << new QuestionOption(answer: 'O2', question: q2, nextQuestion: q3)
-        q3.options << new QuestionOption(answer: 'O3', question: q3)
+        q3.options << new QuestionOption(answer: 'O3', question: q3, nextQuestion: q4)
+        q4.options << new QuestionOption(answer: 'O4', question: q4, nextQuestion: q5)
+        q5.options << new QuestionOption(answer: 'O5', question: q5)
 
-        survey.questions.addAll([q1, q2, q3])
+        survey.questions.addAll([q1, q2, q3, q4, q5])
 
         surveyRepository.update(survey)
 
@@ -256,8 +273,51 @@ class UssdServiceTest extends DbTestCase {
         // Answer #3.
         //
 
-        def page4 = answer page3.options[2]
+        def page4 = answer page3.options.first()
         page4.with {
+            assertEquals 'Fourth one', text
+            assertThat options, hasSize(1)
+
+            options.first().with {
+                assertEquals(['O4', 4, 4, 1], [text, answerId, questionId, surveyId])
+            }
+        }
+
+        assertEquals 3, respondent().answersCount
+        assertEquals 1, questionRepository.load(4).sentCount
+
+
+
+        def page5 = answer page4.options.first()
+        page5.with {
+            assertEquals 'Fifth one', text
+            assertThat options, hasSize(1)
+
+            options.first().with {
+                assertEquals(['O5', 5, 5, 1], [text, answerId, questionId, surveyId])
+            }
+        }
+
+        assertEquals 4, respondent().answersCount
+        assertEquals 1, questionRepository.load(5).sentCount
+
+
+        def page6 = textAnswer page5.options.first(), 'some text'
+        page6.with {
+            assertEquals 'First one', text
+            assertThat options, hasSize(1)
+
+            options.first().with {
+                assertEquals(['O1', 1, 1, 1], [text, answerId, questionId, surveyId])
+            }
+        }
+
+        assertEquals 5, respondent().answersCount
+        assertEquals 1, questionRepository.load(5).sentCount
+
+
+        def page7 = textAnswer page6.options.first(), 'some text'
+        page7.with {
             assertEquals survey().details.endText, text
             assertThat it, instanceOf(UssdResponseModel.TextUssdResponseModel)
         }
@@ -265,7 +325,7 @@ class UssdServiceTest extends DbTestCase {
         // Check final stats.
 
         respondent().with {
-            assertEquals 3, answersCount
+            assertEquals 6, answersCount
             assertTrue finished
         }
 
@@ -384,16 +444,16 @@ class UssdServiceTest extends DbTestCase {
 
         testFullCycle()
 
-        assertEquals 'With options',
+        assertEquals 'First one',
                 answerRepository.getLast(survey(), respondent()).question.title
-        assertEquals([1, 1, 1],
+        assertEquals([2, 1, 1, 1, 1],
                 questionRepository.list().sort { it.id }.collect { it.sentCount })
 
         respondent().with {
-            assertEquals 3, it.answersCount
+            assertEquals 6, it.answersCount
             assertTrue it.finished
         }
-        assertThat answerRepository.list(), hasSize(3)
+        assertThat answerRepository.list(), hasSize(6)
 
         // Load the landing page again.
         // We expect the same output as the first time, statistics should be reset.
@@ -406,7 +466,7 @@ class UssdServiceTest extends DbTestCase {
         }
 
         assertNull answerRepository.getLast(survey(), respondent())
-        assertEquals([1, 0, 0],
+        assertEquals([1, 0, 0, 0 , 0],
                 questionRepository.list().sort { it.id }.collect { it.sentCount })
         respondent().with {
             assertEquals 0, it.answersCount

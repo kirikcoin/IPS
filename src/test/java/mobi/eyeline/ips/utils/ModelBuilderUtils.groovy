@@ -63,7 +63,7 @@ class ModelBuilderUtils {
             add(obj)
         }
 
-        protected T add(T obj) { list << obj; obj }
+        protected <S extends T> S add(S obj) { list << obj; obj }
 
         /**
          * Should probably be overridden to provide proper {@code @DelegatesTo} type.
