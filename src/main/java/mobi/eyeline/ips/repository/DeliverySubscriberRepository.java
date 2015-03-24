@@ -100,17 +100,18 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
     }
 
     // TODO: this is untested due to missing `time_to_sec' and `timediff' routines in HSQL.
-      public int expire(State from, State to, long expirationDelaySeconds) {
+    public int expire(State from, State to, long expirationDelaySeconds) {
         final Session session = getSessionFactory().openSession();
+
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
 
             final int count = session.createSQLQuery(
-                    "update delivery_subscribers ds " +
-                            "set state = :toState" +
-                            "where " +
-                            " ds.state = :fromState and time_to_sec(timediff(now(), ds.last_update)) > :diff")
+                    "UPDATE delivery_subscribers ds" +
+                    " SET state = :toState" +
+                    " WHERE " +
+                    " ds.state = :fromState AND time_to_sec(timediff(now(), ds.last_update)) > :diff")
                     .setParameter("diff", expirationDelaySeconds)
                     .setParameter("fromState", from)
                     .setParameter("toState", to)
@@ -121,14 +122,14 @@ public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscri
             return count;
 
         } catch (HibernateException e) {
-            if((transaction != null) && transaction.isActive()) {
+            if ((transaction != null) && transaction.isActive()) {
                 try {
                     transaction.rollback();
                 } catch (HibernateException ee) {
                     logger.error(e.getMessage(), e);
                 }
             }
-            throw  e;
+            throw e;
 
         } finally {
             session.close();
