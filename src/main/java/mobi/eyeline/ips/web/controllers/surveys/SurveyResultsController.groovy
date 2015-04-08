@@ -82,4 +82,15 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
         resultsExportService.writeCouponsCsv(
                 os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
     }
+
+    @SuppressWarnings("GroovyUnusedDeclaration")
+    void downloadRespondents(FacesContext context, OutputStream os) {
+        def header = [
+                strings['results.list.csv.msisdn'],
+                strings['results.list.csv.start.date']
+        ]
+
+        resultsExportService.writeRespondentsCsv(
+                os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
+    }
 }

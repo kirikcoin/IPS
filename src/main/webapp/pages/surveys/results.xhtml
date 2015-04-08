@@ -131,7 +131,7 @@
               </f:facet>
 
               <eye:buttons id="downloadButtonsPanel">
-                <eye:button id ="downloadButton">
+                <eye:button id="downloadButton">
                   <h:commandLink styleClass="button-green"
                                  value="#{bundle['results.button.download']}">
                     <eye:fileDownloadListener method="#{surveyResultsController.downloadResults}"
@@ -140,12 +140,21 @@
                   </h:commandLink>
                 </eye:button>
 
-                <eye:button id ="couponsDownloadButton" rendered="#{surveyResultsController.hasCoupons}">
+                <eye:button id="couponsDownloadButton" rendered="#{surveyResultsController.hasCoupons}">
                   <h:commandLink styleClass="button-green"
                                  value="#{bundle['results.button.download.coupons']}">
                     <eye:fileDownloadListener method="#{surveyResultsController.downloadCoupons}"
                                               contentType="text/csv"
                                               filename="survey_#{surveyResultsController.surveyId}_coupons.csv"/>
+                  </h:commandLink>
+                </eye:button>
+
+                <eye:button id="respondentsDownloadButton">
+                  <h:commandLink styleClass="button-green"
+                                 value="#{bundle['results.button.download.respondents']}">
+                    <eye:fileDownloadListener method="#{surveyResultsController.downloadRespondents}"
+                                              contentType="text/csv"
+                                              filename="survey_#{surveyResultsController.surveyId}_respondents.csv"/>
                   </h:commandLink>
                 </eye:button>
 
