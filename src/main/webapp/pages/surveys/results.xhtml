@@ -13,6 +13,12 @@
               src="#{resources.path}/resources/pages/surveys/results.js#{resources.version}">
       </script>
 
+      <h:outputStylesheet rendered="#{surveyResultsController.hasCoupons}">
+        #respondentsDownloadButton {
+          width: 1%;
+        }
+      </h:outputStylesheet>
+
     </ui:define>
 
     <ui:define name="scripts">
@@ -140,21 +146,21 @@
                   </h:commandLink>
                 </eye:button>
 
-                <eye:button id="couponsDownloadButton" rendered="#{surveyResultsController.hasCoupons}">
-                  <h:commandLink styleClass="button-green"
-                                 value="#{bundle['results.button.download.coupons']}">
-                    <eye:fileDownloadListener method="#{surveyResultsController.downloadCoupons}"
-                                              contentType="text/csv"
-                                              filename="survey_#{surveyResultsController.surveyId}_coupons.csv"/>
-                  </h:commandLink>
-                </eye:button>
-
                 <eye:button id="respondentsDownloadButton">
                   <h:commandLink styleClass="button-green"
                                  value="#{bundle['results.button.download.respondents']}">
                     <eye:fileDownloadListener method="#{surveyResultsController.downloadRespondents}"
                                               contentType="text/csv"
                                               filename="survey_#{surveyResultsController.surveyId}_respondents.csv"/>
+                  </h:commandLink>
+                </eye:button>
+
+                <eye:button id="couponsDownloadButton" rendered="#{surveyResultsController.hasCoupons}">
+                  <h:commandLink styleClass="button-green"
+                                 value="#{bundle['results.button.download.coupons']}">
+                    <eye:fileDownloadListener method="#{surveyResultsController.downloadCoupons}"
+                                              contentType="text/csv"
+                                              filename="survey_#{surveyResultsController.surveyId}_coupons.csv"/>
                   </h:commandLink>
                 </eye:button>
 
