@@ -139,6 +139,56 @@ public class ResultsExportService {
         }
     }
 
+    void writeRespondentsCsv(OutputStream os,
+                             List<String> header,
+                             Survey survey,
+                             Date periodStart,
+                             Date periodEnd,
+                             String filter,
+                             TimeZone timeZone,
+                             Locale locale) {
+
+        os.withWriter('UTF-8') { Writer writer ->
+            final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
+
+            try {
+                // Add header line.
+                csvWriter.writeNext(header as String[])
+
+                iterateResults(
+                        csvWriter,
+                        survey,
+                        periodStart,
+                        periodEnd,
+                        filter,
+                        null,    // coupons don't matter
+                        timeZone,
+                        locale,
+                        this.&writeRespondentsData
+                )
+
+            } finally {
+                csvWriter.close()
+            }
+        }
+    }
+
+    @SuppressWarnings("GrMethodMayBeStatic")
+    private void writeRespondentsData(List<SurveySession> sessions,
+                                      CSVWriter csvWriter,
+                                      TimeZone timeZone,
+                                      Locale locale) {
+        final df = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, locale)
+        df.timeZone = timeZone
+
+        sessions.each { session ->
+            csvWriter.writeNext([
+                    session.respondent.msisdn,
+                    df.format(session.respondent.startDate)
+            ] as String[])
+        }
+    }
+
     private void iterateResults(CSVWriter csvWriter,
                                 Survey survey,
                                 Date periodStart,
