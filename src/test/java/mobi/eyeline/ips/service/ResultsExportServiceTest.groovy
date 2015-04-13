@@ -14,7 +14,7 @@ class ResultsExportServiceTest extends DbTestCase {
     super.setUp()
 
     initRepository(db)
-    init()
+    fillTestData()
 
     exportService = new ResultsExportService(answerRepository, 2)
   }
