@@ -5,7 +5,7 @@ class InvitationDeliveryRepositorySessionTest extends DbTestCase {
 
   void setUp() {
     super.setUp()
-    initServices(db)
+    init(db)
   }
 
   void testList() {

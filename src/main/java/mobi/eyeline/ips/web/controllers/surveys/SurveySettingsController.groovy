@@ -44,8 +44,8 @@ class SurveySettingsController extends BaseSurveyController {
 
   private final QuestionRepository questionRepository = Services.instance().questionRepository
   private final UserRepository userRepository = Services.instance().userRepository
-  private
-  final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
+  private final AccessNumberRepository accessNumberRepository =
+      Services.instance().accessNumberRepository
 
   private final PushService pushService = Services.instance().pushService
   private final CouponService couponService = Services.instance().couponService
@@ -300,20 +300,6 @@ class SurveySettingsController extends BaseSurveyController {
     return 'SURVEY_LIST'
   }
 
-  void moveUp(int questionId) {
-    persistedSurvey.moveUp(questionRepository.load(questionId))
-    surveyRepository.update(persistedSurvey)
-
-    persistedSurvey = surveyRepository.load(surveyId)
-  }
-
-  void moveDown(int questionId) {
-    persistedSurvey.moveDown(questionRepository.load(questionId))
-    surveyRepository.update(persistedSurvey)
-
-    persistedSurvey = surveyRepository.load(surveyId)
-  }
-
   void beforeDeleteQuestion(int questionId) {
     def question = questionRepository.load(questionId)
     this.questionId = questionId
@@ -411,7 +397,7 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     if (!questionId) {
-      persistedSurvey.questions.add(persistedQuestion)
+      persistedSurvey.pages.add(persistedQuestion)
       surveyRepository.update(persistedSurvey)
 
     } else {
@@ -480,7 +466,8 @@ class SurveySettingsController extends BaseSurveyController {
     persistedQuestion.title = question.title
     persistedQuestion.enabledDefaultAnswer = (defaultQuestionId != -1)
     if (persistedQuestion.enabledDefaultAnswer) {
-      persistedQuestion.defaultQuestion = defaultQuestionId ? questionRepository.get(defaultQuestionId) : null
+      persistedQuestion.defaultQuestion =
+          (defaultQuestionId ? questionRepository.get(defaultQuestionId) : null) as Question
     } else {
       persistedQuestion.defaultQuestion = null
     }

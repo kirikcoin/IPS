@@ -13,7 +13,7 @@ import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace
 
-@Mixin([RepositoryMock, TreeBuilder])
+@Mixin([TreeBuilder, RepositoryMock])
 class SurveyServiceTest extends DbTestCase {
 
   SurveyService surveyService

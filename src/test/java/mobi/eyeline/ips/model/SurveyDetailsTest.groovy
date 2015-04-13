@@ -4,7 +4,14 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.hasSize
 
-class SurveyDetailsTest extends ValidationTestCase {
+@Mixin(ValidationTestCase)
+class SurveyDetailsTest extends GroovyTestCase {
+
+  @Override
+  protected void setUp() {
+    super.setUp()
+    init()
+  }
 
   void test1() {
     def violations = validate new SurveyDetails()

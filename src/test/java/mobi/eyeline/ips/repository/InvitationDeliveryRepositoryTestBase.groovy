@@ -28,7 +28,7 @@ class InvitationDeliveryRepositoryTestBase {
     GroovyTestCase.assertEquals(expected, deliveries*.id)
   }
 
-  void initServices(db) {
+  void init(DB db) {
     invitationDeliveryRepository = new InvitationDeliveryRepository(db)
     deliverySubscriberRepository = new DeliverySubscriberRepository(db)
     csvParseService = new CsvParseService()

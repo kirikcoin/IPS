@@ -193,7 +193,7 @@ class UssdServiceTest extends DbTestCase {
     q4.options << new QuestionOption(answer: 'O4', question: q4, nextQuestion: q5)
     q5.options << new QuestionOption(answer: 'O5', question: q5)
 
-    survey.questions.addAll([q1, q2, q3, q4, q5])
+    survey.pages.addAll([q1, q2, q3, q4, q5])
 
     surveyRepository.update(survey)
 

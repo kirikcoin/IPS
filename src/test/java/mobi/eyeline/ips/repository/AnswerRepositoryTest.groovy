@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertThat
 
-@Mixin([RepositoryMock, SampleAnswers])
+@Mixin([SampleAnswers, RepositoryMock])
 class AnswerRepositoryTest extends DbTestCase {
 
   void setUp() {

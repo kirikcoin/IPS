@@ -23,7 +23,7 @@ public class LessFilter extends HttpFilter {
 
   private static final int LESS_PARSER_INSTANCES = 8;
 
-  private final Pattern FILTER_PATTERN = Pattern.compile(".*\\.less\\.faces|.*\\.less");
+  private final Pattern FILTER_PATTERN = Pattern.compile("(.*\\.less\\.faces|.*\\.less)(|;.*)");
 
   private ResourcePool<LessParser> parserPool;
   private boolean devMode;

@@ -1,7 +1,6 @@
 package mobi.eyeline.ips.model;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
 import mobi.eyeline.ips.util.ListUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.Formula;
@@ -31,14 +30,18 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Iterables.tryFind;
+import static com.google.common.collect.Lists.newArrayList;
 import static javax.persistence.CascadeType.ALL;
-import static mobi.eyeline.ips.model.Question.SKIP_INACTIVE;
+import static mobi.eyeline.ips.model.ExtLinkPage.PAGE_IS_EXT_LINK;
+import static mobi.eyeline.ips.model.Question.PAGE_IS_QUESTION;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 /**
@@ -97,10 +100,9 @@ public class Survey implements Serializable {
   private SurveyDetails details;
 
   @OneToMany(mappedBy = "survey", cascade = ALL, orphanRemoval = true)
-  @OrderColumn(name = "question_order")
   @LazyCollection(LazyCollectionOption.FALSE)
   @Cache(usage = READ_WRITE)
-  private List<Question> questions = new ArrayList<>();
+  private List<Page> pages = new ArrayList<>();
 
   @Valid
   @ManyToOne(fetch = FetchType.EAGER)
@@ -131,8 +133,7 @@ public class Survey implements Serializable {
   @Formula("(select case when (now() < s.startdate) then -1 when (now() > s.expires) then 1 else 0 end from surveys s where s.id = id)")
   private int state;
 
-  public Survey() {
-  }
+  public Survey() { }
 
   @PrePersist
   @PreUpdate
@@ -194,16 +195,30 @@ public class Survey implements Serializable {
     this.details = surveyDetails;
   }
 
+  public List<Page> getPages() {
+    return pages;
+  }
+
+  public void setPages(List<Page> pages) {
+    this.pages = pages;
+  }
+
   public List<Question> getQuestions() {
-    return questions;
+    final Collection<Page> questions = filter(getPages(), PAGE_IS_QUESTION);
+    return newArrayList(transform(questions, ListUtils.<Page, Question>functionCast()));
+  }
+
+  public List<ExtLinkPage> getExtLinkPages() {
+    final Collection<Page> questions = filter(getPages(), PAGE_IS_EXT_LINK);
+    return newArrayList(transform(questions, ListUtils.<Page, ExtLinkPage>functionCast()));
   }
 
   public List<Question> getActiveQuestions() {
-    return com.google.common.collect.Lists.newArrayList(filter(getQuestions(), not(SKIP_INACTIVE)));
+    return newArrayList(filter(getQuestions(), not(Page.skipInactive())));
   }
 
-  public void setQuestions(List<Question> questions) {
-    this.questions = questions;
+  public List<ExtLinkPage> getActiveExtLinkPages() {
+    return newArrayList(filter(getExtLinkPages(), not(Page.skipInactive())));
   }
 
   public User getClient() {
@@ -222,16 +237,8 @@ public class Survey implements Serializable {
     this.owner = owner;
   }
 
-  public void moveUp(Question question) {
-    ListUtils.moveUp(getQuestions(), question, SKIP_INACTIVE);
-  }
-
-  public void moveDown(Question question) {
-    ListUtils.moveDown(getQuestions(), question, SKIP_INACTIVE);
-  }
-
   public Question getFirstQuestion() {
-    return tryFind(getQuestions(), not(SKIP_INACTIVE)).orNull();
+    return tryFind(getQuestions(), not(Page.skipInactive())).orNull();
   }
 
   @SuppressWarnings("UnusedDeclaration")
@@ -240,10 +247,6 @@ public class Survey implements Serializable {
     return (getStartDate() != null) &&
         (getEndDate() != null) &&
         getStartDate().compareTo(getEndDate()) <= 0;
-  }
-
-  public int getQuestionsCount() {
-    return getQuestions().size();
   }
 
   public int getActiveQuestionsCount() {
@@ -273,7 +276,7 @@ public class Survey implements Serializable {
   }
 
   public List<SurveyPattern> getInactivePatterns() {
-    return Lists.newArrayList(filter(getPatterns(), new Predicate<SurveyPattern>() {
+    return newArrayList(filter(getPatterns(), new Predicate<SurveyPattern>() {
       @Override
       public boolean apply(SurveyPattern input) {
         return !input.isActive();
@@ -305,7 +308,7 @@ public class Survey implements Serializable {
         ", active=" + active +
         ", statistics=" + ((statistics == null) ? null : statistics.toTraceString()) +
         ", details=" + ((details == null) ? null : details.toTraceString()) +
-        ", questions=" + questions +
+        ", pages=" + getPages() +
         ", client=" + ((client == null) ? null : client.toTraceString()) +
         ", owner=" + ((owner == null) ? null : owner.toTraceString()) +
         '}';

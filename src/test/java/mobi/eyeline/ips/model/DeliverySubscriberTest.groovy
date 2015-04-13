@@ -3,7 +3,14 @@ package mobi.eyeline.ips.model
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
 
-class DeliverySubscriberTest extends ValidationTestCase {
+@Mixin(ValidationTestCase)
+class DeliverySubscriberTest extends GroovyTestCase {
+
+  @Override
+  protected void setUp() {
+    super.setUp()
+    init()
+  }
 
   void test1() {
     assertThat validate(new DeliverySubscriber(msisdn: null, state: null)), hasSize(2)

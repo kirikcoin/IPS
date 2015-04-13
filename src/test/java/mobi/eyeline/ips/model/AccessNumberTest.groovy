@@ -4,7 +4,14 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.hasSize
 
-class AccessNumberTest extends ValidationTestCase {
+@Mixin(ValidationTestCase)
+class AccessNumberTest extends GroovyTestCase {
+
+  @Override
+  protected void setUp() {
+    super.setUp()
+    init()
+  }
 
   void test1() {
     def violations = validate new AccessNumber(number: null)

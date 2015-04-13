@@ -12,7 +12,7 @@ class InvitationDeliveryRepositoryTest extends DbTestCase {
   void setUp() {
     db = new DB(new Properties())
 
-    initServices(db)
+    init(db)
   }
 
   @Override

@@ -65,58 +65,6 @@ class SurveyRepositoryTest extends DbTestCase {
     assertThat questionRepository.load(3).options, hasSize(4)
   }
 
-  void testQuestionOrdering() {
-
-    def survey = survey(startDate: new Date(), endDate: new Date()) {
-      questions {
-        question(title: 'Q1') {
-          option(answer: "${enclosing.title}-option")
-        }
-        question(title: 'Q2') {
-          option(answer: "${enclosing.title}-option")
-        }
-        question(title: 'Q3') {
-          option(answer: "${enclosing.title}-option")
-        }
-        question(title: 'Q4') {
-          option(answer: "${enclosing.title}-option")
-        }
-      }
-    }
-
-    def sid = surveyRepository.save survey
-
-    def loadSurvey = { surveyRepository.load sid }
-
-    def newQuestion = { id, title ->
-      def q = new Question(id: id, survey: survey, title: title);
-      q.options.add(new QuestionOption(answer: "${q.title}-option", question: q))
-      q
-    }
-
-    def q1 = newQuestion 1, 'Q1'
-    def q2 = newQuestion 2, 'Q2'
-    def q3 = newQuestion 3, 'Q3'
-    def q4 = newQuestion 4, 'Q4'
-
-    assertEquals([q1, q2, q3, q4], loadSurvey().questions)
-
-    survey.moveUp q1
-    surveyRepository.update(survey)
-
-    assertEquals([q2, q1, q3, q4], loadSurvey().questions)
-
-    survey.moveUp q1
-    surveyRepository.update(survey)
-
-    assertEquals([q2, q3, q1, q4], loadSurvey().questions)
-
-    survey.moveDown q1
-    surveyRepository.update(survey)
-
-    assertEquals([q2, q1, q3, q4], loadSurvey().questions)
-  }
-
   void testOptionOrdering() {
     def s = survey(startDate: new Date(), endDate: new Date()) {
       details(title: 'Foo')
@@ -137,7 +85,7 @@ class SurveyRepositoryTest extends DbTestCase {
     def q = new Question(survey: s, title: 'With options')
     q.options << new QuestionOption(answer: 'Foo', question: q)
 
-    s.questions.add(q)
+    s.pages << q
     surveyRepository.update(s)
 
     // For ordering

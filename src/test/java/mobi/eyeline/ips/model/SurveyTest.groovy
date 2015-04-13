@@ -5,7 +5,14 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.not
 
-class SurveyTest extends ValidationTestCase {
+@Mixin(ValidationTestCase)
+class SurveyTest extends GroovyTestCase {
+
+  @Override
+  protected void setUp() {
+    super.setUp()
+    init()
+  }
 
   void test1() {
     assertThat validate(survey()), not(empty())

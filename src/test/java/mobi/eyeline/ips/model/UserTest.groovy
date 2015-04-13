@@ -5,13 +5,14 @@ import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.hasSize
 
-class UserTest extends ValidationTestCase {
+@Mixin(ValidationTestCase)
+class UserTest extends GroovyTestCase {
 
   def manager
 
   @Override
   void setUp() {
-    super.setUp()
+    init()
 
     manager = new User(
         login: 'testManager',

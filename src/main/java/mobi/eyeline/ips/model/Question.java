@@ -13,20 +13,16 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,24 +33,15 @@ import static javax.persistence.CascadeType.ALL;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Entity
-@Table(name = "questions")
 @Proxy(lazy = false)
 @Cache(usage = READ_WRITE)
-public class Question implements Serializable {
-
-  @Id
-  @Column(name = "id")
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
-
-  @ManyToOne(optional = false)
-  @JoinColumn(name = "survey_id")
-  private Survey survey;
+@DiscriminatorValue("question")
+public class Question extends Page {
 
   /**
    * Текст вопроса, отображается для респондентов.
    */
-  @Column(name = "title", nullable = false)
+  @Column(name = "title", nullable = true)
   @NotEmpty(message = "{question.validation.title.empty}")
   @MaxSize(70)
   private String title;
@@ -68,26 +55,6 @@ public class Question implements Serializable {
   @Valid
   @Cache(usage = READ_WRITE)
   private List<QuestionOption> options = new ArrayList<>();
-
-  /**
-   * Порядок отображения вопроса в опросе.
-   */
-  @Column(name = "question_order")
-  private int order;
-
-  /**
-   * При удалении вопрос помечается флагом {@code active = false} в БД и
-   * перестает отображаться в веб-интерфейсе.
-   */
-  @Column(name = "active", columnDefinition = "BIT")
-  @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean active = true;
-
-  /**
-   * Количество отправок данного вопроса респондентам.
-   */
-  @Column(name = "sent_count")
-  private int sentCount;
 
   /**
    * Разрешить ответ по-умолчанию.
@@ -106,34 +73,14 @@ public class Question implements Serializable {
   @PrePersist
   @PreUpdate
   void prepareIndex() {
-    if (getSurvey() != null) {
-      order = getSurvey().getQuestions().indexOf(this);
-    }
-
     for (QuestionOption option : getOptions()) {
       option.prepareIndex();
     }
   }
 
-  public Question() {
-  }
+  public Question() { }
 
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public Survey getSurvey() {
-    return survey;
-  }
-
-  public void setSurvey(Survey survey) {
-    this.survey = survey;
-  }
-
+  @Override
   public String getTitle() {
     return title;
   }
@@ -146,7 +93,6 @@ public class Question implements Serializable {
     return options;
   }
 
-
   public List<QuestionOption> getActiveOptions() {
     return newArrayList(filter(getOptions(), not(QuestionOption.SKIP_INACTIVE)));
   }
@@ -155,44 +101,20 @@ public class Question implements Serializable {
     this.options = options;
   }
 
-  public int getOrder() {
-    return order;
-  }
-
   public int getActiveIndex() {
     return getSurvey().getActiveQuestions().indexOf(this);
   }
 
-  public void setOrder(int order) {
-    this.order = order;
-  }
-
-  public boolean isActive() {
-    return active;
-  }
-
-  public void setActive(boolean active) {
-    this.active = active;
-  }
-
-  public int getSentCount() {
-    return sentCount;
-  }
-
-  public void setSentCount(int sentCount) {
-    this.sentCount = sentCount;
-  }
-
   public Question getNext() {
-    return ListUtils.getNext(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+    return ListUtils.getNext(getSurvey().getQuestions(), this, Page.<Question>skipInactive());
   }
 
   public boolean isFirst() {
-    return ListUtils.isFirst(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+    return ListUtils.isFirst(getSurvey().getQuestions(), this, Page.<Question>skipInactive());
   }
 
   public boolean isLast() {
-    return ListUtils.isLast(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+    return ListUtils.isLast(getSurvey().getQuestions(), this, Page.<Question>skipInactive());
   }
 
   public Question getDefaultQuestion() {
@@ -220,9 +142,8 @@ public class Question implements Serializable {
   @SuppressWarnings("UnusedDeclaration")
   @AssertTrue(message = "{question.validation.default}")
   private boolean isCorrectDefaultQuestion() {
-    return isEnabledDefaultAnswer() || (!isEnabledDefaultAnswer() && getDefaultQuestion() == null);
+    return isEnabledDefaultAnswer() || (getDefaultQuestion() == null);
   }
-
 
   @SuppressWarnings("UnusedDeclaration")
   @AssertTrue(message = "{question.validation.options.empty}")
@@ -233,7 +154,7 @@ public class Question implements Serializable {
   @Override
   public String toString() {
     return "Question{" +
-        "id=" + id +
+        "id=" + getId() +
         ", title='" + title + '\'' +
         '}';
   }
@@ -245,23 +166,18 @@ public class Question implements Serializable {
 
     Question question = (Question) o;
 
-    return !(id != null ? !id.equals(question.id) : question.id != null);
-
+    return !(getId() != null ? !getId().equals(question.getId()) : question.getId() != null);
   }
 
   @Override
   public int hashCode() {
-    return id != null ? id.hashCode() : 0;
+    return getId() != null ? getId().hashCode() : 0;
   }
 
-//
-  //
-  //
-
-  public static final Predicate<Question> SKIP_INACTIVE = new Predicate<Question>() {
+  public static final Predicate<Page> PAGE_IS_QUESTION = new Predicate<Page>() {
     @Override
-    public boolean apply(Question question) {
-      return !question.isActive();
+    public boolean apply(Page page) {
+      return page instanceof Question;
     }
   };
 }

@@ -5,7 +5,7 @@ import mobi.eyeline.ips.repository.DbTestCase
 import mobi.eyeline.ips.repository.RepositoryMock
 import mobi.eyeline.ips.repository.SampleAnswers
 
-@Mixin([RepositoryMock, SampleAnswers])
+@Mixin([SampleAnswers, RepositoryMock])
 class ResultsExportServiceTest extends DbTestCase {
 
   private ResultsExportService exportService
@@ -14,10 +14,9 @@ class ResultsExportServiceTest extends DbTestCase {
     super.setUp()
 
     initRepository(db)
+    init()
 
     exportService = new ResultsExportService(answerRepository, 2)
-
-    fillTestData()
   }
 
   private void checkCsv(List<String> expected,

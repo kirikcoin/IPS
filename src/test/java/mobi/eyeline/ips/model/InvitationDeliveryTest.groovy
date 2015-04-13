@@ -5,7 +5,14 @@ import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
 
-class InvitationDeliveryTest extends ValidationTestCase {
+@Mixin(ValidationTestCase)
+class InvitationDeliveryTest extends GroovyTestCase {
+
+  @Override
+  protected void setUp() {
+    super.setUp()
+    init()
+  }
 
   void test1() {
     assertThat validate(new InvitationDelivery(state: null)), hasSize(4)

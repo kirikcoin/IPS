@@ -1,8 +1,10 @@
 package mobi.eyeline.ips.util;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -128,5 +130,15 @@ public class ListUtils {
 
   private static <T> Predicate<T> skipNothing() {
     return Predicates.alwaysFalse();
+  }
+
+  public static <X, Y> Function<X, Y> functionCast() {
+    return new Function<X, Y>() {
+      @SuppressWarnings("unchecked")
+      @Override
+      public Y apply(X input) {
+        return (Y) input;
+      }
+    };
   }
 }

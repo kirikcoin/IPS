@@ -8,8 +8,8 @@ import static mobi.eyeline.ips.utils.SurveyBuilder.surveys
 
 class SampleAnswers {
 
-  def survey = { int id -> surveyRepository.load(id) as Survey }
-  def respondent = { int id -> respondentRepository.load(id) as Respondent }
+  Survey survey(int id) { surveyRepository.load(id) as Survey }
+  Respondent respondent(int id) { respondentRepository.load(id) as Respondent }
 
   final Date now = new Date(1401715950_000)
 

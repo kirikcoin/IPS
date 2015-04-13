@@ -81,7 +81,7 @@ class SurveyBuilder {
 
     Question question(Map _) {
       surveyContext.bind(add(new Question(_))) {
-        surveyContext.enclosing.questions << it
+        surveyContext.enclosing.pages << it
         it.survey = surveyContext.enclosing
       }
     }

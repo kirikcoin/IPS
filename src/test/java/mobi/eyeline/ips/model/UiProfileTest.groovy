@@ -3,7 +3,14 @@ package mobi.eyeline.ips.model
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
 
-class UiProfileTest extends ValidationTestCase {
+@Mixin(ValidationTestCase)
+class UiProfileTest extends GroovyTestCase {
+
+  @Override
+  protected void setUp() {
+    super.setUp()
+    init()
+  }
 
   void test1() {
 
