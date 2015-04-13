@@ -13,8 +13,7 @@ import java.util.List;
  * author: Denis Enenko
  * date: 21.01.2014
  */
-public class RequestParam
-{
+public class RequestParam {
   private final HttpServletRequest request;
 
   public static final DateFormat inDF = new SimpleDateFormat("dd-MM-yyyy");
@@ -100,7 +99,7 @@ public class RequestParam
     }
 
     public boolean asBool(boolean def) {
-      if  (val == null)
+      if (val == null)
         return def;
       else
         return ("TRUE".equalsIgnoreCase(val) || "YES".equalsIgnoreCase(val) || "T".equalsIgnoreCase(val) || "Y".equalsIgnoreCase(val) || "ON".equalsIgnoreCase(val));

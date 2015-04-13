@@ -18,49 +18,49 @@ import java.util.Map;
 
 public class EsdpSoapApi {
 
-    private static final Logger logger = LoggerFactory.getLogger(EsdpSoapApi.class);
+  private static final Logger logger = LoggerFactory.getLogger(EsdpSoapApi.class);
 
-    private final EsdpServiceManager soapApi;
+  private final EsdpServiceManager soapApi;
 
-    public EsdpSoapApi(Config config, String login, String passwordHash) {
-        try {
-            soapApi = initServiceManager(config);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Configuration error", e);
-        }
-
-        setCredentials(soapApi, login, passwordHash);
+  public EsdpSoapApi(Config config, String login, String passwordHash) {
+    try {
+      soapApi = initServiceManager(config);
+    } catch (MalformedURLException e) {
+      throw new RuntimeException("Configuration error", e);
     }
 
-    private EsdpServiceManager initServiceManager(Config config) throws MalformedURLException {
-        final String wsdlLocation = config.getEsdpEndpointUrl();
-        logger.info("Using service endpoint URL = [" + wsdlLocation + "]");
+    setCredentials(soapApi, login, passwordHash);
+  }
 
-        final URL url = new URL(EsdpServiceManagerService.class.getResource("."), wsdlLocation);
+  private EsdpServiceManager initServiceManager(Config config) throws MalformedURLException {
+    final String wsdlLocation = config.getEsdpEndpointUrl();
+    logger.info("Using service endpoint URL = [" + wsdlLocation + "]");
 
-        final QName serviceName =
-                new QName("http://api.web.esdp.eyeline.mobi/", "EsdpServiceManagerService");
-        final EsdpServiceManagerService esdpServiceManagerService =
-                new EsdpServiceManagerService(url, serviceName);
+    final URL url = new URL(EsdpServiceManagerService.class.getResource("."), wsdlLocation);
 
-        return esdpServiceManagerService.getEsdpServiceManagerPort();
-    }
+    final QName serviceName =
+        new QName("http://api.web.esdp.eyeline.mobi/", "EsdpServiceManagerService");
+    final EsdpServiceManagerService esdpServiceManagerService =
+        new EsdpServiceManagerService(url, serviceName);
 
-    private void setCredentials(EsdpServiceManager esdpServiceManager,
-                                String login,
-                                String passwordHash) {
+    return esdpServiceManagerService.getEsdpServiceManagerPort();
+  }
 
-        final Map<String, Object> reqContext =
-                ((BindingProvider) esdpServiceManager).getRequestContext();
+  private void setCredentials(EsdpServiceManager esdpServiceManager,
+                              String login,
+                              String passwordHash) {
 
-        Map<String, List<String>> headers = new HashMap<>();
+    final Map<String, Object> reqContext =
+        ((BindingProvider) esdpServiceManager).getRequestContext();
 
-        headers.put("X-API-Login", Collections.singletonList(login));
-        headers.put("X-API-Password", Collections.singletonList(passwordHash));
-        reqContext.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
-    }
+    Map<String, List<String>> headers = new HashMap<>();
 
-    public EsdpServiceManager getSoapApi() {
-        return soapApi;
-    }
+    headers.put("X-API-Login", Collections.singletonList(login));
+    headers.put("X-API-Password", Collections.singletonList(passwordHash));
+    reqContext.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
+  }
+
+  public EsdpServiceManager getSoapApi() {
+    return soapApi;
+  }
 }

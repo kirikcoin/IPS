@@ -7,22 +7,22 @@ import org.hibernate.context.internal.ThreadLocalSessionContext
 
 abstract class DbTestCase extends GroovyTestCase {
 
-    protected DB db
+  protected DB db
 
-    private Transaction tx
+  private Transaction tx
 
-    void setUp() {
-        db = new DB(new Properties())
+  void setUp() {
+    db = new DB(new Properties())
 
-        final Session session = db.sessionFactory.openSession()
-        ThreadLocalSessionContext.bind(session)
-        tx = session.beginTransaction()
+    final Session session = db.sessionFactory.openSession()
+    ThreadLocalSessionContext.bind(session)
+    tx = session.beginTransaction()
 
-        HashUtilsSupport.init()
-    }
+    HashUtilsSupport.init()
+  }
 
-    void tearDown() {
-        tx.commit()
-        db.sessionFactory.close()
-    }
+  void tearDown() {
+    tx.commit()
+    db.sessionFactory.close()
+  }
 }

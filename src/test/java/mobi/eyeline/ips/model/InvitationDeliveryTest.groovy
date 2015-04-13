@@ -7,92 +7,92 @@ import static org.hamcrest.Matchers.hasSize
 
 class InvitationDeliveryTest extends ValidationTestCase {
 
-    void test1() {
-        assertThat validate(new InvitationDelivery(state: null)), hasSize(4)
-    }
+  void test1() {
+    assertThat validate(new InvitationDelivery(state: null)), hasSize(4)
+  }
 
-    void test2() {
-        def delivery = new InvitationDelivery(
-                type: NI_DIALOG,
-                state: ACTIVE,
-                inputFile: 'txt.txt',
-                speed: 1,
-                text: 'a' * 200)
-        def violations = validate delivery
-        assertEquals 'text', violations[0].propertyPath.first().name
-    }
+  void test2() {
+    def delivery = new InvitationDelivery(
+        type: NI_DIALOG,
+        state: ACTIVE,
+        inputFile: 'txt.txt',
+        speed: 1,
+        text: 'a' * 200)
+    def violations = validate delivery
+    assertEquals 'text', violations[0].propertyPath.first().name
+  }
 
-    void test3() {
-        def delivery = new InvitationDelivery(
-                type: NI_DIALOG,
-                state: ACTIVE,
-                inputFile: 'txt.txt',
-                speed: 200,
-                text: 'a')
-        def violations = validate delivery
-        assertEquals 'speed', violations[0].propertyPath.first().name
+  void test3() {
+    def delivery = new InvitationDelivery(
+        type: NI_DIALOG,
+        state: ACTIVE,
+        inputFile: 'txt.txt',
+        speed: 200,
+        text: 'a')
+    def violations = validate delivery
+    assertEquals 'speed', violations[0].propertyPath.first().name
 
-        delivery = new InvitationDelivery(
-                type: NI_DIALOG,
-                state: ACTIVE,
-                inputFile: 'txt.txt',
-                speed: -1,
-                text: 'a')
-        violations = validate delivery
-        assertEquals 'speed', violations[0].propertyPath.first().name
-    }
+    delivery = new InvitationDelivery(
+        type: NI_DIALOG,
+        state: ACTIVE,
+        inputFile: 'txt.txt',
+        speed: -1,
+        text: 'a')
+    violations = validate delivery
+    assertEquals 'speed', violations[0].propertyPath.first().name
+  }
 
-    void test4(){
-        def delivery = new InvitationDelivery(
-                type: NI_DIALOG,
-                state: ACTIVE,
-                inputFile: 'txt.txt',
-                speed: 50,
-                text: 'a',
-                retriesIntervalMinutes: 0,
-                retriesNumber: 0)
-        def violations = validate delivery
-        assertThat violations, hasSize(2)
+  void test4() {
+    def delivery = new InvitationDelivery(
+        type: NI_DIALOG,
+        state: ACTIVE,
+        inputFile: 'txt.txt',
+        speed: 50,
+        text: 'a',
+        retriesIntervalMinutes: 0,
+        retriesNumber: 0)
+    def violations = validate delivery
+    assertThat violations, hasSize(2)
 
-        delivery = new InvitationDelivery(
-                type: NI_DIALOG,
-                state: ACTIVE,
-                inputFile: 'txt.txt',
-                speed: 50,
-                text: 'a',
-                retriesIntervalMinutes: 70,
-                retriesNumber: 60)
-        violations = validate delivery
-        assertThat violations, hasSize(2)
-    }
+    delivery = new InvitationDelivery(
+        type: NI_DIALOG,
+        state: ACTIVE,
+        inputFile: 'txt.txt',
+        speed: 50,
+        text: 'a',
+        retriesIntervalMinutes: 70,
+        retriesNumber: 60)
+    violations = validate delivery
+    assertThat violations, hasSize(2)
+  }
 
-    void test5() {
-        def delivery = new InvitationDelivery(
-                type: NI_DIALOG,
-                state: ACTIVE,
-                inputFile: 'txt.txt',
-                speed: 50,
-                text: 'a',
-                retriesEnabled: false,
-                retriesIntervalMinutes: null,
-                retriesNumber: null)
+  void test5() {
+    def delivery = new InvitationDelivery(
+        type: NI_DIALOG,
+        state: ACTIVE,
+        inputFile: 'txt.txt',
+        speed: 50,
+        text: 'a',
+        retriesEnabled: false,
+        retriesIntervalMinutes: null,
+        retriesNumber: null)
 
-        def violations = validate delivery
-        assertThat violations, hasSize(0)
+    def violations = validate delivery
+    assertThat violations, hasSize(0)
 
-        delivery = new InvitationDelivery(
-                type: NI_DIALOG,
-                state: ACTIVE,
-                inputFile: 'txt.txt',
-                speed: 50,
-                text: 'a',
-                retriesEnabled: true,
-                retriesIntervalMinutes: null,
-                retriesNumber: null)
+    delivery = new InvitationDelivery(
+        type: NI_DIALOG,
+        state: ACTIVE,
+        inputFile: 'txt.txt',
+        speed: 50,
+        text: 'a',
+        retriesEnabled: true,
+        retriesIntervalMinutes: null,
+        retriesNumber: null)
 
-        violations = validate delivery
-        assertThat violations, hasSize(1)
+    violations = validate delivery
+    assertThat violations, hasSize(1)
 
-    }
+  }
 
 }

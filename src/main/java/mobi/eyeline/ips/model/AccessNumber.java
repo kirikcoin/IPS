@@ -18,49 +18,49 @@ import javax.validation.constraints.Pattern;
 @Proxy(lazy = false)
 public class AccessNumber {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @Column(name = "number")
-    @MaxSize(30)
-    @NotNull(message = "{survey.validation.access.number.invalid}")
-    @Pattern(regexp = "[1-9\\.\\+\\*][0-9\\.\\+\\*#]+", message = "{survey.validation.access.number.invalid}")
-    private String number;
+  @Column(name = "number")
+  @MaxSize(30)
+  @NotNull(message = "{survey.validation.access.number.invalid}")
+  @Pattern(regexp = "[1-9\\.\\+\\*][0-9\\.\\+\\*#]+", message = "{survey.validation.access.number.invalid}")
+  private String number;
 
-    @OneToOne(mappedBy = "accessNumber", optional = true)
-    private SurveyStats surveyStats;
+  @OneToOne(mappedBy = "accessNumber", optional = true)
+  private SurveyStats surveyStats;
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public String getNumber() {
-        return number;
-    }
+  public String getNumber() {
+    return number;
+  }
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+  public void setNumber(String number) {
+    this.number = number;
+  }
 
-    public SurveyStats getSurveyStats() {
-        return surveyStats;
-    }
+  public SurveyStats getSurveyStats() {
+    return surveyStats;
+  }
 
-    public void setSurveyStats(SurveyStats survey) {
-        this.surveyStats = survey;
-    }
+  public void setSurveyStats(SurveyStats survey) {
+    this.surveyStats = survey;
+  }
 
-    @Override
-    public String toString() {
-        return "AccessNumber{" +
-                "id=" + id +
-                ", number='" + number + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "AccessNumber{" +
+        "id=" + id +
+        ", number='" + number + '\'' +
+        '}';
+  }
 }

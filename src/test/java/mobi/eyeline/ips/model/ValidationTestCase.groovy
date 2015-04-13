@@ -6,14 +6,14 @@ import javax.validation.Validation
 import javax.validation.Validator
 
 abstract class ValidationTestCase extends GroovyTestCase {
-    protected Validator validator
+  protected Validator validator
 
-    public void setUp() {
-        validator = Validation.buildDefaultValidatorFactory().validator
+  public void setUp() {
+    validator = Validation.buildDefaultValidatorFactory().validator
 
-        HashUtilsSupport.init()
+    HashUtilsSupport.init()
 
-    }
+  }
 
-    def validate = {validator.validate it}
+  def validate = { validator.validate it }
 }

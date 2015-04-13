@@ -6,11 +6,11 @@ import org.hibernate.tool.hbm2ddl.SchemaExport
 import static org.hibernate.tool.hbm2ddl.Target.SCRIPT
 
 def configuration = new Configuration()
-        .configure("/hibernate-model.cfg.xml")
-        .configure()
+    .configure("/hibernate-model.cfg.xml")
+    .configure()
 
 new SchemaExport(configuration).with {
-    delimiter = ";"
-    outputFile = "ips_schema.sql"
-    create(SCRIPT)
+  delimiter = ";"
+  outputFile = "ips_schema.sql"
+  create(SCRIPT)
 }

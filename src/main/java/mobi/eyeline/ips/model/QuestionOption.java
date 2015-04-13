@@ -30,123 +30,123 @@ import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 @Cache(usage = READ_WRITE)
 public class QuestionOption implements Serializable {
 
-    /**
-     * Идентификатор ответа.
-     */
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  /**
+   * Идентификатор ответа.
+   */
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    /**
-     * Текст ответа.
-     */
-    @Column(name = "answer", columnDefinition = "TEXT", nullable = false)
-    @NotEmpty(message = "{question.option.answer.empty}")
-    @MaxSize(70)
-    private String answer;
+  /**
+   * Текст ответа.
+   */
+  @Column(name = "answer", columnDefinition = "TEXT", nullable = false)
+  @NotEmpty(message = "{question.option.answer.empty}")
+  @MaxSize(70)
+  private String answer;
 
-    /**
-     * Порядок отображения вопроса в опросе.
-     */
-    @Column(name = "option_order")
-    private int order;
+  /**
+   * Порядок отображения вопроса в опросе.
+   */
+  @Column(name = "option_order")
+  private int order;
 
-    @JoinColumn(name = "next_question")
-    @OneToOne(optional = true)
-    private Question nextQuestion = null;
+  @JoinColumn(name = "next_question")
+  @OneToOne(optional = true)
+  private Question nextQuestion = null;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "question_id")
-    private Question question;
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "question_id")
+  private Question question;
 
-    /**
-     * При удалении вариант ответа помечается флагом {@code active = false} в БД и
-     * перестает отображаться в веб-интерфейсе.
-     */
-    @Column(name = "active", columnDefinition = "BIT")
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean active = true;
+  /**
+   * При удалении вариант ответа помечается флагом {@code active = false} в БД и
+   * перестает отображаться в веб-интерфейсе.
+   */
+  @Column(name = "active", columnDefinition = "BIT")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean active = true;
 
-    public QuestionOption() {
+  public QuestionOption() {
+  }
+
+  void prepareIndex() {
+    if (getQuestion() != null) {
+      order = getQuestion().getOptions().indexOf(this);
     }
+  }
 
-    void prepareIndex() {
-        if (getQuestion() != null) {
-            order = getQuestion().getOptions().indexOf(this);
-        }
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public String getAnswer() {
+    return answer;
+  }
 
-    public String getAnswer() {
-        return answer;
-    }
+  public void setAnswer(String answer) {
+    this.answer = answer;
+  }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
+  public int getOrder() {
+    return order;
+  }
 
-    public int getOrder() {
-        return order;
-    }
+  public int getActiveIndex() {
+    return getQuestion().getActiveOptions().indexOf(this);
+  }
 
-    public int getActiveIndex() {
-        return getQuestion().getActiveOptions().indexOf(this);
-    }
+  public Question getQuestion() {
+    return question;
+  }
 
-    public Question getQuestion() {
-        return question;
-    }
+  public void setQuestion(Question question) {
+    this.question = question;
+  }
 
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
+  public boolean isActive() {
+    return active;
+  }
 
-    public boolean isActive() {
-        return active;
-    }
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+  public void moveTo(int idx) {
+    ListUtils.moveTo(getQuestion().getOptions(), this, idx, SKIP_INACTIVE);
+  }
 
-    public void moveTo(int idx) {
-        ListUtils.moveTo(getQuestion().getOptions(), this, idx, SKIP_INACTIVE);
-    }
+  public Question getNextQuestion() {
+    return nextQuestion;
+  }
 
-    public Question getNextQuestion() {
-        return nextQuestion;
-    }
+  public void setNextQuestion(Question nextQuestion) {
+    this.nextQuestion = nextQuestion;
+  }
 
-    public void setNextQuestion(Question nextQuestion) {
-        this.nextQuestion = nextQuestion;
-    }
+  @Override
+  public String toString() {
+    return "QuestionOption{" +
+        "id=" + id +
+        ", answer='" + answer + '\'' +
+        '}';
+  }
 
+
+  //
+  //
+  //
+
+  public static final Predicate<QuestionOption> SKIP_INACTIVE = new Predicate<QuestionOption>() {
     @Override
-    public String toString() {
-        return "QuestionOption{" +
-                "id=" + id +
-                ", answer='" + answer + '\'' +
-                '}';
+    public boolean apply(QuestionOption option) {
+      return !option.isActive();
     }
-
-
-    //
-    //
-    //
-
-    public static final Predicate<QuestionOption> SKIP_INACTIVE = new Predicate<QuestionOption>() {
-        @Override
-        public boolean apply(QuestionOption option) {
-            return !option.isActive();
-        }
-    };
+  };
 
 }

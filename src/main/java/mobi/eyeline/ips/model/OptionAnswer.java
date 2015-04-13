@@ -13,24 +13,24 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue("option_answer")
 public class OptionAnswer extends Answer {
 
-    /**
-     * Вариант ответа на вопрос.
-     */
-    @JoinColumn(name = "option_id")
-    @ManyToOne(optional = true)
-    @NotNull(message = "{answer.validation.option.empty}")
-    private QuestionOption option;
+  /**
+   * Вариант ответа на вопрос.
+   */
+  @JoinColumn(name = "option_id")
+  @ManyToOne(optional = true)
+  @NotNull(message = "{answer.validation.option.empty}")
+  private QuestionOption option;
 
-    public QuestionOption getOption() {
-        return option;
-    }
+  public QuestionOption getOption() {
+    return option;
+  }
 
-    public void setOption(QuestionOption option) {
-        this.option = option;
-    }
+  public void setOption(QuestionOption option) {
+    this.option = option;
+  }
 
-    @Override
-    public String getAnswer() {
-        return option.getAnswer();
-    }
+  @Override
+  public String getAnswer() {
+    return option.getAnswer();
+  }
 }

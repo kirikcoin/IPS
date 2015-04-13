@@ -9,6 +9,6 @@ import javax.faces.bean.SessionScoped
 @ManagedBean(name = "logoBean", eager = true)
 @SessionScoped
 class LogoBean implements Serializable {
-    byte[] bytes
+  byte[] bytes
 
 }

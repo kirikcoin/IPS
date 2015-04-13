@@ -9,9 +9,9 @@ import javax.faces.bean.ManagedBean
 @ManagedBean(name = "baseSurveyController")
 class BaseSurveyController extends BaseSurveyReadOnlyController {
 
-    Survey persistedSurvey
+  Survey persistedSurvey
 
-    BaseSurveyController() {
-        persistedSurvey = surveyRepository.load(surveyId)
-    }
+  BaseSurveyController() {
+    persistedSurvey = surveyRepository.load(surveyId)
+  }
 }

@@ -9,9 +9,13 @@ import static junit.framework.TestCase.fail
 @InheritConstructors
 class MockTemplateService extends TemplateService {
 
-    String formatUserRegistration(User user, String rawPassword) { fail() }
-    String formatUserModified(User user) { fail() }
-    String formatUserDeactivation(User user) { fail() }
-    String formatUserActivation(User user) { fail() }
-    String formatPasswordRestore(User user, String rawNewPassword) { fail() }
+  String formatUserRegistration(User user, String rawPassword) { fail() }
+
+  String formatUserModified(User user) { fail() }
+
+  String formatUserDeactivation(User user) { fail() }
+
+  String formatUserActivation(User user) { fail() }
+
+  String formatPasswordRestore(User user, String rawNewPassword) { fail() }
 }

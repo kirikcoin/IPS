@@ -17,31 +17,31 @@ import javax.faces.model.SelectItem
 @ManagedBean(name = "clientController")
 class ClientController extends BaseController {
 
-    private final UserRepository userRepository = Services.instance().userRepository
+  private final UserRepository userRepository = Services.instance().userRepository
 
-    /**
-     * List of clients to associate w/ survey.
-     */
-    List<SelectItem> getClients(User currentManager) {
-        if (currentManager.role != Role.MANAGER) {
-            logger.error "Non-manager account requested client list, user = [$currentManager]"
-            throw new AssertionError()
-        }
-
-        return userRepository
-                .listClients(currentManager.showAllClients ? null : currentManager)
-                .findAll { !it.blocked }
-                .collect { new SelectItem(it.id, it.fullName) }
+  /**
+   * List of clients to associate w/ survey.
+   */
+  List<SelectItem> getClients(User currentManager) {
+    if (currentManager.role != Role.MANAGER) {
+      logger.error "Non-manager account requested client list, user = [$currentManager]"
+      throw new AssertionError()
     }
 
-    @SuppressWarnings("GrMethodMayBeStatic")
-    List<SelectItem> getLocales() {
-        def localeName = { IpsLocale ipsLocale ->
-            ResourceBundle
-                    .getBundle('ips', ipsLocale.asLocale())
-                    .getString('locale.name.select')
-        }
+    return userRepository
+        .listClients(currentManager.showAllClients ? null : currentManager)
+        .findAll { !it.blocked }
+        .collect { new SelectItem(it.id, it.fullName) }
+  }
 
-        return IpsLocale.values().collect { IpsLocale it -> new SelectItem(it, localeName(it)) }
+  @SuppressWarnings("GrMethodMayBeStatic")
+  List<SelectItem> getLocales() {
+    def localeName = { IpsLocale ipsLocale ->
+      ResourceBundle
+          .getBundle('ips', ipsLocale.asLocale())
+          .getString('locale.name.select')
     }
+
+    return IpsLocale.values().collect { IpsLocale it -> new SelectItem(it, localeName(it)) }
+  }
 }

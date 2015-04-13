@@ -7,35 +7,35 @@ import static org.hamcrest.Matchers.not
 
 class SurveyTest extends ValidationTestCase {
 
-    void test1() {
-        assertThat validate(survey()), not(empty())
-    }
+  void test1() {
+    assertThat validate(survey()), not(empty())
+  }
 
-    void test2() {
-        def survey = survey(
-                startDate: Date.parse('HH:mm', '01:00'), 
-                endDate: Date.parse('HH:mm', '00:00'))
+  void test2() {
+    def survey = survey(
+        startDate: Date.parse('HH:mm', '01:00'),
+        endDate: Date.parse('HH:mm', '00:00'))
 
-        assertThat validate(survey), not(empty())
-    }
+    assertThat validate(survey), not(empty())
+  }
 
-    void test3() {
-        assertThat validate(survey()), not(empty())
-    }
+  void test3() {
+    assertThat validate(survey()), not(empty())
+  }
 
-    void testValid1() {
-        def survey = survey(
-                startDate: Date.parse('HH:mm', '00:00'), 
-                endDate: Date.parse('HH:mm', '01:00'))
-        
-        assertThat validate(survey), empty()
-    }
+  void testValid1() {
+    def survey = survey(
+        startDate: Date.parse('HH:mm', '00:00'),
+        endDate: Date.parse('HH:mm', '01:00'))
 
-    void testValid2() {
-        def survey = survey(
-                startDate: Date.parse('HH:mm', '00:00'),
-                endDate: Date.parse('HH:mm', '00:00'))
+    assertThat validate(survey), empty()
+  }
 
-        assertThat validate(survey), empty()
-    }
+  void testValid2() {
+    def survey = survey(
+        startDate: Date.parse('HH:mm', '00:00'),
+        endDate: Date.parse('HH:mm', '00:00'))
+
+    assertThat validate(survey), empty()
+  }
 }

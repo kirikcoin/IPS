@@ -24,204 +24,205 @@ import static org.hamcrest.Matchers.instanceOf
 @Mixin([RepositoryMock, UssdServiceUtils])
 class UssdServiceCouponTest extends DbTestCase {
 
-    Config config
+  Config config
+
+  // Dependencies
+
+  SurveyService surveyService
+  PushService pushService
+  MockMailService mailService
+  CouponService couponService
+
+  UssdService ussdService
+
+  final String msisdn = '123'
+  final String sid = '1'
+
+  void setUp() {
+    super.setUp()
+
+    initRepository(db)
+
+    // Configuration
+    config = new DefaultMockConfig()
 
     // Dependencies
+    surveyService = new SurveyService(
+        surveyRepository, questionRepository, questionOptionRepository,
+        surveyInvitationRepository,
+        invitationDeliveryRepository)
 
-    SurveyService surveyService
-    PushService pushService
-    MockMailService mailService
-    CouponService couponService
+    pushService = new PushService(config, new EsdpServiceSupport(null) {
+      @Override
+      String getServiceUrl(Survey survey) { "http://sads/push?id=$survey.id" }
+    }) {
+      def textSent = []
 
-    UssdService ussdService
-
-    final String msisdn    = '123'
-    final String sid       = '1'
-
-    void setUp() {
-        super.setUp()
-
-        initRepository(db)
-
-        // Configuration
-        config = new DefaultMockConfig()
-
-        // Dependencies
-        surveyService = new SurveyService(
-                surveyRepository, questionRepository, questionOptionRepository,
-                surveyInvitationRepository,
-                invitationDeliveryRepository)
-
-        pushService = new PushService(config, new EsdpServiceSupport(null) {
-            @Override String getServiceUrl(Survey survey) { "http://sads/push?id=$survey.id" }
-        }) {
-            def textSent = []
-
-            @Override
-            void scheduleSendSms(Survey survey, String from, String text, String msisdn) {
-                textSent << text
-            }
-        }
-        mailService = new MockMailService()
-        couponService = new CouponService(surveyPatternRepository, mailService)
-
-        ussdService = new UssdService(
-                config,
-                surveyService,
-                pushService,
-                couponService,
-                surveyRepository,
-                respondentRepository,
-                answerRepository,
-                questionRepository,
-                questionOptionRepository)
+      @Override
+      void scheduleSendSms(Survey survey, String from, String text, String msisdn) {
+        textSent << text
+      }
     }
+    mailService = new MockMailService()
+    couponService = new CouponService(surveyPatternRepository, mailService)
 
-    def survey = { surveyRepository.load(sid.toInteger()) }
+    ussdService = new UssdService(
+        config,
+        surveyService,
+        pushService,
+        couponService,
+        surveyRepository,
+        respondentRepository,
+        answerRepository,
+        questionRepository,
+        questionOptionRepository)
+  }
 
-    void createTestSurvey() {
-        def survey = new Survey(startDate: new Date() - 2, endDate: new Date() + 2)
-        survey.details = new SurveyDetails(
-                survey: survey,
-                title: 'Foo',
-                endText: 'End text',
-                endSmsEnabled: true,
-                endSmsText: '[coupon]')
-        surveyRepository.save survey
+  def survey = { surveyRepository.load(sid.toInteger()) }
 
-        def pattern =
-                new SurveyPattern(survey: survey, length: 4, mode: DIGITS_AND_LATIN, active: true)
-        surveyPatternRepository.save(pattern)
+  void createTestSurvey() {
+    def survey = new Survey(startDate: new Date() - 2, endDate: new Date() + 2)
+    survey.details = new SurveyDetails(
+        survey: survey,
+        title: 'Foo',
+        endText: 'End text',
+        endSmsEnabled: true,
+        endSmsText: '[coupon]')
+    surveyRepository.save survey
+
+    def pattern =
+        new SurveyPattern(survey: survey, length: 4, mode: DIGITS_AND_LATIN, active: true)
+    surveyPatternRepository.save(pattern)
+  }
+
+  void test1() {
+    createTestSurvey()
+
+    // Same respondent gets single coupon.
+
+    request([
+        (PARAM_MSISDN)   : msisdn,
+        (PARAM_SURVEY_ID): sid
+    ]).with {
+      assertEquals survey().details.endText, text
+      assertThat it, instanceOf(UssdResponseModel.TextUssdResponseModel)
+
+      it
     }
+    assertEquals(['CNZZ'], pushService.textSent)
 
-    void test1() {
-        createTestSurvey()
+    request([
+        (PARAM_MSISDN)   : msisdn,
+        (PARAM_SURVEY_ID): sid
+    ])
 
-        // Same respondent gets single coupon.
+    assertEquals(['CNZZ', 'CNZZ'], pushService.textSent)
+  }
 
-        request([
-                (PARAM_MSISDN):    msisdn,
-                (PARAM_SURVEY_ID): sid
-        ]).with {
-            assertEquals survey().details.endText, text
-            assertThat it, instanceOf(UssdResponseModel.TextUssdResponseModel)
+  void test2() {
+    createTestSurvey()
 
-            it
-        }
-        assertEquals(['CNZZ'], pushService.textSent)
+    // Distinct respondents get different coupons.
 
-        request([
-                (PARAM_MSISDN):    msisdn,
-                (PARAM_SURVEY_ID): sid
-        ])
+    request([
+        (PARAM_MSISDN)   : '123',
+        (PARAM_SURVEY_ID): sid
+    ])
+    assertEquals(['CNZZ'], pushService.textSent)
 
-        assertEquals(['CNZZ', 'CNZZ'], pushService.textSent)
-    }
+    request([
+        (PARAM_MSISDN)   : '456',
+        (PARAM_SURVEY_ID): sid
+    ])
 
-    void test2() {
-        createTestSurvey()
+    assertEquals(['CNZZ', 'CT6O'], pushService.textSent)
+  }
 
-        // Distinct respondents get different coupons.
+  void test3() {
+    createTestSurvey()
 
-        request([
-                (PARAM_MSISDN):    '123',
-                (PARAM_SURVEY_ID): sid
-        ])
-        assertEquals(['CNZZ'], pushService.textSent)
+    // Check if multiple generators present.
 
-        request([
-                (PARAM_MSISDN):    '456',
-                (PARAM_SURVEY_ID): sid
-        ])
+    def survey = survey()
+    survey.patterns.each { p -> p.active = false }
+    surveyRepository.update survey
 
-        assertEquals(['CNZZ', 'CT6O'], pushService.textSent)
-    }
+    survey.patterns <<
+        new SurveyPattern(survey: survey, length: 6, mode: DIGITS, active: true)
+    surveyRepository.update survey
 
-    void test3() {
-        createTestSurvey()
+    request([
+        (PARAM_MSISDN)   : '123',
+        (PARAM_SURVEY_ID): sid
+    ])
+    assertEquals(['399999'], pushService.textSent)
 
-        // Check if multiple generators present.
+    request([
+        (PARAM_MSISDN)   : '456',
+        (PARAM_SURVEY_ID): sid
+    ])
 
-        def survey = survey()
-        survey.patterns.each { p -> p.active = false }
-        surveyRepository.update survey
+    assertEquals(['399999', '401440'], pushService.textSent)
+  }
 
-        survey.patterns <<
-                new SurveyPattern(survey: survey, length: 6, mode: DIGITS, active: true)
-        surveyRepository.update survey
+  void test4() {
+    createTestSurvey()
 
-        request([
-                (PARAM_MSISDN):    '123',
-                (PARAM_SURVEY_ID): sid
-        ])
-        assertEquals(['399999'], pushService.textSent)
+    // Check if multiple generators present
 
-        request([
-                (PARAM_MSISDN):    '456',
-                (PARAM_SURVEY_ID): sid
-        ])
+    def survey = survey()
+    survey.patterns.clear()
+    surveyRepository.update survey
 
-        assertEquals(['399999', '401440'], pushService.textSent)
-    }
+    User manager = new User(login: 'jdoe',
+        password: '123'.pw(),
+        email: 'username@example.com',
+        fullName: 'John Doe',
+        role: Role.MANAGER,
+        uiProfile: new UiProfile())
 
-    void test4() {
-        createTestSurvey()
+    User client = new User(
+        id: 1,
+        password: '123',
+        login: 'client',
+        fullName: 'client',
+        email: 'client@example.com',
+        role: Role.CLIENT,
+        manager: manager)
 
-        // Check if multiple generators present
+    userRepository.save manager
+    userRepository.save client
+    survey.client = client
 
-        def survey = survey()
-        survey.patterns.clear()
-        surveyRepository.update survey
+    survey.patterns <<
+        new SurveyPattern(
+            survey: survey,
+            length: 2,
+            mode: DIGITS,
+            position: 80,
+            active: true)
+    surveyRepository.update survey
 
-        User manager = new User(login: 'jdoe',
-                                password: '123'.pw(),
-                                email: 'username@example.com',
-                                fullName: 'John Doe',
-                                role: Role.MANAGER,
-                                uiProfile: new UiProfile())
+    // Respondent-1
 
-        User client = new User(
-                id: 1,
-                password: '123',
-                login: 'client',
-                fullName: 'client',
-                email: 'client@example.com',
-                role: Role.CLIENT,
-                manager: manager )
+    request([
+        (PARAM_MSISDN)   : '123',
+        (PARAM_SURVEY_ID): sid
+    ])
+    assertEquals(['59'], pushService.textSent)
 
-        userRepository.save manager
-        userRepository.save client
-        survey.client = client
+    assertThat mailService.calledMethods, hasSize(1)
+    assertEquals 'sendCouponRemaining', mailService.calledMethods[0][0]
 
-        survey.patterns <<
-                new SurveyPattern(
-                        survey: survey,
-                        length: 2,
-                        mode: DIGITS,
-                        position: 80,
-                        active: true)
-        surveyRepository.update survey
+    // Respondent-2
 
-        // Respondent-1
+    request([
+        (PARAM_MSISDN)   : '456',
+        (PARAM_SURVEY_ID): sid
+    ])
+    assertEquals(['59', '30'], pushService.textSent)
 
-        request([
-                (PARAM_MSISDN):    '123',
-                (PARAM_SURVEY_ID): sid
-        ])
-        assertEquals(['59'], pushService.textSent)
-
-        assertThat mailService.calledMethods, hasSize(1)
-        assertEquals 'sendCouponRemaining', mailService.calledMethods[0][0]
-
-        // Respondent-2
-
-        request([
-                (PARAM_MSISDN):    '456',
-                (PARAM_SURVEY_ID): sid
-        ])
-        assertEquals(['59', '30'], pushService.textSent)
-
-        assertThat mailService.calledMethods, hasSize(2)
-        assertEquals 'sendCouponRemaining', mailService.calledMethods[1][0]
-    }
+    assertThat mailService.calledMethods, hasSize(2)
+    assertEquals 'sendCouponRemaining', mailService.calledMethods[1][0]
+  }
 }

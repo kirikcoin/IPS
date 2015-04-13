@@ -12,19 +12,19 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 @FacesValidator("email")
 public class EmailValidator implements Validator {
 
-    @Override
-    public void validate(FacesContext context, UIComponent component, Object value)
-            throws ValidatorException {
+  @Override
+  public void validate(FacesContext context, UIComponent component, Object value)
+      throws ValidatorException {
 
-        if (!isValid((value == null) ? null : value.toString())) {
-            throw new ValidatorException(new FacesMessage());
-        }
+    if (!isValid((value == null) ? null : value.toString())) {
+      throw new ValidatorException(new FacesMessage());
     }
+  }
 
-    public static boolean isValid(String email) {
-        final org.hibernate.validator.internal.constraintvalidators.EmailValidator delegate =
-                new org.hibernate.validator.internal.constraintvalidators.EmailValidator();
+  public static boolean isValid(String email) {
+    final org.hibernate.validator.internal.constraintvalidators.EmailValidator delegate =
+        new org.hibernate.validator.internal.constraintvalidators.EmailValidator();
 
-        return isNotEmpty(email) && delegate.isValid(email, null);
-    }
+    return isNotEmpty(email) && delegate.isValid(email, null);
+  }
 }

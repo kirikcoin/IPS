@@ -12,7 +12,18 @@ import org.hibernate.annotations.Proxy;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.AssertTrue;
 import java.io.Serializable;
@@ -31,226 +42,226 @@ import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 @Cache(usage = READ_WRITE)
 public class Question implements Serializable {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "survey_id")
-    private Survey survey;
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "survey_id")
+  private Survey survey;
 
-    /**
-     * Текст вопроса, отображается для респондентов.
-     */
-    @Column(name = "title", nullable = false)
-    @NotEmpty(message = "{question.validation.title.empty}")
-    @MaxSize(70)
-    private String title;
+  /**
+   * Текст вопроса, отображается для респондентов.
+   */
+  @Column(name = "title", nullable = false)
+  @NotEmpty(message = "{question.validation.title.empty}")
+  @MaxSize(70)
+  private String title;
 
-    /**
-     * Варианты ответа на вопрос.
-     */
-    @OneToMany(mappedBy = "question", cascade = ALL, orphanRemoval = true)
-    @OrderColumn(name = "option_order")
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @Valid
-    @Cache(usage = READ_WRITE)
-    private List<QuestionOption> options = new ArrayList<>();
+  /**
+   * Варианты ответа на вопрос.
+   */
+  @OneToMany(mappedBy = "question", cascade = ALL, orphanRemoval = true)
+  @OrderColumn(name = "option_order")
+  @LazyCollection(LazyCollectionOption.FALSE)
+  @Valid
+  @Cache(usage = READ_WRITE)
+  private List<QuestionOption> options = new ArrayList<>();
 
-    /**
-     * Порядок отображения вопроса в опросе.
-     */
-    @Column(name = "question_order")
-    private int order;
+  /**
+   * Порядок отображения вопроса в опросе.
+   */
+  @Column(name = "question_order")
+  private int order;
 
-    /**
-     * При удалении вопрос помечается флагом {@code active = false} в БД и
-     * перестает отображаться в веб-интерфейсе.
-     */
-    @Column(name = "active", columnDefinition = "BIT")
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean active = true;
+  /**
+   * При удалении вопрос помечается флагом {@code active = false} в БД и
+   * перестает отображаться в веб-интерфейсе.
+   */
+  @Column(name = "active", columnDefinition = "BIT")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean active = true;
 
-    /**
-     * Количество отправок данного вопроса респондентам.
-     */
-    @Column(name = "sent_count")
-    private int sentCount;
+  /**
+   * Количество отправок данного вопроса респондентам.
+   */
+  @Column(name = "sent_count")
+  private int sentCount;
 
-    /**
-     * Разрешить ответ по-умолчанию.
-     */
-    @Column(name = "enabled_default_answer", columnDefinition = "BIT")
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean enabledDefaultAnswer;
+  /**
+   * Разрешить ответ по-умолчанию.
+   */
+  @Column(name = "enabled_default_answer", columnDefinition = "BIT")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean enabledDefaultAnswer;
 
-    /**
-     * Опция для вопроса по умолчанию. Если введён некорректный вариант ответа, следующим будет данный вопрос.
-     */
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "default_question_id")
-    private Question defaultQuestion;
+  /**
+   * Опция для вопроса по умолчанию. Если введён некорректный вариант ответа, следующим будет данный вопрос.
+   */
+  @ManyToOne(optional = true)
+  @JoinColumn(name = "default_question_id")
+  private Question defaultQuestion;
 
-    @PrePersist
-    @PreUpdate
-    void prepareIndex() {
-        if (getSurvey() != null) {
-            order = getSurvey().getQuestions().indexOf(this);
-        }
-
-        for (QuestionOption option : getOptions()) {
-            option.prepareIndex();
-        }
+  @PrePersist
+  @PreUpdate
+  void prepareIndex() {
+    if (getSurvey() != null) {
+      order = getSurvey().getQuestions().indexOf(this);
     }
 
-    public Question() {
+    for (QuestionOption option : getOptions()) {
+      option.prepareIndex();
     }
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public Question() {
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public Survey getSurvey() {
-        return survey;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public void setSurvey(Survey survey) {
-        this.survey = survey;
-    }
+  public Survey getSurvey() {
+    return survey;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public void setSurvey(Survey survey) {
+    this.survey = survey;
+  }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public List<QuestionOption> getOptions() {
-        return options;
-    }
+  public void setTitle(String title) {
+    this.title = title;
+  }
 
-
-    public List<QuestionOption> getActiveOptions() {
-        return newArrayList(filter(getOptions(), not(QuestionOption.SKIP_INACTIVE)));
-    }
-
-    public void setOptions(List<QuestionOption> options) {
-        this.options = options;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public int getActiveIndex() {
-        return getSurvey().getActiveQuestions().indexOf(this);
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public int getSentCount() {
-        return sentCount;
-    }
-
-    public void setSentCount(int sentCount) {
-        this.sentCount = sentCount;
-    }
-
-    public Question getNext() {
-        return ListUtils.getNext(getSurvey().getQuestions(), this, SKIP_INACTIVE);
-    }
-
-    public boolean isFirst() {
-        return ListUtils.isFirst(getSurvey().getQuestions(), this, SKIP_INACTIVE);
-    }
-
-    public boolean isLast() {
-        return ListUtils.isLast(getSurvey().getQuestions(), this, SKIP_INACTIVE);
-    }
-
-    public Question getDefaultQuestion() {
-        return defaultQuestion;
-    }
-
-    public void setDefaultQuestion(Question defaultQuestion) {
-        this.defaultQuestion = defaultQuestion;
-    }
-
-    public boolean isEnabledDefaultAnswer() {
-        return enabledDefaultAnswer;
-    }
-
-    public void setEnabledDefaultAnswer(boolean enabledDefaultAnswer) {
-        this.enabledDefaultAnswer = enabledDefaultAnswer;
-    }
-
-    // TODO: seems to be the only way to access this data from page markup.
-    // Is there another option?
-    public SegmentationService.SegmentationInfo getSegmentationInfo() {
-        return Services.instance().getSegmentationService().getSegmentationInfo(this);
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @AssertTrue(message = "{question.validation.default}")
-    private boolean isCorrectDefaultQuestion() {
-        return isEnabledDefaultAnswer() || (!isEnabledDefaultAnswer() && getDefaultQuestion() == null);
-    }
+  public List<QuestionOption> getOptions() {
+    return options;
+  }
 
 
-    @SuppressWarnings("UnusedDeclaration")
-    @AssertTrue(message = "{question.validation.options.empty}")
-    public boolean isValidOptions() {
-        return enabledDefaultAnswer || !getActiveOptions().isEmpty();
-    }
+  public List<QuestionOption> getActiveOptions() {
+    return newArrayList(filter(getOptions(), not(QuestionOption.SKIP_INACTIVE)));
+  }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                '}';
-    }
+  public void setOptions(List<QuestionOption> options) {
+    this.options = options;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Question)) return false;
+  public int getOrder() {
+    return order;
+  }
 
-        Question question = (Question) o;
+  public int getActiveIndex() {
+    return getSurvey().getActiveQuestions().indexOf(this);
+  }
 
-        return !(id != null ? !id.equals(question.id) : question.id != null);
+  public void setOrder(int order) {
+    this.order = order;
+  }
 
-    }
+  public boolean isActive() {
+    return active;
+  }
 
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
+  public void setActive(boolean active) {
+    this.active = active;
+  }
+
+  public int getSentCount() {
+    return sentCount;
+  }
+
+  public void setSentCount(int sentCount) {
+    this.sentCount = sentCount;
+  }
+
+  public Question getNext() {
+    return ListUtils.getNext(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+  }
+
+  public boolean isFirst() {
+    return ListUtils.isFirst(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+  }
+
+  public boolean isLast() {
+    return ListUtils.isLast(getSurvey().getQuestions(), this, SKIP_INACTIVE);
+  }
+
+  public Question getDefaultQuestion() {
+    return defaultQuestion;
+  }
+
+  public void setDefaultQuestion(Question defaultQuestion) {
+    this.defaultQuestion = defaultQuestion;
+  }
+
+  public boolean isEnabledDefaultAnswer() {
+    return enabledDefaultAnswer;
+  }
+
+  public void setEnabledDefaultAnswer(boolean enabledDefaultAnswer) {
+    this.enabledDefaultAnswer = enabledDefaultAnswer;
+  }
+
+  // TODO: seems to be the only way to access this data from page markup.
+  // Is there another option?
+  public SegmentationService.SegmentationInfo getSegmentationInfo() {
+    return Services.instance().getSegmentationService().getSegmentationInfo(this);
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  @AssertTrue(message = "{question.validation.default}")
+  private boolean isCorrectDefaultQuestion() {
+    return isEnabledDefaultAnswer() || (!isEnabledDefaultAnswer() && getDefaultQuestion() == null);
+  }
+
+
+  @SuppressWarnings("UnusedDeclaration")
+  @AssertTrue(message = "{question.validation.options.empty}")
+  public boolean isValidOptions() {
+    return enabledDefaultAnswer || !getActiveOptions().isEmpty();
+  }
+
+  @Override
+  public String toString() {
+    return "Question{" +
+        "id=" + id +
+        ", title='" + title + '\'' +
+        '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Question)) return false;
+
+    Question question = (Question) o;
+
+    return !(id != null ? !id.equals(question.id) : question.id != null);
+
+  }
+
+  @Override
+  public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+  }
 
 //
-    //
-    //
+  //
+  //
 
-    public static final Predicate<Question> SKIP_INACTIVE = new Predicate<Question>() {
-        @Override
-        public boolean apply(Question question) {
-            return !question.isActive();
-        }
-    };
+  public static final Predicate<Question> SKIP_INACTIVE = new Predicate<Question>() {
+    @Override
+    public boolean apply(Question question) {
+      return !question.isActive();
+    }
+  };
 }

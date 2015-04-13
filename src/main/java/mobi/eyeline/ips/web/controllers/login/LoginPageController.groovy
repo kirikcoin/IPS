@@ -9,17 +9,17 @@ import javax.faces.context.FacesContext
 @CompileStatic
 @ManagedBean(name = "login")
 class LoginPageController extends BaseController {
-    private boolean error
+  private boolean error
 
-    LoginPageController() {
-        def params =
-                FacesContext.currentInstance.externalContext.requestParameterMap
-        this.error = (params["loginError"] != null)
+  LoginPageController() {
+    def params =
+        FacesContext.currentInstance.externalContext.requestParameterMap
+    this.error = (params["loginError"] != null)
 
-    }
+  }
 
-    boolean isError() {
-        return error
-    }
+  boolean isError() {
+    return error
+  }
 
 }

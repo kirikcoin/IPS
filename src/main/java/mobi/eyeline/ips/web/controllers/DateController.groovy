@@ -8,6 +8,6 @@ import javax.faces.bean.ManagedBean
 @ManagedBean(name = "dateController")
 class DateController extends BaseController {
 
-    @SuppressWarnings("GrMethodMayBeStatic")
-    Date getNow() { new Date() }
+  @SuppressWarnings("GrMethodMayBeStatic")
+  Date getNow() { new Date() }
 }

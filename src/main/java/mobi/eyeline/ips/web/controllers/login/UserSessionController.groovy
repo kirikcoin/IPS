@@ -10,18 +10,25 @@ import javax.faces.bean.ManagedBean
 @ManagedBean(name = "userSession")
 class UserSessionController extends BaseController {
 
-    String logout() {
-        getHttpSession(false)?.invalidate()
-        return 'LOGIN'
-    }
+  String logout() {
+    getHttpSession(false)?.invalidate()
+    return 'LOGIN'
+  }
 
-    //
-    //  Authorization routines.
-    //
+  //
+  //  Authorization routines.
+  //
 
 
-    @Memoized boolean isSurveyModificationAllowed() { !isClientRole() }
-    @Memoized boolean isSurveyViewAllowed() { isClientRole() || isManagerRole() }
-    @Memoized boolean isInvitationDeliveryAllowed() { getCurrentUser().canSendInvitations }
-    @Memoized boolean isC2sAllowed() { getCurrentUser().showC2s }
+  @Memoized
+  boolean isSurveyModificationAllowed() { !isClientRole() }
+
+  @Memoized
+  boolean isSurveyViewAllowed() { isClientRole() || isManagerRole() }
+
+  @Memoized
+  boolean isInvitationDeliveryAllowed() { getCurrentUser().canSendInvitations }
+
+  @Memoized
+  boolean isC2sAllowed() { getCurrentUser().showC2s }
 }

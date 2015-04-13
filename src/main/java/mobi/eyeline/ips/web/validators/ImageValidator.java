@@ -10,20 +10,20 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public class ImageValidator {
 
-    private static final List<String> SUPPORTED_EXTENSIONS = asList("jpg", "jpeg", "png");
+  private static final List<String> SUPPORTED_EXTENSIONS = asList("jpg", "jpeg", "png");
 
-    /**
-     * @return {@code true} iff considered valid.
-     */
-    public boolean validate(String imageName) {
-        if (isEmpty(imageName)) {
-            return false;
-        }
-
-        final String ext = Files.getFileExtension(imageName);
-        final String name = Files.getNameWithoutExtension(imageName);
-
-        return isNotEmpty(ext) && isNotEmpty(name) &&
-                SUPPORTED_EXTENSIONS.contains(ext.toLowerCase());
+  /**
+   * @return {@code true} iff considered valid.
+   */
+  public boolean validate(String imageName) {
+    if (isEmpty(imageName)) {
+      return false;
     }
+
+    final String ext = Files.getFileExtension(imageName);
+    final String name = Files.getNameWithoutExtension(imageName);
+
+    return isNotEmpty(ext) && isNotEmpty(name) &&
+        SUPPORTED_EXTENSIONS.contains(ext.toLowerCase());
+  }
 }

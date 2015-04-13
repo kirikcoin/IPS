@@ -18,78 +18,78 @@ import javax.faces.model.SelectItem
 @ManagedBean(name = "profilePageController")
 class ProfileController extends BaseController {
 
-    private final UserRepository userRepository = Services.instance().userRepository
-    private final UserService userService = Services.instance().userService
+  private final UserRepository userRepository = Services.instance().userRepository
+  private final UserService userService = Services.instance().userService
 
-    User user
+  User user
 
-    String currentPassword
+  String currentPassword
 
-    String newPassword
-    String newPasswordConfirmation
-    LocaleController localeController
+  String newPassword
+  String newPasswordConfirmation
+  LocaleController localeController
 
-    boolean updateOk
+  boolean updateOk
 
-    ProfileController() {
-        user = getCurrentUser()
-        localeController = new LocaleController()
+  ProfileController() {
+    user = getCurrentUser()
+    localeController = new LocaleController()
+  }
+
+  void saveProfile() {
+    updateOk = true
+
+    updateOk &= validateModel()
+
+    if (!isPasswordIntact()) {
+      // Update user password if corresponding fields are filled in.
+      updateOk &= updatePassword()
     }
 
-    void saveProfile() {
-        updateOk = true
-
-        updateOk &= validateModel()
-
-        if (!isPasswordIntact()) {
-            // Update user password if corresponding fields are filled in.
-            updateOk &= updatePassword()
-        }
-
-        if (updateOk) {
-            userRepository.update(user)
-        }
-
-        localeController.changeLocale(user)
+    if (updateOk) {
+      userRepository.update(user)
     }
 
-    private boolean isPasswordIntact() {
-        currentPassword == null && newPassword == null && newPasswordConfirmation == null
+    localeController.changeLocale(user)
+  }
+
+  private boolean isPasswordIntact() {
+    currentPassword == null && newPassword == null && newPasswordConfirmation == null
+  }
+
+  private boolean updatePassword() {
+    if (!userService.checkPassword(user, currentPassword)) {
+      addErrorMessage(strings['profile.edit.password.invalid'], 'currentPassword')
+      return false
     }
 
-    private boolean updatePassword() {
-        if (!userService.checkPassword(user, currentPassword)) {
-            addErrorMessage(strings['profile.edit.password.invalid'], 'currentPassword')
-            return false
-        }
-
-        if (newPassword == null) {
-            // XXX: This case somehow passes validation.
-            // Why is validator not triggered for empty fields?
-            addErrorMessage(strings['profile.edit.message.password.required'], 'newPassword')
-            return false
-        }
-
-        if (newPassword != newPasswordConfirmation) {
-            addErrorMessage(
-                    strings['profile.edit.password.confirmation.mismatch'],
-                    'newPasswordConfirmation')
-            return false
-        }
-
-        user.password = HashUtils.hashPassword(newPassword)
-        return true
+    if (newPassword == null) {
+      // XXX: This case somehow passes validation.
+      // Why is validator not triggered for empty fields?
+      addErrorMessage(strings['profile.edit.message.password.required'], 'newPassword')
+      return false
     }
 
-    private boolean validateModel() {
-        def messages = validator.validate(user)
-        if (!userService.isEmailAllowed(user)) {
-            messages << new SimpleConstraintViolation<User>('email',
-                    strings['client.dialog.validation.email.exists'])
-        }
-
-        return !renderViolationMessage(messages as Set, [:], ['fullName', 'email', 'phoneNumber'])
+    if (newPassword != newPasswordConfirmation) {
+      addErrorMessage(
+          strings['profile.edit.password.confirmation.mismatch'],
+          'newPasswordConfirmation')
+      return false
     }
 
-    List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(getLocale()) }
+    user.password = HashUtils.hashPassword(newPassword)
+    return true
+  }
+
+  private boolean validateModel() {
+    def messages = validator.validate(user)
+    if (!userService.isEmailAllowed(user)) {
+      messages << new SimpleConstraintViolation<User>('email',
+          strings['client.dialog.validation.email.exists'])
+    }
+
+    return !renderViolationMessage(messages as Set, [:], ['fullName', 'email', 'phoneNumber'])
+  }
+
+  List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(getLocale()) }
 }

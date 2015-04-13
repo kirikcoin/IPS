@@ -16,81 +16,81 @@ import javax.faces.context.FacesContext
 @ManagedBean(name = "surveyResultsController")
 class SurveyResultsController extends BaseSurveyReadOnlyController {
 
-    private final AnswerRepository answerRepository = Services.instance().answerRepository
-    private final ResultsExportService resultsExportService = Services.instance().resultsExportService
+  private final AnswerRepository answerRepository = Services.instance().answerRepository
+  private final ResultsExportService resultsExportService = Services.instance().resultsExportService
 
-    Date periodStart = survey.startDate
-    Date periodEnd = survey.endDate
-    String filter
+  Date periodStart = survey.startDate
+  Date periodEnd = survey.endDate
+  String filter
 
-    final boolean hasCoupons = survey.activePattern != null
+  final boolean hasCoupons = survey.activePattern != null
 
-    DataTableModel getTableModel() {
-        return new DataTableModel() {
+  DataTableModel getTableModel() {
+    return new DataTableModel() {
 
-            @Override
-            List getRows(int startPos,
-                         int count,
-                         DataTableSortOrder sortOrder) {
+      @Override
+      List getRows(int startPos,
+                   int count,
+                   DataTableSortOrder sortOrder) {
 
-                return answerRepository.list(
-                        getSurvey(),
-                        periodStart,
-                        periodEnd,
-                        filter,
-                        sortOrder.columnId,
-                        sortOrder.asc,
-                        count,
-                        startPos)
-            }
+        return answerRepository.list(
+            getSurvey(),
+            periodStart,
+            periodEnd,
+            filter,
+            sortOrder.columnId,
+            sortOrder.asc,
+            count,
+            startPos)
+      }
 
-            @Override
-            int getRowsCount() {
-                return answerRepository.count(
-                        getSurvey(),
-                        periodStart,
-                        periodEnd,
-                        filter,
-                        null)
-            }
-        }
+      @Override
+      int getRowsCount() {
+        return answerRepository.count(
+            getSurvey(),
+            periodStart,
+            periodEnd,
+            filter,
+            null)
+      }
     }
+  }
 
 
-    @SuppressWarnings("GroovyUnusedDeclaration")
-    void downloadResults(FacesContext context, OutputStream os) {
-        def header = [
-                strings['results.list.csv.msisdn'],
-                strings['results.list.csv.question.number'],
-                strings['results.list.csv.question.text'],
-                strings['results.list.csv.questionoption.number'],
-                strings['results.list.csv.questionoption.text'],
-                strings['results.list.csv.date']
-        ]
+  @SuppressWarnings("GroovyUnusedDeclaration")
+  void downloadResults(FacesContext context, OutputStream os) {
+    def header = [
+        strings['results.list.csv.msisdn'],
+        strings['results.list.csv.question.number'],
+        strings['results.list.csv.question.text'],
+        strings['results.list.csv.questionoption.number'],
+        strings['results.list.csv.questionoption.text'],
+        strings['results.list.csv.date']
+    ]
 
-        resultsExportService.writeResultsCsv(
-                os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
-    }
+    resultsExportService.writeResultsCsv(
+        os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
+  }
 
-    @SuppressWarnings("GroovyUnusedDeclaration")
-    void downloadCoupons(FacesContext context, OutputStream os) {
-        def header = [
-                strings['results.list.csv.msisdn'],
-                strings['results.list.csv.coupon']
-        ]
+  @SuppressWarnings("GroovyUnusedDeclaration")
+  void downloadCoupons(FacesContext context, OutputStream os) {
+    def header = [
+        strings['results.list.csv.msisdn'],
+        strings['results.list.csv.coupon']
+    ]
 
-        resultsExportService.writeCouponsCsv(
-                os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
-    }
+    resultsExportService.writeCouponsCsv(
+        os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
+  }
 
-    @SuppressWarnings("GroovyUnusedDeclaration")
-    void downloadRespondents(FacesContext context, OutputStream os) {
-        def header = [
-                strings['results.list.csv.msisdn'],
-                strings['results.list.csv.start.date']
-        ]
+  @SuppressWarnings("GroovyUnusedDeclaration")
+  void downloadRespondents(FacesContext context, OutputStream os) {
+    def header = [
+        strings['results.list.csv.msisdn'],
+        strings['results.list.csv.start.date']
+    ]
 
-        resultsExportService.writeRespondentsCsv(
-                os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
-    }
+    resultsExportService.writeRespondentsCsv(
+        os, header, getSurvey(), periodStart, periodEnd, filter, getTimeZone(), getLocale())
+  }
 }

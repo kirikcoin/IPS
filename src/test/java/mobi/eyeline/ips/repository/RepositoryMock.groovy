@@ -6,35 +6,35 @@ package mobi.eyeline.ips.repository
  */
 class RepositoryMock {
 
-    //
-    //  All repository classes.
-    //
+  //
+  //  All repository classes.
+  //
 
-    UserRepository userRepository
-    RespondentRepository respondentRepository
-    SurveyStatsRepository surveyStatsRepository
-    SurveyRepository surveyRepository
-    QuestionRepository questionRepository
-    QuestionOptionRepository questionOptionRepository
-    AnswerRepository answerRepository
-    SurveyInvitationRepository surveyInvitationRepository
-    InvitationDeliveryRepository invitationDeliveryRepository
-    DeliverySubscriberRepository deliverySubscriberRepository
-    SurveyPatternRepository surveyPatternRepository
-    AccessNumberRepository accessNumberRepository
+  UserRepository userRepository
+  RespondentRepository respondentRepository
+  SurveyStatsRepository surveyStatsRepository
+  SurveyRepository surveyRepository
+  QuestionRepository questionRepository
+  QuestionOptionRepository questionOptionRepository
+  AnswerRepository answerRepository
+  SurveyInvitationRepository surveyInvitationRepository
+  InvitationDeliveryRepository invitationDeliveryRepository
+  DeliverySubscriberRepository deliverySubscriberRepository
+  SurveyPatternRepository surveyPatternRepository
+  AccessNumberRepository accessNumberRepository
 
-    void initRepository(db) {
-        userRepository = new UserRepository(db)
-        respondentRepository = new RespondentRepository(db)
-        questionRepository = new QuestionRepository(db)
-        surveyStatsRepository = new SurveyStatsRepository(db)
-        surveyRepository = new SurveyRepository(db)
-        questionOptionRepository = new QuestionOptionRepository(db)
-        answerRepository = new AnswerRepository(db)
-        surveyInvitationRepository = new SurveyInvitationRepository(db)
-        invitationDeliveryRepository = new InvitationDeliveryRepository(db)
-        deliverySubscriberRepository = new DeliverySubscriberRepository(db)
-        surveyPatternRepository = new SurveyPatternRepository(db)
-        accessNumberRepository = new AccessNumberRepository(db)
-    }
+  void initRepository(db) {
+    userRepository = new UserRepository(db)
+    respondentRepository = new RespondentRepository(db)
+    questionRepository = new QuestionRepository(db)
+    surveyStatsRepository = new SurveyStatsRepository(db)
+    surveyRepository = new SurveyRepository(db)
+    questionOptionRepository = new QuestionOptionRepository(db)
+    answerRepository = new AnswerRepository(db)
+    surveyInvitationRepository = new SurveyInvitationRepository(db)
+    invitationDeliveryRepository = new InvitationDeliveryRepository(db)
+    deliverySubscriberRepository = new DeliverySubscriberRepository(db)
+    surveyPatternRepository = new SurveyPatternRepository(db)
+    accessNumberRepository = new AccessNumberRepository(db)
+  }
 }

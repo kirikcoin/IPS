@@ -19,79 +19,83 @@ import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
 
 public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AccessNumberRepository.class);
+  private static final Logger logger = LoggerFactory.getLogger(AccessNumberRepository.class);
 
-    public AccessNumberRepository(DB db) {
-        super(db);
+  public AccessNumberRepository(DB db) {
+    super(db);
+  }
+
+  public List<AccessNumber> list(String filter,
+                                 String orderColumn,
+                                 boolean orderAsc,
+                                 int limit,
+                                 int offset) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = session.createCriteria(AccessNumber.class);
+
+    criteria.createAlias("surveyStats", "surveyStats", LEFT_OUTER_JOIN);
+    criteria.createAlias("surveyStats.survey", "survey", LEFT_OUTER_JOIN);
+    criteria.createAlias("survey.details", "details", LEFT_OUTER_JOIN);
+
+    if (isNotBlank(filter)) {
+      filter = filter.trim();
+
+      final Criterion filters = or(
+          EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE),
+          EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE)
+      );
+      criteria.add(filters);
     }
 
-    public List<AccessNumber> list(String filter,
-                                   String orderColumn,
-                                   boolean orderAsc,
-                                   int limit,
-                                   int offset) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(AccessNumber.class);
+    criteria.setFirstResult(offset).setMaxResults(limit);
 
-        criteria.createAlias("surveyStats", "surveyStats", LEFT_OUTER_JOIN);
-        criteria.createAlias("surveyStats.survey", "survey", LEFT_OUTER_JOIN);
-        criteria.createAlias("survey.details", "details", LEFT_OUTER_JOIN);
+    if (orderColumn != null) {
+      final String orderProperty;
+      switch (orderColumn) {
+        case "number":
+          orderProperty = "number";
+          break;
+        case "survey":
+          orderProperty = "details.title";
+          break;
+        default:
+          throw new RuntimeException("Unexpected sort column " + orderColumn);
+      }
 
-        if (isNotBlank(filter)) {
-            filter = filter.trim();
-
-            final Criterion filters = or(
-                    EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE),
-                    EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE)
-            );
-            criteria.add(filters);
-        }
-
-        criteria.setFirstResult(offset).setMaxResults(limit);
-
-        if (orderColumn != null) {
-            final String orderProperty;
-            switch (orderColumn) {
-                case "number":      orderProperty = "number";        break;
-                case "survey":      orderProperty = "details.title";  break;
-                default:
-                    throw new RuntimeException("Unexpected sort column " + orderColumn);
-            }
-
-            criteria.addOrder(orderAsc ? Order.asc(orderProperty) : Order.desc(orderProperty));
-        }
-
-        //noinspection unchecked
-        return (List<AccessNumber>) criteria.list();
+      criteria.addOrder(orderAsc ? Order.asc(orderProperty) : Order.desc(orderProperty));
     }
 
-    public int count(String filter) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(AccessNumber.class);
+    //noinspection unchecked
+    return (List<AccessNumber>) criteria.list();
+  }
 
-        criteria.createAlias("surveyStats", "surveyStats", LEFT_OUTER_JOIN);
-        criteria.createAlias("surveyStats.survey", "survey", LEFT_OUTER_JOIN);
-        criteria.createAlias("survey.details", "details", LEFT_OUTER_JOIN);
+  public int count(String filter) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = session.createCriteria(AccessNumber.class);
 
-        if (isNotBlank(filter)) {
-            filter = filter.trim();
+    criteria.createAlias("surveyStats", "surveyStats", LEFT_OUTER_JOIN);
+    criteria.createAlias("surveyStats.survey", "survey", LEFT_OUTER_JOIN);
+    criteria.createAlias("survey.details", "details", LEFT_OUTER_JOIN);
 
-            final Criterion filters = or(
-                    EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE),
-                    EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE)
-            );
-            criteria.add(filters);
-        }
+    if (isNotBlank(filter)) {
+      filter = filter.trim();
 
-        criteria.setProjection(Projections.rowCount());
-
-        return ((Number) criteria.uniqueResult()).intValue();
+      final Criterion filters = or(
+          EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE),
+          EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE)
+      );
+      criteria.add(filters);
     }
 
-    public AccessNumber find(String number) {
-        final Session session = getSessionFactory().getCurrentSession();
+    criteria.setProjection(Projections.rowCount());
 
-        final Criteria criteria = session.createCriteria(AccessNumber.class);
-        return (AccessNumber) criteria.add(eq("number", number)).uniqueResult();
-    }
+    return ((Number) criteria.uniqueResult()).intValue();
+  }
+
+  public AccessNumber find(String number) {
+    final Session session = getSessionFactory().getCurrentSession();
+
+    final Criteria criteria = session.createCriteria(AccessNumber.class);
+    return (AccessNumber) criteria.add(eq("number", number)).uniqueResult();
+  }
 }

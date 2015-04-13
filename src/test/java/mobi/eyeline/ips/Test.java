@@ -1,17 +1,17 @@
 package mobi.eyeline.ips;
 
 public class Test {
-    @org.junit.Test
-    public void test() {
+  @org.junit.Test
+  public void test() {
 
-        String s = "abc'";
+    String s = "abc'";
 
-        String jsValue = s;
-        jsValue = jsValue.replaceAll("\n", "\\\\n'");
-        jsValue = jsValue.replaceAll("\\\\", "\\\\\\\\");
-        jsValue = jsValue.replaceAll("'", "\\\\'");
+    String jsValue = s;
+    jsValue = jsValue.replaceAll("\n", "\\\\n'");
+    jsValue = jsValue.replaceAll("\\\\", "\\\\\\\\");
+    jsValue = jsValue.replaceAll("'", "\\\\'");
 
 
-        System.out.println("jsValue = '" + jsValue + "'");
-    }
+    System.out.println("jsValue = '" + jsValue + "'");
+  }
 }

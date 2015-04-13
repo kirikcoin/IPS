@@ -27,7 +27,7 @@ public abstract class ResourcePool<T> {
    * Executes an action using one of the guarded resources, waits for availability if needed.
    *
    * @throws InterruptedException If interrupted while waiting for resource availability
-   * @throws Exception Exceptions raised in the supplied action are re-thrown.
+   * @throws Exception            Exceptions raised in the supplied action are re-thrown.
    */
   public final <V> V execute(ResourceCallable<V, T> action) throws Exception {
     final T instance = resources.take();

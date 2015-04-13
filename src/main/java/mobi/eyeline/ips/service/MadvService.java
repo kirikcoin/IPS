@@ -8,23 +8,23 @@ import java.util.List;
 
 public class MadvService {
 
-    public int countViews(CampaignsSoapImpl soapApi,
-                          int campaignId) {
-        int count = 0;
+  public int countViews(CampaignsSoapImpl soapApi,
+                        int campaignId) {
+    int count = 0;
 
-        final List<DeliveryInfo> listDeliveries = soapApi.listDeliveries(campaignId);
-        if (listDeliveries != null) {
-            for (DeliveryInfo delivery : listDeliveries) {
-                count += delivery.getImpressionsCount();
-            }
-        }
-
-        final List<BannerInfo> listBanners = soapApi.listBanners(campaignId);
-        if (listBanners != null) {
-            for (BannerInfo banner : listBanners) {
-                count += banner.getImpressionsCount();
-            }
-        }
-        return count;
+    final List<DeliveryInfo> listDeliveries = soapApi.listDeliveries(campaignId);
+    if (listDeliveries != null) {
+      for (DeliveryInfo delivery : listDeliveries) {
+        count += delivery.getImpressionsCount();
+      }
     }
+
+    final List<BannerInfo> listBanners = soapApi.listBanners(campaignId);
+    if (listBanners != null) {
+      for (BannerInfo banner : listBanners) {
+        count += banner.getImpressionsCount();
+      }
+    }
+    return count;
+  }
 }

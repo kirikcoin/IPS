@@ -24,74 +24,75 @@ import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 @Cache(usage = READ_WRITE)
 public class SurveyInvitation implements Serializable {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    /**
-     * Количество разосланных приглашений.
-     */
-    @Column(name = "value", nullable = false)
-    @Min(value = 1, message = "{invitations.value.invalid}")
-    private int value;
+  /**
+   * Количество разосланных приглашений.
+   */
+  @Column(name = "value", nullable = false)
+  @Min(value = 1, message = "{invitations.value.invalid}")
+  private int value;
 
-    /**
-     * Дата отправки приглашений.
-     */
-    @Column(name = "date", nullable = false)
-    @NotNull(message = "{invitations.date.null}")
-    private Date date;
+  /**
+   * Дата отправки приглашений.
+   */
+  @Column(name = "date", nullable = false)
+  @NotNull(message = "{invitations.date.null}")
+  private Date date;
 
-    @JoinColumn(name = "survey_id")
-    @GeneratedValue(generator = "gen")
-    @GenericGenerator(
-            name = "gen",
-            strategy = "foreign",
-            parameters = @Parameter(name = "property", value = "survey"))
-    @ManyToOne(optional = false)
-    private Survey survey;
+  @JoinColumn(name = "survey_id")
+  @GeneratedValue(generator = "gen")
+  @GenericGenerator(
+      name = "gen",
+      strategy = "foreign",
+      parameters = @Parameter(name = "property", value = "survey"))
+  @ManyToOne(optional = false)
+  private Survey survey;
 
-    public SurveyInvitation() {}
+  public SurveyInvitation() {
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public int getValue() {
-        return value;
-    }
+  public int getValue() {
+    return value;
+  }
 
-    public void setValue(int value) {
-        this.value = value;
-    }
+  public void setValue(int value) {
+    this.value = value;
+  }
 
-    public Date getDate() {
-        return date;
-    }
+  public Date getDate() {
+    return date;
+  }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    public Survey getSurvey() {
-        return survey;
-    }
+  public Survey getSurvey() {
+    return survey;
+  }
 
-    public void setSurvey(Survey survey) {
-        this.survey = survey;
-    }
+  public void setSurvey(Survey survey) {
+    this.survey = survey;
+  }
 
-    @Override
-    public String toString() {
-        return "SurveyInvitation{" +
-                "id=" + id +
-                ", value=" + value +
-                ", date=" + date +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "SurveyInvitation{" +
+        "id=" + id +
+        ", value=" + value +
+        ", date=" + date +
+        '}';
+  }
 }

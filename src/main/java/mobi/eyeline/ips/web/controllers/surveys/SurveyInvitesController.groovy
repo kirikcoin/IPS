@@ -22,135 +22,136 @@ import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 @ManagedBean(name = "surveyInvitesController")
 class SurveyInvitesController extends BaseController {
 
-    private final SurveyInvitationRepository surveyInvitationRepository =
-            Services.instance().surveyInvitationRepository
-    private final SurveyRepository surveyRepository = Services.instance().surveyRepository
-    private final MadvUpdateService madvUpdateService = Services.instance().madvUpdateService
+  private final SurveyInvitationRepository surveyInvitationRepository =
+      Services.instance().surveyInvitationRepository
+  private final SurveyRepository surveyRepository = Services.instance().surveyRepository
+  private final MadvUpdateService madvUpdateService = Services.instance().madvUpdateService
 
-    // MADV campaign
-    String madvId
-    boolean madvIdError
+  // MADV campaign
+  String madvId
+  boolean madvIdError
 
-    // Invitations
-    Date inviteDate = new Date()
-    String newInviteDate
-    String inviteValue
-    boolean inviteError
+  // Invitations
+  Date inviteDate = new Date()
+  String newInviteDate
+  String inviteValue
+  boolean inviteError
 
-    @Delegate
-    BaseSurveyReadOnlyController surveys =
-            beanByName('baseSurveyReadOnlyController', BaseSurveyReadOnlyController)
+  @Delegate
+  BaseSurveyReadOnlyController surveys =
+      beanByName('baseSurveyReadOnlyController', BaseSurveyReadOnlyController)
 
-    SurveyInvitesController() {
-        madvId = survey.statistics.campaign
+  SurveyInvitesController() {
+    madvId = survey.statistics.campaign
 
-        newInviteDate = formatDateTime(inviteDate, getTimeZone())
-    }
+    newInviteDate = formatDateTime(inviteDate, getTimeZone())
+  }
 
-    boolean isCampaignDefined() { survey.statistics.campaign != null }
+  boolean isCampaignDefined() { survey.statistics.campaign != null }
 
-    DataTableModel getTableModel() {
-        return new DataTableModel() {
-            @Override
-            List getRows(int offset,
-                         int limit,
-                         DataTableSortOrder sortOrder) {
+  DataTableModel getTableModel() {
+    return new DataTableModel() {
+      @Override
+      List getRows(int offset,
+                   int limit,
+                   DataTableSortOrder sortOrder) {
 
-                final List<SurveyInvitation> list = surveyInvitationRepository.list(
-                            getSurvey(),
-                            sortOrder.columnId,
-                            sortOrder.asc,
-                            limit,
-                            offset)
+        final List<SurveyInvitation> list = surveyInvitationRepository.list(
+            getSurvey(),
+            sortOrder.columnId,
+            sortOrder.asc,
+            limit,
+            offset)
 
-                return list.collect {
-                    new TableItem(
-                            id: it.id,
-                            date: it.date,
-                            value: it.value
-                    )
-                }
-            }
-
-            @Override
-            int getRowsCount() {
-                surveyInvitationRepository.count(getSurvey())
-            }
+        return list.collect {
+          new TableItem(
+              id: it.id,
+              date: it.date,
+              value: it.value
+          )
         }
+      }
+
+      @Override
+      int getRowsCount() {
+        surveyInvitationRepository.count(getSurvey())
+      }
+    }
+  }
+
+  void addInvite() {
+    int inviteValueInt = 0
+    try {
+      inviteValueInt = Integer.parseInt(inviteValue)
+    } catch (Exception ignored) {
     }
 
-    void addInvite() {
-        int inviteValueInt = 0
-        try {
-            inviteValueInt = Integer.parseInt(inviteValue)
-        } catch (Exception ignored) {}
+    def invite = new SurveyInvitation(
+        survey: surveyRepository.load(surveyId),
+        date: inviteDate,
+        value: inviteValueInt)
 
-        def invite = new SurveyInvitation(
-                survey: surveyRepository.load(surveyId),
-                date: inviteDate,
-                value: inviteValueInt)
-
-        inviteError = renderViolationMessage(validator.validate(invite), [
-                'date': 'inviteDate',
-                'value': 'inviteValue'
-        ])
-        if (!inviteError) {
-            surveyInvitationRepository.save(invite)
-        }
+    inviteError = renderViolationMessage(validator.validate(invite), [
+        'date' : 'inviteDate',
+        'value': 'inviteValue'
+    ])
+    if (!inviteError) {
+      surveyInvitationRepository.save(invite)
     }
+  }
 
-    void deleteInvite() {
-        int id = getParamValue("inviteId").asInteger()
-        surveyInvitationRepository.delete(surveyInvitationRepository.load(id))
+  void deleteInvite() {
+    int id = getParamValue("inviteId").asInteger()
+    surveyInvitationRepository.delete(surveyInvitationRepository.load(id))
+  }
+
+  void onMadvEditSave() {
+    if (StringUtils.isNumeric(madvId)) {
+      survey.statistics.with {
+        campaign = madvId
+        sentCount = 0
+        lastUpdate = null
+        updateStatus = UNDEFINED
+      }
+      surveyRepository.update(survey)
+      madvUpdateService.runNow(survey.id)
+
+      madvIdError = false
+
+    } else {
+      addErrorMessage(
+          strings['invitations.block.advertising.company.dialog.id.error'],
+          'newIdentifier')
+      madvIdError = true
     }
+  }
 
-    void onMadvEditSave() {
-        if (StringUtils.isNumeric(madvId)) {
-            survey.statistics.with {
-                campaign = madvId
-                sentCount = 0
-                lastUpdate = null
-                updateStatus = UNDEFINED
-            }
-            surveyRepository.update(survey)
-            madvUpdateService.runNow(survey.id)
+  void onMadvEditCancel() {
+    madvId = survey.statistics.campaign
+  }
 
-            madvIdError = false
-
-        } else {
-            addErrorMessage(
-                    strings['invitations.block.advertising.company.dialog.id.error'],
-                    'newIdentifier')
-            madvIdError = true
-        }
+  void clearMadvId() {
+    survey.statistics.with {
+      campaign = null
+      sentCount = 0
+      lastUpdate = null
+      updateStatus = UNDEFINED
     }
+    surveyRepository.update(survey)
 
-    void onMadvEditCancel() {
-        madvId = survey.statistics.campaign
-    }
+    madvId = null
+  }
 
-    void clearMadvId() {
-        survey.statistics.with {
-            campaign = null
-            sentCount = 0
-            lastUpdate = null
-            updateStatus = UNDEFINED
-        }
-        surveyRepository.update(survey)
+  void updateSentCount() { madvUpdateService.runNow() }
 
-        madvId = null
-    }
+  int getTotalInvitations() {
+    surveyInvitationRepository.list(survey).collect { it.value }.sum(0) as int
+  }
 
-    void updateSentCount() { madvUpdateService.runNow() }
-
-    int getTotalInvitations() {
-        surveyInvitationRepository.list(survey).collect { it.value }.sum(0) as int
-    }
-
-    static class TableItem implements Serializable {
-        int id
-        Date date
-        int value
-    }
+  static class TableItem implements Serializable {
+    int id
+    Date date
+    int value
+  }
 
 }

@@ -5,18 +5,18 @@ package mobi.eyeline.ips.generators;
  */
 public interface Pattern {
 
-    /**
-     * Bijection {@code [0..N-1] -> L}.
-     */
-    CharSequence convert(long number);
+  /**
+   * Bijection {@code [0..N-1] -> L}.
+   */
+  CharSequence convert(long number);
 
-    /**
-     * Bijection {@code L -> [0..N-1]}.
-     */
-    long convert(CharSequence value);
+  /**
+   * Bijection {@code L -> [0..N-1]}.
+   */
+  long convert(CharSequence value);
 
-    /**
-     * @return Range upper threshold aka {@code N}.
-     */
-    long getCapacity();
+  /**
+   * @return Range upper threshold aka {@code N}.
+   */
+  long getCapacity();
 }

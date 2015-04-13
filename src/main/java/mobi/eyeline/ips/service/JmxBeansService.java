@@ -26,105 +26,106 @@ import java.net.UnknownHostException;
 
 public class JmxBeansService {
 
-    private static final Logger logger = LoggerFactory.getLogger(JmxBeansService.class);
+  private static final Logger logger = LoggerFactory.getLogger(JmxBeansService.class);
 
-    private static JmxBeansService instance;
+  private static JmxBeansService instance;
 
-    private JmxServer jmxServer;
+  private JmxServer jmxServer;
 
 
-    public static synchronized void initialize(Config config) {
-        if (instance != null) {
-            throw new AssertionError("Instance is already initialized");
-        }
-
-        instance = new JmxBeansService(config);
+  public static synchronized void initialize(Config config) {
+    if (instance != null) {
+      throw new AssertionError("Instance is already initialized");
     }
 
-    private JmxBeansService(Config config) {
-        if (!config.isJmxEnabled()) {
-            logger.info("JMX disabled");
-            return;
-        }
+    instance = new JmxBeansService(config);
+  }
 
-        // This effectively uses the same port for RMI registry and RMI server.
-        jmxServer = new JmxServer(config.getJmxPort());
-
-        // Handle callbacks for NATs, host parameter is optional.
-        if (config.getJmxHost() != null) {
-            try {
-                jmxServer.setInetAddress(Inet4Address.getByName(config.getJmxHost()));
-            } catch (UnknownHostException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        final Services services = Services.instance();
-        try {
-            // Start own MBean server bypassing the one (possibly) created by JVM.
-            jmxServer.start();
-            jmxServer.register(services.getDeliveryService());
-            jmxServer.register(services.getNotificationService());
-            jmxServer.register(services.getEsdpService());
-
-        } catch (JMException e) {
-            logger.error("JMX initialization failed", e);
-        }
-
-        try {
-            initHibernate(Services.instance().getDb().getSessionFactory());
-        } catch (InstanceAlreadyExistsException |
-                MBeanRegistrationException |
-                MalformedObjectNameException |
-                NotCompliantMBeanException e) {
-            logger.error("Hibernate JMX error", e);
-        }
-
-        initEhcache();
+  private JmxBeansService(Config config) {
+    if (!config.isJmxEnabled()) {
+      logger.info("JMX disabled");
+      return;
     }
 
-    public static JmxBeansService getInstance() {
-        return instance;
+    // This effectively uses the same port for RMI registry and RMI server.
+    jmxServer = new JmxServer(config.getJmxPort());
+
+    // Handle callbacks for NATs, host parameter is optional.
+    if (config.getJmxHost() != null) {
+      try {
+        jmxServer.setInetAddress(Inet4Address.getByName(config.getJmxHost()));
+      } catch (UnknownHostException e) {
+        throw new RuntimeException(e);
+      }
     }
 
-    public void stop() {
-        if (jmxServer != null) {
-            jmxServer.stop();
-        }
+    final Services services = Services.instance();
+    try {
+      // Start own MBean server bypassing the one (possibly) created by JVM.
+      jmxServer.start();
+      jmxServer.register(services.getDeliveryService());
+      jmxServer.register(services.getNotificationService());
+      jmxServer.register(services.getEsdpService());
+
+    } catch (JMException e) {
+      logger.error("JMX initialization failed", e);
     }
 
-    private void initHibernate(SessionFactory sessionFactory)
-            throws NotCompliantMBeanException, InstanceAlreadyExistsException,
-            MBeanRegistrationException, MalformedObjectNameException {
-
-        final ObjectName statsName = new ObjectName("org.hibernate:type=statistics");
-        final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
-
-        final Statistics statistics = sessionFactory.getStatistics();
-        statistics.setStatisticsEnabled(true);
-
-        final InvocationHandler handler = new InvocationHandler() {
-            @Override
-            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                return method.invoke(statistics, args);
-            }
-        };
-
-        final Object statisticsMBean = Proxy.newProxyInstance(
-                getClass().getClassLoader(),
-                new Class<?>[] { StatisticsMXBean.class },
-                handler);
-
-        mbeanServer.registerMBean(statisticsMBean, statsName);
+    try {
+      initHibernate(Services.instance().getDb().getSessionFactory());
+    } catch (InstanceAlreadyExistsException |
+        MBeanRegistrationException |
+        MalformedObjectNameException |
+        NotCompliantMBeanException e) {
+      logger.error("Hibernate JMX error", e);
     }
 
-    private void initEhcache() {
-        final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+    initEhcache();
+  }
 
-        final CacheManager manager = CacheManager.getInstance();
-        ManagementService.registerMBeans(manager, mbeanServer, true, true, false, true);
+  public static JmxBeansService getInstance() {
+    return instance;
+  }
+
+  public void stop() {
+    if (jmxServer != null) {
+      jmxServer.stop();
     }
+  }
 
-    @MXBean
-    public static interface StatisticsMXBean extends Statistics {}
+  private void initHibernate(SessionFactory sessionFactory)
+      throws NotCompliantMBeanException, InstanceAlreadyExistsException,
+      MBeanRegistrationException, MalformedObjectNameException {
+
+    final ObjectName statsName = new ObjectName("org.hibernate:type=statistics");
+    final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+
+    final Statistics statistics = sessionFactory.getStatistics();
+    statistics.setStatisticsEnabled(true);
+
+    final InvocationHandler handler = new InvocationHandler() {
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        return method.invoke(statistics, args);
+      }
+    };
+
+    final Object statisticsMBean = Proxy.newProxyInstance(
+        getClass().getClassLoader(),
+        new Class<?>[]{StatisticsMXBean.class},
+        handler);
+
+    mbeanServer.registerMBean(statisticsMBean, statsName);
+  }
+
+  private void initEhcache() {
+    final MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+
+    final CacheManager manager = CacheManager.getInstance();
+    ManagementService.registerMBeans(manager, mbeanServer, true, true, false, true);
+  }
+
+  @MXBean
+  public static interface StatisticsMXBean extends Statistics {
+  }
 }

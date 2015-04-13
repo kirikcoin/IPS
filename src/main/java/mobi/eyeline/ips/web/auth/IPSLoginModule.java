@@ -16,59 +16,59 @@ import java.util.Map;
  * date: 20.01.2014
  */
 public class IPSLoginModule implements LoginModule {
-    private Subject subject;
-    private CallbackHandler callbackHandler;
+  private Subject subject;
+  private CallbackHandler callbackHandler;
 
-    private String password;
-    private String name;
+  private String password;
+  private String name;
 
 
-    @Override
-    public boolean abort() throws LoginException {
-        return true;
+  @Override
+  public boolean abort() throws LoginException {
+    return true;
+  }
+
+  @Override
+  public boolean commit() throws LoginException {
+    final IPSAuthenticator auth = new IPSAuthenticator();
+    final User user = auth.findUser(name, password);
+    if (user == null) {
+      return false;
     }
 
-    @Override
-    public boolean commit() throws LoginException {
-        final IPSAuthenticator auth = new IPSAuthenticator();
-        final User user = auth.findUser(name, password);
-        if (user == null) {
-            return false;
-        }
+    subject.getPrincipals().add(new WebUser(name, user.getId()));
+    subject.getPrincipals().add(new WebRole(user.getRole().getName()));
+    return true;
+  }
 
-        subject.getPrincipals().add(new WebUser(name, user.getId()));
-        subject.getPrincipals().add(new WebRole(user.getRole().getName()));
-        return true;
+  @Override
+  public void initialize(Subject subject,
+                         CallbackHandler callbackHandler,
+                         Map<String, ?> sharedState,
+                         Map<String, ?> options) {
+
+    this.subject = subject;
+    this.callbackHandler = callbackHandler;
+  }
+
+  @Override
+  public boolean login() throws LoginException {
+    NameCallback name = new NameCallback("User name");
+    PasswordCallback password = new PasswordCallback("Password", true);
+    try {
+      this.callbackHandler.handle(new Callback[]{name, password});
+      this.name = name.getName();
+      this.password = new String(password.getPassword());
+
+    } catch (Exception e) {
+      throw new LoginException(e.getMessage());
     }
 
-    @Override
-    public void initialize(Subject subject,
-                           CallbackHandler callbackHandler,
-                           Map<String, ?> sharedState,
-                           Map<String, ?> options) {
+    return true;
+  }
 
-        this.subject = subject;
-        this.callbackHandler = callbackHandler;
-    }
-
-    @Override
-    public boolean login() throws LoginException {
-        NameCallback name = new NameCallback("User name");
-        PasswordCallback password = new PasswordCallback("Password", true);
-        try {
-            this.callbackHandler.handle(new Callback[] {name, password});
-            this.name = name.getName();
-            this.password = new String(password.getPassword());
-
-        } catch (Exception e) {
-            throw new LoginException(e.getMessage());
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean logout() throws LoginException {
-        return true;
-    }
+  @Override
+  public boolean logout() throws LoginException {
+    return true;
+  }
 }

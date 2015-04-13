@@ -24,159 +24,158 @@ import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 @ManagedBean(name = "surveyListController")
 class SurveyListController extends BaseController {
 
-    private final SurveyRepository surveyRepository = Services.instance().surveyRepository
-    private final UserRepository userRepository = Services.instance().userRepository
+  private final SurveyRepository surveyRepository = Services.instance().surveyRepository
+  private final UserRepository userRepository = Services.instance().userRepository
 
-    private final EsdpService esdpService = Services.instance().esdpService
-    private final SurveyService surveyService = Services.instance().surveyService
-    private final TimeZoneService timeZoneService = Services.instance().timeZoneService
+  private final EsdpService esdpService = Services.instance().esdpService
+  private final SurveyService surveyService = Services.instance().surveyService
+  private final TimeZoneService timeZoneService = Services.instance().timeZoneService
 
-    //
-    //  List
-    //
+  //
+  //  List
+  //
 
-    String search
+  String search
 
+  //
+  //  New survey creation.
+  //
 
-    //
-    //  New survey creation.
-    //
+  String newSurveyTitle
 
-    String newSurveyTitle
+  Date newSurveyStartDate
+  Date newSurveyEndDate
 
-    Date newSurveyStartDate
-    Date newSurveyEndDate
+  String newSurveyStartDateOrig
+  String newSurveyEndDateOrig
 
-    String newSurveyStartDateOrig
-    String newSurveyEndDateOrig
+  Integer newSurveyClientId
 
-    Integer newSurveyClientId
+  boolean newSurveyValidationError = false
 
-    boolean newSurveyValidationError = false
+  SurveyListController() {
+    def now = new Date()
+    newSurveyStartDate =
+        new Date((now + 1).clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
+    newSurveyEndDate = newSurveyStartDate + 7
 
-    SurveyListController() {
-        def now = new Date()
-        newSurveyStartDate =
-                new Date((now + 1).clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
-        newSurveyEndDate = newSurveyStartDate + 7
+    newSurveyStartDateOrig = formatDateTime(newSurveyStartDate, getTimeZone())
+    newSurveyEndDateOrig = formatDateTime(newSurveyEndDate, getTimeZone())
+  }
 
-        newSurveyStartDateOrig = formatDateTime(newSurveyStartDate, getTimeZone())
-        newSurveyEndDateOrig = formatDateTime(newSurveyEndDate, getTimeZone())
+  DataTableModel getTableModel() {
+
+    return new DataTableModel() {
+      @Override
+      public List getRows(int offset,
+                          int limit,
+                          DataTableSortOrder sortOrder) {
+
+        def list = surveyRepository.list(
+            isManagerRole() ? null : getCurrentUser(),
+            isManagerRole() && getCurrentUser().onlyOwnSurveysVisible ?
+                getCurrentUser() : null,
+            search,
+            true,
+            sortOrder.columnId,
+            sortOrder.asc,
+            limit,
+            offset)
+
+        return list.collect {
+          new TableItem(
+              id: it.id,
+              title: it.details.title,
+              client: it.client?.fullName,
+              startDate: it.startDate,
+              endDate: it.endDate,
+              accessNumber: it.statistics.accessNumber?.number)
+        }
+      }
+
+      @Override
+      public int getRowsCount() {
+        surveyRepository.count(
+            isManagerRole() ? null : getCurrentUser(),
+            isManagerRole() && getCurrentUser().onlyOwnSurveysVisible ?
+                getCurrentUser() : null,
+            search,
+            true)
+      }
+    }
+  }
+
+  void createSurvey() {
+
+    def checkClientIdUnset = {
+      if (newSurveyClientId == null) {
+        addErrorMessage(strings['survey.validation.client.empty'], 'clients')
+        return true
+      }
+      return false
     }
 
-    DataTableModel getTableModel() {
-
-        return new DataTableModel() {
-            @Override
-            public List getRows(int offset,
-                                int limit,
-                                DataTableSortOrder sortOrder) {
-
-                def list = surveyRepository.list(
-                        isManagerRole() ? null : getCurrentUser(),
-                        isManagerRole() && getCurrentUser().onlyOwnSurveysVisible ?
-                                getCurrentUser() : null,
-                        search,
-                        true,
-                        sortOrder.columnId,
-                        sortOrder.asc,
-                        limit,
-                        offset)
-
-                return list.collect {
-                    new TableItem(
-                            id: it.id,
-                            title: it.details.title,
-                            client: it.client?.fullName,
-                            startDate: it.startDate,
-                            endDate: it.endDate,
-                            accessNumber: it.statistics.accessNumber?.number)
-                }
-            }
-
-            @Override
-            public int getRowsCount() {
-                surveyRepository.count(
-                        isManagerRole() ? null : getCurrentUser(),
-                        isManagerRole() && getCurrentUser().onlyOwnSurveysVisible ?
-                                getCurrentUser() : null,
-                        search,
-                        true)
-            }
-        }
+    newSurveyValidationError = checkClientIdUnset()
+    if (newSurveyValidationError) {
+      return  // Can't check further
     }
 
-    void createSurvey() {
+    def survey = new Survey(
+        startDate: newSurveyStartDate,
+        endDate: newSurveyEndDate,
+        active: true,
+        client: userRepository.load(newSurveyClientId),
+        owner: getCurrentUser())
+    survey.details = new SurveyDetails(survey: survey, title: newSurveyTitle)
+    survey.statistics = new SurveyStats(survey: survey)
 
-        def checkClientIdUnset = {
-            if (newSurveyClientId == null) {
-                addErrorMessage(strings['survey.validation.client.empty'], 'clients')
-                return true
-            }
-            return false
-        }
+    newSurveyValidationError |= renderViolationMessage(
+        validator.validate(survey),
+        [
+            'details.title'        : 'newSurveyTitle',
+            'startDate'            : 'newSurveyStartDate',
+            'endDate'              : 'newSurveyEndDate',
+            'endDateAfterStartDate': 'newSurveyEndDate'
+        ])
 
-        newSurveyValidationError = checkClientIdUnset()
-        if (newSurveyValidationError) {
-            return  // Can't check further
-        }
-
-        def survey = new Survey(
-                startDate: newSurveyStartDate,
-                endDate: newSurveyEndDate,
-                active: true,
-                client: userRepository.load(newSurveyClientId),
-                owner: getCurrentUser())
-        survey.details = new SurveyDetails(survey: survey, title: newSurveyTitle)
-        survey.statistics = new SurveyStats(survey: survey)
-
-        newSurveyValidationError |= renderViolationMessage(
-                validator.validate(survey),
-                [
-                        'details.title': 'newSurveyTitle',
-                        'startDate': 'newSurveyStartDate',
-                        'endDate': 'newSurveyEndDate',
-                        'endDateAfterStartDate': 'newSurveyEndDate'
-                ])
-
-        if (newSurveyValidationError) {
-            // Stay on the current page.
-            return
-        }
-
-        logger.trace "Creating survey: ${survey.toTraceString()}"
-
-        def surveyId = surveyRepository.save(survey)
-
-        try {
-            // Requires survey ID, so it should be already persisted.
-            esdpService.save(getCurrentUser(), survey)
-            SurveySettingsController.goToSurvey(surveyId)
-
-        } catch (Exception e) {
-            logger.error e.message, e
-            newSurveyValidationError = true
-            addErrorMessage strings['esdp.error.survey.creation']
-
-            surveyService.delete survey
-        }
+    if (newSurveyValidationError) {
+      // Stay on the current page.
+      return
     }
 
-    @SuppressWarnings("GrMethodMayBeStatic")
-    void surveyClickHandler(int surveyId) {
-        SurveySettingsController.goToSurvey(surveyId)
+    logger.trace "Creating survey: ${survey.toTraceString()}"
+
+    def surveyId = surveyRepository.save(survey)
+
+    try {
+      // Requires survey ID, so it should be already persisted.
+      esdpService.save(getCurrentUser(), survey)
+      SurveySettingsController.goToSurvey(surveyId)
+
+    } catch (Exception e) {
+      logger.error e.message, e
+      newSurveyValidationError = true
+      addErrorMessage strings['esdp.error.survey.creation']
+
+      surveyService.delete survey
     }
+  }
 
-    static class TableItem implements Serializable {
+  @SuppressWarnings("GrMethodMayBeStatic")
+  void surveyClickHandler(int surveyId) {
+    SurveySettingsController.goToSurvey(surveyId)
+  }
 
-        int id
+  static class TableItem implements Serializable {
 
-        String title
-        String client
+    int id
 
-        Date startDate
-        Date endDate
+    String title
+    String client
 
-        String accessNumber
-    }
+    Date startDate
+    Date endDate
+
+    String accessNumber
+  }
 }

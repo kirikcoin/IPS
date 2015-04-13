@@ -16,23 +16,23 @@ import javax.faces.context.FacesContext
 @ManagedBean(name = "passwordResetController")
 class PasswordResetController extends BaseController {
 
-    private final UserService userService = Services.instance().userService
+  private final UserService userService = Services.instance().userService
 
-    String email
+  String email
 
-    void resetPassword() {
-        if (!EmailValidator.isValid(email)) {
-            addErrorMessage(strings['passwrecovery.form.incorrectemail'], 'email')
-        }
-
-        try {
-            userService.resetPassword(email)
-            FacesContext.currentInstance.externalContext.redirect '/login.faces?recovery=true'
-
-        } catch (LoginException e) {
-            logger.warn(e.message, e)
-            FacesContext.currentInstance.externalContext.redirect '/passwordreset.faces?recovery=false'
-        }
+  void resetPassword() {
+    if (!EmailValidator.isValid(email)) {
+      addErrorMessage(strings['passwrecovery.form.incorrectemail'], 'email')
     }
+
+    try {
+      userService.resetPassword(email)
+      FacesContext.currentInstance.externalContext.redirect '/login.faces?recovery=true'
+
+    } catch (LoginException e) {
+      logger.warn(e.message, e)
+      FacesContext.currentInstance.externalContext.redirect '/passwordreset.faces?recovery=false'
+    }
+  }
 
 }
