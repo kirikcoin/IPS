@@ -1,4 +1,4 @@
-package mobi.eyeline.ips.web;
+package mobi.eyeline.ips.web.filters;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,33 +38,25 @@ import java.io.IOException;
  *     </li>
  * </ol>
  */
-public class RequestEagerParsingFilter implements Filter {
+public class RequestEagerParsingFilter extends HttpFilter {
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // Nothing here.
-    }
+    protected void doFilter(HttpServletRequest req,
+                            HttpServletResponse resp,
+                            FilterChain chain) throws IOException, ServletException {
 
-    @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
-
-        final HttpServletRequest httpRequest = (HttpServletRequest) request;
-        final HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        httpRequest.setCharacterEncoding("UTF-8");
+        req.setCharacterEncoding("UTF-8");
 
         try {
-            tryParsingIfApplicable(httpRequest);
+            tryParsingIfApplicable(req);
 
         } catch (Exception e) {
-            httpResponse.sendRedirect(
-                    httpRequest.getContextPath() + "/error.faces?id=400&type=FILE_SIZE");
+            resp.sendRedirect(
+                    req.getContextPath() + "/error.faces?id=400&type=FILE_SIZE");
             return;
         }
 
-        chain.doFilter(request, response);
+        chain.doFilter(req, resp);
     }
 
     private void tryParsingIfApplicable(HttpServletRequest httpRequest)
@@ -74,10 +66,5 @@ public class RequestEagerParsingFilter implements Filter {
                 contentType.toLowerCase().contains("multipart/form-data")) {
             httpRequest.getParts();
         }
-    }
-
-    @Override
-    public void destroy() {
-        // Nothing here.
     }
 }

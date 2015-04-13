@@ -42,7 +42,7 @@
                 conf="site->default"/>
     <dependency org="org.jgrapht" name="jgrapht-core" rev="0.9.0" conf="site->default"/>
 
-    <dependency org="mobi.eyeline.util.extutils" name="lessparser" rev="1.6.1"/>
+    <dependency org="mobi.eyeline.util.extutils" name="lessparser" rev="1.7.5"/>
     <dependency org="mobi.eyeline.util.extutils" name="generalutils" rev="1.38.0" transitive="false"/>
 
     <dependency org="org.slf4j" name="slf4j-api" rev="1.7.5" conf="site->default"/>
