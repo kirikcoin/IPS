@@ -43,7 +43,7 @@ public class AnswerOption extends UssdOption {
         option.getId(),
         isExitLink ? "exit" : null);
 
-    assert option.isActive() : "Sending inactive answer option";
+    assert !option.isDeleted() : "Sending deleted answer option";
   }
 
   public int getAnswerId() {
@@ -59,8 +59,10 @@ public class AnswerOption extends UssdOption {
   }
 
   @Override
-  public UssdResponseModel handle(String msisdn, MessageHandler handler) {
-    return handler.handle(msisdn, this);
+  public UssdResponseModel handle(String msisdn,
+                                  MessageHandler handler,
+                                  OuterRequest outerRequest) {
+    return handler.handle(msisdn, this, outerRequest);
   }
 
   @Override

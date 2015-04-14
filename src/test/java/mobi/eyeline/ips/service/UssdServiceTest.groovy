@@ -11,12 +11,13 @@ import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.properties.FailingMockConfig
 import mobi.eyeline.ips.repository.DbTestCase
 import mobi.eyeline.ips.repository.RepositoryMock
+import mobi.eyeline.ips.utils.SurveyBuilder
 
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_ANSWER_ID
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_QUESTION_ID
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_BAD_COMMAND
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_MESSAGE_TYPE
-import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN_DEPRECATED
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID
 import static mobi.eyeline.ips.messages.UssdOption.UssdOptionType.ANSWER
@@ -84,7 +85,7 @@ class UssdServiceTest extends DbTestCase {
   def answer(option) {
     def props = [:]
     props.putAll option.properties
-    props[UssdOption.PARAM_MSISDN] = msisdn
+    props[UssdOption.PARAM_MSISDN_DEPRECATED] = msisdn
     request(props)
   }
 
@@ -92,7 +93,7 @@ class UssdServiceTest extends DbTestCase {
     def props = [:]
     props.putAll option.properties
     props.put PARAM_BAD_COMMAND, text
-    props[UssdOption.PARAM_MSISDN] = msisdn
+    props[UssdOption.PARAM_MSISDN_DEPRECATED] = msisdn
     request(props)
   }
 
@@ -102,7 +103,7 @@ class UssdServiceTest extends DbTestCase {
 
   void testStartPageMissingSurvey() {
     request([
-        (PARAM_SURVEY_ID): '100500', (PARAM_MSISDN): '123'
+        (PARAM_SURVEY_ID): '100500', (PARAM_MSISDN_DEPRECATED): '123'
     ]).with {
       assertTrue it.options.empty
       assertThat it, instanceOf(UssdResponseModel.NoSurveyResponseModel)
@@ -115,13 +116,13 @@ class UssdServiceTest extends DbTestCase {
     }
 
     shouldFail(MissingParameterException) {
-      request([(PARAM_MSISDN): '123'])
+      request([(PARAM_MSISDN_DEPRECATED): '123'])
     }
   }
 
   void testStartPageUnknownRequest() {
     request([
-        (PARAM_MSISDN)      : '123',
+        (PARAM_MSISDN_DEPRECATED)      : '123',
         (PARAM_MESSAGE_TYPE): 'foo'
     ]).with {
       assertThat it, instanceOf(UssdResponseModel.ErrorResponseModel)
@@ -130,7 +131,7 @@ class UssdServiceTest extends DbTestCase {
 
   void testQuestionPageUnknownRequest1() {
     request([
-        (PARAM_MSISDN)      : '123',
+        (PARAM_MSISDN_DEPRECATED)      : '123',
         (PARAM_MESSAGE_TYPE): ANSWER,
         (PARAM_QUESTION_ID) : 1,
         (PARAM_ANSWER_ID)   : 1,
@@ -143,7 +144,7 @@ class UssdServiceTest extends DbTestCase {
   void testQuestionPageUnknownRequest2() {
     shouldFail(MissingParameterException) {
       request([
-          (PARAM_MSISDN)      : '123',
+          (PARAM_MSISDN_DEPRECATED)      : '123',
           (PARAM_MESSAGE_TYPE): ANSWER,
           (PARAM_QUESTION_ID) : 1,
           (PARAM_ANSWER_ID)   : 1,
@@ -154,7 +155,7 @@ class UssdServiceTest extends DbTestCase {
   void testQuestionPageUnknownRequest3() {
     shouldFail(MissingParameterException) {
       request([
-          (PARAM_MSISDN)      : '123',
+          (PARAM_MSISDN_DEPRECATED)      : '123',
           (PARAM_MESSAGE_TYPE): "$ANSWER",
           (PARAM_ANSWER_ID)   : 1,
           (PARAM_SURVEY_ID)   : 1
@@ -165,7 +166,7 @@ class UssdServiceTest extends DbTestCase {
   void testQuestionPageUnknownRequest4() {
     shouldFail(MissingParameterException) {
       request([
-          (PARAM_MSISDN)      : '123',
+          (PARAM_MSISDN_DEPRECATED)      : '123',
           (PARAM_MESSAGE_TYPE): "$ANSWER",
           (PARAM_QUESTION_ID) : 1,
           (PARAM_SURVEY_ID)   : 1
@@ -222,7 +223,7 @@ class UssdServiceTest extends DbTestCase {
     //
 
     def page1 = request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ]).with {
       assertEquals 'First one', text
@@ -351,14 +352,14 @@ class UssdServiceTest extends DbTestCase {
     }
 
     request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ]).with {
       assertThat it, instanceOf(UssdResponseModel.NoSurveyResponseModel)
     }
 
     request([
-        (PARAM_MSISDN)         : msisdn,
+        (PARAM_MSISDN_DEPRECATED)         : msisdn,
         (PARAM_SURVEY_ID)      : sid,
         (PARAM_SKIP_VALIDATION): true
     ]).with {
@@ -373,7 +374,7 @@ class UssdServiceTest extends DbTestCase {
     surveyRepository.save survey
 
     request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ]).with {
       assertEquals survey.details.endText, it.text
@@ -388,7 +389,7 @@ class UssdServiceTest extends DbTestCase {
     }
 
     def page1 = request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ])
 
@@ -405,14 +406,14 @@ class UssdServiceTest extends DbTestCase {
     createTestSurvey()
 
     def page1 = request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ])
     answer page1.options.first()
 
     // Accessing start page again.
     def page1Again = request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ])
 
@@ -465,7 +466,7 @@ class UssdServiceTest extends DbTestCase {
     // We expect the same output as the first time, statistics should be reset.
 
     request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ]).with {
       assertEquals 'First one', it.text
@@ -485,7 +486,7 @@ class UssdServiceTest extends DbTestCase {
     //noinspection GroovyUnusedAssignment
     def page1 = request([
         (PARAM_SURVEY_ID): 1,
-        (PARAM_MSISDN)   : '79131234567',
+        (PARAM_MSISDN_DEPRECATED)   : '79131234567',
     ]).with {
       assertEquals 'First one', it.text
     }
@@ -495,7 +496,7 @@ class UssdServiceTest extends DbTestCase {
         (PARAM_MESSAGE_TYPE): ANSWER,
         (PARAM_QUESTION_ID) : 1,
         (PARAM_ANSWER_ID)   : 1,
-        (PARAM_MSISDN)      : '79131234567',
+        (PARAM_MSISDN_DEPRECATED)      : '79131234567',
     ]).with {
       assertEquals 'Second one', it.text
     }
@@ -505,11 +506,47 @@ class UssdServiceTest extends DbTestCase {
         (PARAM_MESSAGE_TYPE): ANSWER,
         (PARAM_QUESTION_ID) : 1,
         (PARAM_ANSWER_ID)   : 1,
-        (PARAM_MSISDN)      : '79131234567',
+        (PARAM_MSISDN_DEPRECATED)      : '79131234567',
         (PARAM_BAD_COMMAND) : null
     ]).with {
       assertEquals 'Second one', it.text
     }
 
+  }
+
+  void testRedirect() {
+
+    final s = SurveyBuilder.survey(id: 1, startDate: new Date(), endDate: new Date()) {
+      details(title: 'Foo')
+      pages {
+        extLink(serviceName: 'bar', serviceUrl: 'http://foo.bar')
+        question(title: 'Q1') {
+          option(answer: 'O1', nextPage: ref(serviceName: 'bar'))
+        }
+      }
+    }
+
+    surveyRepository.save s
+
+    //noinspection GroovyUnusedAssignment
+    def page1 = request([
+        (PARAM_SURVEY_ID)         : 1,
+        (PARAM_MSISDN_DEPRECATED) : '79131234567',
+        (PARAM_SKIP_VALIDATION)   : true,
+    ]).with {
+      assertEquals 'Q1', it.text
+    }
+
+    request([
+        (PARAM_SURVEY_ID)         : 1,
+        (PARAM_MESSAGE_TYPE)      : ANSWER,
+        (PARAM_QUESTION_ID)       : 1,
+        (PARAM_ANSWER_ID)         : 1,
+        (PARAM_MSISDN_DEPRECATED) : '79131234567',
+        (PARAM_SKIP_VALIDATION)   : true,
+    ]).with { resp ->
+      assertTrue resp instanceof UssdResponseModel.RedirectUssdResponseModel
+      assertEquals 'http://foo.bar?abonent=79131234567', resp.redirectUrl
+    }
   }
 }

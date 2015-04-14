@@ -33,8 +33,10 @@ public class BadCommandOption extends UssdOption {
   }
 
   @Override
-  public UssdResponseModel handle(String msisdn, MessageHandler handler) {
-    return handler.handle(msisdn, this);
+  public UssdResponseModel handle(String msisdn,
+                                  MessageHandler handler,
+                                  OuterRequest outerRequest) {
+    return handler.handle(msisdn, this, outerRequest);
   }
 
   @Override

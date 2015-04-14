@@ -64,9 +64,9 @@ public class QuestionOption implements Serializable {
    * При удалении вариант ответа помечается флагом {@code active = false} в БД и
    * перестает отображаться в веб-интерфейсе.
    */
-  @Column(name = "active", columnDefinition = "BIT")
+  @Column(name = "deleted", columnDefinition = "BIT")
   @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean active = true;
+  private boolean deleted = false;
 
   public QuestionOption() {
   }
@@ -109,12 +109,12 @@ public class QuestionOption implements Serializable {
     this.question = question;
   }
 
-  public boolean isActive() {
-    return active;
+  public boolean isDeleted() {
+    return deleted;
   }
 
-  public void setActive(boolean active) {
-    this.active = active;
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
   }
 
   public void moveTo(int idx) {
@@ -145,7 +145,7 @@ public class QuestionOption implements Serializable {
   public static final Predicate<QuestionOption> SKIP_INACTIVE = new Predicate<QuestionOption>() {
     @Override
     public boolean apply(QuestionOption option) {
-      return !option.isActive();
+      return option.isDeleted();
     }
   };
 

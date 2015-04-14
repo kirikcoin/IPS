@@ -17,7 +17,8 @@ public abstract class UssdOption {
    */
   public static final String PARAM_SKIP_VALIDATION = "skip_validation";
 
-  public static final String PARAM_MSISDN = "abonent";
+  public static final String PARAM_MSISDN_DEPRECATED  = "abonent";
+  public static final String PARAM_MSISDN             = "subscriber";
 
   public static final String PARAM_MESSAGE_TYPE = "type";
 
@@ -96,7 +97,9 @@ public abstract class UssdOption {
     return skipValidation;
   }
 
-  public abstract UssdResponseModel handle(String msisdn, MessageHandler handler);
+  public abstract UssdResponseModel handle(String msisdn,
+                                           MessageHandler handler,
+                                           OuterRequest outerRequest);
 
   @Override
   public String toString() {

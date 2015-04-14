@@ -51,7 +51,7 @@ class QuestionTest extends GroovyTestCase {
 
   void test7() {
     def question = question(title: 'foo') {
-      option(answer: 'Foo', active: false)
+      option(answer: 'Foo', deleted: true)
     }
 
     assertThat validate(question), hasSize(1)

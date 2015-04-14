@@ -12,7 +12,7 @@ import mobi.eyeline.ips.properties.DefaultMockConfig
 import mobi.eyeline.ips.repository.DbTestCase
 import mobi.eyeline.ips.repository.RepositoryMock
 
-import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN_DEPRECATED
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID
 import static mobi.eyeline.ips.model.SurveyPattern.Mode.DIGITS
 import static mobi.eyeline.ips.model.SurveyPattern.Mode.DIGITS_AND_LATIN
@@ -104,7 +104,7 @@ class UssdServiceCouponTest extends DbTestCase {
     // Same respondent gets single coupon.
 
     request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ]).with {
       assertEquals survey().details.endText, text
@@ -115,7 +115,7 @@ class UssdServiceCouponTest extends DbTestCase {
     assertEquals(['CNZZ'], pushService.textSent)
 
     request([
-        (PARAM_MSISDN)   : msisdn,
+        (PARAM_MSISDN_DEPRECATED)   : msisdn,
         (PARAM_SURVEY_ID): sid
     ])
 
@@ -128,13 +128,13 @@ class UssdServiceCouponTest extends DbTestCase {
     // Distinct respondents get different coupons.
 
     request([
-        (PARAM_MSISDN)   : '123',
+        (PARAM_MSISDN_DEPRECATED)   : '123',
         (PARAM_SURVEY_ID): sid
     ])
     assertEquals(['CNZZ'], pushService.textSent)
 
     request([
-        (PARAM_MSISDN)   : '456',
+        (PARAM_MSISDN_DEPRECATED)   : '456',
         (PARAM_SURVEY_ID): sid
     ])
 
@@ -155,13 +155,13 @@ class UssdServiceCouponTest extends DbTestCase {
     surveyRepository.update survey
 
     request([
-        (PARAM_MSISDN)   : '123',
+        (PARAM_MSISDN_DEPRECATED)   : '123',
         (PARAM_SURVEY_ID): sid
     ])
     assertEquals(['399999'], pushService.textSent)
 
     request([
-        (PARAM_MSISDN)   : '456',
+        (PARAM_MSISDN_DEPRECATED)   : '456',
         (PARAM_SURVEY_ID): sid
     ])
 
@@ -209,7 +209,7 @@ class UssdServiceCouponTest extends DbTestCase {
     // Respondent-1
 
     request([
-        (PARAM_MSISDN)   : '123',
+        (PARAM_MSISDN_DEPRECATED)   : '123',
         (PARAM_SURVEY_ID): sid
     ])
     assertEquals(['59'], pushService.textSent)
@@ -220,7 +220,7 @@ class UssdServiceCouponTest extends DbTestCase {
     // Respondent-2
 
     request([
-        (PARAM_MSISDN)   : '456',
+        (PARAM_MSISDN_DEPRECATED)   : '456',
         (PARAM_SURVEY_ID): sid
     ])
     assertEquals(['59', '30'], pushService.textSent)

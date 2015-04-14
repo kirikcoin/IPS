@@ -68,12 +68,12 @@ public abstract class Page implements Serializable {
     this.survey = survey;
   }
 
-  public boolean isActive() {
-    return !deleted;
+  public boolean isDeleted() {
+    return deleted;
   }
 
-  public void setActive(boolean active) {
-    this.deleted = !active;
+  public void setDeleted(boolean deleted) {
+    this.deleted = deleted;
   }
 
   public int getSentCount() {
@@ -95,7 +95,7 @@ public abstract class Page implements Serializable {
     return new Predicate<T>() {
       @Override
       public boolean apply(T page) {
-        return !page.isActive();
+        return page.isDeleted();
       }
     };
   }

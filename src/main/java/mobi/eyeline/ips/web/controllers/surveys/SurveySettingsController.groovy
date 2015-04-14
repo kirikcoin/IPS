@@ -397,7 +397,7 @@ class SurveySettingsController extends BaseSurveyController {
 
       questionOptions = new DynamicTableModel()
       question.options
-          .findAll { it.active }
+          .findAll { !it.deleted }
           .each { QuestionOption it ->
         def row = new DynamicTableRow() {
           {
@@ -580,7 +580,7 @@ class SurveySettingsController extends BaseSurveyController {
 
       persistedQuestion.options
           .findAll { opt -> !(opt.id in retainedOptionIds) }
-          .each { opt -> opt.active = false }
+          .each { opt -> opt.deleted = true }
     }
 
     def handleUpdated = {

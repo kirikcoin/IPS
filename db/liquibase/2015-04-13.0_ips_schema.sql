@@ -23,3 +23,7 @@ ALTER TABLE `pages` DROP `question_order`;
 ALTER TABLE `question_options` CHANGE `next_question` `next_page` INT(11) DEFAULT NULL;
 ALTER TABLE `pages` CHANGE `title` `title` varchar(255) NULL;
 ALTER TABLE `pages` CHANGE `default_question_id` `default_page_id` int(11) DEFAULT NULL;
+
+-- A long-desired cleanup: the whole `active'/`inactive' naming seems ambiguous, step 2.
+ALTER TABLE `question_options` CHANGE `active` `deleted` tinyint(1) NOT NULL DEFAULT '0';
+UPDATE `question_options` SET `deleted` = NOT `deleted`;

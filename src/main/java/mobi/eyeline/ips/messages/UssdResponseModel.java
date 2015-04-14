@@ -16,13 +16,13 @@ public class UssdResponseModel {
   private final String text;
   private final List<UssdOption> options;
 
-  public UssdResponseModel(String text, List<? extends UssdOption> options) {
-    this.text = requireNonNull(text);
-    this.options = Collections.unmodifiableList(options);
-  }
+  /** If non-null, redirect to the specified URL. */
+  private final String redirectUrl;
 
-  public UssdResponseModel(String text) {
-    this(text, Collections.<UssdOption>emptyList());
+  protected UssdResponseModel(String text, List<UssdOption> options, String performRedirect) {
+    this.text = text;
+    this.options = options;
+    this.redirectUrl = performRedirect;
   }
 
   public String getText() {
@@ -33,12 +33,25 @@ public class UssdResponseModel {
     return options;
   }
 
+  public String getRedirectUrl() {
+    return redirectUrl;
+  }
+
   /**
    * Model with no options, just text.
    */
   public static class TextUssdResponseModel extends UssdResponseModel {
     public TextUssdResponseModel(String text) {
-      super(text);
+      super(text, Collections.<UssdOption>emptyList(), null);
+    }
+  }
+
+  /**
+   * Model with no options, just text.
+   */
+  public static class OptionsResponseModel extends UssdResponseModel {
+    public OptionsResponseModel(String text, List<? extends UssdOption> options) {
+      super(text, Collections.unmodifiableList(options), null);
     }
   }
 
@@ -48,6 +61,15 @@ public class UssdResponseModel {
   public static class NoSurveyResponseModel extends TextUssdResponseModel {
     public NoSurveyResponseModel() {
       super(USSD_BUNDLE.getString("ussd.survey.not.available"));
+    }
+  }
+
+  /**
+   * Perform redirect.
+   */
+  public static class RedirectUssdResponseModel extends UssdResponseModel {
+    public RedirectUssdResponseModel(String url) {
+      super(null, Collections.<UssdOption>emptyList(), url);
     }
   }
 

@@ -107,7 +107,7 @@ public class SurveyService {
       questionRepository.update(defRef);
     }
 
-    question.setActive(false);
+    question.setDeleted(true);
     questionRepository.update(question);
   }
 
@@ -126,7 +126,7 @@ public class SurveyService {
       questionRepository.update(defRef);
     }
 
-    page.setActive(false);
+    page.setDeleted(true);
     extLinkPageRepository.update(page);
   }
 
