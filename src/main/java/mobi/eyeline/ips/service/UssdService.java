@@ -21,6 +21,7 @@ import mobi.eyeline.ips.model.SurveyDetails;
 import mobi.eyeline.ips.model.TextAnswer;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AnswerRepository;
+import mobi.eyeline.ips.repository.ExtLinkPageRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
@@ -59,6 +60,7 @@ public class UssdService implements MessageHandler {
   private final AnswerRepository answerRepository;
   private final QuestionRepository questionRepository;
   private final QuestionOptionRepository questionOptionRepository;
+  private final ExtLinkPageRepository extLinkPageRepository;
 
   private final String baseUrl;
 
@@ -73,7 +75,8 @@ public class UssdService implements MessageHandler {
                      RespondentRepository respondentRepository,
                      AnswerRepository answerRepository,
                      QuestionRepository questionRepository,
-                     QuestionOptionRepository questionOptionRepository) {
+                     QuestionOptionRepository questionOptionRepository,
+                     ExtLinkPageRepository extLinkPageRepository) {
 
     this.surveyService = surveyService;
     this.pushService = pushService;
@@ -84,6 +87,7 @@ public class UssdService implements MessageHandler {
     this.answerRepository = answerRepository;
     this.questionRepository = questionRepository;
     this.questionOptionRepository = questionOptionRepository;
+    this.extLinkPageRepository = extLinkPageRepository;
 
     baseUrl = config.getBaseSurveyUrl();
   }
@@ -392,7 +396,13 @@ public class UssdService implements MessageHandler {
         if (paramMsisdnDeprecated != null) addParameter(PARAM_MSISDN_DEPRECATED, paramMsisdnDeprecated);
       }};
 
-      return new UssdResponseModel.RedirectUssdResponseModel(uri.build().toString());
+      final UssdResponseModel.RedirectUssdResponseModel response =
+          new UssdResponseModel.RedirectUssdResponseModel(uri.build().toString());
+
+      extLink.setSentCount(extLink.getSentCount() + 1);
+      extLinkPageRepository.update(extLink);
+
+      return response;
 
     } catch (URISyntaxException e) {
       logger.error(
