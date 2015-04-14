@@ -77,7 +77,8 @@ class UssdServiceTest extends DbTestCase {
         respondentRepository,
         answerRepository,
         questionRepository,
-        questionOptionRepository)
+        questionOptionRepository,
+        extLinkPageRepository)
   }
 
   def survey = { surveyRepository.load(sid.toInteger()) }

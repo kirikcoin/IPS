@@ -24,7 +24,7 @@ class EsdpServiceTest extends GroovyTestCase {
 
     ussdService = new UssdService(
         new DefaultMockConfig(),
-        null, null, null, null, null, null, null, null) {
+        null, null, null, null, null, null, null, null, null) {
       @Override
       String getSurveyUrl(Survey survey) { "http://surveys?id=$survey.id" }
     }
