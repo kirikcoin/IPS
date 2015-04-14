@@ -484,7 +484,9 @@ class SurveySettingsController extends BaseSurveyController {
     persistedExtLink.serviceUrl = extLinkPage.serviceUrl
 
     final validationError = renderViolationMessage(
-        validator.validate(persistedExtLink) as Set<ConstraintViolation>)
+        validator.validate(persistedExtLink) as Set<ConstraintViolation>,
+        [:],
+        ['serviceName', 'serviceUrl'])
     if (validationError) {
       errorId = FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
       return
