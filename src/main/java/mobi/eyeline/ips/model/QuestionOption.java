@@ -52,9 +52,9 @@ public class QuestionOption implements Serializable {
   @Column(name = "option_order")
   private int order;
 
-  @JoinColumn(name = "next_question")
+  @JoinColumn(name = "next_page")
   @OneToOne(optional = true)
-  private Question nextQuestion = null;
+  private Page nextPage = null;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "question_id")
@@ -121,12 +121,12 @@ public class QuestionOption implements Serializable {
     ListUtils.moveTo(getQuestion().getOptions(), this, idx, SKIP_INACTIVE);
   }
 
-  public Question getNextQuestion() {
-    return nextQuestion;
+  public Page getNextPage() {
+    return nextPage;
   }
 
-  public void setNextQuestion(Question nextQuestion) {
-    this.nextQuestion = nextQuestion;
+  public void setNextPage(Page nextPage) {
+    this.nextPage = nextPage;
   }
 
   @Override

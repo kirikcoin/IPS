@@ -48,7 +48,10 @@ class UssdServiceCouponTest extends DbTestCase {
 
     // Dependencies
     surveyService = new SurveyService(
-        surveyRepository, questionRepository, questionOptionRepository,
+        surveyRepository,
+        questionRepository,
+        extLinkPageRepository,
+        questionOptionRepository,
         surveyInvitationRepository,
         invitationDeliveryRepository)
 

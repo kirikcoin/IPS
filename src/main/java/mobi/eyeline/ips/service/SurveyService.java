@@ -1,8 +1,11 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.model.ExtLinkPage;
+import mobi.eyeline.ips.model.Page;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.repository.ExtLinkPageRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
@@ -20,17 +23,20 @@ public class SurveyService {
 
   private final SurveyRepository surveyRepository;
   private final QuestionRepository questionRepository;
+  private final ExtLinkPageRepository extLinkPageRepository;
   private final QuestionOptionRepository questionOptionRepository;
   private final SurveyInvitationRepository surveyInvitationRepository;
   private final InvitationDeliveryRepository invitationDeliveryRepository;
 
   public SurveyService(SurveyRepository surveyRepository,
                        QuestionRepository questionRepository,
+                       ExtLinkPageRepository extLinkPageRepository,
                        QuestionOptionRepository questionOptionRepository,
                        SurveyInvitationRepository surveyInvitationRepository,
                        InvitationDeliveryRepository invitationDeliveryRepository) {
     this.surveyRepository = surveyRepository;
     this.questionRepository = questionRepository;
+    this.extLinkPageRepository = extLinkPageRepository;
     this.questionOptionRepository = questionOptionRepository;
     this.surveyInvitationRepository = surveyInvitationRepository;
     this.invitationDeliveryRepository = invitationDeliveryRepository;
@@ -89,15 +95,15 @@ public class SurveyService {
   public void deleteQuestion(Question question) {
     for (Question ref : getReferencesTo(question)) {
       for (QuestionOption option : ref.getActiveOptions()) {
-        if (question.equals(option.getNextQuestion())) {
-          option.setNextQuestion(null);
+        if (question.equals(option.getNextPage())) {
+          option.setNextPage(null);
           questionOptionRepository.update(option);
         }
       }
     }
 
     for (Question defRef : getDefaultReferencesTo(question)) {
-      defRef.setDefaultQuestion(null);
+      defRef.setDefaultPage(null);
       questionRepository.update(defRef);
     }
 
@@ -105,12 +111,31 @@ public class SurveyService {
     questionRepository.update(question);
   }
 
-  public List<Question> getReferencesTo(Question question) {
+  public void deleteExtLinkPage(ExtLinkPage page) {
+    for (Question ref : getReferencesTo(page)) {
+      for (QuestionOption option : ref.getActiveOptions()) {
+        if (page.equals(option.getNextPage())) {
+          option.setNextPage(null);
+          questionOptionRepository.update(option);
+        }
+      }
+    }
+
+    for (Question defRef : getDefaultReferencesTo(page)) {
+      defRef.setDefaultPage(null);
+      questionRepository.update(defRef);
+    }
+
+    page.setActive(false);
+    extLinkPageRepository.update(page);
+  }
+
+  public List<Question> getReferencesTo(Page page) {
     final List<Question> refs = new ArrayList<>();
 
-    for (Question currentQuestion : question.getSurvey().getActiveQuestions()) {
+    for (Question currentQuestion : page.getSurvey().getActiveQuestions()) {
       for (QuestionOption option : currentQuestion.getActiveOptions()) {
-        if (question.equals(option.getNextQuestion())) {
+        if (page.equals(option.getNextPage())) {
           refs.add(currentQuestion);
           break;
         }
@@ -120,12 +145,12 @@ public class SurveyService {
     return refs;
   }
 
-  public List<Question> getDefaultReferencesTo(Question question) {
+  public List<Question> getDefaultReferencesTo(Page page) {
     final List<Question> refs = new ArrayList<>();
 
-    for (Question currentQuestion : question.getSurvey().getActiveQuestions()) {
-      if (currentQuestion.getDefaultQuestion() == null) continue;
-      if (currentQuestion.isEnabledDefaultAnswer() && currentQuestion.getDefaultQuestion().equals(question)) {
+    for (Question currentQuestion : page.getSurvey().getActiveQuestions()) {
+      if (currentQuestion.getDefaultPage() == null) continue;
+      if (currentQuestion.isEnabledDefaultAnswer() && currentQuestion.getDefaultPage().equals(page)) {
         refs.add(currentQuestion);
       }
     }

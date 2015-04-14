@@ -44,6 +44,7 @@ class MadvUpdateServiceTest extends DbTestCase {
     surveyService = new SurveyService(
         surveyRepository,
         questionRepository,
+        extLinkPageRepository,
         questionOptionRepository,
         surveyInvitationRepository,
         invitationDeliveryRepository)

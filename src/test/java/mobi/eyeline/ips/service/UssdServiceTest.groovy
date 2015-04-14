@@ -54,9 +54,13 @@ class UssdServiceTest extends DbTestCase {
 
     // Dependencies
     surveyService = new SurveyService(
-        surveyRepository, questionRepository, questionOptionRepository,
+        surveyRepository,
+        questionRepository,
+        extLinkPageRepository,
+        questionOptionRepository,
         surveyInvitationRepository,
         invitationDeliveryRepository)
+
     pushService = new PushService(config, new EsdpServiceSupport(null) {
       @Override
       String getServiceUrl(Survey survey) { "http://sads?push$survey.id" }
@@ -178,8 +182,8 @@ class UssdServiceTest extends DbTestCase {
     def q1 = new Question(survey: survey, title: 'First one', enabledDefaultAnswer: true)
     def q2 = new Question(survey: survey, title: 'Second one')
     def q3 = new Question(survey: survey, title: 'With options')
-    def q4 = new Question(survey: survey, title: 'Fourth one', enabledDefaultAnswer: true, defaultQuestion: q3)
-    def q5 = new Question(survey: survey, title: 'Fifth one', enabledDefaultAnswer: true, defaultQuestion: q1)
+    def q4 = new Question(survey: survey, title: 'Fourth one', enabledDefaultAnswer: true, defaultPage: q3)
+    def q5 = new Question(survey: survey, title: 'Fifth one', enabledDefaultAnswer: true, defaultPage: q1)
 
     q1.with {
       enabledDefaultAnswer: true
@@ -187,10 +191,10 @@ class UssdServiceTest extends DbTestCase {
       q3
     }
 
-    q1.options << new QuestionOption(answer: 'O1', question: q1, nextQuestion: q2)
-    q2.options << new QuestionOption(answer: 'O2', question: q2, nextQuestion: q3)
-    q3.options << new QuestionOption(answer: 'O3', question: q3, nextQuestion: q4)
-    q4.options << new QuestionOption(answer: 'O4', question: q4, nextQuestion: q5)
+    q1.options << new QuestionOption(answer: 'O1', question: q1, nextPage: q2)
+    q2.options << new QuestionOption(answer: 'O2', question: q2, nextPage: q3)
+    q3.options << new QuestionOption(answer: 'O3', question: q3, nextPage: q4)
+    q4.options << new QuestionOption(answer: 'O4', question: q4, nextPage: q5)
     q5.options << new QuestionOption(answer: 'O5', question: q5)
 
     survey.pages.addAll([q1, q2, q3, q4, q5])
@@ -379,7 +383,7 @@ class UssdServiceTest extends DbTestCase {
   void testTerminal() {
     createTestSurvey()
     survey().questions[0].options[0].with {
-      nextQuestion = null
+      nextPage = null
       questionOptionRepository.update it
     }
 

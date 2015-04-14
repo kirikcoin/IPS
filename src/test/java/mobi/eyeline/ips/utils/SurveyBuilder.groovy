@@ -100,14 +100,14 @@ class SurveyBuilder {
 
       // Resolve deferred references.
       list.collectMany { it.options }
-          .findAll { QuestionOption opt -> opt.nextQuestion instanceof DeferredReference }
+          .findAll { QuestionOption opt -> opt.nextPage instanceof DeferredReference }
           .each { QuestionOption opt ->
-        opt.nextQuestion = (opt.nextQuestion as DeferredReference<Question>).resolve(list)
+        opt.nextPage = (opt.nextPage as DeferredReference<Question>).resolve(list)
       }
 
-      list.findAll { Question q -> q.defaultQuestion instanceof DeferredReference }
+      list.findAll { Question q -> q.defaultPage instanceof DeferredReference }
           .each { Question q ->
-        q.defaultQuestion = (q.defaultQuestion as DeferredReference<Question>).resolve(list)
+        q.defaultPage = (q.defaultPage as DeferredReference<Question>).resolve(list)
       }
 
       list

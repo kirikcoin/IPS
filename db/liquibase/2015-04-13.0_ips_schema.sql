@@ -19,3 +19,7 @@ UPDATE `pages` SET `deleted` = NOT `deleted`;
 -- A long-desired cleanup: now we don't even provide a way to rearrange questions from the UI,
 -- thus making the whole `order' field mess just redundant.
 ALTER TABLE `pages` DROP `question_order`;
+
+ALTER TABLE `question_options` CHANGE `next_question` `next_page` INT(11) DEFAULT NULL;
+ALTER TABLE `pages` CHANGE `title` `title` varchar(255) NULL;
+ALTER TABLE `pages` CHANGE `default_question_id` `default_page_id` int(11) DEFAULT NULL;

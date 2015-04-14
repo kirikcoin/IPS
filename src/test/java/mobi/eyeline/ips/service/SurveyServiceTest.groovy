@@ -19,7 +19,7 @@ class SurveyServiceTest extends DbTestCase {
   SurveyService surveyService
 
   def newQ = { id -> new Question(id: id) }
-  def newO = { id, next -> new QuestionOption(id: id, nextQuestion: next) }
+  def newO = { id, next -> new QuestionOption(id: id, nextPage: next) }
 
   void setUp() {
     super.setUp()
@@ -47,6 +47,7 @@ class SurveyServiceTest extends DbTestCase {
     surveyService = new SurveyService(
         surveyRepository,
         questionRepository,
+        extLinkPageRepository,
         questionOptionRepository,
         surveyInvitationRepository,
         invitationDeliveryRepository)

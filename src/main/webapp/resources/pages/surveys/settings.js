@@ -51,12 +51,6 @@ var page = {
 
   },
 
-  showQuestionDeleteDialog: function (id) {
-    ips.$byId('questionId').val(id);
-    jsfc('questionDeleteDialog').show();
-    return false;
-  },
-
   showSurveyDeleteDialog: function (id) {
     jsfc('deleteDialog').show();
     return false;
@@ -134,8 +128,16 @@ var page = {
     jsfc('questionModificationDialog').show();
   },
 
+  onExtLinkModificationDialog: function () {
+    jsfc('extLinkModificationDialog').show();
+  },
+
   onQuestionDeleteDialog: function() {
     jsfc('questionDeleteDialog').show();
+  },
+
+  onExtLinkDeleteDialog: function() {
+    jsfc('extLinkDeleteDialog').show();
   },
 
   onPreviewClick: function() {

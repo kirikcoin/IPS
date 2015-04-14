@@ -4,6 +4,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
+import mobi.eyeline.ips.model.Page
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.Survey
 
@@ -11,42 +12,48 @@ import mobi.eyeline.ips.model.Survey
 @Slf4j('logger')
 class SurveyTreeUtil {
 
-  private static TreeNode addQuestion(Question q,
+  private static TreeNode addQuestion(Page p,
                                       TreeNode terminal,
                                       String defaultLabel,
                                       String defaultDescription,
+                                      String questionPrefix,
+                                      String extLinkPrefix,
                                       Map<Integer, TreeNode> target = new LinkedHashMap<>()) {
-    new TreeNode(q.id, "${q.activeIndex + 1}. $q.title" as String, q.title).with { node ->
+    final String prefix = (p instanceof Question) ? questionPrefix : extLinkPrefix
+    final String style = (p instanceof Question) ? null : 'ext-link'
+    new TreeNode(p.id, "$prefix ${p.activeIndex + 1}. $p.title" as String, p.title, style).with { node ->
       if (!target.containsKey(node.id)) {
         target.put(node.id, node)
 
         // id of default question edge should be not equal to normal edge id,
         // for example <0 and equals to question id +1
-        if (q.enabledDefaultAnswer) {
-          if (q.defaultQuestion == null) {
-            node.edges << new TreeEdge(-(q.id + 1),
-                defaultLabel,
-                defaultDescription,
-                terminal)
-          } else {
-            node.edges << new TreeEdge(-(q.id + 1),
-                defaultLabel,
-                defaultDescription,
-                addQuestion(q.defaultQuestion, terminal, defaultLabel, defaultDescription, target))
-          }
-        }
-        node.edges.addAll(q.activeOptions.collect { opt ->
-          new TreeEdge(
-              opt.id,
-              opt.activeIndex + 1 as String,
-              "${opt.activeIndex + 1}. $opt.answer" as String,
-              opt.nextQuestion ?
-                  addQuestion(opt.nextQuestion, terminal, defaultLabel, defaultDescription, target) :
+        if (p instanceof Question) {
+          if (p.enabledDefaultAnswer) {
+            if (p.defaultPage == null) {
+              node.edges << new TreeEdge(-(p.id + 1),
+                  defaultLabel,
+                  defaultDescription,
                   terminal)
-        })
+            } else {
+              node.edges << new TreeEdge(-(p.id + 1),
+                  defaultLabel,
+                  defaultDescription,
+                  addQuestion(p.defaultPage, terminal, defaultLabel, defaultDescription, questionPrefix, extLinkPrefix, target))
+            }
+          }
+          node.edges.addAll(p.activeOptions.collect { opt ->
+            new TreeEdge(
+                opt.id,
+                opt.activeIndex + 1 as String,
+                "${opt.activeIndex + 1}. $opt.answer" as String,
+                opt.nextPage ?
+                    addQuestion(opt.nextPage, terminal, defaultLabel, defaultDescription, questionPrefix, extLinkPrefix, target) :
+                    terminal)
+          })
+        }
         node
       } else {
-        target[q.id]
+        target[p.id]
       }
     }
   }
@@ -66,26 +73,29 @@ class SurveyTreeUtil {
                          String terminalDescription,
                          String unusedLabel,
                          String defaultLabel,
-                         String defaultDescription) {
+                         String defaultDescription,
+                         String questionPrefix,
+                         String extLinkPrefix) {
 
     if (survey.firstQuestion) {
       def terminal = new TreeNode(-1, terminalLabel, terminalDescription)
-      TreeNode tree = addQuestion(survey.firstQuestion, terminal, defaultLabel, defaultDescription)
+      TreeNode tree = addQuestion(
+          survey.firstQuestion, terminal, defaultLabel, defaultDescription, questionPrefix, extLinkPrefix)
 
       int maxEdgeId = listEdges(tree).max { TreeEdge e -> e.id }.id
 
       // Add nodes for unreachable questions by linking from the `terminal'
       listNodes(tree).with { nodes ->
         terminal.edges.addAll  \
-              survey.activeQuestions
-            .grep { Question q -> !nodes.any { TreeNode n -> n.id == q.id } }
-            .collect { q ->
-          def title = "${q.activeIndex + 1}. $q.title ($unusedLabel)"
+              survey.activePages
+            .grep { Page p -> !nodes.any { TreeNode n -> n.id == p.id } }
+            .collect { p ->
+          final String prefix = (p instanceof Question) ? questionPrefix : extLinkPrefix
+          def title = "$prefix ${p.activeIndex + 1}. $p.title ($unusedLabel)"
           new TreeEdge(++maxEdgeId, null, null, 'treeInvisible',
-              new TreeNode(q.id, title as String, q.title, 'treeUnused'))
+              new TreeNode(p.id, title as String, p.title, 'treeUnused'))
         }
       }
-
 
       return tree
 

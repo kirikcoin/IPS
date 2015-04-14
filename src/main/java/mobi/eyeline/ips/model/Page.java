@@ -89,6 +89,8 @@ public abstract class Page implements Serializable {
    */
   public abstract String getTitle();
 
+  public abstract int getActiveIndex();
+
   public static <T extends Page> Predicate<T> skipInactive() {
     return new Predicate<T>() {
       @Override

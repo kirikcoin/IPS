@@ -67,8 +67,8 @@ public class Question extends Page {
    * Опция для вопроса по умолчанию. Если введён некорректный вариант ответа, следующим будет данный вопрос.
    */
   @ManyToOne(optional = true)
-  @JoinColumn(name = "default_question_id")
-  private Question defaultQuestion;
+  @JoinColumn(name = "default_page_id")
+  private Page defaultPage;
 
   @PrePersist
   @PreUpdate
@@ -101,6 +101,7 @@ public class Question extends Page {
     this.options = options;
   }
 
+  @Override
   public int getActiveIndex() {
     return getSurvey().getActiveQuestions().indexOf(this);
   }
@@ -117,12 +118,12 @@ public class Question extends Page {
     return ListUtils.isLast(getSurvey().getQuestions(), this, Page.<Question>skipInactive());
   }
 
-  public Question getDefaultQuestion() {
-    return defaultQuestion;
+  public Page getDefaultPage() {
+    return defaultPage;
   }
 
-  public void setDefaultQuestion(Question defaultQuestion) {
-    this.defaultQuestion = defaultQuestion;
+  public void setDefaultPage(Page defaultPage) {
+    this.defaultPage = defaultPage;
   }
 
   public boolean isEnabledDefaultAnswer() {
@@ -142,7 +143,7 @@ public class Question extends Page {
   @SuppressWarnings("UnusedDeclaration")
   @AssertTrue(message = "{question.validation.default}")
   private boolean isCorrectDefaultQuestion() {
-    return isEnabledDefaultAnswer() || (getDefaultQuestion() == null);
+    return isEnabledDefaultAnswer() || (getDefaultPage() == null);
   }
 
   @SuppressWarnings("UnusedDeclaration")

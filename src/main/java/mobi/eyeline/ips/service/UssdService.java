@@ -7,7 +7,9 @@ import mobi.eyeline.ips.messages.MissingParameterException;
 import mobi.eyeline.ips.messages.UssdOption;
 import mobi.eyeline.ips.messages.UssdResponseModel;
 import mobi.eyeline.ips.model.Answer;
+import mobi.eyeline.ips.model.ExtLinkPage;
 import mobi.eyeline.ips.model.OptionAnswer;
+import mobi.eyeline.ips.model.Page;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Respondent;
@@ -199,9 +201,9 @@ public class UssdService implements MessageHandler {
         questionOptionRepository.load(request.getAnswerId());
     answerRepository.save(respondent, option);
 
-    final Question next = option.getNextQuestion();
+    final Page next = option.getNextPage();
     if (next != null) {
-      return question(next, request.isSkipValidation());
+      return page(next, request.isSkipValidation());
 
     } else {
       // All the questions are answered.
@@ -223,29 +225,24 @@ public class UssdService implements MessageHandler {
 
     final Answer lastAnswer = answerRepository.getLast(survey, respondent);
 
-    Question current;
-    if (lastAnswer == null) {
-      current = survey.getFirstQuestion();
+    final Page current = (lastAnswer == null) ?
+        survey.getFirstQuestion() : getNextPage(lastAnswer);
+
+    if ((current instanceof Question) && ((Question) current).isEnabledDefaultAnswer()) {
+      return processDefaultQuestion(request, survey, respondent, (Question) current);
 
     } else {
-      current = getNextQuestion(lastAnswer);
-    }
-
-    if (current.isEnabledDefaultAnswer()) {
-      return processDefaultQuestion(request, survey, respondent, current);
-
-    } else {
-      return question(current, request.isSkipValidation());
+      return page(current, request.isSkipValidation());
     }
   }
 
-  private Question getNextQuestion(Answer lastAnswer) {
+  private Page getNextPage(Answer lastAnswer) {
     final Question lastAnsweredQuestion = lastAnswer.getQuestion();
 
     if (lastAnswer instanceof TextAnswer) {
-      return lastAnsweredQuestion.getDefaultQuestion();
+      return lastAnsweredQuestion.getDefaultPage();
     } else {
-      return ((OptionAnswer) lastAnswer).getOption().getNextQuestion();
+      return ((OptionAnswer) lastAnswer).getOption().getNextPage();
     }
   }
 
@@ -257,9 +254,9 @@ public class UssdService implements MessageHandler {
     respondent.setAnswersCount(respondent.getAnswersCount() + 1);
     respondentRepository.update(respondent);
 
-    final Question next = question.getDefaultQuestion();
+    final Page next = question.getDefaultPage();
     return (next == null) ?
-        surveyFinish(respondent, survey) : question(next, request.isSkipValidation());
+        surveyFinish(respondent, survey) : page(next, request.isSkipValidation());
   }
 
   @Override
@@ -351,6 +348,13 @@ public class UssdService implements MessageHandler {
     }
   }
 
+  private UssdResponseModel page(Page page, boolean skipValidation) {
+    if      (page instanceof Question)    return question((Question) page, skipValidation);
+    else if (page instanceof ExtLinkPage) return extLink((ExtLinkPage) page, skipValidation);
+
+    throw new AssertionError("Unexpected page type: [" + page + "]");
+  }
+
   /**
    * @param skipValidation If set, all the links will contain
    *                       {@link mobi.eyeline.ips.messages.UssdOption#PARAM_SKIP_VALIDATION a flag} skipping survey validity check.
@@ -362,7 +366,7 @@ public class UssdService implements MessageHandler {
     final List<AnswerOption> renderedOptions = new ArrayList<>();
     for (QuestionOption option : question.getActiveOptions()) {
       final boolean isExitLink =
-          (option.getNextQuestion() == null) &&
+          (option.getNextPage() == null) &&
               (question.getSurvey().getDetails().getEndText() == null);
 
       renderedOptions.add(
@@ -374,5 +378,32 @@ public class UssdService implements MessageHandler {
     questionRepository.update(question);
 
     return new UssdResponseModel(question.getTitle(), renderedOptions);
+  }
+
+  /**
+   * @param skipValidation If set, all the links will contain
+   *                       {@link mobi.eyeline.ips.messages.UssdOption#PARAM_SKIP_VALIDATION a flag} skipping survey validity check.
+   * @return Form for the specified question.
+   */
+  private UssdResponseModel extLink(ExtLinkPage extLink, boolean skipValidation) {
+    assert extLink.isActive() : "Sending inactive question";
+
+    throw new UnsupportedOperationException("Not implemented yet");
+
+//    final List<AnswerOption> renderedOptions = new ArrayList<>();
+//    for (QuestionOption option : extLink.getActiveOptions()) {
+//      final boolean isExitLink =
+//          (option.getNextPage() == null) &&
+//              (extLink.getSurvey().getDetails().getEndText() == null);
+//
+//      renderedOptions.add(
+//          new AnswerOption(option.getActiveIndex() + 1, option, skipValidation, isExitLink)
+//      );
+//    }
+//
+//    extLink.setSentCount(extLink.getSentCount() + 1);
+//    questionRepository.update(extLink);
+//
+//    return new UssdResponseModel(extLink.getTitle(), renderedOptions);
   }
 }

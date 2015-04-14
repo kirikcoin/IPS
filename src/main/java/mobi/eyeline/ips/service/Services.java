@@ -7,7 +7,9 @@ import mobi.eyeline.ips.repository.AccessNumberRepository;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.DB;
 import mobi.eyeline.ips.repository.DeliverySubscriberRepository;
+import mobi.eyeline.ips.repository.ExtLinkPageRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
+import mobi.eyeline.ips.repository.PageRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
@@ -38,6 +40,8 @@ public class Services {
   private final SurveyStatsRepository surveyStatsRepository;
   private final SurveyRepository surveyRepository;
   private final QuestionRepository questionRepository;
+  private final ExtLinkPageRepository extLinkPageRepository;
+  private final PageRepository pageRepository;
   private final QuestionOptionRepository questionOptionRepository;
   private final AnswerRepository answerRepository;
   private final SurveyInvitationRepository surveyInvitationRepository;
@@ -75,6 +79,8 @@ public class Services {
     userRepository = new UserRepository(db);
     respondentRepository = new RespondentRepository(db);
     questionRepository = new QuestionRepository(db);
+    extLinkPageRepository = new ExtLinkPageRepository(db);
+    pageRepository = new PageRepository(db);
     surveyStatsRepository = new SurveyStatsRepository(db);
     surveyRepository = new SurveyRepository(db);
     questionOptionRepository = new QuestionOptionRepository(db);
@@ -91,6 +97,7 @@ public class Services {
     surveyService = new SurveyService(
         surveyRepository,
         questionRepository,
+        extLinkPageRepository,
         questionOptionRepository,
         surveyInvitationRepository,
         invitationDeliveryRepository);
@@ -181,6 +188,14 @@ public class Services {
 
   public QuestionRepository getQuestionRepository() {
     return questionRepository;
+  }
+
+  public ExtLinkPageRepository getExtLinkPageRepository() {
+    return extLinkPageRepository;
+  }
+
+  public PageRepository getPageRepository() {
+    return pageRepository;
   }
 
   public QuestionOptionRepository getQuestionOptionRepository() {

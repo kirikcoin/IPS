@@ -217,6 +217,10 @@ public class Survey implements Serializable {
     return newArrayList(filter(getQuestions(), not(Page.skipInactive())));
   }
 
+  public List<Page> getActivePages() {
+    return newArrayList(filter(getPages(), not(Page.skipInactive())));
+  }
+
   public List<ExtLinkPage> getActiveExtLinkPages() {
     return newArrayList(filter(getExtLinkPages(), not(Page.skipInactive())));
   }

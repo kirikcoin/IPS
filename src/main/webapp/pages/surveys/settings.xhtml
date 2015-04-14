@@ -35,8 +35,12 @@
             page.onEditEndMessageClick();
           } else if ("#{surveySettingsController.errorId}" == 'questionModificationDialog') {
             page.onQuestionModificationDialog();
+          } else if ("#{surveySettingsController.errorId}" == 'extLinkModificationDialog') {
+            page.onExtLinkModificationDialog();
           } else if ("#{surveySettingsController.errorId}" == 'questionDeleteDialog') {
             page.onQuestionDeleteDialog();
+          } else if ("#{surveySettingsController.errorId}" == 'extLinkDeleteDialog') {
+            page.onExtLinkDeleteDialog();
           } else if ("#{surveySettingsController.errorId}" == 'surveyPreviewDialog') {
             page.onPreviewClick();
           } else if ("#{surveySettingsController.errorId}" == 'deleteDialog') {
@@ -75,6 +79,7 @@
 
         <h:inputHidden id="id" value="#{surveySettingsController.surveyId}"/>
         <h:inputHidden id="questionId" value="#{surveySettingsController.questionId}"/>
+        <h:inputHidden id="extLinkId" value="#{surveySettingsController.extLinkId}"/>
 
         <h:inputHidden id="settingsStartDate" value="#{surveySettingsController.settingsStartDate}"/>
         <h:inputHidden id="settingsEndDate" value="#{surveySettingsController.settingsEndDate}"/>
@@ -270,130 +275,199 @@
               </f:facet>
               <h:panelGroup>
                 <h:outputText rendered="#{empty surveySettingsController.persistedSurvey.activeQuestions}"
-                              value="#{bundle['survey.settings.no.questions']}"
+                              value="#{bundle['survey.settings.no.pages']}"
                               styleClass="placeholder"/>
               </h:panelGroup>
               <eye:tabs id="tabs" autoSelectClass="opened" rendered="#{!empty surveySettingsController.persistedSurvey.activeQuestions}">
                 <eye:tab id="questions" label="#{bundle['survey.settings.questions.tabs.questions']}">
-                  <h:panelGroup>
 
-                    <ui:repeat value="#{surveySettingsController.persistedSurvey.activeQuestions}"
-                               var="question">
-                      <h:panelGrid columns="1" styleClass="question">
+                  <eye:collapsingGroup opened="true" id="groupEditorQuestions">
+                    <f:facet name="header">
+                      <h:panelGroup>
+                        <h:outputText value="#{bundle['survey.settings.questions.questions']}"/>
+                      </h:panelGroup>
+                    </f:facet>
 
-                        <!-- Question header -->
-                        <f:facet name="header">
-                          <h:panelGrid columns="2" style="background-color: #F0F0F0;">
-                            <h:panelGroup>
-                              <h:outputText value="#{question.activeIndex + 1}. "
-                                            style="padding-right: 5px"/>
-                              <h:outputText value="#{question.title} "/>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
-                              <h:commandLink value="#{bundle['survey.details.delete']}"
-                                             styleClass="modify"
-                                             action="#{surveySettingsController.beforeDeleteQuestion(question.id)}"/>
-                              <h:commandLink value="#{bundle['survey.settings.modify']}"
-                                             action="#{surveySettingsController.modifyQuestion(question.id)}"
-                                             styleClass="modify"/>
-                            </h:panelGroup>
-                          </h:panelGrid>
-                        </f:facet>
+                    <h:panelGroup rendered="#{empty surveySettingsController.persistedSurvey.activeQuestions}">
+                      <h:outputText value="#{bundle['survey.settings.no.questions']}"
+                                    styleClass="placeholder"/>
+                    </h:panelGroup>
 
-                        <!-- Question body -->
-                        <h:panelGrid columns="2" columnClasses="columnOptionsList,columnSegmentation">
+                    <h:panelGroup>
+                      <ui:repeat value="#{surveySettingsController.persistedSurvey.activeQuestions}"
+                                 var="question">
+                        <h:panelGrid columns="1" styleClass="question">
+
+                          <!-- Question header -->
+                          <f:facet name="header">
+                            <h:panelGrid columns="2" style="background-color: #F0F0F0;">
+                              <h:panelGroup>
+                                <h:outputText value="#{question.activeIndex + 1}. "
+                                              style="padding-right: 5px"/>
+                                <h:outputText value="#{question.title} "/>
+                              </h:panelGroup>
+                              <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
+                                <h:commandLink value="#{bundle['survey.details.delete']}"
+                                               styleClass="modify"
+                                               action="#{surveySettingsController.beforeDeleteQuestion(question.id)}"/>
+                                <h:commandLink value="#{bundle['survey.settings.modify']}"
+                                               action="#{surveySettingsController.modifyQuestion(question.id)}"
+                                               styleClass="modify"/>
+                              </h:panelGroup>
+                            </h:panelGrid>
+                          </f:facet>
+
+                          <!-- Question body -->
+                          <h:panelGrid columns="2" columnClasses="columnOptionsList,columnSegmentation">
 
                             <!-- Options list -->
                             <h:panelGroup styleClass="defaultOption" layout="block">
-                                <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultQuestion != null}"
-                                              value="#{bundle['survey.settings.question.default.question']} &#8594; #{question.defaultQuestion.activeIndex + 1}"
-                                              styleClass="option-label"/>
-                                <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultQuestion == null}"
-                                              value="#{bundle['survey.settings.question.default.question']} &#8594; #{bundle['question.option.terminal.list.label']}"
-                                              styleClass="option-label"/>
-                                <h:outputText rendered="#{!question.enabledDefaultAnswer}"
-                                              value="#{bundle['survey.settings.question.default.question']} #{bundle['survey.settings.question.default.question.disabled']}"
-                                              styleClass="option-label"/>
+                              <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultPage != null}"
+                                            value="#{bundle['survey.settings.question.default.question']} &#8594; #{surveySettingsController.getPagePrefix(question.defaultPage)} #{question.defaultPage.activeIndex + 1}"
+                                            styleClass="option-label"/>
+                              <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultPage == null}"
+                                            value="#{bundle['survey.settings.question.default.question']} &#8594; #{bundle['question.option.terminal.list.label']}"
+                                            styleClass="option-label"/>
+                              <h:outputText rendered="#{!question.enabledDefaultAnswer}"
+                                            value="#{bundle['survey.settings.question.default.question']} #{bundle['survey.settings.question.default.question.disabled']}"
+                                            styleClass="option-label"/>
 
                             </h:panelGroup>
                             <h:panelGroup layout="block"></h:panelGroup>
 
                             <h:outputText rendered="#{empty question.activeOptions}"
-                                        value="#{bundle['survey.settings.question.options.not.specified']}"
-                                        styleClass="placeholder"/>
+                                          value="#{bundle['survey.settings.question.options.not.specified']}"
+                                          styleClass="placeholder"/>
 
-                          <h:dataTable var="option"
-                                       value="#{question.activeOptions}"
-                                       rendered="#{not empty question.activeOptions}"
-                                       style="padding-left: 20px">
-                            <h:column>
-                              <h:outputText value="#{option.activeIndex + 1}. "
-                                            styleClass="option-number"/>
-                              <h:outputText value="#{option.answer}"/>
-                              <h:outputText value="&#8594; #{bundle['question.option.terminal.list.label']}"
-                                            rendered="#{option.nextQuestion == null}"
-                                            styleClass="option-label"/>
-                              <h:outputText value="&#8594; #{option.nextQuestion.activeIndex+1}"
-                                            rendered="#{option.nextQuestion != null}"
-                                            styleClass="option-label"/>
-
-                            </h:column>
-                          </h:dataTable>
+                            <h:dataTable var="option"
+                                         value="#{question.activeOptions}"
+                                         rendered="#{not empty question.activeOptions}"
+                                         style="padding-left: 20px">
+                              <h:column>
+                                <h:outputText value="#{option.activeIndex + 1}. "
+                                              styleClass="option-number"/>
+                                <h:outputText value="#{option.answer}"/>
+                                <h:outputText value="&#8594; #{bundle['question.option.terminal.list.label']}"
+                                              rendered="#{option.nextPage == null}"
+                                              styleClass="option-label"/>
+                                <h:outputText value="&#8594; #{surveySettingsController.getPagePrefix(option.nextPage)} #{option.nextPage.activeIndex+1}"
+                                              rendered="#{option.nextPage != null}"
+                                              styleClass="option-label"/>
+                              </h:column>
+                            </h:dataTable>
 
 
                             <!-- Segmentation -->
-                          <h:panelGroup layout="block" id="segmentation">
-                            <h:panelGrid columns="2">
-                              <h:outputLabel for="symbols"
-                                             value="#{bundle['survey.settings.question.symbols']}:"/>
-                              <h:outputText id="symbols"
-                                            value="#{question.segmentationInfo.symbolsCount}"/>
+                            <h:panelGroup layout="block" id="segmentation">
+                              <h:panelGrid columns="2">
+                                <h:outputLabel for="symbols"
+                                               value="#{bundle['survey.settings.question.symbols']}:"/>
+                                <h:outputText id="symbols"
+                                              value="#{question.segmentationInfo.symbolsCount}"/>
 
-                              <h:outputLabel for="segments"
-                                             value="#{bundle['survey.settings.question.segments']}:"/>
-                              <h:outputText id="segments"
-                                            value="#{question.segmentationInfo.segmentsCount}"/>
+                                <h:outputLabel for="segments"
+                                               value="#{bundle['survey.settings.question.segments']}:"/>
+                                <h:outputText id="segments"
+                                              value="#{question.segmentationInfo.segmentsCount}"/>
 
-                              <h:outputLabel for="perSegment"
-                                             value="#{bundle['survey.settings.question.symbols.per.segment']}:"/>
-                              <h:outputText id="perSegment"
-                                            value="#{question.segmentationInfo.maxSymbolsPerSegment}"/>
-                            </h:panelGrid>
-                          </h:panelGroup>
+                                <h:outputLabel for="perSegment"
+                                               value="#{bundle['survey.settings.question.symbols.per.segment']}:"/>
+                                <h:outputText id="perSegment"
+                                              value="#{question.segmentationInfo.maxSymbolsPerSegment}"/>
+                              </h:panelGrid>
+                            </h:panelGroup>
+                          </h:panelGrid>
+
                         </h:panelGrid>
+                      </ui:repeat>
+                    </h:panelGroup>
+                  </eye:collapsingGroup>
 
-                      </h:panelGrid>
-                    </ui:repeat>
-                  </h:panelGroup>
+                  <eye:collapsingGroup opened="true" id="groupEditorExtLinks">
+                    <f:facet name="header">
+                      <h:panelGroup>
+                        <h:outputText value="#{bundle['survey.settings.questions.ext.links']}"/>
+                      </h:panelGroup>
+                    </f:facet>
+                    <h:panelGroup>
+
+                      <h:panelGroup rendered="#{empty surveySettingsController.persistedSurvey.activeExtLinkPages}">
+                        <h:outputText value="#{bundle['survey.settings.no.ext.links']}"
+                                      styleClass="placeholder"/>
+                      </h:panelGroup>
+
+                      <ui:repeat value="#{surveySettingsController.persistedSurvey.activeExtLinkPages}"
+                                 var="extLink">
+
+                        <h:panelGrid columns="1" styleClass="extLink">
+
+                          <!-- Item header -->
+                          <f:facet name="header">
+                            <h:panelGrid columns="2" style="background-color: #F0F0F0;">
+                              <h:panelGroup>
+                                <h:outputText value="#{extLink.activeIndex + 1}. "
+                                              style="padding-right: 5px"/>
+                                <h:outputText value="#{extLink.title} "/>
+                              </h:panelGroup>
+                              <h:panelGroup rendered="#{userSession.surveyModificationAllowed}">
+                                <h:commandLink value="#{bundle['survey.details.delete']}"
+                                               styleClass="modify"
+                                               action="#{surveySettingsController.beforeDeleteExtLink(extLink.id)}"/>
+                                <h:commandLink value="#{bundle['survey.settings.modify']}"
+                                               action="#{surveySettingsController.modifyExtLink(extLink.id)}"
+                                               styleClass="modify"/>
+                              </h:panelGroup>
+                            </h:panelGrid>
+                          </f:facet>
+
+                          <h:panelGrid columns="2" columnClasses="columnOptionsList,columnSegmentation">
+                            <h:panelGroup styleClass="defaultOption" layout="block">
+                              <h:outputText value="#{bundle['survey.settings.ext.link.modify.service.url']}:"
+                                            styleClass="option-label" style="padding-right: 5px"/>
+                              <h:outputText value="#{extLink.serviceUrl}"/>
+                            </h:panelGroup>
+                          </h:panelGrid>
+                        </h:panelGrid>
+                      </ui:repeat>
+                    </h:panelGroup>
+                  </eye:collapsingGroup>
+
                 </eye:tab>
 
-                  <eye:tab id="graph" label="#{bundle['survey.settings.questions.tabs.graphs']}">
-                      <ipsc:tree id="questionsTree"
-                                 value="#{surveySettingsController.questionsGraph}"
-                                 height="600"
-                                 width="1162"
-                                 direction="TB"/>
-                      <c:if test="#{surveySettingsController.openedGraph}">
-                          <!-- Marks that last active tab is the graph. -->
-                          <span id="graphFlag" class="opened"/>
-                      </c:if>
-                      <h:panelGroup layout="block" styleClass="italicStyle">
-                          <h:outputText value="#{bundle['survey.settings.questions.tabs.graphs.legend']}"/>
-                      </h:panelGroup>
-                  </eye:tab>
+                <eye:tab id="graph" label="#{bundle['survey.settings.questions.tabs.graphs']}">
+                  <ipsc:tree id="questionsTree"
+                             value="#{surveySettingsController.questionsGraph}"
+                             height="600"
+                             width="1162"
+                             direction="TB"/>
+                  <c:if test="#{surveySettingsController.openedGraph}">
+                    <!-- Marks that last active tab is the graph. -->
+                    <span id="graphFlag" class="opened"/>
+                  </c:if>
+                  <h:panelGroup layout="block" styleClass="italicStyle">
+                    <h:outputText value="#{bundle['survey.settings.questions.tabs.graphs.legend']}"/>
+                  </h:panelGroup>
+                </eye:tab>
 
               </eye:tabs>
 
               <h:panelGrid columns="2" columnClasses="previewLeft,previewRight">
-                <eye:buttons>
-                  <eye:button>
-                    <h:commandLink value="#{bundle['survey.settings.question.add']}"
-                                   action="#{surveySettingsController.modifyQuestion(null)}"
-                                   styleClass="button-green"
-                                   rendered="#{userSession.surveyModificationAllowed}"/>
-                  </eye:button>
-                  <eye:space/>
-                </eye:buttons>
+                <h:panelGroup>
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink value="#{bundle['survey.settings.question.add']}"
+                                     action="#{surveySettingsController.modifyQuestion(null)}"
+                                     styleClass="button-green" style="width: 1px"
+                                     rendered="#{userSession.surveyModificationAllowed}"/>
+                    </eye:button>
+                    <eye:button id="btnAddExtLink" visible="#{empty surveySettingsController.persistedSurvey.activeQuestions ? false : true}">
+                      <h:commandLink value="#{bundle['survey.settings.ext.link.add']}"
+                                     action="#{surveySettingsController.modifyExtLink(null)}"
+                                     styleClass="button-green" style="width: 100%"
+                                     rendered="#{userSession.surveyModificationAllowed}"/>
+                    </eye:button>
+                  </eye:buttons>
+                </h:panelGroup>
 
                 <eye:buttons
                     rendered="#{not empty surveySettingsController.survey.activeQuestions}">
@@ -632,6 +706,40 @@
         </eye:dialog>
 
         <!--
+            External link delete confirmation dialog
+        -->
+        <eye:dialog id="extLinkDeleteDialog"
+                    title="#{bundle['survey.settings.ext.links.delete.title']}"
+                    width="400">
+
+          <h:panelGroup styleClass="confirmDialog_content" layout="block">
+            <h:outputText value="#{surveySettingsController.extLinkDeletePrompt}" escape="false"/>
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" style="margin: 10px"/>
+
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink id="extLinkDeleteDialog_confirmButton"
+                             styleClass="button-green"
+                             value="#{bundle['dialog.confirm']}"
+                             action="#{surveySettingsController.deleteExtLink}">
+                <f:param name="errorId" value="extLinkDeleteDialog"/>
+              </h:commandLink>
+            </eye:button>
+
+            <eye:button>
+              <h:commandLink id="extLinkDeleteDialog_cancelButton"
+                             styleClass="button-green"
+                             value="#{bundle['dialog.cancel']}"
+                             onclick="jsfc('extLinkDeleteDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
+
+        <!--
             Question modification dialog
         -->
         <eye:dialog id="questionModificationDialog"
@@ -645,9 +753,9 @@
                          maxlength="70"
                          value="#{surveySettingsController.question.title}"/>
 
-            <br/>
+          <br/>
 
-            <h:panelGroup id="headerBlock" layout="block">
+          <h:panelGroup id="headerBlock" layout="block">
             <h:panelGrid columns="5"
                          columnClasses="questionColDrag, questionColId, questionColTitle, questionColNext, questionColAdd">
               <h:outputText value=" "/>
@@ -714,6 +822,45 @@
             <eye:space/>
           </eye:buttons>
 
+        </eye:dialog>
+
+        <!--
+            External link modification dialog.
+        -->
+        <eye:dialog id="extLinkModificationDialog"
+                    title="#{bundle['survey.settings.ext.link.modify.title']}"
+                    width="700">
+
+          <h:outputLabel value="#{bundle['survey.settings.ext.link.modify.service.name']}:"
+                         for="serviceName"/>
+          <eye:inputText id="serviceName"
+                         maxlength="70"
+                         value="#{surveySettingsController.extLinkPage.serviceName}"/>
+          <br/>
+
+          <h:outputLabel value="#{bundle['survey.settings.ext.link.modify.service.url']}:"
+                         for="serviceUrl"/>
+          <eye:inputText id="serviceUrl"
+                         maxlength="255"
+                         value="#{surveySettingsController.extLinkPage.serviceUrl}"/>
+          <br/>
+
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink id="saveExtLink"
+                             styleClass="button-green btnSubmit"
+                             value="#{bundle['survey.settings.ext.link.modify.save']}"
+                             action="#{surveySettingsController.saveExtLink}">
+                <f:param name="errorId" value="extLinkModificationDialog"/>
+              </h:commandLink>
+            </eye:button>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['survey.settings.ext.link.modify.cancel']}"
+                             onclick="return page.onDialogCancel('extLinkModificationDialog');"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
         </eye:dialog>
 
         <!-- Survey preview dialog -->

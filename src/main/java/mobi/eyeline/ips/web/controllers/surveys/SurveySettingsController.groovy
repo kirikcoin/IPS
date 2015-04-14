@@ -5,10 +5,14 @@ import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.AccessNumber
+import mobi.eyeline.ips.model.ExtLinkPage
+import mobi.eyeline.ips.model.Page
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.SurveyPattern
 import mobi.eyeline.ips.repository.AccessNumberRepository
+import mobi.eyeline.ips.repository.ExtLinkPageRepository
+import mobi.eyeline.ips.repository.PageRepository
 import mobi.eyeline.ips.repository.QuestionRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.CouponService
@@ -43,6 +47,8 @@ import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.
 class SurveySettingsController extends BaseSurveyController {
 
   private final QuestionRepository questionRepository = Services.instance().questionRepository
+  private final ExtLinkPageRepository extLinkPageRepository = Services.instance().extLinkPageRepository
+  private final PageRepository pageRepository = Services.instance().pageRepository
   private final UserRepository userRepository = Services.instance().userRepository
   private final AccessNumberRepository accessNumberRepository =
       Services.instance().accessNumberRepository
@@ -63,11 +69,15 @@ class SurveySettingsController extends BaseSurveyController {
   int newSurveyClientId
 
   Integer questionId
+  Integer extLinkId
 
   // Question modification
   Question question = new Question()
   Integer defaultQuestionId
   DynamicTableModel questionOptions = new DynamicTableModel()
+
+  // Ext link modification
+  ExtLinkPage extLinkPage = new ExtLinkPage()
 
   // Phone number for survey preview.
   String phoneNumber = currentUser.phoneNumber
@@ -108,6 +118,7 @@ class SurveySettingsController extends BaseSurveyController {
   TreeNode questionsGraph
 
   String questionDeletePrompt
+  String extLinkDeletePrompt
 
   SurveySettingsController() {
     super()
@@ -123,7 +134,7 @@ class SurveySettingsController extends BaseSurveyController {
   List<SelectItem> getNextQuestionsList() {
     [
         new SelectItem(-1, strings['question.option.terminal.inlist'] as String),
-        *activeQuestions
+        *activePages
     ] as List<SelectItem>
   }
 
@@ -132,20 +143,25 @@ class SurveySettingsController extends BaseSurveyController {
         // -1 - disabled default answer
         new SelectItem(-1, strings['survey.settings.question.default.question.disabled'] as String),
         new SelectItem(null, strings['question.option.terminal.inlist'] as String),
-        *activeQuestions
+        *activePages
     ] as List<SelectItem>
   }
 
-  List<SelectItem> getActiveQuestions() {
-    survey.activeQuestions.collect { q ->
-      def idx = q.activeIndex + 1
+  List<SelectItem> getActivePages() {
+    def asSelectItem = { Page p ->
+      def idx = p.activeIndex + 1
       def maxLabel = 20
-      def title = q.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
+      def title = p.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
       new SelectItem(
-          q.id,
-          "$idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel - 3] + '...'}",
-          "$idx. ${q.title} ")
-    } as List<SelectItem>
+          p.id,
+          "${getPagePrefix(p)} $idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel - 3] + '...'}",
+          "${getPagePrefix(p)} $idx. ${p.title}")
+    }
+
+    [
+        * survey.activeQuestions.collect(asSelectItem),
+        * survey.activeExtLinkPages.collect(asSelectItem)
+    ] as List<SelectItem>
   }
 
   private void updateQuestionsGraph() {
@@ -155,7 +171,9 @@ class SurveySettingsController extends BaseSurveyController {
         strings['survey.settings.questions.tabs.graphs.end.description'],
         strings['survey.settings.questions.option.unused'],
         strings['survey.settings.question.modify.default.question.label'],
-        strings['survey.settings.question.modify.default.question.description'])
+        strings['survey.settings.question.modify.default.question.description'],
+        strings['survey.settings.pages.option.prefix.question'],
+        strings['survey.settings.pages.option.prefix.ext.link'])
 
     def start = new TreeNode(-2,
         strings['survey.settings.questions.tabs.graphs.start.label'],
@@ -327,10 +345,45 @@ class SurveySettingsController extends BaseSurveyController {
     errorId = 'questionDeleteDialog'
   }
 
+  void beforeDeleteExtLink(int extLinkId) {
+    final extLink = extLinkPageRepository.load(extLinkId)
+    this.extLinkId = extLinkId
+
+    def refs = surveyService.getReferencesTo(extLink)
+    def defaultRefs = surveyService.getDefaultReferencesTo(extLink)
+
+    defaultRefs.each { Question q ->
+      if (!refs.contains(q)) refs << q
+    }
+
+    if (refs.empty) {
+      extLinkDeletePrompt = strings['survey.settings.ext.links.delete.prompt']
+
+    } else if (refs.size() == 1) {
+      questionDeletePrompt = MessageFormat.format(
+          strings['survey.settings.ext.links.delete.prompt.with.references.single'] as String,
+          refs.first().activeIndex + 1 as String)
+    } else {
+      questionDeletePrompt = MessageFormat.format(
+          strings['survey.settings.ext.links.delete.prompt.with.references.plural'] as String,
+          refs.collect { Question q -> q.activeIndex + 1 }.join(', '))
+    }
+
+    errorId = 'extLinkDeleteDialog'
+  }
+
   void deleteQuestion() {
     int questionId = getParamValue('questionId').asInteger()
 
     surveyService.deleteQuestion(questionRepository.load(questionId))
+    persistedSurvey = surveyRepository.load(surveyId)
+    updateQuestionsGraph()
+  }
+
+  void deleteExtLink() {
+    int extLinkId = getParamValue('extLinkId').asInteger()
+
+    surveyService.deleteExtLinkPage(extLinkPageRepository.load(extLinkId))
     persistedSurvey = surveyRepository.load(surveyId)
     updateQuestionsGraph()
   }
@@ -340,7 +393,7 @@ class SurveySettingsController extends BaseSurveyController {
 
     if (questionId) {
       question = questionRepository.load(questionId)
-      defaultQuestionId = question.enabledDefaultAnswer ? question.defaultQuestion?.id : -1
+      defaultQuestionId = question.enabledDefaultAnswer ? question.defaultPage?.id : -1
 
       questionOptions = new DynamicTableModel()
       question.options
@@ -349,7 +402,7 @@ class SurveySettingsController extends BaseSurveyController {
         def row = new DynamicTableRow() {
           {
             setValue 'answer', it.answer
-            setValue 'nextQuestion', it.nextQuestion ? it.nextQuestion.id : -1 as String
+            setValue 'nextQuestion', it.nextPage ? it.nextPage.id : -1 as String
             setValue 'id', it.id
           }
         }
@@ -363,6 +416,21 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     errorId = 'questionModificationDialog'
+
+    return null
+  }
+
+  String modifyExtLink(Integer extLinkId) {
+    this.extLinkId = extLinkId
+
+    if (extLinkId) {
+      extLinkPage = extLinkPageRepository.load(extLinkId)
+
+    } else {
+      extLinkPage = new ExtLinkPage()
+    }
+
+    errorId = 'extLinkModificationDialog'
 
     return null
   }
@@ -402,6 +470,32 @@ class SurveySettingsController extends BaseSurveyController {
 
     } else {
       questionRepository.saveOrUpdate(persistedQuestion)
+    }
+
+    updateQuestionsGraph()
+    goToSurvey(surveyId)
+  }
+
+  void saveExtLink() {
+    final persistedExtLink = extLinkId ?
+        extLinkPageRepository.load(extLinkId) : new ExtLinkPage(survey: persistedSurvey)
+
+    persistedExtLink.serviceName = extLinkPage.serviceName
+    persistedExtLink.serviceUrl = extLinkPage.serviceUrl
+
+    final validationError = renderViolationMessage(
+        validator.validate(persistedExtLink) as Set<ConstraintViolation>)
+    if (validationError) {
+      errorId = FacesContext.currentInstance.externalContext.requestParameterMap["errorId"]
+      return
+    }
+
+    if (!extLinkId) {
+      persistedSurvey.pages.add(persistedExtLink)
+      surveyRepository.update(persistedSurvey)
+
+    } else {
+      extLinkPageRepository.saveOrUpdate(persistedExtLink)
     }
 
     updateQuestionsGraph()
@@ -454,22 +548,28 @@ class SurveySettingsController extends BaseSurveyController {
     new PhoneValidator().validate(phoneNumber)
   }
 
+  String getPagePrefix(Page p) {
+    return (p instanceof Question) ?
+        strings['survey.settings.pages.option.prefix.question'] :
+        strings['survey.settings.pages.option.prefix.ext.link']
+  }
+
   private void updateQuestionModel(Question persistedQuestion) {
     def getId = { DynamicTableRow row -> row.getValue('id') as String }
     def getAnswer = { DynamicTableRow row -> row.getValue('answer') as String }
-    def getNextQuestion = { DynamicTableRow row ->
+    def getNextPage = { DynamicTableRow row ->
       int nextId = row.getValue('nextQuestion') as Integer
-      nextId == -1 ? null : questionRepository.get(nextId) as Question
+      nextId == -1 ? null : pageRepository.get(nextId) as Page
     }
     def index = { DynamicTableRow row -> questionOptions.rows.indexOf(row) }
 
     persistedQuestion.title = question.title
     persistedQuestion.enabledDefaultAnswer = (defaultQuestionId != -1)
     if (persistedQuestion.enabledDefaultAnswer) {
-      persistedQuestion.defaultQuestion =
-          (defaultQuestionId ? questionRepository.get(defaultQuestionId) : null) as Question
+      persistedQuestion.defaultPage =
+          (defaultQuestionId ? pageRepository.get(defaultQuestionId) : null) as Page
     } else {
-      persistedQuestion.defaultQuestion = null
+      persistedQuestion.defaultPage = null
     }
 
     def handleRemoved = {
@@ -490,7 +590,7 @@ class SurveySettingsController extends BaseSurveyController {
             .find { DynamicTableRow row -> getId(row).toInteger() == option.id }
             .each { DynamicTableRow row ->
           option.answer = getAnswer(row)
-          option.nextQuestion = getNextQuestion(row)
+          option.nextPage = getNextPage(row)
           option.moveTo index(row)
         }
       }
@@ -503,7 +603,7 @@ class SurveySettingsController extends BaseSurveyController {
         def option = new QuestionOption(
             question: persistedQuestion,
             answer: getAnswer(row),
-            nextQuestion: getNextQuestion(row))
+            nextPage: getNextPage(row))
         persistedQuestion.options.add option
         option.moveTo index(row)
       }

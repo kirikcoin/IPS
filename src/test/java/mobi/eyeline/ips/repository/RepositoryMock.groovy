@@ -15,6 +15,7 @@ class RepositoryMock {
   SurveyStatsRepository surveyStatsRepository
   SurveyRepository surveyRepository
   QuestionRepository questionRepository
+  ExtLinkPageRepository extLinkPageRepository
   QuestionOptionRepository questionOptionRepository
   AnswerRepository answerRepository
   SurveyInvitationRepository surveyInvitationRepository
@@ -27,6 +28,7 @@ class RepositoryMock {
     userRepository = new UserRepository(db)
     respondentRepository = new RespondentRepository(db)
     questionRepository = new QuestionRepository(db)
+    extLinkPageRepository = new ExtLinkPageRepository(db)
     surveyStatsRepository = new SurveyStatsRepository(db)
     surveyRepository = new SurveyRepository(db)
     questionOptionRepository = new QuestionOptionRepository(db)
