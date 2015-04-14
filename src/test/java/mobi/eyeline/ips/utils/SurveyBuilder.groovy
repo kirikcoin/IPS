@@ -3,7 +3,9 @@ package mobi.eyeline.ips.utils
 import groovy.transform.InheritConstructors
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Answer
+import mobi.eyeline.ips.model.ExtLinkPage
 import mobi.eyeline.ips.model.OptionAnswer
+import mobi.eyeline.ips.model.Page
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Survey
@@ -40,7 +42,7 @@ class SurveyBuilder {
   }
 
   static Question question(Map _, @DelegatesTo(QuestionContext) Closure closure) {
-    new QuestionsContext(new SurveyContext(null), [:]).question(_, closure)
+    new PagesContext(new SurveyContext(null), [:]).question(_, closure)
   }
 
   @InheritConstructors
@@ -70,11 +72,10 @@ class SurveyBuilder {
   }
 
   @InheritConstructors
-  static class QuestionsContext extends ListContext<Question> {
+  static class PagesContext extends ListContext<Page> {
+    protected SurveyContext surveyContext = new SurveyContext(null)
 
-    private SurveyContext surveyContext = new SurveyContext(null)
-
-    QuestionsContext(SurveyContext surveyContext, Map commonArgs) {
+    PagesContext(SurveyContext surveyContext, Map commonArgs) {
       this(commonArgs)
       this.surveyContext = surveyContext
     }
@@ -90,33 +91,50 @@ class SurveyBuilder {
       question(question(args), closure)
     }
 
+    ExtLinkPage extLink(Map _) {
+      surveyContext.bind(add(new ExtLinkPage(_))) {
+        surveyContext.enclosing.pages << it
+        it.survey = surveyContext.enclosing
+      }
+    }
+
+    ExtLinkPage extLink(Map args, @DelegatesTo(ExtLinkContext) Closure closure) {
+      extLink extLink(args), closure
+    }
+
     static Question question(Question question, @DelegatesTo(QuestionContext) Closure closure) {
       new QuestionContext(question).with closure
       question
     }
 
-    List<Question> invoke(@DelegatesTo(QuestionsContext) Closure closure) {
+    static ExtLinkPage extLink(ExtLinkPage extLink, @DelegatesTo(ExtLinkContext) Closure closure) {
+      new ExtLinkContext(extLink).with closure; extLink
+    }
+
+    List<Page> invoke(@DelegatesTo(PagesContext) Closure closure) {
       super.invoke closure
 
+      final questions = list.findAll { it instanceof Question } as List<Question>
+
       // Resolve deferred references.
-      list.collectMany { it.options }
+      questions.collectMany { it.options }
           .findAll { QuestionOption opt -> opt.nextPage instanceof DeferredReference }
           .each { QuestionOption opt ->
-        opt.nextPage = (opt.nextPage as DeferredReference<Question>).resolve(list)
+        opt.nextPage = (opt.nextPage as DeferredReference<Page>).resolve(list)
       }
 
-      list.findAll { Question q -> q.defaultPage instanceof DeferredReference }
+      questions.findAll { Question q -> q.defaultPage instanceof DeferredReference }
           .each { Question q ->
-        q.defaultPage = (q.defaultPage as DeferredReference<Question>).resolve(list)
+        q.defaultPage = (q.defaultPage as DeferredReference<Page>).resolve(list)
       }
 
       list
     }
 
     /**
-     * @return Question reference.
+     * @return Page reference.
      */
-    Question ref(Map classifier) { new DeferredQuestion(classifier) }
+    Page ref(Map classifier) { new DeferredPage(classifier) }
   }
 
   /**
@@ -178,8 +196,8 @@ class SurveyBuilder {
     /**
      * Allows to create a set of {@link Question questions} and binds them to the enclosing survey.
      */
-    List<Question> questions(@DelegatesTo(QuestionsContext) Closure closure) {
-      new QuestionsContext(this, [:]).invoke closure
+    List<Question> pages(@DelegatesTo(PagesContext) Closure closure) {
+      new PagesContext(this, [:]).invoke closure
     }
 
   }
@@ -209,12 +227,19 @@ class SurveyBuilder {
     }
   }
 
-  static class DeferredQuestion extends Question implements DeferredReference<Question> {
-    final Map classifier
-    DeferredQuestion(Map classifier) { this.classifier = classifier }
+  @InheritConstructors
+  static class ExtLinkContext extends Context<ExtLinkPage> {
 
-    Question resolve(List<Question> others) { resolve(others, classifier) }
   }
 
+  static class DeferredPage extends Page implements DeferredReference<Page> {
+    final Map classifier
+    DeferredPage(Map classifier) { this.classifier = classifier }
+
+    Page resolve(List<Page> others) { resolve(others, classifier) }
+
+    @Override String getTitle() { '' }
+    @Override int getActiveIndex() { 0 }
+  }
 
 }

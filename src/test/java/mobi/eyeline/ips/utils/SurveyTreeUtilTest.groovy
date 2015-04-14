@@ -1,6 +1,8 @@
 package mobi.eyeline.ips.utils
 
+import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.Question
+import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.util.SurveyTreeUtil
 
 import static SurveyBuilder.survey
@@ -19,7 +21,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
   void test1() {
 
     def survey = survey([:]) {
-      questions {
+      pages {
         question(id: 0) {
           option(id: 0, nextPage: ref(id: 1))
           option(id: 1, nextPage: ref(id: 1))
@@ -40,8 +42,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
     }
 
 
-    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '', '', '')
-    assertThat tree.describe(), equalToIgnoringWhiteSpace('''
+    assertThat asTree(survey).describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
             [0] --0--> [1]
@@ -61,7 +62,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
   void test2() {
 
     def survey = survey([:]) {
-      questions {
+      pages {
         question(id: 0, defaultPage: ref(id: 1)) {
           option(id: 0, nextPage: ref(id: 1))
           option(id: 1, nextPage: ref(id: 1))
@@ -83,8 +84,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
 
     survey.questions.each { Question q -> q.enabledDefaultAnswer = true }
 
-    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '', '', '')
-    assertThat tree.describe(), equalToIgnoringWhiteSpace('''
+    assertThat asTree(survey).describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
             [0] --default--> [1]
@@ -108,7 +108,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
 
   void testLoop() {
     def survey = survey([:]) {
-      questions {
+      pages {
         question(id: 0) {
           option(id: 0, nextPage: ref(id: 1))
           option(id: 1, nextPage: ref(title: 'Q1'))
@@ -124,8 +124,7 @@ class SurveyTreeUtilTest extends GroovyTestCase {
       }
     }
 
-    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '', '', '')
-    assertThat tree.describe(), equalToIgnoringWhiteSpace('''
+    assertThat asTree(survey).describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
             [0] --0--> [1]
@@ -138,4 +137,23 @@ class SurveyTreeUtilTest extends GroovyTestCase {
             [1] --2--> [-1]
             ''')
   }
+
+  void testExtLink() {
+    def survey = survey([:]) {
+      pages {
+        question(id: 0) {
+          option(id: 0, nextPage: ref(id: 1))
+        }
+        extLink(id: 1)
+      }
+    }
+
+    assertThat asTree(survey).describe(), equalToIgnoringWhiteSpace('''
+            Root: [0]
+
+            [0] --0--> [1]
+            ''')
+  }
+
+  TreeNode asTree(Survey survey) { SurveyTreeUtil.asTree(survey, '', '', '', '', '', '', '') }
 }

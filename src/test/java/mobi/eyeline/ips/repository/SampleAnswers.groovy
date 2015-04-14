@@ -17,7 +17,7 @@ class SampleAnswers {
 
     def allSurveys = surveys(startDate: new Date(), endDate: new Date()) {
       survey(id: 1) {
-        questions {
+        pages {
           question(title: 'First \\one', sentCount: 5) {
             option(answer: 'Option \n\r1')
             option(answer: 'Option 2')
@@ -33,7 +33,7 @@ class SampleAnswers {
       }
 
       survey(id: 2) {
-        questions {
+        pages {
           question(title: 'Third one') {
             option(answer: 'Option 1')
             option(answer: 'Option 2')

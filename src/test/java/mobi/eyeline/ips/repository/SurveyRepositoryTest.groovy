@@ -28,7 +28,7 @@ class SurveyRepositoryTest extends DbTestCase {
     def s = survey(startDate: new Date(), endDate: new Date()) {
       details(title: 'Foo')
 
-      questions {
+      pages {
         question(title: 'First one') {
           option(answer: 'O1')
         }
@@ -49,7 +49,7 @@ class SurveyRepositoryTest extends DbTestCase {
     def q3 = questionRepository.load(3)
 
     survey {
-      questions {
+      pages {
         question(q3) {
           option(answer: 'Option 1')
           option(answer: 'Option 2')
@@ -68,7 +68,7 @@ class SurveyRepositoryTest extends DbTestCase {
   void testOptionOrdering() {
     def s = survey(startDate: new Date(), endDate: new Date()) {
       details(title: 'Foo')
-      questions {
+      pages {
         question(title: 'First one') {
           option(answer: "${enclosing.title}-option")
         }
@@ -94,7 +94,7 @@ class SurveyRepositoryTest extends DbTestCase {
     q = s.questions.last()
 
     survey {
-      questions {
+      pages {
         question(q) {
           option(answer: 'Option1')
           option(answer: 'Option2')

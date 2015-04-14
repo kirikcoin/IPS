@@ -16,7 +16,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test1() {
     def survey = survey(id: 1) {
-      questions {
+      pages {
         question(title: 'Ako ste boli celkovo spokojný pri návšteve Obchodného centra?') {
           option(answer: 'Mimoriadne spokojný')
           option(answer: 'Veľmi spokojný')
@@ -38,7 +38,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test31503() {
     def survey = survey(id: 31503) {
-      questions {
+      pages {
         question(title: 'Chcete sa zucastnit ankety? Ak stlacite "ano" mozno nieco vyhrate') {
           option(answer: 'Ano')
           option(answer: 'Nie')
@@ -51,7 +51,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test31507() {
     def survey = survey(id: 31507) {
-      questions {
+      pages {
         question(title: 'OBCHOD.SK doručili sme Vám zásielku ID 31507. Ohodnoťte kvalitu') {
           option(answer: 'Pokračovať v hodnotení')
           option(answer: 'Koniec')
@@ -79,7 +79,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test31508() {
     def survey = survey(id: 31508) {
-      questions {
+      pages {
         question(title: 'Чтобы получить купон, пройдите опрос') {
           option(answer: 'Дальше')
         }
@@ -91,7 +91,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test31547() {
     def survey = survey(id: 31547) {
-      questions {
+      pages {
         question(title: 'Dobry den! Prieskum o kvalite zivota.') {
           option(answer: 'Ano, chcem sa zucastnit')
           option(answer: 'Ne, nechcem sa zucastnit')
@@ -110,7 +110,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test31559() {
     def survey = survey(id: 31559) {
-      questions {
+      pages {
         question(title: 'š,č,ť,ž ä, ...., €, $') {
           option(answer: 'š,č,ť,ž')
           option(answer: 'ä, ...., €, $')
@@ -130,7 +130,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test31560() {
     def survey = survey(id: 31560) {
-      questions {
+      pages {
         question(title: 'Robime bezplatny prieskum spolocnosti VAS OPERATOR. Zucastnite sa?') {
           option(answer: 'Ano')
           option(answer: 'Nie')
@@ -158,7 +158,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test31575() {
     def survey = survey(id: 31575) {
-      questions {
+      pages {
         question(title: 'Zúčastníš sa prieskumu?') {
           option(answer: 'Áno')
           option(answer: 'Nie')
@@ -219,7 +219,7 @@ class MobilizerSegmentationTest extends GroovyTestCase {
 
   void test31588() {
     def survey = survey(id: 31588) {
-      questions {
+      pages {
         question(title: 'Ako ste boli celkovo spokojný pri návšteve Obchodného centra?') {
           option(answer: 'Mimoriadne spokojný')
           option(answer: 'Veľmi spokojný')

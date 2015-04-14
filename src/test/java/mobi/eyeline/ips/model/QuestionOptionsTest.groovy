@@ -19,7 +19,7 @@ class QuestionOptionsTest extends DbTestCase {
     final s = survey(startDate: new Date(), endDate: new Date()) {
       details(title: 'Foo')
 
-      questions {
+      pages {
         question(title: 'First one') {
           option(answer: 'O1')
         }

@@ -60,7 +60,7 @@ class SurveyServiceTest extends DbTestCase {
 
   void testDeleteQuestion1() {
     def survey = survey([:]) {
-      questions {
+      pages {
         question(id: 0) {
           option(id: 0, nextPage: ref(id: 1))
           option(id: 1, nextPage: ref(id: 1))
