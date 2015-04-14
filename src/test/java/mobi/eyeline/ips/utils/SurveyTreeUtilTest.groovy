@@ -21,26 +21,26 @@ class SurveyTreeUtilTest extends GroovyTestCase {
     def survey = survey([:]) {
       questions {
         question(id: 0) {
-          option(id: 0, nextQuestion: ref(id: 1))
-          option(id: 1, nextQuestion: ref(id: 1))
+          option(id: 0, nextPage: ref(id: 1))
+          option(id: 1, nextPage: ref(id: 1))
         }
-        question(id: 1, defaultQuestion: ref(id: 1)) {
-          option(id: 0, nextQuestion: ref(id: 2))
-          option(id: 1, nextQuestion: ref(id: 2))
+        question(id: 1, defaultPage: ref(id: 1)) {
+          option(id: 0, nextPage: ref(id: 2))
+          option(id: 1, nextPage: ref(id: 2))
         }
         question(id: 2) {
-          option(id: 0, nextQuestion: ref(id: 3))
-          option(id: 1, nextQuestion: ref(id: 3))
+          option(id: 0, nextPage: ref(id: 3))
+          option(id: 1, nextPage: ref(id: 3))
         }
         question(id: 3) {
-          option(id: 0, nextQuestion: null)
-          option(id: 1, nextQuestion: null)
+          option(id: 0, nextPage: null)
+          option(id: 1, nextPage: null)
         }
       }
     }
 
 
-    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '')
+    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '', '', '')
     assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
@@ -62,31 +62,28 @@ class SurveyTreeUtilTest extends GroovyTestCase {
 
     def survey = survey([:]) {
       questions {
-        question(id: 0, defaultQuestion: ref(id: 1)) {
-          option(id: 0, nextQuestion: ref(id: 1))
-          option(id: 1, nextQuestion: ref(id: 1))
+        question(id: 0, defaultPage: ref(id: 1)) {
+          option(id: 0, nextPage: ref(id: 1))
+          option(id: 1, nextPage: ref(id: 1))
         }
         question(id: 1) {
-          option(id: 0, nextQuestion: ref(id: 2))
-          option(id: 1, nextQuestion: ref(id: 2))
+          option(id: 0, nextPage: ref(id: 2))
+          option(id: 1, nextPage: ref(id: 2))
         }
         question(id: 2) {
-          option(id: 0, nextQuestion: ref(id: 3))
-          option(id: 1, nextQuestion: ref(id: 3))
+          option(id: 0, nextPage: ref(id: 3))
+          option(id: 1, nextPage: ref(id: 3))
         }
         question(id: 3) {
-          option(id: 0, nextQuestion: null)
-          option(id: 1, nextQuestion: null)
+          option(id: 0, nextPage: null)
+          option(id: 1, nextPage: null)
         }
       }
     }
 
-    survey.questions.each { Question q ->
-      q.enabledDefaultAnswer = true;
+    survey.questions.each { Question q -> q.enabledDefaultAnswer = true }
 
-    }
-
-    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '')
+    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '', '', '')
     assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
@@ -113,21 +110,21 @@ class SurveyTreeUtilTest extends GroovyTestCase {
     def survey = survey([:]) {
       questions {
         question(id: 0) {
-          option(id: 0, nextQuestion: ref(id: 1))
-          option(id: 1, nextQuestion: ref(title: 'Q1'))
-          option(id: 2, nextQuestion: null)
-          option(id: 3, nextQuestion: ref(id: 0))
+          option(id: 0, nextPage: ref(id: 1))
+          option(id: 1, nextPage: ref(title: 'Q1'))
+          option(id: 2, nextPage: null)
+          option(id: 3, nextPage: ref(id: 0))
         }
 
         question(id: 1, title: 'Q1') {
-          option(id: 0, nextQuestion: ref(id: 0))
-          option(id: 1, nextQuestion: ref(id: 1))
-          option(id: 2, nextQuestion: null)
+          option(id: 0, nextPage: ref(id: 0))
+          option(id: 1, nextPage: ref(id: 1))
+          option(id: 2, nextPage: null)
         }
       }
     }
 
-    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '')
+    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '', '', '')
     assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 

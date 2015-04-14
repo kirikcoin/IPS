@@ -62,27 +62,27 @@ class SurveyServiceTest extends DbTestCase {
     def survey = survey([:]) {
       questions {
         question(id: 0) {
-          option(id: 0, nextQuestion: ref(id: 1))
-          option(id: 1, nextQuestion: ref(id: 1))
+          option(id: 0, nextPage: ref(id: 1))
+          option(id: 1, nextPage: ref(id: 1))
         }
         question(id: 1) {
-          option(id: 0, nextQuestion: ref(id: 2))
-          option(id: 1, nextQuestion: ref(id: 2))
+          option(id: 0, nextPage: ref(id: 2))
+          option(id: 1, nextPage: ref(id: 2))
         }
         question(id: 2) {
-          option(id: 0, nextQuestion: ref(id: 3))
-          option(id: 1, nextQuestion: ref(id: 3))
+          option(id: 0, nextPage: ref(id: 3))
+          option(id: 1, nextPage: ref(id: 3))
         }
         question(id: 3) {
-          option(id: 0, nextQuestion: null)
-          option(id: 1, nextQuestion: null)
+          option(id: 0, nextPage: null)
+          option(id: 1, nextPage: null)
         }
       }
     }
 
     surveyService.deleteQuestion(survey.questions[1])
 
-    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '')
+    def tree = SurveyTreeUtil.asTree(survey, '', '', '', '', '', '', '')
     assertThat tree.describe(), equalToIgnoringWhiteSpace('''
             Root: [0]
 
