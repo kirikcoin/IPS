@@ -454,13 +454,13 @@
                                      id="retriesEnabled"
                                      value="#{invitationDeliveryController.invitationDelivery.retriesEnabled}"/>
 
-            <h:outputLabel for="retriesNumber"
+            <h:outputLabel for="retriesMax"
                            styleClass="retries"
                            value="#{bundle['invitations.deliveries.dialog.retries.number']}"/>
-            <eye:inputText id="retriesNumber" maxlength="3" size="9"
+            <eye:inputText id="retriesMax" maxlength="3" size="9"
                            styleClass="retries"
                            readonly="#{!invitationDeliveryController.invitationDelivery.state.editable}"
-                           value="#{invitationDeliveryController.retriesNumberString}"/>
+                           value="#{invitationDeliveryController.retriesMaxString}"/>
 
             <h:outputLabel for="retriesIntervalMinutes"
                            styleClass="retries"

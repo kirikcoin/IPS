@@ -47,7 +47,7 @@ class InvitationDeliveryController extends BaseController {
   InvitationDelivery invitationDelivery
   String speedString
   String typeString
-  String retriesNumberString
+  String retriesMaxString
   String retriesIntervalString
   Boolean dialogForEdit
   Integer modifiedDeliveryId
@@ -129,14 +129,14 @@ class InvitationDeliveryController extends BaseController {
       modifiedDeliveryFilename = invitationDelivery.inputFile
       speedString = invitationDelivery.speed
       typeString = nameOf(invitationDelivery.type)
-      retriesNumberString = invitationDelivery.retriesNumber
+      retriesMaxString = invitationDelivery.retriesMax
       retriesIntervalString = invitationDelivery.retriesIntervalMinutes
       dialogForEdit = true
 
     } else {
       invitationDelivery = new InvitationDelivery()
       speedString = DEFAULT_SPEED
-      retriesNumberString = invitationDelivery.retriesNumber
+      retriesMaxString = invitationDelivery.retriesMax
       retriesIntervalString = invitationDelivery.retriesIntervalMinutes
       dialogForEdit = false
     }
@@ -176,7 +176,7 @@ class InvitationDeliveryController extends BaseController {
         persistedDelivery.type = invitationDelivery.type
         persistedDelivery.text = invitationDelivery.text
         persistedDelivery.retriesEnabled = invitationDelivery.retriesEnabled
-        persistedDelivery.retriesNumber = invitationDelivery.retriesNumber
+        persistedDelivery.retriesMax = invitationDelivery.retriesMax
         persistedDelivery.retriesIntervalMinutes = invitationDelivery.retriesIntervalMinutes
       }
 
@@ -219,17 +219,17 @@ class InvitationDeliveryController extends BaseController {
       deliveryModifyError = true
     }
 
-    if (retriesNumberString != null) {
+    if (retriesMaxString != null) {
       try {
-        invitationDelivery.retriesNumber = Integer.parseInt(retriesNumberString)
+        invitationDelivery.retriesMax = Integer.parseInt(retriesMaxString)
       } catch (NumberFormatException e) {
-        errorMessages << new SimpleConstraintViolation('retriesNumber',
+        errorMessages << new SimpleConstraintViolation('retriesMax',
             strings['invitations.deliveries.retries.number.interval'])
         deliveryModifyError = true
 
       }
     } else {
-      errorMessages << new SimpleConstraintViolation('retriesNumber',
+      errorMessages << new SimpleConstraintViolation('retriesMax',
           strings['invitations.deliveries.retries.number.interval'])
       deliveryModifyError = true
     }
@@ -262,11 +262,11 @@ class InvitationDeliveryController extends BaseController {
             'text'                  : 'invitationText',
             'speed'                 : 'deliverySpeed',
             'inputFile'             : 'deliveryReceivers',
-            'retriesNumber'         : 'retriesNumber',
+            'retriesMax'            : 'retriesMax',
             'retriesIntervalMinutes': 'retriesIntervalMinutes'
 
         ],
-        ['text', 'inputFile', 'speed', 'retriesNumber', 'retriesIntervalMinutes'])
+        ['text', 'inputFile', 'speed', 'retriesMax', 'retriesIntervalMinutes'])
     if (!invitationDelivery.inputFile) {
       deliveryReceiversError = true
     }

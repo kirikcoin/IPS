@@ -27,3 +27,8 @@ ALTER TABLE `pages` CHANGE `default_question_id` `default_page_id` int(11) DEFAU
 -- A long-desired cleanup: the whole `active'/`inactive' naming seems ambiguous, step 2.
 ALTER TABLE `question_options` CHANGE `active` `deleted` tinyint(1) NOT NULL DEFAULT '0';
 UPDATE `question_options` SET `deleted` = NOT `deleted`;
+
+-- Rename the fields according to the common conventions.
+ALTER TABLE `deliveries` CHANGE `retriesNumber` `retries_max` INT(11) DEFAULT NULL;
+ALTER TABLE `deliveries` CHANGE `retriesInterval` `retries_interval` INT(11) DEFAULT NULL;
+ALTER TABLE `deliveries` CHANGE `retriesEnabled` `retries_enabled` TINYINT(1) DEFAULT '1';

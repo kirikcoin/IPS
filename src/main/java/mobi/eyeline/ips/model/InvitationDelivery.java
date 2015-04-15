@@ -75,18 +75,18 @@ public class InvitationDelivery implements Serializable {
   @Formula("(select count(*) from delivery_subscribers d where d.delivery_id = id and d.state in ('UNDELIVERED'))")
   private Integer errorsCount;
 
-  @Column(name = "retriesEnabled", columnDefinition = "BIT")
+  @Column(name = "retries_enabled", columnDefinition = "BIT")
   @org.hibernate.annotations.Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean retriesEnabled = true;
 
   @Max(value = 50, message = "{invitations.deliveries.retries.number.interval}")
   @Min(value = 1, message = "{invitations.deliveries.retries.number.interval}")
-  @Column(name = "retriesNumber")
-  private Integer retriesNumber = 1;
+  @Column(name = "retries_max")
+  private Integer retriesMax = 1;
 
   @Max(value = 60, message = "{invitations.deliveries.retries.interval.interval}")
   @Min(value = 1, message = "{invitations.deliveries.retries.interval.interval}")
-  @Column(name = "retriesInterval")
+  @Column(name = "retries_interval")
   private Integer retriesIntervalMinutes = 1;
 
   public InvitationDelivery() {
@@ -176,12 +176,12 @@ public class InvitationDelivery implements Serializable {
     this.retriesEnabled = retriesEnabled;
   }
 
-  public Integer getRetriesNumber() {
-    return retriesNumber;
+  public Integer getRetriesMax() {
+    return retriesMax;
   }
 
-  public void setRetriesNumber(Integer retriesNumber) {
-    this.retriesNumber = retriesNumber;
+  public void setRetriesMax(Integer retriesMax) {
+    this.retriesMax = retriesMax;
   }
 
   public Integer getRetriesIntervalMinutes() {
@@ -194,7 +194,7 @@ public class InvitationDelivery implements Serializable {
 
   @AssertTrue(message = "Interval and number of retries must be not empty.")
   private boolean isValidRetriesFields() {
-    return (retriesEnabled) ? (retriesNumber != null && retriesIntervalMinutes != null) : true;
+    return (retriesEnabled) ? (retriesMax != null && retriesIntervalMinutes != null) : true;
   }
 
   public static enum State {

@@ -57,7 +57,7 @@ class InvitationDeliveryTest extends GroovyTestCase {
         speed: 50,
         text: 'a',
         retriesIntervalMinutes: 0,
-        retriesNumber: 0)
+        retriesMax: 0)
     def violations = validate delivery
     assertThat violations, hasSize(2)
 
@@ -68,7 +68,7 @@ class InvitationDeliveryTest extends GroovyTestCase {
         speed: 50,
         text: 'a',
         retriesIntervalMinutes: 70,
-        retriesNumber: 60)
+        retriesMax: 60)
     violations = validate delivery
     assertThat violations, hasSize(2)
   }
@@ -82,7 +82,7 @@ class InvitationDeliveryTest extends GroovyTestCase {
         text: 'a',
         retriesEnabled: false,
         retriesIntervalMinutes: null,
-        retriesNumber: null)
+        retriesMax: null)
 
     def violations = validate delivery
     assertThat violations, hasSize(0)
@@ -95,7 +95,7 @@ class InvitationDeliveryTest extends GroovyTestCase {
         text: 'a',
         retriesEnabled: true,
         retriesIntervalMinutes: null,
-        retriesNumber: null)
+        retriesMax: null)
 
     violations = validate delivery
     assertThat violations, hasSize(1)
