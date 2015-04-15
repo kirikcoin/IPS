@@ -1,8 +1,6 @@
 "use strict";
 
-ips.SelectShortMenu = function ($selectElement) {
-
-  var $select = $selectElement;
+ips.SelectShortMenu = function ($select) {
 
   /**
    * @param {string} val
@@ -35,6 +33,15 @@ ips.SelectShortMenu = function ($selectElement) {
       $opt.html($opt.data('short-label'));
     });
   }
+
+  //
+  //  Mark the element as already processed to avoid repeated processing.
+  //
+
+  if ($select.hasClass('select-short-menu')) {
+    return;
+  }
+  $select.addClass('select-short-menu');
 
   saveLabels();
 

@@ -315,41 +315,41 @@
                           <h:panelGrid columns="2" columnClasses="columnOptionsList,columnSegmentation">
 
                             <!-- Options list -->
-                            <h:panelGroup styleClass="defaultOption" layout="block">
-                              <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultPage != null}"
-                                            value="#{bundle['survey.settings.question.default.question']} &#8594; #{surveySettingsController.getPagePrefix(question.defaultPage)} #{question.defaultPage.activeIndex + 1} (#{question.defaultPage.briefTitle})"
-                                            styleClass="option-label"/>
-                              <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultPage == null}"
-                                            value="#{bundle['survey.settings.question.default.question']} &#8594; #{bundle['question.option.terminal.list.label']}"
-                                            styleClass="option-label"/>
-                              <h:outputText rendered="#{!question.enabledDefaultAnswer}"
-                                            value="#{bundle['survey.settings.question.default.question']} #{bundle['survey.settings.question.default.question.disabled']}"
-                                            styleClass="option-label"/>
+                            <h:panelGroup>
+                              <h:panelGroup styleClass="defaultOption" layout="block">
+                                <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultPage != null}"
+                                              value="#{bundle['survey.settings.question.default.question']} &#8594; #{surveySettingsController.getPagePrefix(question.defaultPage)} #{question.defaultPage.activeIndex + 1} (#{question.defaultPage.briefTitle})"
+                                              styleClass="option-label"/>
+                                <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultPage == null}"
+                                              value="#{bundle['survey.settings.question.default.question']} &#8594; #{bundle['question.option.terminal.list.label']}"
+                                              styleClass="option-label"/>
+                                <h:outputText rendered="#{!question.enabledDefaultAnswer}"
+                                              value="#{bundle['survey.settings.question.default.question']} #{bundle['survey.settings.question.default.question.disabled']}"
+                                              styleClass="option-label"/>
 
+                              </h:panelGroup>
+
+                              <h:outputText rendered="#{empty question.activeOptions}"
+                                            value="#{bundle['survey.settings.question.options.not.specified']}"
+                                            styleClass="placeholder"/>
+
+                              <h:dataTable var="option"
+                                           value="#{question.activeOptions}"
+                                           rendered="#{not empty question.activeOptions}"
+                                           style="padding-left: 20px">
+                                <h:column>
+                                  <h:outputText value="#{option.activeIndex + 1}. "
+                                                styleClass="option-number"/>
+                                  <h:outputText value="#{option.answer}"/>
+                                  <h:outputText value="&#8594; #{bundle['question.option.terminal.list.label']}"
+                                                rendered="#{option.nextPage == null}"
+                                                styleClass="option-label"/>
+                                  <h:outputText value="&#8594; #{surveySettingsController.getPagePrefix(option.nextPage)} #{option.nextPage.activeIndex+1} (#{option.nextPage.briefTitle})"
+                                                rendered="#{option.nextPage != null}"
+                                                styleClass="option-label"/>
+                                </h:column>
+                              </h:dataTable>
                             </h:panelGroup>
-                            <h:panelGroup layout="block"></h:panelGroup>
-
-                            <h:outputText rendered="#{empty question.activeOptions}"
-                                          value="#{bundle['survey.settings.question.options.not.specified']}"
-                                          styleClass="placeholder"/>
-
-                            <h:dataTable var="option"
-                                         value="#{question.activeOptions}"
-                                         rendered="#{not empty question.activeOptions}"
-                                         style="padding-left: 20px">
-                              <h:column>
-                                <h:outputText value="#{option.activeIndex + 1}. "
-                                              styleClass="option-number"/>
-                                <h:outputText value="#{option.answer}"/>
-                                <h:outputText value="&#8594; #{bundle['question.option.terminal.list.label']}"
-                                              rendered="#{option.nextPage == null}"
-                                              styleClass="option-label"/>
-                                <h:outputText value="&#8594; #{surveySettingsController.getPagePrefix(option.nextPage)} #{option.nextPage.activeIndex+1} (#{option.nextPage.briefTitle})"
-                                              rendered="#{option.nextPage != null}"
-                                              styleClass="option-label"/>
-                              </h:column>
-                            </h:dataTable>
-
 
                             <!-- Segmentation -->
                             <h:panelGroup layout="block" id="segmentation">
@@ -787,17 +787,15 @@
             </eye:dynamicTable>
           </h:panelGroup>
 
+          <h:outputLabel value="#{bundle['survey.settings.question.modify.default.question']}: "
+                         for="defaultQuestion"/>
 
+          <h:selectOneMenu id="defaultQuestion" value="#{surveySettingsController.defaultQuestionId}">
+            <f:selectItems value="#{surveySettingsController.defaultQuestionsList}"/>
+          </h:selectOneMenu>
 
-            <h:outputLabel value="#{bundle['survey.settings.question.modify.default.question']}: "
-                           for="defaultQuestion"/>
-
-            <h:selectOneMenu id="defaultQuestion" value="#{surveySettingsController.defaultQuestionId}">
-                <f:selectItems value="#{surveySettingsController.defaultQuestionsList}"/>
-            </h:selectOneMenu>
-
-            <br/>
-            <br/>
+          <br/>
+          <br/>
 
           <eye:buttons>
             <eye:button>

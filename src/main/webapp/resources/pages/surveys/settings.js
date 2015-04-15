@@ -123,11 +123,20 @@ var page = {
     return false;
   },
 
-
-  onQuestionModificationDialog: function() {
+  /** @private */
+  _bindSelectShortMenu: function () {
     $('#questionModificationDialog_div')
         .find('select')
         .each(function (i, e) { new ips.SelectShortMenu($(e)) } );
+  },
+
+  onQuestionModificationDialog: function() {
+    this._bindSelectShortMenu();
+
+    var self = this;
+    jsfc('questionOptions').addListener(function (event) {
+      if (event.type == 'added') self._bindSelectShortMenu();
+    });
 
     jsfc('questionModificationDialog').show();
   },
