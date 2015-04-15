@@ -10,9 +10,7 @@
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
       <h:outputStylesheet library="pages" name="surveys/settings.less"/>
-
-      <link rel="STYLESHEET" type="text/css"
-            href="#{resources.path}/resources/styles/font-awesome/css/font-awesome.min.css"/>
+      <h:outputStylesheet library="styles" name="font-awesome/css/font-awesome.min.css"/>
 
       <h:outputScript library="pages" name="surveys/settings.js" target="head"/>
       <h:outputScript library="ipsc" name="select-short-menu.js" target="head"/>

@@ -11,7 +11,6 @@ import javax.faces.context.FacesContext
 
 import static mobi.eyeline.ips.model.Role.CLIENT
 import static mobi.eyeline.ips.model.Role.MANAGER
-import static mobi.eyeline.ips.web.BuildVersion.BUILD_VERSION
 
 @CompileStatic
 @ManagedBean(name = "resources")
@@ -27,9 +26,6 @@ class ResourceController extends BaseController {
   String getPath() {
     FacesContext.currentInstance.externalContext.requestContextPath
   }
-
-  @SuppressWarnings("GrMethodMayBeStatic")
-  String getVersion() { BUILD_VERSION }
 
   @SuppressWarnings("GrMethodMayBeStatic")
   String getSkin() {

@@ -85,7 +85,6 @@
              includeantruntime="false"/>
     </groovyc>
 
-    <antcall target="gen-version"/>
     <antcall target="gen-tznames"/>
   </target>
 
@@ -149,26 +148,12 @@
     </jar>
   </target>
 
-  <target name="gen-version">
-    <taskdef name="groovy"
-             classname="org.codehaus.groovy.ant.Groovy"
-             classpathref="classpath"/>
-
-    <groovy src="${basedir}/src/utils/java/mobi/eyeline/ips/web/BuildVersionGenerator.groovy">
-      <arg value="${gen.dir}"/>
-      <arg value=".${release.version}"/>
-    </groovy>
-
-    <javac destdir="${build.dir}/classes">
-      <src path="${gen.dir}"/>
-      <classpath refid="classpath"/>
-    </javac>
-  </target>
-
   <target name="gen-tznames">
     <taskdef name="groovy"
              classname="org.codehaus.groovy.ant.Groovy"
              classpathref="classpath"/>
+
+    <mkdir dir="${gen.dir}"/>
 
     <groovy src="${basedir}/src/utils/java/mobi/eyeline/ips/tzdata/GenTzData.groovy">
       <arg value="--source=${basedir}/src/utils/resources/tzdata"/>

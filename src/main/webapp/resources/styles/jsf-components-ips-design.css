@@ -88,13 +88,13 @@ table.eyeline_buttons div.menu-bar a {
 
 .eyeline_collapsingGroupHeader0 {
     margin-top: 16px;
-    background: url(../images/list_opened_cg.gif) left top no-repeat;
+    background: url(../images/list_opened_cg.gif.faces) left top no-repeat;
     border-bottom: 1px solid #C0C0C0;
 }
 
 .eyeline_collapsingGroupHeader1 {
     margin-top: 16px;
-    background: url(../images/list_closed_cg.gif) left top no-repeat;
+    background: url(../images/list_closed_cg.gif.faces) left top no-repeat;
 }
 
 .eyeline_collapsingGroupBody {
@@ -133,7 +133,7 @@ table.eyeline_list tr {
 }
 
 th.eyeline_check_all_ico {
-    background: url(../images/ico16_checked_sa.gif);
+    background: url(../images/ico16_checked_sa.gif.faces);
     background-repeat: no-repeat;
     background-position: center
 }
@@ -189,23 +189,23 @@ table.eyeline_list tbody a:hover {
 }
 
 table.eyeline_list th a.eyeline_up {
-    background-image: url(../images/sort_up.gif);
+    background-image: url(../images/sort_up.gif.faces);
 }
 
 table.eyeline_list th a.eyeline_down {
-    background-image: url(../images/sort_down.gif);
+    background-image: url(../images/sort_down.gif.faces);
 }
 
 div.eyeline_inner_data_opened {
     width: 15px;
     height: 15px;
-    background: url(../images/list_opened.png) no-repeat;
+    background: url(../images/list_opened.png.faces) no-repeat;
 }
 
 div.eyeline_inner_data_closed {
     width: 15px;
     height: 15px;
-    background: url(../images/list_closed.png) no-repeat;
+    background: url(../images/list_closed.png.faces) no-repeat;
 }
 
 /* ПАНЕЛЬ НАВИГАЦИИ */
@@ -240,19 +240,19 @@ table.eyeline_navbar_panel td {
 }
 
 .eyeline_navbar_first {
-    background-image: url(../images/nav_first.gif);
+    background-image: url(../images/nav_first.gif.faces);
 }
 
 .eyeline_navbar_prev {
-    background-image: url(../images/nav_prev.gif);
+    background-image: url(../images/nav_prev.gif.faces);
 }
 
 .eyeline_navbar_next {
-    background-image: url(../images/nav_next.gif);
+    background-image: url(../images/nav_next.gif.faces);
 }
 
 .eyeline_navbar_last {
-    background-image: url(../images/nav_last.gif);
+    background-image: url(../images/nav_last.gif.faces);
 }
 
 .eyeline_navbar_counters {
@@ -295,7 +295,7 @@ table.eyeline_overlay td {
 
 div.eyeline_loading {
     /*margin-top:auto;margin-bottom:auto;*/
-    background-image: url(../images/loading.gif);
+    background-image: url(../images/loading.gif.faces);
     background-position: center;
     background-repeat: no-repeat;
     height: 16px;
@@ -337,11 +337,11 @@ span.stop_button a {
 }
 
 .eyeline_up {
-    background-image: url(../images/sort_up.gif);
+    background-image: url(../images/sort_up.gif.faces);
 }
 
 .eyeline_down {
-    background-image: url(../images/sort_down.gif);
+    background-image: url(../images/sort_down.gif.faces);
 }
 
 /* Выделение записей */
@@ -363,7 +363,7 @@ table.select_button_area td {
 }
 
 .select_page_button {
-    background: url(../images/ico16_checked_sa.gif);
+    background: url(../images/ico16_checked_sa.gif.faces);
     background-repeat: no-repeat;
     background-position: center;
     cursor: pointer;
@@ -375,7 +375,7 @@ table.select_button_area td {
 
 .select_menu_button {
     cursor: pointer;
-    background-image: url(../images/list_opened_center.gif);
+    background-image: url(../images/list_opened_center.gif.faces);
     background-position: right;
     background-repeat: no-repeat;
     width: 15px;
@@ -410,7 +410,7 @@ table.select_button_area td {
 /* Открытие/Закрытие inner rows */
 
 .toggle_button_closed {
-    background: url(../images/list_closed.png) no-repeat center;
+    background: url(../images/list_closed.png.faces) no-repeat center;
     cursor: pointer;
     width: 15px;
     height: 15px;
@@ -418,7 +418,7 @@ table.select_button_area td {
 }
 
 .toggle_button_opened {
-    background: url(../images/list_opened.png) no-repeat center;
+    background: url(../images/list_opened.png.faces) no-repeat center;
     cursor: pointer;
     width: 15px;
     height: 15px;
@@ -491,7 +491,7 @@ table.eyeline_data_table_filter a.xi {
 }
 
 .eyeline_addbutton {
-    background: url(../images/but_add.gif) no-repeat scroll center center transparent;
+    background: url(../images/but_add.gif.faces) no-repeat scroll center center transparent;
     cursor: pointer;
     height: 20px;
     width: 19px;
@@ -499,7 +499,7 @@ table.eyeline_data_table_filter a.xi {
 }
 
 .eyeline_delbutton {
-    background: url(../images/but_del.gif) no-repeat scroll center center transparent;
+    background: url(../images/but_del.gif.faces) no-repeat scroll center center transparent;
     cursor: pointer;
     height: 20px;
     width: 19px;
@@ -631,7 +631,7 @@ table.eyeline_page_calendar_header td.eyeline_next a {
 }
 
 div.eyeline_page_calendar_header_prev {
-    background-image: url(../images/nav_prev.gif);
+    background-image: url(../images/nav_prev.gif.faces);
     background-repeat: no-repeat;
     background-position: right;
 }
@@ -639,7 +639,7 @@ div.eyeline_page_calendar_header_prev {
 div.eyeline_page_calendar_header_next {
     width: 12px;
     height: 11px;
-    background-image: url(../images/nav_next.gif);
+    background-image: url(../images/nav_next.gif.faces);
     background-repeat: no-repeat;
     background-position: left;
 }
@@ -752,14 +752,14 @@ div.eyeline_selectManyShuttle table.select_buttons input {
 .eyeline_selectManyChecklist .selectAllBtn {
     width: 12px;
     height: 12px;
-    background: url(../images/cb_not_checked.gif) center no-repeat;
+    background: url(../images/cb_not_checked.gif.faces) center no-repeat;
     display: inline-block;
     cursor: pointer;
     padding: 2px;
 }
 
 .eyeline_selectManyChecklist .selectAllBtn.clicked {
-    background: url(../images/cb_checked.gif) center no-repeat;
+    background: url(../images/cb_checked.gif.faces) center no-repeat;
 }
 
 /*Стиль тела*/
@@ -823,7 +823,7 @@ div.eyeline_selectManyShuttle table.select_buttons input {
     width: 100%;
     height: 100%;
     background-color: transparent;
-    background: url('../images/dialog_shadow.png');
+    background: url('../images/dialog_shadow.png.faces');
     z-index: 9998;
 }
 
@@ -903,7 +903,7 @@ table.eyeline_upd_content_overlay td {
 }
 
 div.eyeline_upd_content_loading {
-    background-image: url("../images/loading.gif");
+    background-image: url("../images/loading.gif.faces");
     background-position: center;
     background-repeat: no-repeat;
     height: 16px;

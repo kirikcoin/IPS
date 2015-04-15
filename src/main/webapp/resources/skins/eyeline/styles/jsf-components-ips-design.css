@@ -1,4 +1,4 @@
-@import "../../../styles/jsf-components-ips-design.css";
+@import "../../styles/jsf-components-ips-design.css.faces";
 
 
 
@@ -36,19 +36,19 @@ table.eyeline_list tbody a:hover {
 }
 
 .eyeline_navbar_first {
-    background-image: url(../images/nav_first.gif);
+    background-image: url(../images/nav_first.gif.faces);
 }
 
 .eyeline_navbar_prev {
-    background-image: url(../images/nav_prev.gif);
+    background-image: url(../images/nav_prev.gif.faces);
 }
 
 .eyeline_navbar_next {
-    background-image: url(../images/nav_next.gif);
+    background-image: url(../images/nav_next.gif.faces);
 }
 
 .eyeline_navbar_last {
-    background-image: url(../images/nav_last.gif);
+    background-image: url(../images/nav_last.gif.faces);
 }
 
 .eyeline_navbar_current_page {

@@ -14,41 +14,28 @@
 
     <title>#{bundle['app.title']}</title>
 
-    <link rel="STYLESHEET" type="text/css"
-          href="#{resources.path}/resources/skins/#{resources.skin}/styles/jsf-components-ips-design.css#{resources.version}"/>
-    <link rel="STYLESHEET" type="text/css"
-          href="#{resources.path}/resources/skins/#{resources.skin}/styles/jquery-ips-design.css#{resources.version}"/>
-    <link rel="STYLESHEET" type="text/css"
-          href="#{resources.path}/resources/skins/#{resources.skin}/styles/main-menu.css#{resources.version}"/>
-    <link rel="STYLESHEET" type="text/css"
-          href="#{resources.path}/resources/styles/style.less"/>
-    <link rel="STYLESHEET" type="text/css"
-          href="#{resources.path}/resources/styles/tree.less"/>
-    <link rel="STYLESHEET" type="text/css"
-          href="#{resources.path}/resources/skins/#{resources.skin}/styles/style.less"/>
+    <h:outputStylesheet library="skins" name="#{resources.skin}/styles/jsf-components-ips-design.css"/>
+    <h:outputStylesheet library="skins" name="#{resources.skin}/styles/jquery-ips-design.css"/>
+    <h:outputStylesheet library="skins" name="#{resources.skin}/styles/main-menu.css"/>
 
-    <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/jquery.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/jquery-ui.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/jquery.tablednd.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/ui.datepicker-ru.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/d3.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/dagre-d3.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/tree.js#{resources.version}"></script>
-    <script type="text/javascript" language="javascript"
-            src="#{resources.path}/resources/js/ips.js#{resources.version}"></script>
+    <h:outputStylesheet library="styles" name="style.less"/>
+    <h:outputStylesheet library="styles" name="tree.less"/>
+
+    <h:outputStylesheet library="skins" name="#{resources.skin}/styles/style.less"/>
+
+    <h:outputScript library="js" name="jquery.js"/>
+    <h:outputScript library="js" name="jquery-ui.js"/>
+    <h:outputScript library="js" name="jquery.tablednd.js"/>
+    <h:outputScript library="js" name="ui.datepicker-ru.js"/>
+
+    <h:outputScript library="js" name="d3.js"/>
+    <h:outputScript library="js" name="dagre-d3.js"/>
+    <h:outputScript library="js" name="tree.js"/>
+    <h:outputScript library="js" name="ips.js"/>
 
     <ui:insert name="head"/>
 
-    <link rel="STYLESHEET" type="text/css"
-          href="#{resources.path}/resources/skins/#{resources.skin}/styles/pages.less"/>
-
+    <h:outputStylesheet library="skins" name="#{resources.skin}/styles/pages.less"/>
   </h:head>
 
   <body>
