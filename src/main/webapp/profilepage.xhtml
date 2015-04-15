@@ -12,16 +12,13 @@
     </ui:define>
 
     <ui:define name="scripts">
-      <script type="text/javascript">
-        //    <![CDATA[
+      <h:outputScript>
         $(function () {
           if (#{profilePageController.updateOk}) {
             ips.message.info("#{bundle['profile.edit.message.success']}");
           }
-
         });
-        //    ]]>
-      </script>
+      </h:outputScript>
     </ui:define>
 
     <ui:define name="content">

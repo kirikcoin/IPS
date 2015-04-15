@@ -6,12 +6,8 @@
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
-      <link rel="STYLESHEET" type="text/css"
-            href="#{resources.path}/resources/pages/surveys/results.less"/>
-
-      <script type="text/javascript"
-              src="#{resources.path}/resources/pages/surveys/results.js#{resources.version}">
-      </script>
+      <h:outputStylesheet library="pages" name="surveys/results.less"/>
+      <h:outputScript library="pages" name="surveys/results.js" target="head"/>
 
       <h:outputStylesheet rendered="#{surveyResultsController.hasCoupons}">
         #respondentsDownloadButton {
@@ -22,18 +18,14 @@
     </ui:define>
 
     <ui:define name="scripts">
-      <script type="text/javascript">
-        //            <![CDATA[
-
+      <h:outputScript>
         $(function () {
           page.init();
 
           $('form').attr('action',
               '/pages/surveys/results.faces?id=#{surveyResultsController.surveyId}');
         });
-        //            ]]>
-      </script>
-
+      </h:outputScript>
     </ui:define>
 
     <ui:define name="content">

@@ -19,8 +19,7 @@
     </ui:define>
 
     <ui:define name="scripts">
-      <script type="text/javascript">
-        //    <![CDATA[
+      <h:outputScript>
         page.init();
 
         $(function() {
@@ -67,8 +66,7 @@
             ips.$byId('openedGraph').val(data.index == 1);
           });
         });
-        //    ]]>
-      </script>
+      </h:outputScript>
 
     </ui:define>
 
