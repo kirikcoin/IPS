@@ -5,10 +5,10 @@ import mobi.eyeline.ips.properties.DefaultMockConfig
 class ServiceTest extends GroovyTestCase {
 
   void testDoubleInitialization() {
-    Services.initialize(new DefaultMockConfig())
+    Services.initialize(new ServicesImpl(new DefaultMockConfig()))
 
     shouldFail(AssertionError) {
-      Services.initialize(new DefaultMockConfig())
+      Services.initialize(new ServicesImpl(new DefaultMockConfig()))
     }
   }
 
