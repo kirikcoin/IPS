@@ -63,7 +63,7 @@
                                 type="${option.linkType}"
                             </c:if>
                             accesskey="${option.key}"
-                            pageId="index.jsp?${fn:escapeXml(option.uri)}">
+                            pageId="/ussd/index.jsp?${fn:escapeXml(option.uri)}">
                         <c:out value="${option.text}"/>
                     </link>
                 </c:forEach>
