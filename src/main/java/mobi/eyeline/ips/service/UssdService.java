@@ -262,7 +262,7 @@ public class UssdService implements MessageHandler {
   }
 
   public String getSurveyUrl(Survey survey) {
-    return baseUrl + "/ussd/index.jsp?survey_id=" + survey.getId();
+    return baseUrl + "/service/" + survey.getId();
   }
 
 

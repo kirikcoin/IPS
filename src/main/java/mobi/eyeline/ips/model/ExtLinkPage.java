@@ -61,6 +61,14 @@ public class ExtLinkPage extends Page {
     return getSurvey().getActiveExtLinkPages().indexOf(this);
   }
 
+  @Override
+  public String toString() {
+    return "ExtLinkPage{" +
+        "id=" + getId() +
+        ", serviceUrl='" + serviceUrl + '\'' +
+        '}';
+  }
+
   public static final Predicate<Page> PAGE_IS_EXT_LINK = new Predicate<Page>() {
     @Override
     public boolean apply(Page page) {

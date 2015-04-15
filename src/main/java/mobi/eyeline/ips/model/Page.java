@@ -89,6 +89,16 @@ public abstract class Page implements Serializable {
    */
   public abstract String getTitle();
 
+  /**
+   * Brief page name.
+   */
+  public String getBriefTitle() {
+    final int maxSize = 50;
+    return (getTitle().length() <= maxSize) ?
+        getTitle() :
+        getTitle().substring(0, maxSize - 3) + "...";
+  }
+
   public abstract int getActiveIndex();
 
   public static <T extends Page> Predicate<T> skipInactive() {

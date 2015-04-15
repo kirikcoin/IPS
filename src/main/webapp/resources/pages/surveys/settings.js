@@ -125,6 +125,10 @@ var page = {
 
 
   onQuestionModificationDialog: function() {
+    $('#questionModificationDialog_div')
+        .find('select')
+        .each(function (i, e) { new ips.SelectShortMenu($(e)) } );
+
     jsfc('questionModificationDialog').show();
   },
 

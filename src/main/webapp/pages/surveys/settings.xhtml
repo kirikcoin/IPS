@@ -9,15 +9,13 @@
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
-      <link rel="STYLESHEET" type="text/css"
-            href="#{resources.path}/resources/pages/surveys/settings.less"/>
+      <h:outputStylesheet library="pages" name="surveys/settings.less"/>
 
       <link rel="STYLESHEET" type="text/css"
             href="#{resources.path}/resources/styles/font-awesome/css/font-awesome.min.css"/>
 
-      <script type="text/javascript"
-              src="#{resources.path}/resources/pages/surveys/settings.js#{resources.version}">
-      </script>
+      <h:outputScript library="pages" name="surveys/settings.js" target="head"/>
+      <h:outputScript library="ipsc" name="select-short-menu.js" target="head"/>
     </ui:define>
 
     <ui:define name="scripts">
@@ -323,7 +321,7 @@
                             <!-- Options list -->
                             <h:panelGroup styleClass="defaultOption" layout="block">
                               <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultPage != null}"
-                                            value="#{bundle['survey.settings.question.default.question']} &#8594; #{surveySettingsController.getPagePrefix(question.defaultPage)} #{question.defaultPage.activeIndex + 1}"
+                                            value="#{bundle['survey.settings.question.default.question']} &#8594; #{surveySettingsController.getPagePrefix(question.defaultPage)} #{question.defaultPage.activeIndex + 1} (#{question.defaultPage.briefTitle})"
                                             styleClass="option-label"/>
                               <h:outputText rendered="#{question.enabledDefaultAnswer and question.defaultPage == null}"
                                             value="#{bundle['survey.settings.question.default.question']} &#8594; #{bundle['question.option.terminal.list.label']}"
@@ -350,7 +348,7 @@
                                 <h:outputText value="&#8594; #{bundle['question.option.terminal.list.label']}"
                                               rendered="#{option.nextPage == null}"
                                               styleClass="option-label"/>
-                                <h:outputText value="&#8594; #{surveySettingsController.getPagePrefix(option.nextPage)} #{option.nextPage.activeIndex+1}"
+                                <h:outputText value="&#8594; #{surveySettingsController.getPagePrefix(option.nextPage)} #{option.nextPage.activeIndex+1} (#{option.nextPage.briefTitle})"
                                               rendered="#{option.nextPage != null}"
                                               styleClass="option-label"/>
                               </h:column>
@@ -786,6 +784,7 @@
               <eye:selectColumn name="nextQuestion"
                                 values="#{surveySettingsController.nextQuestionsList}"
                                 var="t2" itemLabel="#{t2.label}" itemValue="#{t2.value}"
+                                itemDescription="#{t2.description}"
                                 allowEditAfterAdd="true"
                                 columnClass="nextColumn"/>
 

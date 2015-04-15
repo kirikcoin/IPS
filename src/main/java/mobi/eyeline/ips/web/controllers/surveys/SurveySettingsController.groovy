@@ -150,11 +150,10 @@ class SurveySettingsController extends BaseSurveyController {
   List<SelectItem> getActivePages() {
     def asSelectItem = { Page p ->
       def idx = p.activeIndex + 1
-      def maxLabel = 20
       def title = p.title.replace('\r\n', ' ').replace('\n', ' ').replace('\r', ' ')
       new SelectItem(
           p.id,
-          "${getPagePrefix(p)} $idx. ${title.length() <= maxLabel ? title : title[0..<maxLabel - 3] + '...'}",
+          "${getPagePrefix(p)} $idx. $title",
           "${getPagePrefix(p)} $idx. ${p.title}")
     }
 
@@ -360,11 +359,11 @@ class SurveySettingsController extends BaseSurveyController {
       extLinkDeletePrompt = strings['survey.settings.ext.links.delete.prompt']
 
     } else if (refs.size() == 1) {
-      questionDeletePrompt = MessageFormat.format(
+      extLinkDeletePrompt = MessageFormat.format(
           strings['survey.settings.ext.links.delete.prompt.with.references.single'] as String,
           refs.first().activeIndex + 1 as String)
     } else {
-      questionDeletePrompt = MessageFormat.format(
+      extLinkDeletePrompt = MessageFormat.format(
           strings['survey.settings.ext.links.delete.prompt.with.references.plural'] as String,
           refs.collect { Question q -> q.activeIndex + 1 }.join(', '))
     }

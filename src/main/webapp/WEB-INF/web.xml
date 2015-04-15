@@ -119,6 +119,16 @@
   </filter-mapping>
 
   <filter-mapping>
+    <filter-name>lessFilter</filter-name>
+    <servlet-name>faces</servlet-name>
+  </filter-mapping>
+
+  <mime-mapping>
+    <extension>less</extension>
+    <mime-type>text/css</mime-type>
+  </mime-mapping>
+
+  <filter-mapping>
     <filter-name>css</filter-name>
     <url-pattern>*</url-pattern>
   </filter-mapping>
@@ -150,6 +160,11 @@
     </multipart-config>
   </servlet>
 
+  <servlet-mapping>
+    <servlet-name>faces</servlet-name>
+    <url-pattern>*.faces</url-pattern>
+  </servlet-mapping>
+
   <servlet>
     <description>Servlet for delivery notifications</description>
     <servlet-name>deliveryNotification</servlet-name>
@@ -172,9 +187,15 @@
     <url-pattern>/images/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <description>USSD service handler</description>
+    <servlet-name>serviceServlet</servlet-name>
+    <servlet-class>mobi.eyeline.ips.web.servlets.ServiceServlet</servlet-class>
+  </servlet>
+
   <servlet-mapping>
-    <servlet-name>faces</servlet-name>
-    <url-pattern>*.faces</url-pattern>
+    <servlet-name>serviceServlet</servlet-name>
+    <url-pattern>/service/*</url-pattern>
   </servlet-mapping>
 
 
