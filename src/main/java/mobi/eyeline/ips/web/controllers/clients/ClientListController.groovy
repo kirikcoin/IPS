@@ -7,7 +7,6 @@ import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.MailService
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
@@ -15,17 +14,18 @@ import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.inject.Model
 import javax.faces.model.SelectItem
+import javax.inject.Inject
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "clientListController")
+@Model
 class ClientListController extends BaseController {
 
-  private final UserRepository userRepository = Services.instance().userRepository
-  private final UserService userService = Services.instance().userService
-  private final MailService mailService = Services.instance().mailService
+  @Inject private UserRepository userRepository
+  @Inject private UserService userService
+  @Inject private MailService mailService
 
   String search
   Boolean dialogForEdit

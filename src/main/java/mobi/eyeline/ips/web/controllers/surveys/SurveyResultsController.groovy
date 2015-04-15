@@ -4,26 +4,34 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.service.ResultsExportService
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
-import javax.faces.bean.ManagedBean
+import javax.annotation.PostConstruct
+import javax.enterprise.inject.Model
 import javax.faces.context.FacesContext
+import javax.inject.Inject
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "surveyResultsController")
+@Model
 class SurveyResultsController extends BaseSurveyReadOnlyController {
 
-  private final AnswerRepository answerRepository = Services.instance().answerRepository
-  private final ResultsExportService resultsExportService = Services.instance().resultsExportService
+  @Inject private AnswerRepository answerRepository
+  @Inject private ResultsExportService resultsExportService
 
-  Date periodStart = survey.startDate
-  Date periodEnd = survey.endDate
+  Date periodStart
+  Date periodEnd
   String filter
 
-  final boolean hasCoupons = survey.activePattern != null
+  boolean hasCoupons
+
+  @PostConstruct
+  void init() {
+    periodStart = survey.startDate
+    periodEnd = survey.endDate
+    hasCoupons = survey.activePattern != null
+  }
 
   DataTableModel getTableModel() {
     return new DataTableModel() {

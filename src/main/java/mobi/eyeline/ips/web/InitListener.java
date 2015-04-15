@@ -5,6 +5,7 @@ import com.eyeline.utils.config.xml.XmlConfig;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.service.JmxBeansService;
 import mobi.eyeline.ips.service.Services;
+import mobi.eyeline.ips.service.ServicesImpl;
 import org.apache.log4j.PropertyConfigurator;
 
 import javax.servlet.ServletContextEvent;
@@ -37,7 +38,7 @@ public class InitListener implements ServletContextListener {
     initLog4j(configDir);
 
     final Config config = initProperties(configDir);
-    Services.initialize(config);
+    Services.initialize(new ServicesImpl(config));
 
     initJaasAuthorization(servletContextEvent);
 

@@ -2,7 +2,6 @@ package mobi.eyeline.ips.service;
 
 
 import mobi.eyeline.ips.external.MadvSoapApi;
-import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AccessNumberRepository;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.DB;
@@ -18,145 +17,27 @@ import mobi.eyeline.ips.repository.SurveyPatternRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
 import mobi.eyeline.ips.repository.SurveyStatsRepository;
 import mobi.eyeline.ips.repository.UserRepository;
-import mobi.eyeline.ips.service.deliveries.DeliveryPushService;
 import mobi.eyeline.ips.service.deliveries.DeliveryService;
 import mobi.eyeline.ips.service.deliveries.NotificationService;
-import mobi.eyeline.ips.util.TimeSource;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 
 /**
  * Service lookup.
  */
 @SuppressWarnings("FieldCanBeLocal")
+@ApplicationScoped
 public class Services {
 
-  private static Services instance;
+  private static ServicesImpl instance;
 
-  private final DB db;
-
-  private final TimeSource timeSource;
-
-  private final UserRepository userRepository;
-  private final RespondentRepository respondentRepository;
-  private final SurveyStatsRepository surveyStatsRepository;
-  private final SurveyRepository surveyRepository;
-  private final QuestionRepository questionRepository;
-  private final ExtLinkPageRepository extLinkPageRepository;
-  private final PageRepository pageRepository;
-  private final QuestionOptionRepository questionOptionRepository;
-  private final AnswerRepository answerRepository;
-  private final SurveyInvitationRepository surveyInvitationRepository;
-  private final InvitationDeliveryRepository invitationDeliveryRepository;
-  private final DeliverySubscriberRepository deliverySubscriberRepository;
-  private final SurveyPatternRepository surveyPatternRepository;
-  private final AccessNumberRepository accessNumberRepository;
-
-  private final MadvSoapApi madvSoapApi;
-  private final MadvService madvService;
-  private final SurveyService surveyService;
-  private final TemplateService templateService;
-  private final MailService mailService;
-  private final EsdpServiceSupport esdpServiceSupport;
-  private final PushService pushService;
-  private final UserService userService;
-  private final CouponService couponService;
-  private final UssdService ussdService;
-  private final EsdpService esdpService;
-  private final MadvUpdateService madvUpdateService;
-  private final SegmentationService segmentationService;
-  private final ResultsExportService resultsExportService;
-  private final DeliveryPushService deliveryPushService;
-  private final DeliveryService deliveryService;
-  private final NotificationService notificationService;
-
-  private final CsvParseService csvParseService;
-  private final TimeZoneService timeZoneService;
-
-  private Services(Config config) {
-    db = new DB(config.getDatabaseProperties());
-
-    timeSource = new TimeSource();
-
-    userRepository = new UserRepository(db);
-    respondentRepository = new RespondentRepository(db);
-    questionRepository = new QuestionRepository(db);
-    extLinkPageRepository = new ExtLinkPageRepository(db);
-    pageRepository = new PageRepository(db);
-    surveyStatsRepository = new SurveyStatsRepository(db);
-    surveyRepository = new SurveyRepository(db);
-    questionOptionRepository = new QuestionOptionRepository(db);
-    answerRepository = new AnswerRepository(db);
-    surveyInvitationRepository = new SurveyInvitationRepository(db);
-    invitationDeliveryRepository = new InvitationDeliveryRepository(db);
-    deliverySubscriberRepository = new DeliverySubscriberRepository(db);
-    surveyPatternRepository = new SurveyPatternRepository(db);
-    accessNumberRepository = new AccessNumberRepository(db);
-
-    madvSoapApi = new MadvSoapApi(config);
-    madvService = new MadvService();
-
-    surveyService = new SurveyService(
-        surveyRepository,
-        questionRepository,
-        extLinkPageRepository,
-        questionOptionRepository,
-        surveyInvitationRepository,
-        invitationDeliveryRepository);
-
-    templateService = new TemplateService(config.getLoginUrl());
-    mailService = new MailService(templateService,
-        new SmtpSender(
-            config.getSmtpHost(),
-            config.getSmtpPort(),
-            config.getSmtpUsername(),
-            config.getSmtpPassword(),
-            config.getMailFrom()));
-    esdpServiceSupport = new EsdpServiceSupport(config);
-
-    pushService = new PushService(config, esdpServiceSupport);
-
-    userService = new UserService(userRepository, mailService);
-    couponService = new CouponService(surveyPatternRepository, mailService);
-    ussdService = new UssdService(
-        config,
-        surveyService,
-        pushService,
-        couponService,
-        surveyRepository,
-        respondentRepository,
-        answerRepository,
-        questionRepository,
-        questionOptionRepository,
-        extLinkPageRepository);
-    esdpService = new EsdpService(config, ussdService, esdpServiceSupport);
-
-    madvUpdateService = new MadvUpdateService(
-        config,
-        madvSoapApi,
-        madvService,
-        surveyStatsRepository,
-        surveyRepository);
-    segmentationService = new SegmentationService();
-    resultsExportService = new ResultsExportService(answerRepository, 100);
-
-    deliveryPushService = new DeliveryPushService(config, esdpServiceSupport);
-    deliveryService = new DeliveryService(
-        timeSource,
-        invitationDeliveryRepository,
-        deliverySubscriberRepository,
-        deliveryPushService,
-        config);
-    notificationService = new NotificationService(timeSource, deliverySubscriberRepository, deliveryService);
-
-    csvParseService = new CsvParseService();
-    timeZoneService = new TimeZoneService();
-  }
-
-  public static synchronized void initialize(Config properties) {
+  public static synchronized void initialize(ServicesImpl impl) {
     if (instance != null) {
       throw new AssertionError("Instance is already initialized");
     }
 
-    instance = new Services(properties);
+    instance = impl;
   }
 
   public static Services instance() {
@@ -164,134 +45,166 @@ public class Services {
       throw new AssertionError("Instance is not initialized");
     }
 
-    return instance;
+    return new Services();
   }
 
+  @Produces
   public DB getDb() {
-    return db;
+    return instance.getDb();
   }
 
+  @Produces
   public UserRepository getUserRepository() {
-    return userRepository;
+    return instance.getUserRepository();
   }
 
+  @Produces
   public RespondentRepository getRespondentRepository() {
-    return respondentRepository;
+    return instance.getRespondentRepository();
   }
 
+  @Produces
   public SurveyStatsRepository getSurveyStatsRepository() {
-    return surveyStatsRepository;
+    return instance.getSurveyStatsRepository();
   }
 
+  @Produces
   public SurveyRepository getSurveyRepository() {
-    return surveyRepository;
+    return instance.getSurveyRepository();
   }
 
+  @Produces
   public QuestionRepository getQuestionRepository() {
-    return questionRepository;
+    return instance.getQuestionRepository();
   }
 
+  @Produces
   public ExtLinkPageRepository getExtLinkPageRepository() {
-    return extLinkPageRepository;
+    return instance.getExtLinkPageRepository();
   }
 
+  @Produces
   public PageRepository getPageRepository() {
-    return pageRepository;
+    return instance.getPageRepository();
   }
 
+  @Produces
   public QuestionOptionRepository getQuestionOptionRepository() {
-    return questionOptionRepository;
+    return instance.getQuestionOptionRepository();
   }
 
+  @Produces
   public AnswerRepository getAnswerRepository() {
-    return answerRepository;
+    return instance.getAnswerRepository();
   }
 
+  @Produces
   public SurveyInvitationRepository getSurveyInvitationRepository() {
-    return surveyInvitationRepository;
+    return instance.getSurveyInvitationRepository();
   }
 
+  @Produces
   public InvitationDeliveryRepository getInvitationDeliveryRepository() {
-    return invitationDeliveryRepository;
+    return instance.getInvitationDeliveryRepository();
   }
 
+  @Produces
   public DeliverySubscriberRepository getDeliverySubscriberRepository() {
-    return deliverySubscriberRepository;
+    return instance.getDeliverySubscriberRepository();
   }
 
+  @Produces
   public SurveyPatternRepository getSurveyPatternRepository() {
-    return surveyPatternRepository;
+    return instance.getSurveyPatternRepository();
   }
 
+  @Produces
   public AccessNumberRepository getAccessNumberRepository() {
-    return accessNumberRepository;
+    return instance.getAccessNumberRepository();
   }
 
+  @Produces
   public MadvSoapApi getMadvSoapApi() {
-    return madvSoapApi;
+    return instance.getMadvSoapApi();
   }
 
+  @Produces
   public MadvService getMadvService() {
-    return madvService;
+    return instance.getMadvService();
   }
 
+  @Produces
   public SurveyService getSurveyService() {
-    return surveyService;
+    return instance.getSurveyService();
   }
 
+  @Produces
   public MailService getMailService() {
-    return mailService;
+    return instance.getMailService();
   }
 
+  @Produces
   public EsdpServiceSupport getEsdpServiceSupport() {
-    return esdpServiceSupport;
+    return instance.getEsdpServiceSupport();
   }
 
+  @Produces
   public UserService getUserService() {
-    return userService;
+    return instance.getUserService();
   }
 
+  @Produces
   public CouponService getCouponService() {
-    return couponService;
+    return instance.getCouponService();
   }
 
+  @Produces
   public UssdService getUssdService() {
-    return ussdService;
+    return instance.getUssdService();
   }
 
+  @Produces
   public EsdpService getEsdpService() {
-    return esdpService;
+    return instance.getEsdpService();
   }
 
+  @Produces
   public MadvUpdateService getMadvUpdateService() {
-    return madvUpdateService;
+    return instance.getMadvUpdateService();
   }
 
+  @Produces
   public PushService getPushService() {
-    return pushService;
+    return instance.getPushService();
   }
 
+  @Produces
   public SegmentationService getSegmentationService() {
-    return segmentationService;
+    return instance.getSegmentationService();
   }
 
+  @Produces
   public ResultsExportService getResultsExportService() {
-    return resultsExportService;
+    return instance.getResultsExportService();
   }
 
+  @Produces
   public DeliveryService getDeliveryService() {
-    return deliveryService;
+    return instance.getDeliveryService();
   }
 
+  @Produces
   public NotificationService getNotificationService() {
-    return notificationService;
+    return instance.getNotificationService();
   }
 
+  @Produces
   public CsvParseService getCsvParseService() {
-    return csvParseService;
+    return instance.getCsvParseService();
   }
 
+  @Produces
   public TimeZoneService getTimeZoneService() {
-    return timeZoneService;
+    return instance.getTimeZoneService();
   }
 }

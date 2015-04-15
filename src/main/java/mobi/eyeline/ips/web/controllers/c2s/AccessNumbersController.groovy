@@ -4,28 +4,28 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.repository.AccessNumberRepository
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.context.RequestScoped
+import javax.inject.Inject
+import javax.inject.Named
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "accessNumberController")
+@Named("accessNumberController")
+@RequestScoped
 class AccessNumbersController extends BaseController {
 
-  private
-  final AccessNumberRepository accessNumberRepository = Services.instance().accessNumberRepository
+  @Inject private AccessNumberRepository accessNumberRepository
 
   String search
 
   Integer modifiedNumberId
   String newNumber
   Boolean numberAddError
-
 
   DataTableModel getTableModel() {
     new DataTableModel() {

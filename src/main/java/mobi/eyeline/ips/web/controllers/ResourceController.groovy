@@ -3,21 +3,21 @@ package mobi.eyeline.ips.web.controllers
 import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.Services
 
-import javax.faces.bean.ApplicationScoped
-import javax.faces.bean.ManagedBean
+import javax.enterprise.context.ApplicationScoped
 import javax.faces.context.FacesContext
+import javax.inject.Inject
+import javax.inject.Named
 
 import static mobi.eyeline.ips.model.Role.CLIENT
 import static mobi.eyeline.ips.model.Role.MANAGER
 
 @CompileStatic
-@ManagedBean(name = "resources")
+@Named("resources")
 @ApplicationScoped
 class ResourceController extends BaseController {
 
-  private final UserRepository userRepository = Services.instance().userRepository
+  @Inject private UserRepository userRepository
 
   /**
    * @return Current request context path.

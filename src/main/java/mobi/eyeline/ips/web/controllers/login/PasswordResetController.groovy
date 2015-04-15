@@ -3,20 +3,20 @@ package mobi.eyeline.ips.web.controllers.login
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.exceptions.LoginException
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.EmailValidator
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.inject.Model
 import javax.faces.context.FacesContext
+import javax.inject.Inject
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "passwordResetController")
+@Model
 class PasswordResetController extends BaseController {
 
-  private final UserService userService = Services.instance().userService
+  @Inject private UserService userService
 
   String email
 

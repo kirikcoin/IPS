@@ -3,11 +3,13 @@ package mobi.eyeline.ips.web.controllers.login
 import groovy.transform.CompileStatic
 import mobi.eyeline.ips.web.controllers.BaseController
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.context.RequestScoped
 import javax.faces.context.FacesContext
+import javax.inject.Named
 
 @CompileStatic
-@ManagedBean(name = "login")
+@Named("login")
+@RequestScoped
 class LoginPageController extends BaseController {
   private boolean error
 

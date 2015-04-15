@@ -4,24 +4,9 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
-import mobi.eyeline.ips.model.AccessNumber
-import mobi.eyeline.ips.model.ExtLinkPage
-import mobi.eyeline.ips.model.Page
-import mobi.eyeline.ips.model.Question
-import mobi.eyeline.ips.model.QuestionOption
-import mobi.eyeline.ips.model.SurveyPattern
-import mobi.eyeline.ips.repository.AccessNumberRepository
-import mobi.eyeline.ips.repository.ExtLinkPageRepository
-import mobi.eyeline.ips.repository.PageRepository
-import mobi.eyeline.ips.repository.QuestionRepository
-import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.CouponService
-import mobi.eyeline.ips.service.EsdpService
-import mobi.eyeline.ips.service.EsdpServiceSupport
-import mobi.eyeline.ips.service.MobilizerSegmentation
-import mobi.eyeline.ips.service.PushService
-import mobi.eyeline.ips.service.Services
-import mobi.eyeline.ips.service.SurveyService
+import mobi.eyeline.ips.model.*
+import mobi.eyeline.ips.repository.*
+import mobi.eyeline.ips.service.*
 import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
@@ -29,35 +14,34 @@ import mobi.eyeline.ips.web.validators.SimpleConstraintViolation
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableModel
 import mobi.eyeline.util.jsf.components.dynamic_table.model.DynamicTableRow
 
-import javax.faces.bean.ManagedBean
+import javax.annotation.PostConstruct
+import javax.enterprise.inject.Model
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
+import javax.inject.Inject
 import javax.validation.ConstraintViolation
 import java.text.MessageFormat
 
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.COUPON
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.DISABLED
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.SMS
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.*
 
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "surveySettingsController")
+@Model
 class SurveySettingsController extends BaseSurveyController {
 
-  private final QuestionRepository questionRepository = Services.instance().questionRepository
-  private final ExtLinkPageRepository extLinkPageRepository = Services.instance().extLinkPageRepository
-  private final PageRepository pageRepository = Services.instance().pageRepository
-  private final UserRepository userRepository = Services.instance().userRepository
-  private final AccessNumberRepository accessNumberRepository =
-      Services.instance().accessNumberRepository
+  @Inject private QuestionRepository questionRepository
+  @Inject private ExtLinkPageRepository extLinkPageRepository
+  @Inject private PageRepository pageRepository
+  @Inject private UserRepository userRepository
+  @Inject private AccessNumberRepository accessNumberRepository
 
-  private final PushService pushService = Services.instance().pushService
-  private final CouponService couponService = Services.instance().couponService
-  private final SurveyService surveyService = Services.instance().surveyService
-  private final EsdpService esdpService = Services.instance().esdpService
-  private final EsdpServiceSupport esdpServiceSupport = Services.instance().esdpServiceSupport
+  @Inject private PushService pushService
+  @Inject private CouponService couponService
+  @Inject private SurveyService surveyService
+  @Inject private EsdpService esdpService
+  @Inject private EsdpServiceSupport esdpServiceSupport
 
   String errorId
 
@@ -80,21 +64,20 @@ class SurveySettingsController extends BaseSurveyController {
   ExtLinkPage extLinkPage = new ExtLinkPage()
 
   // Phone number for survey preview.
-  String phoneNumber = currentUser.phoneNumber
+  String phoneNumber
 
   boolean previewSentOk
 
-  EndSmsType endSmsType = determineEndSmsType()
+  EndSmsType endSmsType
 
   EndSmsType determineEndSmsType() {
     if (!survey.details.endSmsEnabled) return DISABLED
     return survey.activePattern != null ? COUPON : SMS
   }
 
-  boolean couponEnabled = endSmsType == COUPON
-  SurveyPattern.Mode currentPatternMode =
-      !couponEnabled ? SurveyPattern.Mode.DIGITS : survey.activePattern.mode
-  int currentPatternLength = survey.activePattern == null ? 4 : survey.activePattern.length
+  boolean couponEnabled
+  SurveyPattern.Mode currentPatternMode
+  int currentPatternLength
 
   List<SelectItem> patternModes = SurveyPattern.Mode.values()
       .collect { SurveyPattern.Mode mode ->
@@ -103,25 +86,25 @@ class SurveySettingsController extends BaseSurveyController {
     new SelectItem(mode, BaseController.strings[key] as String)
   }.toList()
 
-  String generatorName = !couponEnabled ? null :
-      BaseController.strings["survey.settings.end.message.coupon.format.${survey.activePattern.mode}".toString()]
+  String generatorName
 
-  long couponsSent = survey.patterns.collect { it.position }.sum(0) as long
-  long couponsAvailable = !couponEnabled ? 0 : couponService.getAvailable(survey)
+  long couponsSent
+  long couponsAvailable
 
-  boolean showWarning = couponEnabled && (couponService.getPercentAvailable(survey) <= 10)
-  boolean showDisabled = couponEnabled && (couponsAvailable == 0)
+  boolean showWarning
+  boolean showDisabled
 
-  String accessNumberNumber = survey.statistics.accessNumber?.number
-  Integer accessNumberId = survey.statistics.accessNumber?.id
+  String accessNumberNumber
+  Integer accessNumberId
 
   TreeNode questionsGraph
 
   String questionDeletePrompt
   String extLinkDeletePrompt
 
-  SurveySettingsController() {
-    super()
+
+  @PostConstruct
+  void init() {
     newSurveyClientId = survey.client.id
 
     updateQuestionsGraph()
@@ -129,6 +112,25 @@ class SurveySettingsController extends BaseSurveyController {
     settingsStartDate = formatDateTime(survey.startDate, getTimeZone())
     settingsEndDate = formatDateTime(survey.endDate, getTimeZone())
 
+    phoneNumber = currentUser.phoneNumber
+
+    endSmsType = determineEndSmsType()
+
+    couponEnabled = endSmsType == COUPON
+    currentPatternMode =
+        !couponEnabled ? SurveyPattern.Mode.DIGITS : survey.activePattern.mode
+    currentPatternLength = survey.activePattern == null ? 4 : survey.activePattern.length
+
+    generatorName = !couponEnabled ? null :
+        BaseController.strings["survey.settings.end.message.coupon.format.${survey.activePattern.mode}".toString()]
+    couponsSent = survey.patterns.collect { it.position }.sum(0) as long
+    couponsAvailable = !couponEnabled ? 0 : couponService.getAvailable(survey)
+
+    showWarning = couponEnabled && (couponService.getPercentAvailable(survey) <= 10)
+    showDisabled = couponEnabled && (couponsAvailable == 0)
+
+    accessNumberNumber = survey.statistics.accessNumber?.number
+    accessNumberId = survey.statistics.accessNumber?.id
   }
 
   List<SelectItem> getNextQuestionsList() {

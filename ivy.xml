@@ -77,6 +77,10 @@
     <!-- JMX -->
     <dependency org="com.j256.simplejmx" name="simplejmx" rev="1.9" conf="site->default"/>
 
+    <!-- Weld CDI -->
+    <dependency org="org.jboss.weld.servlet" name="weld-servlet" rev="2.2.9.Final" transitive="false"
+                conf="site->default"/>
+
     <!--
         Provided
     -->

@@ -8,28 +8,29 @@ import mobi.eyeline.ips.model.SurveyStats
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.EsdpService
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
-import javax.faces.bean.ManagedBean
+import javax.annotation.PostConstruct
+import javax.enterprise.inject.Model
+import javax.inject.Inject
 
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "surveyListController")
+@Model
 class SurveyListController extends BaseController {
 
-  private final SurveyRepository surveyRepository = Services.instance().surveyRepository
-  private final UserRepository userRepository = Services.instance().userRepository
+  @Inject private SurveyRepository surveyRepository
+  @Inject private UserRepository userRepository
 
-  private final EsdpService esdpService = Services.instance().esdpService
-  private final SurveyService surveyService = Services.instance().surveyService
-  private final TimeZoneService timeZoneService = Services.instance().timeZoneService
+  @Inject private EsdpService esdpService
+  @Inject private SurveyService surveyService
+  @Inject private TimeZoneService timeZoneService
 
   //
   //  List
@@ -53,7 +54,8 @@ class SurveyListController extends BaseController {
 
   boolean newSurveyValidationError = false
 
-  SurveyListController() {
+  @PostConstruct
+  void init() {
     def now = new Date()
     newSurveyStartDate =
         new Date((now + 1).clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))

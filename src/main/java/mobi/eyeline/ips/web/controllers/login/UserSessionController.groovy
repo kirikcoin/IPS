@@ -4,10 +4,12 @@ import groovy.transform.CompileStatic
 import groovy.transform.Memoized
 import mobi.eyeline.ips.web.controllers.BaseController
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.context.RequestScoped
+import javax.inject.Named
 
 @CompileStatic
-@ManagedBean(name = "userSession")
+@Named("userSession")
+@RequestScoped
 class UserSessionController extends BaseController {
 
   String logout() {

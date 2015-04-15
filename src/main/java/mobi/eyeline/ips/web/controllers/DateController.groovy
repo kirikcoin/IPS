@@ -2,10 +2,10 @@ package mobi.eyeline.ips.web.controllers
 
 import groovy.transform.CompileStatic
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.inject.Model
 
 @CompileStatic
-@ManagedBean(name = "dateController")
+@Model
 class DateController extends BaseController {
 
   @SuppressWarnings("GrMethodMayBeStatic")

@@ -4,41 +4,37 @@ import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.UiProfile
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.controllers.LogoBean
 import mobi.eyeline.ips.web.validators.ImageValidator
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
 import javax.annotation.PostConstruct
-import javax.faces.bean.ManagedBean
-import javax.faces.bean.ManagedProperty
+import javax.enterprise.inject.Model
+import javax.inject.Inject
 
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
-@ManagedBean(name = "skinSettingsController")
+@Model
 class SkinSettingsController extends BaseController {
 
-  private final UserRepository userRepository = Services.instance().userRepository
+  @Inject private UserRepository userRepository
 
   User user
   UploadedFile imageFile
   Boolean error
 
   /** Stored in session */
-  @ManagedProperty(value = "#{logoBean}")
-  LogoBean previewLogo
+  @Inject LogoBean previewLogo
 
   LogoBean viewSavedLogo
 
   List<UiProfile.Skin> getSkins() { UiProfile.Skin.values() as List }
 
-  SkinSettingsController() {
-    user = getCurrentUser()
-  }
-
   @PostConstruct
   void initBeans() {
+    user = getCurrentUser()
+
     if (!viewSavedLogo?.bytes) {
       viewSavedLogo = new LogoBean(bytes: user.uiProfile.icon)
     }

@@ -7,22 +7,22 @@ import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.repository.RespondentRepository
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.chart.bar.BarModel
 import mobi.eyeline.util.jsf.components.chart.pie.PieModel
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.inject.Model
+import javax.inject.Inject
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "surveyStatsController")
+@Model
 class SurveyStatsController extends BaseSurveyReadOnlyController {
 
-  private final AnswerRepository answerRepository = Services.instance().answerRepository
-  private final RespondentRepository respondentRepository = Services.instance().respondentRepository
-  private final SurveyService surveyService = Services.instance().surveyService
+  @Inject private AnswerRepository answerRepository
+  @Inject private RespondentRepository respondentRepository
+  @Inject private SurveyService surveyService
 
   //
   //  Models.
@@ -69,10 +69,10 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
 
   // Need this inner bean to manage AJAX requests. Survey ID is not passed in this case,
   // thus any survey-specific controller fails to instantiate.
-  @ManagedBean(name = "surveyStatsHelpers")
+  @Model
   static class SurveyStatsHelpers extends BaseController {
 
-    private final AnswerRepository answerRepository = Services.instance().answerRepository
+    @Inject private AnswerRepository answerRepository
 
     PieModel getOptionsRatioModel(Question question) {
       new PieModel().with {

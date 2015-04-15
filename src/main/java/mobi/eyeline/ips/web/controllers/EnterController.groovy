@@ -4,13 +4,17 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.User
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.inject.Model
+import javax.faces.context.ExternalContext
 import javax.faces.context.FacesContext
+import javax.inject.Inject
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "enterController")
+@Model
 class EnterController extends BaseController {
+
+  @Inject private ExternalContext externalContext
 
   Object getRunOnLogin() {
     init()
@@ -34,6 +38,6 @@ class EnterController extends BaseController {
   }
 
   private void redirect(String target) {
-    FacesContext.currentInstance.externalContext.redirect target
+    externalContext.redirect target
   }
 }

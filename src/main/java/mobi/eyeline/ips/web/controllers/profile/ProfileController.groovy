@@ -3,7 +3,6 @@ package mobi.eyeline.ips.web.controllers.profile
 import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
@@ -11,15 +10,19 @@ import mobi.eyeline.ips.web.controllers.LocaleController
 import mobi.eyeline.ips.web.controllers.TimeZoneHelper
 import mobi.eyeline.ips.web.validators.SimpleConstraintViolation
 
-import javax.faces.bean.ManagedBean
+import javax.annotation.PostConstruct
+import javax.enterprise.context.RequestScoped
 import javax.faces.model.SelectItem
+import javax.inject.Inject
+import javax.inject.Named
 
 @CompileStatic
-@ManagedBean(name = "profilePageController")
+@Named("profilePageController")
+@RequestScoped
 class ProfileController extends BaseController {
 
-  private final UserRepository userRepository = Services.instance().userRepository
-  private final UserService userService = Services.instance().userService
+  @Inject private UserRepository userRepository
+  @Inject private UserService userService
 
   User user
 
@@ -31,7 +34,8 @@ class ProfileController extends BaseController {
 
   boolean updateOk
 
-  ProfileController() {
+  @PostConstruct
+  void init() {
     user = getCurrentUser()
     localeController = new LocaleController()
   }

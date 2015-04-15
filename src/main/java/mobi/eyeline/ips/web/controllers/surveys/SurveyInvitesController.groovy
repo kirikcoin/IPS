@@ -6,26 +6,27 @@ import mobi.eyeline.ips.model.SurveyInvitation
 import mobi.eyeline.ips.repository.SurveyInvitationRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.service.MadvUpdateService
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import org.apache.commons.lang3.StringUtils
 
-import javax.faces.bean.ManagedBean
+import javax.annotation.PostConstruct
+import javax.enterprise.inject.Model
+import javax.inject.Inject
+import javax.inject.Named
 
 import static mobi.eyeline.ips.model.InvitationUpdateStatus.UNDEFINED
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "surveyInvitesController")
+@Model
 class SurveyInvitesController extends BaseController {
 
-  private final SurveyInvitationRepository surveyInvitationRepository =
-      Services.instance().surveyInvitationRepository
-  private final SurveyRepository surveyRepository = Services.instance().surveyRepository
-  private final MadvUpdateService madvUpdateService = Services.instance().madvUpdateService
+  @Inject private SurveyInvitationRepository surveyInvitationRepository
+  @Inject private SurveyRepository surveyRepository
+  @Inject private MadvUpdateService madvUpdateService
 
   // MADV campaign
   String madvId
@@ -37,13 +38,12 @@ class SurveyInvitesController extends BaseController {
   String inviteValue
   boolean inviteError
 
-  @Delegate
-  BaseSurveyReadOnlyController surveys =
-      beanByName('baseSurveyReadOnlyController', BaseSurveyReadOnlyController)
+  @Delegate @Inject @Named("baseSurveyReadOnlyController")
+  BaseSurveyReadOnlyController surveys
 
-  SurveyInvitesController() {
+  @PostConstruct
+  void init() {
     madvId = survey.statistics.campaign
-
     newInviteDate = formatDateTime(inviteDate, getTimeZone())
   }
 

@@ -6,6 +6,7 @@ import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.web.controllers.LogoBean;
 import org.apache.http.HttpStatus;
 
+import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,8 @@ import java.io.IOException;
 
 public class ImageViewServlet extends HttpServlet {
 
-  private final UserRepository userRepository = Services.instance().getUserRepository();
+  @Inject private UserRepository userRepository;
+  @Inject private LogoBean logoBean;
 
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,8 +44,6 @@ public class ImageViewServlet extends HttpServlet {
       }
 
     } else if ("preview".equals(pathParts[1])) {
-      final LogoBean logoBean = (LogoBean) request.getSession().getAttribute("logoBean");
-
       returnImage(response, logoBean.getBytes());
 
     } else {

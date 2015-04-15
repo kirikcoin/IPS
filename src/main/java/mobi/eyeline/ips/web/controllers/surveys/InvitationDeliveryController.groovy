@@ -16,28 +16,29 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 import mobi.eyeline.util.jsf.components.input_file.UploadedFile
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.inject.Model
 import javax.faces.model.SelectItem
+import javax.inject.Inject
+import javax.inject.Named
 import javax.validation.ConstraintViolation
 import java.text.MessageFormat
 import java.util.regex.Pattern
 
-import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
-import static mobi.eyeline.ips.model.InvitationDelivery.State.COMPLETED
-import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
+import static mobi.eyeline.ips.model.InvitationDelivery.State.*
 import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 
 @CompileStatic
 @Slf4j('logger')
-@ManagedBean(name = "invitationDeliveryController")
+@Model
 class InvitationDeliveryController extends BaseController {
 
   private static final int DEFAULT_SPEED = 10
 
-  private final InvitationDeliveryRepository invitationDeliveryRepository =
-      Services.instance().invitationDeliveryRepository
-  private final CsvParseService csvParseService = Services.instance().csvParseService
-  private final DeliveryService deliveryService = Services.instance().deliveryService
+  @Inject private InvitationDeliveryRepository invitationDeliveryRepository
+  @Inject private CsvParseService csvParseService
+  @Inject private DeliveryService deliveryService
+
+  @Delegate @Inject @Named("baseSurveyReadOnlyController") BaseSurveyReadOnlyController surveys
 
   boolean deliveryModifyError
   boolean deliveryReceiversError
@@ -58,10 +59,6 @@ class InvitationDeliveryController extends BaseController {
   String progress
 
   private List<ConstraintViolation> errorMessages = []
-
-  @Delegate
-  BaseSurveyReadOnlyController surveys =
-      beanByName('baseSurveyReadOnlyController', BaseSurveyReadOnlyController)
 
   final List<SelectItem> types = InvitationDelivery.Type.values().collect {
     InvitationDelivery.Type t -> new SelectItem(t, nameOf(t))

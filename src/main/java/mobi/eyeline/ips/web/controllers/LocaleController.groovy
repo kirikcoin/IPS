@@ -3,11 +3,11 @@ package mobi.eyeline.ips.web.controllers
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.web.IPSViewHandler
 
-import javax.faces.bean.ManagedBean
+import javax.enterprise.inject.Model
 import javax.faces.bean.SessionScoped
 import javax.faces.context.FacesContext
 
-@ManagedBean(name = "localeController")
+@Model
 @SessionScoped
 class LocaleController extends BaseController {
 

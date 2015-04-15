@@ -5,7 +5,6 @@ import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.util.DelegateResourceBundle
 import mobi.eyeline.ips.util.RequestParam
 import mobi.eyeline.ips.web.auth.WebUser
@@ -14,6 +13,7 @@ import mobi.eyeline.ips.web.validators.LocalizedMessageInterpolator
 import javax.faces.application.FacesMessage
 import javax.faces.context.ExternalContext
 import javax.faces.context.FacesContext
+import javax.inject.Inject
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.validation.ConstraintViolation
@@ -26,10 +26,10 @@ import static java.util.Collections.emptyMap
 @Slf4j('logger')
 abstract class BaseController implements Serializable {
 
-  private final UserRepository userRepository = Services.instance().userRepository
+  @Inject private UserRepository userRepository
 
   BaseController() {
-    logger.trace("Controller instantiated: [${this.class.name}]")
+    logger.trace "Controller instantiated: [${this.class.name}]"
   }
 
   //
@@ -198,8 +198,4 @@ abstract class BaseController implements Serializable {
     String getAt(String key) { getString(key) }
   }
 
-  static <T> T beanByName(String name, Class<T> clazz) {
-    def context = FacesContext.currentInstance
-    (T) context.application.evaluateExpressionGet(context, '#{' + name + '}', clazz)
-  }
 }

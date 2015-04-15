@@ -1,26 +1,23 @@
 package mobi.eyeline.ips.web.servlets;
 
 import mobi.eyeline.ips.messages.MissingParameterException;
-import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.service.deliveries.NotificationService;
 import mobi.eyeline.ips.util.RequestParseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
-import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.*;
 
 public class DeliveryNotificationServlet extends HttpServlet {
   private static final Logger logger = LoggerFactory.getLogger(DeliveryNotificationServlet.class);
 
-  private final NotificationService notificationService =
-      Services.instance().getNotificationService();
+  @Inject private NotificationService notificationService;
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
