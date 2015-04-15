@@ -129,12 +129,10 @@ public class ResultsExportService {
                                 TimeZone timeZone,
                                 Locale locale) {
     sessions.each { session ->
-      session.answers.each { answer ->
-        csvWriter.writeNext([
-            session.respondent.msisdn,
-            session.respondent.coupon
-        ] as String[])
-      }
+      csvWriter.writeNext([
+          session.respondent.msisdn,
+          session.respondent.coupon
+      ] as String[])
     }
   }
 
