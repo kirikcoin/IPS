@@ -247,6 +247,7 @@ class SurveySettingsController extends BaseSurveyController {
           )
         }
       }
+
     } else {
       if (activePattern != null) {
         persistedSurvey.patterns.each { it.active = false }
@@ -318,15 +319,17 @@ class SurveySettingsController extends BaseSurveyController {
   }
 
   void beforeDeleteQuestion(int questionId) {
-    def question = questionRepository.load(questionId)
     this.questionId = questionId
 
-    def refs = surveyService.getReferencesTo(question)
-    def defaultRefs = surveyService.getDefaultReferencesTo(question)
+    final question = questionRepository.load(questionId)
 
-    defaultRefs.each { Question q ->
-      if (!refs.contains(q)) refs << q
-    }
+    final refs = [
+        * surveyService.getReferencesTo(question),
+        * surveyService.getDefaultReferencesTo(question)
+    ] as LinkedHashSet<Question>
+
+    // Don't warn about about the references from itself.
+    refs.removeAll { q -> q.id == questionId }
 
     if (refs.empty) {
       questionDeletePrompt = strings['survey.settings.questions.delete.prompt']
@@ -334,11 +337,12 @@ class SurveySettingsController extends BaseSurveyController {
     } else if (refs.size() == 1) {
       questionDeletePrompt = MessageFormat.format(
           strings['survey.settings.questions.delete.prompt.with.references.single'] as String,
-          refs.first().activeIndex + 1 as String)
+          (refs.first().activeIndex + 1) as String)
+
     } else {
       questionDeletePrompt = MessageFormat.format(
           strings['survey.settings.questions.delete.prompt.with.references.plural'] as String,
-          refs.collect { Question q -> q.activeIndex + 1 }.join(', '))
+          refs.collect { q -> q.activeIndex + 1 }.join(', '))
     }
 
     errorId = 'questionDeleteDialog'
