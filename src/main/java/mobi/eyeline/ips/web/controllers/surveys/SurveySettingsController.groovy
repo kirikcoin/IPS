@@ -382,7 +382,9 @@ class SurveySettingsController extends BaseSurveyController {
 
     surveyService.deleteQuestion(questionRepository.load(questionId))
     persistedSurvey = surveyRepository.load(surveyId)
+
     updateQuestionsGraph()
+    goToSurvey(surveyId)
   }
 
   void deleteExtLink() {
@@ -390,7 +392,9 @@ class SurveySettingsController extends BaseSurveyController {
 
     surveyService.deleteExtLinkPage(extLinkPageRepository.load(extLinkId))
     persistedSurvey = surveyRepository.load(surveyId)
+
     updateQuestionsGraph()
+    goToSurvey(surveyId)
   }
 
   String modifyQuestion(Integer questionId) {
