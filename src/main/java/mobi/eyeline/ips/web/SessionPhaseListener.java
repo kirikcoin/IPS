@@ -1,6 +1,5 @@
 package mobi.eyeline.ips.web;
 
-import mobi.eyeline.ips.repository.DB;
 import mobi.eyeline.ips.service.Services;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -13,7 +12,6 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
-import javax.inject.Inject;
 
 /**
  * author: Denis Enenko
@@ -37,7 +35,7 @@ public class SessionPhaseListener implements PhaseListener {
           (viewRoot != null ? viewRoot.getViewId() : ""));
 
       if (phaseEvent.getPhaseId() == PhaseId.RESTORE_VIEW) {
-        Session session = Services.instance().getDb().getSessionFactory().getCurrentSession();
+        Session session = Services.getInstance().getDb().getSessionFactory().getCurrentSession();
         if (!session.getTransaction().isActive()) {
           session.beginTransaction();
         }
@@ -60,7 +58,7 @@ public class SessionPhaseListener implements PhaseListener {
       if (phaseEvent.getPhaseId() == PhaseId.RENDER_RESPONSE) {
         logger.debug("REQUEST END");
 
-        final SessionFactory sessionFactory = Services.instance().getDb().getSessionFactory();
+        final SessionFactory sessionFactory = Services.getInstance().getDb().getSessionFactory();
         final Transaction transaction = sessionFactory.getCurrentSession().getTransaction();
         try {
           transaction.commit();

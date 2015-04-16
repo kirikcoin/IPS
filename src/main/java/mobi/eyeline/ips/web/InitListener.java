@@ -39,11 +39,11 @@ public class InitListener implements ServletContextListener {
     initLog4j(configDir);
 
     final Config config = initProperties(configDir);
-    Services.initialize(new ServicesImpl(config));
+
+    final Services services = Services.initialize(new ServicesImpl(config));
+    JmxBeansService.initialize(config, services);
 
     initJaasAuthorization(servletContextEvent);
-
-    JmxBeansService.initialize(config);
   }
 
   private Config initProperties(File configDir) {

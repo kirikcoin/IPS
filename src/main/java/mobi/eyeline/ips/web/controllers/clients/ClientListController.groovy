@@ -7,6 +7,7 @@ import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.MailService
+import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
@@ -26,6 +27,7 @@ class ClientListController extends BaseController {
   @Inject private UserRepository userRepository
   @Inject private UserService userService
   @Inject private MailService mailService
+  @Inject private TimeZoneService timeZoneService
 
   String search
   Boolean dialogForEdit
@@ -196,7 +198,7 @@ class ClientListController extends BaseController {
     }
   }
 
-  List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(getLocale()) }
+  List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(timeZoneService, getLocale()) }
 
   static class TableItem implements Serializable {
     int id

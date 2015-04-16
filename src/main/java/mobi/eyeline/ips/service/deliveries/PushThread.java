@@ -106,7 +106,7 @@ class PushThread extends LoopThread {
       invitationDeliveryRepository.update(dbModel);
 
       // XXX:DEBUG
-      Services.instance().getDeliveryService().onDeliveryKick(delivery);
+      Services.getInstance().getDeliveryService().onDeliveryKick(delivery);
 
     } else {
 //            logger.info("Delivery-" + delivery.getModel().getId() + ": will be returned toSend");

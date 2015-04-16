@@ -3,6 +3,7 @@ package mobi.eyeline.ips.web.controllers.profile
 import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.repository.UserRepository
+import mobi.eyeline.ips.service.TimeZoneService
 import mobi.eyeline.ips.service.UserService
 import mobi.eyeline.ips.util.HashUtils
 import mobi.eyeline.ips.web.controllers.BaseController
@@ -23,6 +24,7 @@ class ProfileController extends BaseController {
 
   @Inject private UserRepository userRepository
   @Inject private UserService userService
+  @Inject private TimeZoneService timeZoneService
 
   User user
 
@@ -95,5 +97,5 @@ class ProfileController extends BaseController {
     return !renderViolationMessage(messages as Set, [:], ['fullName', 'email', 'phoneNumber'])
   }
 
-  List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(getLocale()) }
+  List<SelectItem> getTimeZones() { TimeZoneHelper.getTimeZones(timeZoneService, getLocale()) }
 }

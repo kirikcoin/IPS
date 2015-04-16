@@ -15,7 +15,7 @@ public class IPSAuthenticator {
   public User findUser(String login, String password) throws LoginException {
     final User user;
     try {
-      user = Services.instance().getUserRepository().getUser(login, password);
+      user = Services.getInstance().getUserRepository().getUser(login, password);
 
     } catch (HibernateException e) {
       throw new LoginException(e.getMessage());

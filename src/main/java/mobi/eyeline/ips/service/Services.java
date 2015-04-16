@@ -33,16 +33,18 @@ public class Services {
 
   private static ServicesImpl instance;
 
-  public static synchronized void initialize(ServicesImpl impl) {
+  public static synchronized Services initialize(ServicesImpl impl) {
     if (instance != null) {
       throw new AssertionError("Instance is already initialized");
     }
 
     instance = impl;
     instance.start();
+
+    return getInstance();
   }
 
-  public static Services instance() {
+  public static Services getInstance() {
     if (instance == null) {
       throw new AssertionError("Instance is not initialized");
     }

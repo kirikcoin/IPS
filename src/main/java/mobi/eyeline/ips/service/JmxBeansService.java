@@ -33,15 +33,15 @@ public class JmxBeansService {
   private JmxServer jmxServer;
 
 
-  public static synchronized void initialize(Config config) {
+  public static synchronized void initialize(Config config, Services services) {
     if (instance != null) {
       throw new AssertionError("Instance is already initialized");
     }
 
-    instance = new JmxBeansService(config);
+    instance = new JmxBeansService(config, services);
   }
 
-  private JmxBeansService(Config config) {
+  private JmxBeansService(Config config, Services services) {
     if (!config.isJmxEnabled()) {
       logger.info("JMX disabled");
       return;
@@ -59,7 +59,6 @@ public class JmxBeansService {
       }
     }
 
-    final Services services = Services.instance();
     try {
       // Start own MBean server bypassing the one (possibly) created by JVM.
       jmxServer.start();
@@ -72,7 +71,7 @@ public class JmxBeansService {
     }
 
     try {
-      initHibernate(Services.instance().getDb().getSessionFactory());
+      initHibernate(services.getDb().getSessionFactory());
     } catch (InstanceAlreadyExistsException |
         MBeanRegistrationException |
         MalformedObjectNameException |

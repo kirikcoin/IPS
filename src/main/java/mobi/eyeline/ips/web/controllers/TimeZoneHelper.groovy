@@ -1,7 +1,7 @@
 package mobi.eyeline.ips.web.controllers
 
 import groovy.transform.CompileStatic
-import mobi.eyeline.ips.service.Services
+import mobi.eyeline.ips.service.TimeZoneService
 import org.apache.commons.lang3.tuple.Pair
 
 import javax.faces.model.SelectItem
@@ -14,7 +14,8 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS
 @CompileStatic
 class TimeZoneHelper {
 
-  static List<SelectItem> getTimeZones(Locale locale) {
+  static List<SelectItem> getTimeZones(TimeZoneService timeZoneService,
+                                       Locale locale) {
     def itemOf = { String tzId, String name ->
       int raw = TimeZone.getTimeZone(tzId).rawOffset
 
@@ -26,9 +27,8 @@ class TimeZoneHelper {
       new SelectItem(tzId, "$name ($prefix)" as String)
     }
 
-    Services.instance().timeZoneService.getZoneNames(locale).collect {
-      Pair<String, String> kv -> itemOf(kv.key, kv.value) as SelectItem
-    }
+    timeZoneService.getZoneNames(locale)
+        .collect { Pair<String, String> kv -> itemOf(kv.key, kv.value) as SelectItem }
   }
 
   /**
