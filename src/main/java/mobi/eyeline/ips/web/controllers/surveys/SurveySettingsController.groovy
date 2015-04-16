@@ -206,6 +206,8 @@ class SurveySettingsController extends BaseSurveyController {
     copyCoupons()
 
     surveyRepository.update(persistedSurvey)
+
+    goToSurvey(surveyId)
   }
 
   private void copyEndMessage() {
