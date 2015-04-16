@@ -123,11 +123,6 @@ public class Respondent implements Serializable {
     this.coupon = coupon;
   }
 
-  public int getAnswersPercentage() {
-    final int questionsCount = getSurvey().getActiveQuestionsCount();
-    return (questionsCount == 0) ? 0 : ((getAnswersCount() * 100) / questionsCount);
-  }
-
   @Override
   public String toString() {
     return "Respondent{" +
