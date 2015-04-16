@@ -60,7 +60,9 @@ public class RequestEagerParsingFilter extends HttpFilter {
     final String contentType = httpRequest.getContentType();
     if ((contentType != null) &&
         contentType.toLowerCase().contains("multipart/form-data")) {
-      httpRequest.getParts();
+      if ("POST".equals(httpRequest.getMethod())) {
+        httpRequest.getParts();
+      }
     }
   }
 }
