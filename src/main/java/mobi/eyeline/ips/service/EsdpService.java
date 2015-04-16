@@ -9,6 +9,7 @@ import mobi.eyeline.ips.external.esdp.Service;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
+import mobi.eyeline.ips.repository.SurveyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +25,16 @@ public class EsdpService {
   private final Config config;
   private final UssdService ussdService;
   private final EsdpServiceSupport esdpServiceSupport;
+  private final SurveyRepository surveyRepository;
 
   public EsdpService(Config config,
                      UssdService ussdService,
-                     EsdpServiceSupport esdpServiceSupport) {
+                     EsdpServiceSupport esdpServiceSupport,
+                     SurveyRepository surveyRepository) {
     this.config = config;
     this.ussdService = ussdService;
     this.esdpServiceSupport = esdpServiceSupport;
+    this.surveyRepository = surveyRepository;
   }
 
   public void save(User user, Survey survey) throws EsdpServiceException {
@@ -101,7 +105,7 @@ public class EsdpService {
   public void createMissingServices() {
     logger.info("Creating missing services for all the surveys");
 
-    for (Survey survey : Services.instance().getSurveyRepository().list()) {
+    for (Survey survey : surveyRepository.list()) {
       try {
         logger.info("Survey ID: " + survey.getId());
         if (!survey.isActive()) {

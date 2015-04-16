@@ -109,7 +109,7 @@ class ServicesImpl {
         questionRepository,
         questionOptionRepository,
         extLinkPageRepository)
-    esdpService = new EsdpService(config, ussdService, esdpServiceSupport)
+    esdpService = new EsdpService(config, ussdService, esdpServiceSupport, surveyRepository)
 
     madvUpdateService = new MadvUpdateService(
         config,
@@ -133,4 +133,15 @@ class ServicesImpl {
     timeZoneService = new TimeZoneService()
   }
 
+  void start() {
+    madvUpdateService.start()
+    deliveryService.start()
+    notificationService.start()
+  }
+
+  void shutdown() {
+    notificationService.stop()
+    deliveryService.stop()
+    pushService.stop()
+  }
 }

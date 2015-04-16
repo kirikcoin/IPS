@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web;
 
+import mobi.eyeline.ips.repository.DB;
 import mobi.eyeline.ips.service.Services;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -12,6 +13,7 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+import javax.inject.Inject;
 
 /**
  * author: Denis Enenko

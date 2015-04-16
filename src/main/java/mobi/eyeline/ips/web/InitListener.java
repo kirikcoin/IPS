@@ -20,6 +20,7 @@ public class InitListener implements ServletContextListener {
   private static final String DEFAULT_CONFIG_DIR = "conf";
   private static final String PROPERTIES_FILE_NAME = "config.xml";
 
+  @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
 
     // XXX: Если закомментировать эту строку, то inputText при пустом значении
@@ -41,10 +42,6 @@ public class InitListener implements ServletContextListener {
     Services.initialize(new ServicesImpl(config));
 
     initJaasAuthorization(servletContextEvent);
-
-    Services.instance().getMadvUpdateService().start();
-    Services.instance().getDeliveryService().start();
-    Services.instance().getNotificationService().start();
 
     JmxBeansService.initialize(config);
   }
@@ -90,13 +87,9 @@ public class InitListener implements ServletContextListener {
         TimeUnit.MINUTES.toMillis(1));
   }
 
+  @Override
   public void contextDestroyed(ServletContextEvent servletContextEvent) {
-    try {
-      Services.instance().getDeliveryService().stop();
-      Services.instance().getNotificationService().stop();
-      Services.instance().getPushService().stop();
-      JmxBeansService.getInstance().stop();
-    } catch (InterruptedException ignored) {
-    }
+    Services.shutdown();
+    JmxBeansService.getInstance().stop();
   }
 }

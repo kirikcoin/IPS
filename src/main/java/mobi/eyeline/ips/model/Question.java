@@ -134,12 +134,6 @@ public class Question extends Page {
     this.enabledDefaultAnswer = enabledDefaultAnswer;
   }
 
-  // TODO: seems to be the only way to access this data from page markup.
-  // Is there another option?
-  public SegmentationService.SegmentationInfo getSegmentationInfo() {
-    return Services.instance().getSegmentationService().getSegmentationInfo(this);
-  }
-
   @SuppressWarnings("UnusedDeclaration")
   @AssertTrue(message = "{question.validation.default}")
   private boolean isCorrectDefaultQuestion() {

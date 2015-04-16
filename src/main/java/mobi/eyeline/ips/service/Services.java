@@ -22,6 +22,7 @@ import mobi.eyeline.ips.service.deliveries.NotificationService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Named;
 
 /**
  * Service lookup.
@@ -38,6 +39,7 @@ public class Services {
     }
 
     instance = impl;
+    instance.start();
   }
 
   public static Services instance() {
@@ -46,6 +48,10 @@ public class Services {
     }
 
     return new Services();
+  }
+
+  public static void shutdown() {
+    instance.shutdown();
   }
 
   @Produces
@@ -179,6 +185,7 @@ public class Services {
   }
 
   @Produces
+  @Named
   public SegmentationService getSegmentationService() {
     return instance.getSegmentationService();
   }

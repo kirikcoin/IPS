@@ -118,7 +118,7 @@ class EsdpServiceTest extends GroovyTestCase {
     final EsdpServiceManager api
 
     MockEsdpService(Config config, UssdService ussdService, EsdpServiceManager api) {
-      super(config, ussdService, createMockEsdp())
+      super(config, ussdService, createMockEsdp(), null)
       this.api = api
     }
 
