@@ -375,18 +375,6 @@
                         </h:panelGrid>
                       </ui:repeat>
                     </h:panelGroup>
-                    <h:panelGrid columns="2" columnClasses="previewLeft,previewRight">
-                      <h:panelGroup>
-                        <eye:buttons>
-                          <eye:button id="btnAddQuestion">
-                            <h:commandLink value="#{bundle['survey.settings.question.add']}"
-                                           action="#{surveySettingsController.modifyQuestion(null)}"
-                                           styleClass="button-green" style="width: 1px"
-                                           rendered="#{userSession.surveyModificationAllowed}"/>
-                          </eye:button>
-                        </eye:buttons>
-                      </h:panelGroup>
-                    </h:panelGrid>
                   </eye:collapsingGroup>
 
                   <eye:collapsingGroup opened="true" id="groupEditorExtLinks">
@@ -436,34 +424,6 @@
                         </h:panelGrid>
                       </ui:repeat>
                     </h:panelGroup>
-                    <h:panelGrid columns="2" columnClasses="previewLeft,previewRight">
-                      <h:panelGroup>
-                        <eye:buttons>
-                          <!--<eye:button>
-                            <h:commandLink value="#{bundle['survey.settings.question.add']}"
-                                           action="#{surveySettingsController.modifyQuestion(null)}"
-                                           styleClass="button-green" style="width: 1px"
-                                           rendered="#{userSession.surveyModificationAllowed}"/>
-                          </eye:button>-->
-                          <eye:button id="btnAddExtLink" visible="#{empty surveySettingsController.persistedSurvey.activeQuestions ? false : true}">
-                            <h:commandLink value="#{bundle['survey.settings.ext.link.add']}"
-                                           action="#{surveySettingsController.modifyExtLink(null)}"
-                                           styleClass="button-green" style="width: 100%"
-                                           rendered="#{userSession.surveyModificationAllowed}"/>
-                          </eye:button>
-                        </eye:buttons>
-                      </h:panelGroup>
-
-                      <eye:buttons
-                          rendered="#{not empty surveySettingsController.survey.activeQuestions}">
-                        <eye:button>
-                          <h:outputLink styleClass="button-green"
-                                        onclick="return page.onPreviewClick();">
-                            <h:outputText value="#{bundle['survey.settings.preview']}"/>
-                          </h:outputLink>
-                        </eye:button>
-                      </eye:buttons>
-                    </h:panelGrid>
                   </eye:collapsingGroup>
 
                 </eye:tab>
@@ -485,6 +445,34 @@
 
               </eye:tabs>
 
+                    <h:panelGrid columns="2" columnClasses="previewLeft,previewRight">
+                      <h:panelGroup>
+                        <eye:buttons>
+                    <eye:button>
+                            <h:commandLink value="#{bundle['survey.settings.question.add']}"
+                                           action="#{surveySettingsController.modifyQuestion(null)}"
+                                           styleClass="button-green" style="width: 1px"
+                                           rendered="#{userSession.surveyModificationAllowed}"/>
+                    </eye:button>
+                          <eye:button id="btnAddExtLink" visible="#{empty surveySettingsController.persistedSurvey.activeQuestions ? false : true}">
+                            <h:commandLink value="#{bundle['survey.settings.ext.link.add']}"
+                                           action="#{surveySettingsController.modifyExtLink(null)}"
+                                           styleClass="button-green" style="width: 100%"
+                                           rendered="#{userSession.surveyModificationAllowed}"/>
+                          </eye:button>
+                        </eye:buttons>
+                      </h:panelGroup>
+
+                      <eye:buttons
+                          rendered="#{not empty surveySettingsController.survey.activeQuestions}">
+                        <eye:button>
+                          <h:outputLink styleClass="button-green"
+                                        onclick="return page.onPreviewClick();">
+                            <h:outputText value="#{bundle['survey.settings.preview']}"/>
+                          </h:outputLink>
+                        </eye:button>
+                      </eye:buttons>
+                    </h:panelGrid>
 
             </eye:collapsingGroup>
 
