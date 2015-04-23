@@ -547,7 +547,7 @@ class UssdServiceTest extends DbTestCase {
         (PARAM_SKIP_VALIDATION)   : true,
     ]).with { resp ->
       assertTrue resp instanceof UssdResponseModel.RedirectUssdResponseModel
-      assertEquals 'http://foo.bar?abonent=79131234567', resp.redirectUrl
+      assertEquals 'http://foo.bar?abonent=79131234567&skip_validation=true', resp.redirectUrl
     }
   }
 }
