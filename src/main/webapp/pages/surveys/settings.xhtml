@@ -186,6 +186,14 @@
                   <h:outputText id="externalUrl"
                                 value="#{surveySettingsController.surveyUrl}"
                                 rendered="#{userSession.managerRole}"/>
+
+                  <!-- Poll internal URL -->
+                  <h:outputLabel value="#{bundle['survey.internal.url']}"
+                                 for="internalUrl"
+                                 rendered="#{userSession.managerRole}"/>
+                  <h:outputText id="internalUrl"
+                                value="#{surveySettingsController.surveyInternalUrl}"
+                                rendered="#{userSession.managerRole}"/>
                 </h:panelGrid>
 
                 <h:panelGroup styleClass="settingsDisplay"

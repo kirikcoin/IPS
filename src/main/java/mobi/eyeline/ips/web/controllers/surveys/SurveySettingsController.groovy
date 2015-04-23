@@ -42,6 +42,7 @@ class SurveySettingsController extends BaseSurveyController {
   @Inject private SurveyService surveyService
   @Inject private EsdpService esdpService
   @Inject private EsdpServiceSupport esdpServiceSupport
+  @Inject private UssdService ussdService
 
   String errorId
 
@@ -188,6 +189,7 @@ class SurveySettingsController extends BaseSurveyController {
   }
 
   String getSurveyUrl() { esdpServiceSupport.getServiceUrl(persistedSurvey) }
+  String getSurveyInternalUrl() { ussdService.getSurveyUrl(persistedSurvey) }
 
   void saveMessage() {
     survey.details.endSmsEnabled = endSmsType != DISABLED
