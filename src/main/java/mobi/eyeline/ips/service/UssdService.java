@@ -394,6 +394,9 @@ public class UssdService implements MessageHandler {
 
         final String paramMsisdnDeprecated = outerRequest.getString(PARAM_MSISDN_DEPRECATED, null);
         if (paramMsisdnDeprecated != null) addParameter(PARAM_MSISDN_DEPRECATED, paramMsisdnDeprecated);
+
+        final String paramSkipValidation = outerRequest.getString(PARAM_SKIP_VALIDATION, null);
+        if (paramSkipValidation != null) addParameter(PARAM_SKIP_VALIDATION, paramSkipValidation);
       }};
 
       final UssdResponseModel.RedirectUssdResponseModel response =

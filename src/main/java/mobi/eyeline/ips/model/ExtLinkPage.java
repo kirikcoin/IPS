@@ -22,6 +22,8 @@ import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 @DiscriminatorValue("ext_link")
 public class ExtLinkPage extends Page {
 
+  private static final String PATTERN_URL = "^(http(?:s)?\\:\\/\\/[a-zA-Z0-9]+(?:(?:\\.|\\-)[a-zA-Z0-9]+)+(?:\\:\\d+)?(?:\\/[\\w\\-]+)*(?:\\/?|\\/\\w+\\.[a-zA-Z]{2,4}(?:\\?[\\w]+\\=[\\w\\-]+)?)?(?:\\&[\\w]+\\=[\\w\\-]+)*)$";
+
   @Column(name = "ext_link_name", nullable = true)
   @NotEmpty(message = "{ext.link.validation.name.empty}")
   @MaxSize(value = 70, message = "{ext.link.validation.name.size}")
@@ -29,7 +31,7 @@ public class ExtLinkPage extends Page {
 
   @Column(name = "ext_link_url", nullable = true)
   @NotEmpty(message = "{ext.link.validation.url.empty}")
-  @URL(message = "{ext.link.validation.url.invalid}")
+  @URL(message = "{ext.link.validation.url.invalid}", regexp = PATTERN_URL)
   @MaxSize(value = 255, message = "{ext.link.validation.url.size}")
   private String serviceUrl;
 
