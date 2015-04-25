@@ -2,18 +2,18 @@ package mobi.eyeline.ips.model
 
 import mobi.eyeline.ips.utils.HashUtilsSupport
 
+import javax.validation.ConstraintViolation
 import javax.validation.Validation
 import javax.validation.Validator
 
-abstract class ValidationTestCase extends GroovyTestCase {
-    protected Validator validator
+class ValidationTestCase {
+  private Validator validator
 
-    public void setUp() {
-        validator = Validation.buildDefaultValidatorFactory().validator
+  void init() {
+    validator = Validation.buildDefaultValidatorFactory().validator
 
-        HashUtilsSupport.init()
+    HashUtilsSupport.init()
+  }
 
-    }
-
-    def validate = {validator.validate it}
+  Set<ConstraintViolation> validate(any) { validator.validate any }
 }

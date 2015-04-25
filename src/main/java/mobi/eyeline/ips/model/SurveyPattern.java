@@ -26,101 +26,101 @@ import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 @Cache(usage = READ_WRITE)
 public class SurveyPattern implements Serializable {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @JoinColumn(name = "survey_id")
-    @ManyToOne(optional = false)
-    private Survey survey;
+  @JoinColumn(name = "survey_id")
+  @ManyToOne(optional = false)
+  private Survey survey;
 
-    @Min(0)
-    @Column(name = "position" , columnDefinition = "INT")
-    private long position = 0;
+  @Min(0)
+  @Column(name = "position", columnDefinition = "INT")
+  private long position = 0;
 
-    @Min(0)
-    @NotNull
-    @Column(name = "length")
-    private int length;
+  @Min(0)
+  @NotNull
+  @Column(name = "length")
+  private int length;
 
-    @NotNull
-    @Column(name = "mode")
-    @Enumerated(EnumType.STRING)
-    private Mode mode;
+  @NotNull
+  @Column(name = "mode")
+  @Enumerated(EnumType.STRING)
+  private Mode mode;
 
-    @Column(name = "active", columnDefinition = "BIT")
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean active;
+  @Column(name = "active", columnDefinition = "BIT")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean active;
 
-    public SurveyPattern() {
-    }
+  public SurveyPattern() {
+  }
 
-    public Survey getSurvey() {
-        return survey;
-    }
+  public Survey getSurvey() {
+    return survey;
+  }
 
-    public void setSurvey(Survey survey) {
-        this.survey = survey;
-    }
+  public void setSurvey(Survey survey) {
+    this.survey = survey;
+  }
 
-    public long getPosition() {
-        return position;
-    }
+  public long getPosition() {
+    return position;
+  }
 
-    public void setPosition(long position) {
-        this.position = position;
-    }
+  public void setPosition(long position) {
+    this.position = position;
+  }
 
-    public int getLength() {
-        return length;
-    }
+  public int getLength() {
+    return length;
+  }
 
-    public void setLength(int length) {
-        this.length = length;
-    }
+  public void setLength(int length) {
+    this.length = length;
+  }
 
-    public Mode getMode() {
-        return mode;
-    }
+  public Mode getMode() {
+    return mode;
+  }
 
-    public void setMode(Mode mode) {
-        this.mode = mode;
-    }
+  public void setMode(Mode mode) {
+    this.mode = mode;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public boolean isActive() {
-        return active;
-    }
+  public boolean isActive() {
+    return active;
+  }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 
-    @Override
-    public String toString() {
-        return "SurveyPattern{" +
-                "id=" + id +
-                ", survey=" + survey +
-                ", position=" + position +
-                ", length=" + length +
-                ", mode=" + mode +
-                ", active=" + active +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "SurveyPattern{" +
+        "id=" + id +
+        ", survey=" + survey +
+        ", position=" + position +
+        ", length=" + length +
+        ", mode=" + mode +
+        ", active=" + active +
+        '}';
+  }
 
-    /**
-     * @see mobi.eyeline.ips.util.PatternUtil Pattern mode to regular expression correspondence.
-     */
-    public static enum Mode {
-        DIGITS,
-        DIGITS_AND_LATIN
-    }
+  /**
+   * @see mobi.eyeline.ips.util.PatternUtil Pattern mode to regular expression correspondence.
+   */
+  public static enum Mode {
+    DIGITS,
+    DIGITS_AND_LATIN
+  }
 }

@@ -1,1 +1,5 @@
-@import "../../../styles/jquery-ips-design.css";
+@import "../../styles/jquery-ips-design.css.faces";
+
+div.ui-datepicker {
+  border: 1px solid #9A9A9A;
+}

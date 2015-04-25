@@ -14,148 +14,152 @@ import static org.hamcrest.Matchers.hasSize
 
 class EsdpServiceTest extends GroovyTestCase {
 
-    UssdService ussdService
+  UssdService ussdService
 
-    MockEsdpServiceManager serviceManager
-    EsdpService esdpService
+  MockEsdpServiceManager serviceManager
+  EsdpService esdpService
 
-    void setUp() {
-        super.setUp()
+  void setUp() {
+    super.setUp()
 
-        ussdService = new UssdService(
-                new DefaultMockConfig(),
-                null, null, null, null, null, null, null, null) {
-            @Override
-            String getSurveyUrl(Survey survey) { "http://surveys?id=$survey.id" }
-        }
-
-        serviceManager = new MockEsdpServiceManager()
-        esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
+    ussdService = new UssdService(
+        new DefaultMockConfig(),
+        null, null, null, null, null, null, null, null, null) {
+      @Override
+      String getSurveyUrl(Survey survey) { "http://surveys?id=$survey.id" }
     }
 
-    void testSave() {
-        def survey = survey(id: 42) {
-            details(title: 'Survey 1')
-            owner(id: 53)
-        }
+    serviceManager = new MockEsdpServiceManager()
+    esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
+  }
 
-        esdpService.save(new User(), survey)
-
-        assertThat serviceManager.calledMethods, hasSize(1)
-
-        Service service = serviceManager.calledMethods[0][1] as Service
-
-        assertEquals 'ips-0053-0042', service.id
-        assertEquals 'ips-0053-0042', service.tag
-        assertEquals 'Survey 1', service.title
-        assertEquals 'http://surveys?id=42',
-                service.properties.entry.find { e -> e.key == 'start-page' }.value
+  void testSave() {
+    def survey = survey(id: 42) {
+      details(title: 'Survey 1')
+      owner(id: 53)
     }
 
-    void testDelete() {
-        def survey = survey(id: 42) {
-            owner(id: 53, esdpProvider: 'ips')
-        }
+    esdpService.save(new User(), survey)
 
-        esdpService.delete(new User(), survey)
+    assertThat serviceManager.calledMethods, hasSize(1)
 
-        assertThat serviceManager.calledMethods, hasSize(1)
-        assertEquals 'ips.ips-0053-0042', serviceManager.calledMethods[0][1]
+    Service service = serviceManager.calledMethods[0][1] as Service
+
+    assertEquals 'ips-0053-0042', service.id
+    assertEquals 'ips-0053-0042', service.tag
+    assertEquals 'Survey 1', service.title
+    assertEquals 'http://surveys?id=42',
+        service.properties.entry.find { e -> e.key == 'start-page' }.value
+  }
+
+  void testDelete() {
+    def survey = survey(id: 42) {
+      owner(id: 53, esdpProvider: 'ips')
     }
 
-    void testUpdate1() {
+    esdpService.delete(new User(), survey)
 
-        serviceManager = new MockEsdpServiceManager() {
-            @Override Service getService(String arg0) {
-                new Service(properties: new Service.Properties())
-            }
-        }
-        esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
+    assertThat serviceManager.calledMethods, hasSize(1)
+    assertEquals 'ips.ips-0053-0042', serviceManager.calledMethods[0][1]
+  }
 
-        def survey = survey(id: 42) {
-            details(title: 'Survey 1')
-            statistics(accessNumber: null)
-            owner(id: 53)
-        }
+  void testUpdate1() {
 
-        esdpService.update(new User(), survey)
+    serviceManager = new MockEsdpServiceManager() {
+      @Override
+      Service getService(String arg0) {
+        new Service(properties: new Service.Properties())
+      }
+    }
+    esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
 
-        assertThat serviceManager.calledMethods, hasSize(1)
-        def service = serviceManager.calledMethods[0][1]
-
-        assertEquals '', service.properties.entry.find { e -> e.key == 'sip-number' }.value
-        assertEquals 'Survey 1', service.title
+    def survey = survey(id: 42) {
+      details(title: 'Survey 1')
+      statistics(accessNumber: null)
+      owner(id: 53)
     }
 
-    void testUpdate2() {
+    esdpService.update(new User(), survey)
 
-        serviceManager = new MockEsdpServiceManager() {
-            @Override Service getService(String arg0) {
-                new Service(properties: new Service.Properties())
-            }
-        }
-        esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
+    assertThat serviceManager.calledMethods, hasSize(1)
+    def service = serviceManager.calledMethods[0][1]
 
-        def survey = survey(id: 42) {
-            details(title: 'Survey 1')
-            statistics(accessNumber: new AccessNumber(number: '123'))
-            owner(id: 53)
-        }
+    assertEquals '', service.properties.entry.find { e -> e.key == 'sip-number' }.value
+    assertEquals 'Survey 1', service.title
+  }
 
-        esdpService.update(new User(), survey)
+  void testUpdate2() {
 
-        assertThat serviceManager.calledMethods, hasSize(1)
-        def service = serviceManager.calledMethods[0][1]
+    serviceManager = new MockEsdpServiceManager() {
+      @Override
+      Service getService(String arg0) {
+        new Service(properties: new Service.Properties())
+      }
+    }
+    esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
 
-        assertEquals '123', service.properties.entry.find { e -> e.key == 'sip-number' }.value
-        assertEquals 'Survey 1', service.title
+    def survey = survey(id: 42) {
+      details(title: 'Survey 1')
+      statistics(accessNumber: new AccessNumber(number: '123'))
+      owner(id: 53)
     }
 
-    static class MockEsdpService extends EsdpService {
+    esdpService.update(new User(), survey)
 
-        final EsdpServiceManager api
+    assertThat serviceManager.calledMethods, hasSize(1)
+    def service = serviceManager.calledMethods[0][1]
 
-        MockEsdpService(Config config, UssdService ussdService, EsdpServiceManager api) {
-            super(config, ussdService, createMockEsdp())
-            this.api = api
-        }
+    assertEquals '123', service.properties.entry.find { e -> e.key == 'sip-number' }.value
+    assertEquals 'Survey 1', service.title
+  }
 
-        private static EsdpServiceSupport createMockEsdp() {
-            new EsdpServiceSupport(null) {
-                @Override String getServiceUrl(Survey survey) { "http://surveys?id=$survey.id" }
-            }
-        }
+  static class MockEsdpService extends EsdpService {
 
-        @Override EsdpServiceManager getApi(String login, String passwordHash) { api }
+    final EsdpServiceManager api
+
+    MockEsdpService(Config config, UssdService ussdService, EsdpServiceManager api) {
+      super(config, ussdService, createMockEsdp(), null)
+      this.api = api
     }
 
-    static class MockEsdpServiceManager implements EsdpServiceManager {
-
-        List<List> calledMethods = []
-
+    private static EsdpServiceSupport createMockEsdp() {
+      new EsdpServiceSupport(null) {
         @Override
-        Service getService(String arg0) {
-            calledMethods << ['getService', arg0]; null
-        }
-
-        @Override
-        void createService(Service arg0) {
-            calledMethods << ['createService', arg0]
-        }
-
-        @Override
-        void updateService(Service arg0) {
-            calledMethods << ['updateService', arg0]
-        }
-
-        @Override
-        void activateCustomPackage(String arg0, int arg1, int arg2, int arg3) {
-            calledMethods << ['createService', arg0, arg1, arg2, arg3]
-        }
-
-        @Override
-        void deleteService(String arg0) {
-            calledMethods << ['deleteService', arg0]
-        }
+        String getServiceUrl(Survey survey) { "http://surveys?id=$survey.id" }
+      }
     }
+
+    @Override
+    EsdpServiceManager getApi(String login, String passwordHash) { api }
+  }
+
+  static class MockEsdpServiceManager implements EsdpServiceManager {
+
+    List<List> calledMethods = []
+
+    @Override
+    Service getService(String arg0) {
+      calledMethods << ['getService', arg0]; null
+    }
+
+    @Override
+    void createService(Service arg0) {
+      calledMethods << ['createService', arg0]
+    }
+
+    @Override
+    void updateService(Service arg0) {
+      calledMethods << ['updateService', arg0]
+    }
+
+    @Override
+    void activateCustomPackage(String arg0, int arg1, int arg2, int arg3) {
+      calledMethods << ['createService', arg0, arg1, arg2, arg3]
+    }
+
+    @Override
+    void deleteService(String arg0) {
+      calledMethods << ['deleteService', arg0]
+    }
+  }
 }

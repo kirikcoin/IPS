@@ -2,25 +2,25 @@ package mobi.eyeline.ips.generators;
 
 public interface SequenceGenerator {
 
-    Pattern getPattern();
+  Pattern getPattern();
 
-    /**
-     * @return Total number of combinations for this pattern.
-     */
-    long getTotal();
+  /**
+   * @return Total number of combinations for this pattern.
+   */
+  long getTotal();
 
-    /**
-     * @return Available number of combinations for this pattern,
-     * i.e. taking current position into account.
-     */
-    long getRemaining();
+  /**
+   * @return Available number of combinations for this pattern,
+   * i.e. taking current position into account.
+   */
+  long getRemaining();
 
-    long getCurrentPosition();
+  long getCurrentPosition();
 
-    /**
-     * @return Next pattern, incrementing current position.
-     */
-    CharSequence next();
+  /**
+   * @return Next pattern, incrementing current position.
+   */
+  CharSequence next();
 
-    double getPercentAvailable();
+  double getPercentAvailable();
 }

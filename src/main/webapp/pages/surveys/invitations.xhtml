@@ -7,17 +7,12 @@
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
-      <link rel="STYLESHEET" type="text/css"
-            href="#{resources.path}/resources/pages/surveys/invitations.less"/>
-
-      <script type="text/javascript"
-              src="#{resources.path}/resources/pages/surveys/invitations.js#{resources.version}">
-      </script>
+      <h:outputStylesheet library="pages" name="surveys/invitations.less"/>
+      <h:outputScript library="pages" name="surveys/invitations.js" target="head"/>
     </ui:define>
 
     <ui:define name="scripts">
-      <script type="text/javascript">
-//            <![CDATA[
+      <h:outputScript>
         $(function () {
 
           page.init();
@@ -64,8 +59,7 @@
           }
 
         });
-//            ]]>
-      </script>
+      </h:outputScript>
 
     </ui:define>
 
@@ -460,13 +454,13 @@
                                      id="retriesEnabled"
                                      value="#{invitationDeliveryController.invitationDelivery.retriesEnabled}"/>
 
-            <h:outputLabel for="retriesNumber"
+            <h:outputLabel for="retriesMax"
                            styleClass="retries"
                            value="#{bundle['invitations.deliveries.dialog.retries.number']}"/>
-            <eye:inputText id="retriesNumber" maxlength="3" size="9"
+            <eye:inputText id="retriesMax" maxlength="3" size="9"
                            styleClass="retries"
                            readonly="#{!invitationDeliveryController.invitationDelivery.state.editable}"
-                           value="#{invitationDeliveryController.retriesNumberString}"/>
+                           value="#{invitationDeliveryController.retriesMaxString}"/>
 
             <h:outputLabel for="retriesIntervalMinutes"
                            styleClass="retries"

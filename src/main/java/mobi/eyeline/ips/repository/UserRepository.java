@@ -23,166 +23,176 @@ import static org.hibernate.criterion.Restrictions.or;
 
 public class UserRepository extends BaseRepository<User, Integer> {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
+  private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
-    public UserRepository(DB db) {
-        super(db);
+  public UserRepository(DB db) {
+    super(db);
+  }
+
+  public User getUser(String login, String password) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Transaction tx = session.beginTransaction();
+
+    try {
+      final String providedHash = HashUtils.hashPassword(password);
+      final User user = (User) session
+          .createCriteria(User.class)
+          .setCacheable(true)
+          .add(eq("login", login))
+          .add(eq("password", providedHash).ignoreCase())
+          .uniqueResult();
+
+      tx.commit();
+
+      return user;
+
+    } catch (HibernateException e) {
+      try {
+        tx.rollback();
+      } catch (HibernateException ex) {
+        logger.error(e.getMessage(), ex);
+      }
+
+      throw e;
+    }
+  }
+
+  public User getByLogin(String login) {
+    final Session session = getSessionFactory().openSession();
+
+    try {
+      return (User) session
+          .createCriteria(User.class)
+          .add(eq("login", login))
+          .uniqueResult();
+    } finally {
+      session.close();
+    }
+  }
+
+  public User getByEmail(String email) {
+    final Session session = getSessionFactory().openSession();
+    try {
+      return (User) session
+          .createCriteria(User.class)
+          .add(eq("email", email))
+          .uniqueResult();
+    } finally {
+      session.close();
     }
 
-    public User getUser(String login, String password) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Transaction tx = session.beginTransaction();
+  }
 
-        try {
-            final String providedHash = HashUtils.hashPassword(password);
-            final User user = (User) session
-                    .createCriteria(User.class)
-                    .setCacheable(true)
-                    .add(eq("login", login))
-                    .add(eq("password", providedHash).ignoreCase())
-                    .uniqueResult();
+  public List<User> listByRole(Role role) {
+    final Session session = getSessionFactory().getCurrentSession();
+    //noinspection unchecked
+    return (List<User>) session
+        .createCriteria(User.class)
+        .setCacheable(true)
+        .add(eq("role", role))
+        .list();
+  }
 
-            tx.commit();
+  public List<User> listClients(User manager) {
+    final Session session = getSessionFactory().getCurrentSession();
+    if (manager == null) {
+      return listByRole(Role.CLIENT);
 
-            return user;
+    } else {
+      //noinspection unchecked
+      return (List<User>) session
+          .createCriteria(User.class)
+          .setCacheable(true)
+          .add(eq("role", Role.CLIENT))
+          .add(eq("manager", manager))
+          .list();
+    }
+  }
 
-        } catch (HibernateException e) {
-            try {
-                tx.rollback();
-            } catch (HibernateException ex) {
-                logger.error(e.getMessage(), ex);
-            }
+  public List<User> list(User manager,
+                         String filter,
+                         String orderColumn,
+                         boolean orderAsc,
+                         int limit,
+                         int offset) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
 
-            throw e;
-        }
+    if (isNotBlank(filter)) {
+      filter = filter.trim();
+
+      final Criterion filters = or(
+          EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE),
+          EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE),
+          EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE),
+          EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE)
+      );
+
+      criteria.add(filters);
     }
 
-    public User getByLogin(String login) {
-        final Session session = getSessionFactory().openSession();
-
-        try {
-            return (User) session
-                    .createCriteria(User.class)
-                    .add(eq("login", login))
-                    .uniqueResult();
-        } finally {
-            session.close();
-        }
+    if (manager != null) {
+      criteria.add(Restrictions.eq("manager", manager));
     }
 
-    public User getByEmail(String email) {
-        final Session session = getSessionFactory().openSession();
-        try{
-            return (User) session
-                    .createCriteria(User.class)
-                    .add(eq("email", email))
-                    .uniqueResult();
-        } finally {
-            session.close();
-        }
+    criteria.add(Restrictions.eq("role", Role.CLIENT));
+    criteria.setFirstResult(offset).setMaxResults(limit);
 
+    // TODO: may be in controller too
+    if (orderColumn != null) {
+      final String property;
+      switch (orderColumn) {
+        case "fullName":
+          property = "fullName";
+          break;
+        case "company":
+          property = "company";
+          break;
+        case "login":
+          property = "login";
+          break;
+        case "email":
+          property = "email";
+          break;
+        case "status":
+          property = "blocked";
+          break;
+        default:
+          throw new RuntimeException("Unexpected sort column: " + orderColumn);
+      }
+
+      criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
     }
 
-    public List<User> listByRole(Role role) {
-        final Session session = getSessionFactory().getCurrentSession();
-        //noinspection unchecked
-        return (List<User>) session
-                .createCriteria(User.class)
-                .setCacheable(true)
-                .add(eq("role", role))
-                .list();
+    //noinspection unchecked
+    return (List<User>) criteria.list();
+  }
+
+  public int count(User manager, String filter) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
+
+    if (isNotBlank(filter)) {
+      filter = filter.trim();
+
+      final Criterion filters = or(
+          EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE),
+          EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE),
+          EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE),
+          EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE)
+      );
+
+      criteria.add(filters);
     }
 
-    public List<User> listClients(User manager) {
-        final Session session = getSessionFactory().getCurrentSession();
-        if (manager == null) {
-            return listByRole(Role.CLIENT);
-
-        } else {
-            //noinspection unchecked
-            return (List<User>) session
-                    .createCriteria(User.class)
-                    .setCacheable(true)
-                    .add(eq("role", Role.CLIENT))
-                    .add(eq("manager", manager))
-                    .list();
-        }
+    if (manager != null) {
+      criteria.add(Restrictions.eq("manager", manager));
     }
 
-    public List<User> list(User manager,
-                           String filter,
-                           String orderColumn,
-                           boolean orderAsc,
-                           int limit,
-                           int offset) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
+    criteria.add(Restrictions.eq("role", Role.CLIENT));
+    criteria.setProjection(Projections.rowCount());
 
-        if (isNotBlank(filter)) {
-            filter = filter.trim();
-
-            final Criterion filters = or(
-                    EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE),
-                    EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE),
-                    EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE),
-                    EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE)
-            );
-
-            criteria.add(filters);
-        }
-
-        if (manager != null) {
-            criteria.add(Restrictions.eq("manager", manager));
-        }
-
-        criteria.add(Restrictions.eq("role", Role.CLIENT));
-        criteria.setFirstResult(offset).setMaxResults(limit);
-
-        // TODO: may be in controller too
-        if (orderColumn != null) {
-            final String property;
-            switch (orderColumn) {
-                case "fullName":     property = "fullName";        break;
-                case "company":      property = "company";         break;
-                case "login":        property = "login";           break;
-                case "email":        property = "email";           break;
-                case "status":       property = "blocked";         break;
-                default:
-                    throw new RuntimeException("Unexpected sort column: " + orderColumn);
-            }
-
-            criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
-        }
-
-        //noinspection unchecked
-        return (List<User>) criteria.list();
-    }
-
-    public int count(User manager, String filter) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
-
-        if (isNotBlank(filter)) {
-            filter = filter.trim();
-
-            final Criterion filters = or(
-                    EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE),
-                    EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE),
-                    EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE),
-                    EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE)
-            );
-
-            criteria.add(filters);
-        }
-
-        if (manager != null) {
-            criteria.add(Restrictions.eq("manager", manager));
-        }
-
-        criteria.add(Restrictions.eq("role", Role.CLIENT));
-        criteria.setProjection(Projections.rowCount());
-
-        return ((Number) criteria.uniqueResult()).intValue();
-    }
+    return ((Number) criteria.uniqueResult()).intValue();
+  }
 
 }

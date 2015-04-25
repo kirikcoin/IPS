@@ -1,14 +1,14 @@
 package mobi.eyeline.ips.web.controllers
 
-import javax.faces.bean.ManagedBean
-import javax.faces.bean.SessionScoped
+import javax.enterprise.context.SessionScoped
+import javax.inject.Named
 
 /**
  * Logotype for displaying in upload preview.
  */
-@ManagedBean(name = "logoBean", eager = true)
 @SessionScoped
+@Named
 class LogoBean implements Serializable {
-    byte[] bytes
+  byte[] bytes
 
 }

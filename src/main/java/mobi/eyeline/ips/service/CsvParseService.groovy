@@ -7,62 +7,62 @@ import mobi.eyeline.ips.web.validators.PhoneValidator
 @Slf4j('logger')
 class CsvParseService {
 
-    private final PhoneValidator phoneValidator = new PhoneValidator()
+  private final PhoneValidator phoneValidator = new PhoneValidator()
 
-    CsvParseService() {
-    }
+  CsvParseService() {
+  }
 
-    @SuppressWarnings(["GrMethodMayBeStatic", "GroovyMissingReturnStatement"])
-    List<String> parseFile(InputStream inputStream) throws CsvLineException {
-        def lines = new LinkedHashSet<String>()
+  @SuppressWarnings(["GrMethodMayBeStatic", "GroovyMissingReturnStatement"])
+  List<String> parseFile(InputStream inputStream) throws CsvLineException {
+    def lines = new LinkedHashSet<String>()
 
-        inputStream.eachLine('UTF-8') { String original, int lineNumber ->
-            original = original.trim()
-            if (original.startsWith('#') || original.empty) {
-                // Skip comments and empty lines.
+    inputStream.eachLine('UTF-8') { String original, int lineNumber ->
+      original = original.trim()
+      if (original.startsWith('#') || original.empty) {
+        // Skip comments and empty lines.
 
-            } else {
-                String line = original.replaceFirst('^\\+', '')
+      } else {
+        String line = original.replaceFirst('^\\+', '')
 
-                if (!phoneValidator.validate(line)) {
-                    logger.debug "CSV parse error: $lineNumber: $original"
-                    throw new InvalidMsisdnFormatException(lineNumber, original)
-                }
-
-                if (lines.contains(line)) {
-                    logger.debug "CSV parse error: $lineNumber: $original"
-                    throw new DuplicateMsisdnException(lineNumber, original)
-                }
-                lines << line
-            }
+        if (!phoneValidator.validate(line)) {
+          logger.debug "CSV parse error: $lineNumber: $original"
+          throw new InvalidMsisdnFormatException(lineNumber, original)
         }
 
-        return lines.asList()
-    }
-
-    @EqualsAndHashCode
-    static abstract class CsvLineException extends Exception {
-        final int lineNumber
-        final String lineContent
-
-        CsvLineException(int lineNumber, String lineContent) {
-            super("CSV format error: $lineNumber: $lineContent")
-
-            this.lineNumber = lineNumber
-            this.lineContent = lineContent
+        if (lines.contains(line)) {
+          logger.debug "CSV parse error: $lineNumber: $original"
+          throw new DuplicateMsisdnException(lineNumber, original)
         }
+        lines << line
+      }
     }
 
-    static class InvalidMsisdnFormatException extends CsvLineException {
-        InvalidMsisdnFormatException(int lineNumber, String lineContent) {
-            super(lineNumber, lineContent)
-        }
-    }
+    return lines.asList()
+  }
 
-    static class DuplicateMsisdnException extends CsvLineException {
-        DuplicateMsisdnException(int lineNumber, String lineContent) {
-            super(lineNumber, lineContent)
-        }
+  @EqualsAndHashCode
+  static abstract class CsvLineException extends Exception {
+    final int lineNumber
+    final String lineContent
+
+    CsvLineException(int lineNumber, String lineContent) {
+      super("CSV format error: $lineNumber: $lineContent")
+
+      this.lineNumber = lineNumber
+      this.lineContent = lineContent
     }
+  }
+
+  static class InvalidMsisdnFormatException extends CsvLineException {
+    InvalidMsisdnFormatException(int lineNumber, String lineContent) {
+      super(lineNumber, lineContent)
+    }
+  }
+
+  static class DuplicateMsisdnException extends CsvLineException {
+    DuplicateMsisdnException(int lineNumber, String lineContent) {
+      super(lineNumber, lineContent)
+    }
+  }
 
 }

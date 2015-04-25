@@ -6,28 +6,33 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="org.apache.http.HttpStatus" %>
 <%@ page import="static mobi.eyeline.ips.messages.UssdResponseModel.TextUssdResponseModel" %>
+<%@ page import="mobi.eyeline.ips.messages.UssdResponseModel.RedirectUssdResponseModel" %>
 <%@ page language="java"
          trimDirectiveWhitespaces="true"
          contentType="text/xml; charset=utf-8" %>
 
 <%
   final UssdResponseModel model;
-  boolean showFinalMessage = false;
 
-    try {
+  try {
     @SuppressWarnings("unchecked")
-    final Map<String, String[]> parameters =
-        (Map<String, String[]>) request.getParameterMap();
-
-    model = Services.instance().getUssdService().handle(parameters);
-    showFinalMessage = model instanceof TextUssdResponseModel;
-    pageContext.setAttribute("model", model);
-    pageContext.setAttribute("showFinalMessage", showFinalMessage);
+    final Map<String, String[]> parameters = request.getParameterMap();
+    model = Services.getInstance().getUssdService().handle(parameters);
 
   } catch (MissingParameterException e) {
     response.setStatus(HttpStatus.SC_BAD_REQUEST);      // Avoid displaying HTTP-400 error page.
     response.setContentLength(0);                       // Avoid sending empty lines.
+    return;
   }
+
+  if (model instanceof RedirectUssdResponseModel) {
+    response.sendRedirect(model.getRedirectUrl());
+    return;
+  }
+
+  boolean showFinalMessage = model instanceof TextUssdResponseModel;
+  pageContext.setAttribute("model", model);
+  pageContext.setAttribute("showFinalMessage", showFinalMessage);
 %>
 
 <?xml version="1.0" encoding="utf-8"?>
@@ -58,7 +63,7 @@
                                 type="${option.linkType}"
                             </c:if>
                             accesskey="${option.key}"
-                            pageId="index.jsp?${fn:escapeXml(option.uri)}">
+                            pageId="/ussd/index.jsp?${fn:escapeXml(option.uri)}">
                         <c:out value="${option.text}"/>
                     </link>
                 </c:forEach>

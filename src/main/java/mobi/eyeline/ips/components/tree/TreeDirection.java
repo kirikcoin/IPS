@@ -5,13 +5,13 @@ package mobi.eyeline.ips.components.tree;
  */
 public enum TreeDirection {
 
-    /**
-     * Horizontal, from left to right.
-     */
-    LR,
+  /**
+   * Horizontal, from left to right.
+   */
+  LR,
 
-    /**
-     * Vertical, from to to bottom.
-     */
-    TB
+  /**
+   * Vertical, from to to bottom.
+   */
+  TB
 }

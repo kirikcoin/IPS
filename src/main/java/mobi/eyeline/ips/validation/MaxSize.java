@@ -13,11 +13,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = MaxSizeValidator.class)
 public @interface MaxSize {
 
-    String message() default "{mobi.eyeline.constraints.size.max}";
+  String message() default "{mobi.eyeline.constraints.size.max}";
 
-    Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 
-    int value();
+  int value();
 }

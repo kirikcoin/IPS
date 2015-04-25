@@ -23,117 +23,112 @@ import java.util.Date;
 @Proxy(lazy = false)
 public class Respondent implements Serializable {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+  @Id
+  @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    /**
-     * Опрос, в котором зарегистрирован данный респондент.
-     * <br/>
-     * В случае, если респондент принимает участие в нескольких опросах, для него будут различные
-     * записи в таблице с разным идентификатором опроса.
-     */
-    @JoinColumn(name = "survey_id", nullable = false)
-    @ManyToOne(optional = false)
-    private Survey survey;
+  /**
+   * Опрос, в котором зарегистрирован данный респондент.
+   * <br/>
+   * В случае, если респондент принимает участие в нескольких опросах, для него будут различные
+   * записи в таблице с разным идентификатором опроса.
+   */
+  @JoinColumn(name = "survey_id", nullable = false)
+  @ManyToOne(optional = false)
+  private Survey survey;
 
-    /**
-     * Идентификатор абонента (телефонный номер).
-     */
-    @Column(name = "MSISDN", nullable = false)
-    @NotEmpty
-    private String msisdn;
+  /**
+   * Идентификатор абонента (телефонный номер).
+   */
+  @Column(name = "MSISDN", nullable = false)
+  @NotEmpty
+  private String msisdn;
 
-    @Column(name = "registered", nullable = false)
-    private Date startDate = new Date();
+  @Column(name = "registered", nullable = false)
+  private Date startDate = new Date();
 
-    /**
-     * Флаг, указывает, закончил ли респондент прохождение опроса.
-     * <br/>
-     * Может означать либо отсутствие неотвеченных вопросов,
-     * либо отказ от продолжения (aka "терминальный" ответ).
-     */
-    @Column(name = "finished", columnDefinition = "BIT", nullable = false)
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    private boolean finished;
+  /**
+   * Флаг, указывает, закончил ли респондент прохождение опроса.
+   * <br/>
+   * Может означать либо отсутствие неотвеченных вопросов,
+   * либо отказ от продолжения (aka "терминальный" ответ).
+   */
+  @Column(name = "finished", columnDefinition = "BIT", nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean finished;
 
-    /**
-     * Число ответов. Сбрасывается, если опрос начат сначала.
-     */
-    @Column(name = "answer_count")
-    private int answersCount;
+  /**
+   * Число ответов. Сбрасывается, если опрос начат сначала.
+   */
+  @Column(name = "answer_count")
+  private int answersCount;
 
-    @Column(name = "coupon")
-    private String coupon;
+  @Column(name = "coupon")
+  private String coupon;
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public Survey getSurvey() {
-        return survey;
-    }
+  public Survey getSurvey() {
+    return survey;
+  }
 
-    public void setSurvey(Survey survey) {
-        this.survey = survey;
-    }
+  public void setSurvey(Survey survey) {
+    this.survey = survey;
+  }
 
-    public String getMsisdn() {
-        return msisdn;
-    }
+  public String getMsisdn() {
+    return msisdn;
+  }
 
-    public void setMsisdn(String msisdn) {
-        this.msisdn = msisdn;
-    }
+  public void setMsisdn(String msisdn) {
+    this.msisdn = msisdn;
+  }
 
-    public Date getStartDate() {
-        return startDate;
-    }
+  public Date getStartDate() {
+    return startDate;
+  }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
+  }
 
-    public boolean isFinished() {
-        return finished;
-    }
+  public boolean isFinished() {
+    return finished;
+  }
 
-    public void setFinished(boolean answered) {
-        this.finished = answered;
-    }
+  public void setFinished(boolean answered) {
+    this.finished = answered;
+  }
 
-    public int getAnswersCount() {
-        return answersCount;
-    }
+  public int getAnswersCount() {
+    return answersCount;
+  }
 
-    public void setAnswersCount(int answersCount) {
-        this.answersCount = answersCount;
-    }
+  public void setAnswersCount(int answersCount) {
+    this.answersCount = answersCount;
+  }
 
-    public String getCoupon() {
-        return coupon;
-    }
+  public String getCoupon() {
+    return coupon;
+  }
 
-    public void setCoupon(String coupon) {
-        this.coupon = coupon;
-    }
+  public void setCoupon(String coupon) {
+    this.coupon = coupon;
+  }
 
-    public int getAnswersPercentage() {
-        final int questionsCount = getSurvey().getActiveQuestionsCount();
-        return (questionsCount == 0) ? 0 : ((getAnswersCount() * 100) / questionsCount);
-    }
-
-    @Override
-    public String toString() {
-        return "Respondent{" +
-                "id=" + id +
-                ", msisdn='" + msisdn + '\'' +
-                ", surveyId=" + getSurvey().getId() +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Respondent{" +
+        "id=" + id +
+        ", msisdn='" + msisdn + '\'' +
+        ", surveyId=" + getSurvey().getId() +
+        '}';
+  }
 }

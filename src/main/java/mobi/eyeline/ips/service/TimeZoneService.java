@@ -19,31 +19,31 @@ import static com.google.common.base.Charsets.UTF_8;
 
 public class TimeZoneService {
 
-    private final LoadingCache<Locale, List<Pair<String, String>>> cache =
-            CacheBuilder.newBuilder().softValues().build(new TzCacheLoader());
+  private final LoadingCache<Locale, List<Pair<String, String>>> cache =
+      CacheBuilder.newBuilder().softValues().build(new TzCacheLoader());
 
-    public List<Pair<String, String>> getZoneNames(Locale locale) {
-        try {
-            return cache.get(locale);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+  public List<Pair<String, String>> getZoneNames(Locale locale) {
+    try {
+      return cache.get(locale);
+    } catch (ExecutionException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public int getOffsetMillis(TimeZone timeZone) {
+    return TimeZone.getDefault().getRawOffset() - timeZone.getRawOffset();
+  }
+
+  private static class TzCacheLoader extends CacheLoader<Locale, List<Pair<String, String>>> {
+    @Override
+    public List<Pair<String, String>> load(Locale key) throws IOException {
+      final URL url = getClass().getResource("/tznames_" + key.getLanguage() + ".properties");
+      return new ArrayList<Pair<String, String>>() {{
+        for (String line : Resources.readLines(url, UTF_8)) {
+          final String[] parts = line.split("=");
+          add(Pair.of(parts[0].trim(), parts[1].trim()));
         }
+      }};
     }
-
-    public int getOffsetMillis(TimeZone timeZone) {
-        return TimeZone.getDefault().getRawOffset() - timeZone.getRawOffset();
-    }
-
-    private static class TzCacheLoader extends CacheLoader<Locale, List<Pair<String, String>>> {
-        @Override
-        public List<Pair<String, String>> load(Locale key) throws IOException {
-            final URL url = getClass().getResource("/tznames_" + key.getLanguage() + ".properties");
-            return new ArrayList<Pair<String, String>>() {{
-                for (String line : Resources.readLines(url, UTF_8)) {
-                    final String[] parts = line.split("=");
-                    add(Pair.of(parts[0].trim(), parts[1].trim()));
-                }
-            }};
-        }
-    }
+  }
 }

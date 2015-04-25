@@ -9,42 +9,42 @@ import mobi.eyeline.ips.generators.util.AutomatonUtils;
 
 public class GeneratorBuilder {
 
-    private Automaton automaton;
+  private Automaton automaton;
 
-    public GeneratorBuilder(String regex) throws UnsupportedPatternException {
-        automaton = AutomatonUtils.toAutomaton(regex);
+  public GeneratorBuilder(String regex) throws UnsupportedPatternException {
+    automaton = AutomatonUtils.toAutomaton(regex);
+  }
+
+  public GeneratorBuilder exclude(String regex) throws UnsupportedPatternException {
+    final Automaton excludedAutomaton = AutomatonUtils.toAutomaton(regex);
+    final SimplePattern excludedPattern =
+        new SimplePattern(AutomatonUtils.asStateSymbols(excludedAutomaton));
+
+    final SimplePattern currentPattern =
+        new SimplePattern(AutomatonUtils.asStateSymbols(automaton));
+
+    automaton = AutomatonUtils.toAutomaton(currentPattern.minus(excludedPattern).getPattern());
+
+    return this;
+  }
+
+  public SequenceGenerator build(long startPosition)
+      throws UnsupportedPatternException {
+
+    final String[] positionOptions = AutomatonUtils.asStateSymbols(automaton);
+    final SimplePattern pattern = new SimplePattern(positionOptions);
+
+    if (pattern.getCapacity() == 0) {
+      return new EmptyGenerator();
+
+    } else {
+      final NumberBijection permutation = new PolynomialPermutation(pattern.getCapacity());
+      return new UnorderedSequenceGenerator(pattern, permutation, startPosition);
     }
+  }
 
-    public GeneratorBuilder exclude(String regex) throws UnsupportedPatternException {
-        final Automaton excludedAutomaton = AutomatonUtils.toAutomaton(regex);
-        final SimplePattern excludedPattern =
-                new SimplePattern(AutomatonUtils.asStateSymbols(excludedAutomaton));
-
-        final SimplePattern currentPattern =
-                new SimplePattern(AutomatonUtils.asStateSymbols(automaton));
-
-        automaton = AutomatonUtils.toAutomaton(currentPattern.minus(excludedPattern).getPattern());
-
-        return this;
-    }
-
-    public SequenceGenerator build(long startPosition)
-            throws UnsupportedPatternException {
-
-        final String[] positionOptions = AutomatonUtils.asStateSymbols(automaton);
-        final SimplePattern pattern = new SimplePattern(positionOptions);
-
-        if (pattern.getCapacity() == 0) {
-            return new EmptyGenerator();
-
-        } else {
-            final NumberBijection permutation = new PolynomialPermutation(pattern.getCapacity());
-            return new UnorderedSequenceGenerator(pattern, permutation, startPosition);
-        }
-    }
-
-    public SequenceGenerator build()
-            throws UnsupportedPatternException {
-        return build(0);
-    }
+  public SequenceGenerator build()
+      throws UnsupportedPatternException {
+    return build(0);
+  }
 }

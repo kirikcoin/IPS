@@ -14,54 +14,58 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation, Integer> {
-    private static final Logger logger = LoggerFactory.getLogger(SurveyInvitationRepository.class);
+  private static final Logger logger = LoggerFactory.getLogger(SurveyInvitationRepository.class);
 
-    public SurveyInvitationRepository(DB db) {
-        super(db);
+  public SurveyInvitationRepository(DB db) {
+    super(db);
+  }
+
+  public List<SurveyInvitation> list(Survey survey,
+                                     String orderColumn,
+                                     boolean orderAsc,
+                                     int limit,
+                                     int offset) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = session.createCriteria(SurveyInvitation.class);
+
+    criteria.add(Restrictions.eq("survey", survey));
+    criteria.setFirstResult(offset).setMaxResults(limit);
+    if (orderColumn != null) {
+      final String property;
+      switch (orderColumn) {
+        case "date":
+          property = "date";
+          break;
+        case "value":
+          property = "value";
+          break;
+        default:
+          throw new RuntimeException("Unexpected sort column: " + orderColumn);
+      }
+
+      criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
     }
 
-    public List<SurveyInvitation> list(Survey survey,
-                                       String orderColumn,
-                                       boolean orderAsc,
-                                       int limit,
-                                       int offset) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(SurveyInvitation.class);
+    //noinspection unchecked
+    return (List<SurveyInvitation>) criteria.list();
+  }
 
-        criteria.add(Restrictions.eq("survey", survey));
-        criteria.setFirstResult(offset).setMaxResults(limit);
-        if(orderColumn != null) {
-            final String property;
-            switch (orderColumn) {
-                case "date":        property = "date";      break;
-                case "value":       property = "value";     break;
-                default:
-                    throw new RuntimeException("Unexpected sort column: " + orderColumn);
-            }
+  public List<SurveyInvitation> list(Survey survey) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = session.createCriteria(SurveyInvitation.class);
 
-            criteria.addOrder(orderAsc ? Order.asc(property) : Order.desc(property));
-        }
+    criteria.add(Restrictions.eq("survey", survey));
 
-        //noinspection unchecked
-        return (List<SurveyInvitation>) criteria.list();
-    }
+    //noinspection unchecked
+    return (List<SurveyInvitation>) criteria.list();
+  }
 
-    public List<SurveyInvitation> list(Survey survey) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(SurveyInvitation.class);
+  public int count(Survey survey) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = session.createCriteria(SurveyInvitation.class);
 
-        criteria.add(Restrictions.eq("survey", survey));
-
-        //noinspection unchecked
-        return (List<SurveyInvitation>) criteria.list();
-    }
-
-    public int count(Survey survey) {
-        final Session session = getSessionFactory().getCurrentSession();
-        final Criteria criteria = session.createCriteria(SurveyInvitation.class);
-
-        criteria.add(Restrictions.eq("survey", survey));
-        criteria.setProjection(Projections.rowCount());
-        return ((Number) criteria.uniqueResult()).intValue();
-    }
+    criteria.add(Restrictions.eq("survey", survey));
+    criteria.setProjection(Projections.rowCount());
+    return ((Number) criteria.uniqueResult()).intValue();
+  }
 }

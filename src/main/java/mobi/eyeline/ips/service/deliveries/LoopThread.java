@@ -5,24 +5,24 @@ import org.slf4j.LoggerFactory;
 
 abstract class LoopThread extends Thread {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoopThread.class);
+  private static final Logger logger = LoggerFactory.getLogger(LoopThread.class);
 
-    public LoopThread(String name) {
-        super(name);
+  public LoopThread(String name) {
+    super(name);
+  }
+
+  @Override
+  public void run() {
+    try {
+      while (!isInterrupted()) {
+        loop();
+      }
+
+    } catch (InterruptedException e) {
+      logger.info("Thread " + getName() + " interrupted");
     }
+  }
 
-    @Override
-    public void run() {
-        try {
-            while (!isInterrupted()) {
-                loop();
-            }
-
-        } catch (InterruptedException e) {
-            logger.info("Thread " + getName() + " interrupted");
-        }
-    }
-
-    protected abstract void loop() throws InterruptedException;
+  protected abstract void loop() throws InterruptedException;
 
 }

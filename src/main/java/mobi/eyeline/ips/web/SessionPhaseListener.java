@@ -23,61 +23,61 @@ import javax.faces.event.PhaseListener;
  */
 public class SessionPhaseListener implements PhaseListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(SessionPhaseListener.class);
+  private static final Logger logger = LoggerFactory.getLogger(SessionPhaseListener.class);
 
-    @Override
-    public void beforePhase(PhaseEvent phaseEvent) {
-        try {
-            final UIViewRoot viewRoot = phaseEvent.getFacesContext().getViewRoot();
-            logger.debug("------ BEFORE PHASE " +
-                    phaseEvent.getPhaseId() +
-                    ' ' +
-                    (viewRoot != null ? viewRoot.getViewId() : ""));
+  @Override
+  public void beforePhase(PhaseEvent phaseEvent) {
+    try {
+      final UIViewRoot viewRoot = phaseEvent.getFacesContext().getViewRoot();
+      logger.debug("------ BEFORE PHASE " +
+          phaseEvent.getPhaseId() +
+          ' ' +
+          (viewRoot != null ? viewRoot.getViewId() : ""));
 
-            if (phaseEvent.getPhaseId() == PhaseId.RESTORE_VIEW) {
-                Session session = Services.instance().getDb().getSessionFactory().getCurrentSession();
-                if (!session.getTransaction().isActive()) {
-                    session.beginTransaction();
-                }
-            }
-
-        } catch (Exception e) {
-            logger.error("Error in phase listener", e);
+      if (phaseEvent.getPhaseId() == PhaseId.RESTORE_VIEW) {
+        Session session = Services.getInstance().getDb().getSessionFactory().getCurrentSession();
+        if (!session.getTransaction().isActive()) {
+          session.beginTransaction();
         }
-    }
+      }
 
-    @Override
-    public void afterPhase(PhaseEvent phaseEvent) {
+    } catch (Exception e) {
+      logger.error("Error in phase listener", e);
+    }
+  }
+
+  @Override
+  public void afterPhase(PhaseEvent phaseEvent) {
+    try {
+      final UIViewRoot viewRoot = phaseEvent.getFacesContext().getViewRoot();
+      logger.debug("------ AFTER PHASE " +
+          phaseEvent.getPhaseId() +
+          ' ' +
+          (viewRoot != null ? viewRoot.getViewId() : ""));
+
+      if (phaseEvent.getPhaseId() == PhaseId.RENDER_RESPONSE) {
+        logger.debug("REQUEST END");
+
+        final SessionFactory sessionFactory = Services.getInstance().getDb().getSessionFactory();
+        final Transaction transaction = sessionFactory.getCurrentSession().getTransaction();
         try {
-            final UIViewRoot viewRoot = phaseEvent.getFacesContext().getViewRoot();
-            logger.debug("------ AFTER PHASE " +
-                    phaseEvent.getPhaseId() +
-                    ' ' +
-                    (viewRoot != null ? viewRoot.getViewId() : ""));
+          transaction.commit();
 
-            if (phaseEvent.getPhaseId() == PhaseId.RENDER_RESPONSE) {
-                logger.debug("REQUEST END");
-
-                final SessionFactory sessionFactory = Services.instance().getDb().getSessionFactory();
-                final Transaction transaction = sessionFactory.getCurrentSession().getTransaction();
-                try {
-                    transaction.commit();
-
-                } catch (HibernateException e) {
-                    logger.error("Transaction commit failed", e);
-                    if (transaction.isActive()) {
-                        transaction.rollback();
-                    }
-                }
-
-            }
-        } catch (Exception e) {
-            logger.error("Error in phase listener", e);
+        } catch (HibernateException e) {
+          logger.error("Transaction commit failed", e);
+          if (transaction.isActive()) {
+            transaction.rollback();
+          }
         }
-    }
 
-    @Override
-    public PhaseId getPhaseId() {
-        return PhaseId.ANY_PHASE;
+      }
+    } catch (Exception e) {
+      logger.error("Error in phase listener", e);
     }
+  }
+
+  @Override
+  public PhaseId getPhaseId() {
+    return PhaseId.ANY_PHASE;
+  }
 }

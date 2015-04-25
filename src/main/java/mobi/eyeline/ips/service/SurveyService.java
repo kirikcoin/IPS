@@ -1,8 +1,11 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.model.ExtLinkPage;
+import mobi.eyeline.ips.model.Page;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.repository.ExtLinkPageRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
@@ -16,129 +19,151 @@ import java.util.List;
 
 public class SurveyService {
 
-    private static final Logger logger = LoggerFactory.getLogger(SurveyService.class);
+  private static final Logger logger = LoggerFactory.getLogger(SurveyService.class);
 
-    private final SurveyRepository surveyRepository;
-    private final QuestionRepository questionRepository;
-    private final QuestionOptionRepository questionOptionRepository;
-    private final SurveyInvitationRepository surveyInvitationRepository;
-    private final InvitationDeliveryRepository invitationDeliveryRepository;
+  private final SurveyRepository surveyRepository;
+  private final QuestionRepository questionRepository;
+  private final ExtLinkPageRepository extLinkPageRepository;
+  private final QuestionOptionRepository questionOptionRepository;
+  private final SurveyInvitationRepository surveyInvitationRepository;
+  private final InvitationDeliveryRepository invitationDeliveryRepository;
 
-    public SurveyService(SurveyRepository surveyRepository,
-                         QuestionRepository questionRepository,
-                         QuestionOptionRepository questionOptionRepository,
-                         SurveyInvitationRepository surveyInvitationRepository,
-                         InvitationDeliveryRepository invitationDeliveryRepository) {
-        this.surveyRepository = surveyRepository;
-        this.questionRepository = questionRepository;
-        this.questionOptionRepository = questionOptionRepository;
-        this.surveyInvitationRepository = surveyInvitationRepository;
-        this.invitationDeliveryRepository = invitationDeliveryRepository;
+  public SurveyService(SurveyRepository surveyRepository,
+                       QuestionRepository questionRepository,
+                       ExtLinkPageRepository extLinkPageRepository,
+                       QuestionOptionRepository questionOptionRepository,
+                       SurveyInvitationRepository surveyInvitationRepository,
+                       InvitationDeliveryRepository invitationDeliveryRepository) {
+    this.surveyRepository = surveyRepository;
+    this.questionRepository = questionRepository;
+    this.extLinkPageRepository = extLinkPageRepository;
+    this.questionOptionRepository = questionOptionRepository;
+    this.surveyInvitationRepository = surveyInvitationRepository;
+    this.invitationDeliveryRepository = invitationDeliveryRepository;
+  }
+
+  /**
+   * Loads survey by ID.
+   * <br/>
+   * Returns {@code null} if at least one of these conditions is not met:
+   * <ol>
+   * <li>Survey with this ID exists,</li>
+   * <li>This survey is running now,
+   * i.e. current date is between {@link Survey#startDate} and {@link Survey#endDate}</li>
+   * <li>Survey is not marked as deleted</li>
+   * </ol>
+   *
+   * @param skipValidation if set, the second check is omitted.
+   */
+  public Survey findSurvey(int surveyId, boolean skipValidation) {
+    final Survey survey = surveyRepository.get(surveyId);
+
+    if (survey == null) {
+      logger.info("Survey not found for ID = [" + surveyId + "]");
+      return null;
+
+    } else if (!skipValidation && !survey.isRunningNow()) {
+      logger.info("Survey is not active now, ID = [" + surveyId + "]");
+      return null;
+
+    } else if (!survey.isActive()) {
+      logger.info("Survey is disabled, ID = [" + surveyId + "]");
+      return null;
     }
 
-    /**
-     * Loads survey by ID.
-     * <br/>
-     * Returns {@code null} if at least one of these conditions is not met:
-     * <ol>
-     * <li>Survey with this ID exists,</li>
-     * <li>This survey is running now,
-     * i.e. current date is between {@link Survey#startDate} and {@link Survey#endDate}</li>
-     * <li>Survey is not marked as deleted</li>
-     * </ol>
-     *
-     * @param skipValidation if set, the second check is omitted.
-     */
-    public Survey findSurvey(int surveyId, boolean skipValidation) {
-        final Survey survey = surveyRepository.get(surveyId);
+    return survey;
+  }
 
-        if (survey == null) {
-            logger.info("Survey not found for ID = [" + surveyId + "]");
-            return null;
+  /**
+   * @return Overall invitations count, including:
+   * <ul>
+   * <li>Obtained from MADV,</li>
+   * <li>Actually performed deliveries,</li>
+   * <li>Manually specified,</li>
+   * </ul>
+   */
+  public int countInvitations(Survey survey) {
+    return survey.getStatistics().getSentCount() +
+        invitationDeliveryRepository.countSent(survey) +
+        surveyInvitationRepository.count(survey);
+  }
 
-        } else if (!skipValidation && !survey.isRunningNow()) {
-            logger.info("Survey is not active now, ID = [" + surveyId + "]");
-            return null;
-
-        } else if (!survey.isActive()) {
-            logger.info("Survey is disabled, ID = [" + surveyId + "]");
-            return null;
+  /**
+   * Marks question as inactive and performs DB update.
+   * Nullifies referencing option links.
+   */
+  public void deleteQuestion(Question question) {
+    for (Question ref : getReferencesTo(question)) {
+      for (QuestionOption option : ref.getActiveOptions()) {
+        if (question.equals(option.getNextPage())) {
+          option.setNextPage(null);
+          questionOptionRepository.update(option);
         }
-
-        return survey;
+      }
     }
 
-    /**
-     * @return Overall invitations count, including:
-     * <ul>
-     * <li>Obtained from MADV,</li>
-     * <li>Actually performed deliveries,</li>
-     * <li>Manually specified,</li>
-     * </ul>
-     */
-    public int countInvitations(Survey survey) {
-        return survey.getStatistics().getSentCount() +
-                invitationDeliveryRepository.countSent(survey) +
-                surveyInvitationRepository.count(survey);
+    for (Question defRef : getDefaultReferencesTo(question)) {
+      defRef.setDefaultPage(null);
+      questionRepository.update(defRef);
     }
 
-    /**
-     * Marks question as inactive and performs DB update.
-     * Nullifies referencing option links.
-     */
-    public void deleteQuestion(Question question) {
-        for (Question ref : getReferencesTo(question)) {
-            for (QuestionOption option : ref.getActiveOptions()) {
-                if (question.equals(option.getNextQuestion())) {
-                    option.setNextQuestion(null);
-                    questionOptionRepository.update(option);
-                }
-            }
+    question.setDeleted(true);
+    questionRepository.update(question);
+  }
+
+  public void deleteExtLinkPage(ExtLinkPage page) {
+    for (Question ref : getReferencesTo(page)) {
+      for (QuestionOption option : ref.getActiveOptions()) {
+        if (page.equals(option.getNextPage())) {
+          option.setNextPage(null);
+          questionOptionRepository.update(option);
         }
-
-        for (Question defRef : getDefaultReferencesTo(question)) {
-            defRef.setDefaultQuestion(null);
-            questionRepository.update(defRef);
-        }
-
-        question.setActive(false);
-        questionRepository.update(question);
+      }
     }
 
-    public List<Question> getReferencesTo(Question question) {
-        final List<Question> refs = new ArrayList<>();
-
-        for (Question currentQuestion : question.getSurvey().getActiveQuestions()) {
-            for (QuestionOption option : currentQuestion.getActiveOptions()) {
-                if (question.equals(option.getNextQuestion())) {
-                    refs.add(currentQuestion);
-                    break;
-                }
-            }
-        }
-
-        return refs;
+    for (Question defRef : getDefaultReferencesTo(page)) {
+      defRef.setDefaultPage(null);
+      questionRepository.update(defRef);
     }
 
-    public List<Question> getDefaultReferencesTo(Question question) {
-        final List<Question> refs = new ArrayList<>();
+    page.setDeleted(true);
+    extLinkPageRepository.update(page);
+  }
 
-        for (Question currentQuestion : question.getSurvey().getActiveQuestions()) {
-            if(currentQuestion.getDefaultQuestion() == null) continue;
-            if (currentQuestion.isEnabledDefaultAnswer() && currentQuestion.getDefaultQuestion().equals(question)) {
-                refs.add(currentQuestion);
-            }
+  public List<Question> getReferencesTo(Page page) {
+    final List<Question> refs = new ArrayList<>();
+
+    for (Question currentQuestion : page.getSurvey().getActiveQuestions()) {
+      for (QuestionOption option : currentQuestion.getActiveOptions()) {
+        if (page.equals(option.getNextPage())) {
+          refs.add(currentQuestion);
+          break;
         }
-
-        return refs;
+      }
     }
 
-    public void delete(Survey survey) {
-        survey.setActive(false);
+    return refs;
+  }
 
-        if (survey.getStatistics().getAccessNumber() != null) {
-            survey.getStatistics().setAccessNumber(null);
-        }
-        surveyRepository.update(survey);
+  public List<Question> getDefaultReferencesTo(Page page) {
+    final List<Question> refs = new ArrayList<>();
+
+    for (Question currentQuestion : page.getSurvey().getActiveQuestions()) {
+      if (currentQuestion.getDefaultPage() == null) continue;
+      if (currentQuestion.isEnabledDefaultAnswer() && currentQuestion.getDefaultPage().equals(page)) {
+        refs.add(currentQuestion);
+      }
     }
+
+    return refs;
+  }
+
+  public void delete(Survey survey) {
+    survey.setActive(false);
+
+    if (survey.getStatistics().getAccessNumber() != null) {
+      survey.getStatistics().setAccessNumber(null);
+    }
+    surveyRepository.update(survey);
+  }
 }

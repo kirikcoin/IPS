@@ -1,9 +1,14 @@
-package mobi.eyeline.ips.util;
+package mobi.eyeline.ips.web.filters;
 
+import mobi.eyeline.ips.util.ResourcePool;
 import mobi.eyeline.lessparser.LessException;
 import mobi.eyeline.lessparser.LessParser;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -14,24 +19,28 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
-/**
- * User: user
- * Date: 17.01.14
- */
-public class LessFilter implements Filter {
+public class LessFilter extends HttpFilter {
 
-  private final Pattern FILTER_PATTERN = Pattern.compile(".*\\.less\\.faces|.*\\.less");
+  private static final int LESS_PARSER_INSTANCES = 8;
 
-  private LessParser parser;
+  private final Pattern FILTER_PATTERN = Pattern.compile("(.*\\.less\\.faces|.*\\.less)(|;.*)");
+
+  private ResourcePool<LessParser> parserPool;
   private boolean devMode;
   private ServletContext servletContext;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
     try {
-      parser = new LessParser();
-    } catch (LessException e) {
-      throw new ServletException("Can't init LessFilter.", e);
+      parserPool = new ResourcePool<LessParser>(LESS_PARSER_INSTANCES) {
+        @Override
+        protected LessParser init() throws LessException {
+          return new LessParser();
+        }
+      };
+
+    } catch (Exception e) {
+      throw new ServletException("Can't init LessParser.", e);
     }
 
     servletContext = filterConfig.getServletContext();
@@ -39,52 +48,60 @@ public class LessFilter implements Filter {
     String projectStage = servletContext.getInitParameter("facelets.DEVELOPMENT");
     devMode = projectStage != null && projectStage.equalsIgnoreCase("true");
 
-    servletContext.log("LESS Filter: initialized successfully. devMode = " + devMode) ;
+    servletContext.log("LESS Filter: initialized successfully. devMode = " + devMode);
   }
 
   @Override
-  public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+  protected void doFilter(HttpServletRequest req,
+                          HttpServletResponse resp,
+                          FilterChain filterChain) throws IOException, ServletException {
 
-    HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
-    String url = httpRequest.getRequestURI();
+    final String url = req.getRequestURI();
     if (url == null || !FILTER_PATTERN.matcher(url).matches()) {
-      filterChain.doFilter(servletRequest, servletResponse);
+      filterChain.doFilter(req, resp);
       return;
     }
 
-    RespWrapper httpResponse = new RespWrapper((HttpServletResponse) servletResponse);
-    filterChain.doFilter(httpRequest, httpResponse);
+    final RespWrapper httpResponse = new RespWrapper(resp);
+    filterChain.doFilter(req, httpResponse);
 
     byte[] result;
     if (httpResponse.status == 200 || httpResponse.status == 0) {
-      result = lessToCss(httpRequest, httpResponse);
+      result = lessToCss(req, httpResponse);
       if (devMode)
-        ((HttpServletResponse) servletResponse).addHeader("Cache-Control", "no-store");
+        resp.addHeader("Cache-Control", "no-store");
     } else {
       result = httpResponse.getBytes();
     }
 
-    servletResponse.setContentLength(result.length);
+    resp.setContentLength(result.length);
 
-    if (servletResponse.getContentType() == null || servletResponse.getContentType().isEmpty())
-      servletResponse.setContentType("text/css; encoding=utf-8");
+    if (resp.getContentType() == null || resp.getContentType().isEmpty())
+      resp.setContentType("text/css; encoding=utf-8");
 
-    servletResponse.getOutputStream().write(result);
+    resp.getOutputStream().write(result);
 
-    servletResponse.flushBuffer();
+    resp.flushBuffer();
   }
 
-  private byte[] lessToCss(HttpServletRequest request, RespWrapper response) throws ServletException, UnsupportedEncodingException {
+  private byte[] lessToCss(final HttpServletRequest request,
+                           RespWrapper response) throws ServletException, UnsupportedEncodingException {
     long start = System.currentTimeMillis();
     byte[] css;
     try {
       String encoding = request.getCharacterEncoding();
       Charset charset = encoding == null ? Charset.defaultCharset() : Charset.forName(encoding);
 
-      String less = new String(response.getBytes(), charset);
-      css = parser.parse(less, getPath(request), !devMode).getBytes();
+      final String less = new String(response.getBytes(), charset);
 
-    } catch (LessException e) {
+      css = parserPool.execute(new ResourcePool.ResourceCallable<byte[], LessParser>() {
+        @Override
+        public byte[] call(LessParser parser) throws LessException {
+          return parser.parse(less, getPath(request), !devMode).getBytes();
+        }
+      });
+
+    } catch (Exception e) {
       throw new ServletException(e);
     }
 
@@ -102,11 +119,6 @@ public class LessFilter implements Filter {
 
     return servletContext.getRealPath(uri);
   }
-
-  @Override
-  public void destroy() {
-  }
-
 
   private class RespWrapper extends HttpServletResponseWrapper {
 

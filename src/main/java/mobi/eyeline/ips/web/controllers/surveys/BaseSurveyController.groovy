@@ -3,15 +3,17 @@ package mobi.eyeline.ips.web.controllers.surveys
 import groovy.transform.CompileStatic
 import mobi.eyeline.ips.model.Survey
 
-import javax.faces.bean.ManagedBean
+import javax.annotation.PostConstruct
+import javax.enterprise.inject.Model
 
 @CompileStatic
-@ManagedBean(name = "baseSurveyController")
+@Model
 class BaseSurveyController extends BaseSurveyReadOnlyController {
 
-    Survey persistedSurvey
+  Survey persistedSurvey
 
-    BaseSurveyController() {
-        persistedSurvey = surveyRepository.load(surveyId)
-    }
+  @PostConstruct
+  void initPersistedSurvey() {
+    persistedSurvey = surveyRepository.load(surveyId)
+  }
 }

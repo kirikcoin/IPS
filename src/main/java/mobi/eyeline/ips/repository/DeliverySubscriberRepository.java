@@ -15,126 +15,126 @@ import static mobi.eyeline.ips.model.DeliverySubscriber.State;
 
 public class DeliverySubscriberRepository extends BaseRepository<DeliverySubscriber, Integer> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DeliverySubscriberRepository.class);
+  private static final Logger logger = LoggerFactory.getLogger(DeliverySubscriberRepository.class);
 
-    public DeliverySubscriberRepository(DB db) {
-        super(db);
-    }
+  public DeliverySubscriberRepository(DB db) {
+    super(db);
+  }
 
-    public void updateState(List<Pair<Integer, State>> idsAndStates,
-                            State oldState) {
+  public void updateState(List<Pair<Integer, State>> idsAndStates,
+                          State oldState) {
 
-        final Session session = getSessionFactory().openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
+    final Session session = getSessionFactory().openSession();
+    Transaction transaction = null;
+    try {
+      transaction = session.beginTransaction();
 
-            for (Pair<Integer, State> idAndState : idsAndStates) {
-                int count = session.createQuery(
-                        "UPDATE DeliverySubscriber" +
-                        " SET state = :newState" +
-                        " WHERE id = :id AND state = :oldState")
-                        .setParameter("newState", idAndState.getValue())
-                        .setParameter("oldState", oldState)
-                        .setParameter("id", idAndState.getKey())
-                        .executeUpdate();
+      for (Pair<Integer, State> idAndState : idsAndStates) {
+        int count = session.createQuery(
+            "UPDATE DeliverySubscriber" +
+                " SET state = :newState" +
+                " WHERE id = :id AND state = :oldState")
+            .setParameter("newState", idAndState.getValue())
+            .setParameter("oldState", oldState)
+            .setParameter("id", idAndState.getKey())
+            .executeUpdate();
 
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Subscriber-" + idAndState.getKey() + ": new state = " + idAndState.getValue() + ", if old state = " + oldState + ", count=" + count);
-                }
-            }
-
-            transaction.commit();
-
-        } catch (HibernateException e) {
-            if ((transaction != null) && transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (HibernateException ee) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            throw e;
-
-        } finally {
-            session.close();
+        if (logger.isDebugEnabled()) {
+          logger.debug("Subscriber-" + idAndState.getKey() + ": new state = " + idAndState.getValue() + ", if old state = " + oldState + ", count=" + count);
         }
-    }
+      }
 
-    public void updateState(List<Pair<Integer, State>> idsAndStates) {
+      transaction.commit();
 
-        final Session session = getSessionFactory().openSession();
-        Transaction transaction = null;
+    } catch (HibernateException e) {
+      if ((transaction != null) && transaction.isActive()) {
         try {
-            transaction = session.beginTransaction();
-
-            for (Pair<Integer, State> idAndState : idsAndStates) {
-                int count = session.createQuery(
-                        "UPDATE DeliverySubscriber" +
-                        " SET state = :newState" +
-                        " WHERE id = :id")
-                        .setParameter("newState", idAndState.getValue())
-                        .setParameter("id", idAndState.getKey())
-                        .executeUpdate();
-
-                if(logger.isDebugEnabled()){
-                    logger.debug("Subscriber-" + idAndState.getKey() + ": new state = " + idAndState.getValue() + ", count=" + count);
-                }
-            }
-
-            transaction.commit();
-
-        } catch (HibernateException e) {
-            if ((transaction != null) && transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (HibernateException ee) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            throw e;
-
-        } finally {
-            session.close();
+          transaction.rollback();
+        } catch (HibernateException ee) {
+          logger.error(e.getMessage(), e);
         }
+      }
+      throw e;
+
+    } finally {
+      session.close();
     }
+  }
 
-    // TODO: this is untested due to missing `time_to_sec' and `timediff' routines in HSQL.
-    public int expire(State from, State to, long expirationDelaySeconds) {
-        final Session session = getSessionFactory().openSession();
+  public void updateState(List<Pair<Integer, State>> idsAndStates) {
 
-        Transaction transaction = null;
+    final Session session = getSessionFactory().openSession();
+    Transaction transaction = null;
+    try {
+      transaction = session.beginTransaction();
+
+      for (Pair<Integer, State> idAndState : idsAndStates) {
+        int count = session.createQuery(
+            "UPDATE DeliverySubscriber" +
+                " SET state = :newState" +
+                " WHERE id = :id")
+            .setParameter("newState", idAndState.getValue())
+            .setParameter("id", idAndState.getKey())
+            .executeUpdate();
+
+        if (logger.isDebugEnabled()) {
+          logger.debug("Subscriber-" + idAndState.getKey() + ": new state = " + idAndState.getValue() + ", count=" + count);
+        }
+      }
+
+      transaction.commit();
+
+    } catch (HibernateException e) {
+      if ((transaction != null) && transaction.isActive()) {
         try {
-            transaction = session.beginTransaction();
-
-            final int count = session.createSQLQuery(
-                    "UPDATE delivery_subscribers ds" +
-                    " SET state = :toState" +
-                    " WHERE " +
-                    " ds.state = :fromState AND time_to_sec(timediff(now(), ds.last_update)) > :diff")
-                    .setParameter("diff", expirationDelaySeconds)
-                    .setParameter("fromState", from)
-                    .setParameter("toState", to)
-                    .executeUpdate();
-
-            transaction.commit();
-
-            return count;
-
-        } catch (HibernateException e) {
-            if ((transaction != null) && transaction.isActive()) {
-                try {
-                    transaction.rollback();
-                } catch (HibernateException ee) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            throw e;
-
-        } finally {
-            session.close();
+          transaction.rollback();
+        } catch (HibernateException ee) {
+          logger.error(e.getMessage(), e);
         }
+      }
+      throw e;
+
+    } finally {
+      session.close();
     }
+  }
+
+  // TODO: this is untested due to missing `time_to_sec' and `timediff' routines in HSQL.
+  public int expire(State from, State to, long expirationDelaySeconds) {
+    final Session session = getSessionFactory().openSession();
+
+    Transaction transaction = null;
+    try {
+      transaction = session.beginTransaction();
+
+      final int count = session.createSQLQuery(
+          "UPDATE delivery_subscribers ds" +
+              " SET state = :toState" +
+              " WHERE " +
+              " ds.state = :fromState AND time_to_sec(timediff(now(), ds.last_update)) > :diff")
+          .setParameter("diff", expirationDelaySeconds)
+          .setParameter("fromState", from)
+          .setParameter("toState", to)
+          .executeUpdate();
+
+      transaction.commit();
+
+      return count;
+
+    } catch (HibernateException e) {
+      if ((transaction != null) && transaction.isActive()) {
+        try {
+          transaction.rollback();
+        } catch (HibernateException ee) {
+          logger.error(e.getMessage(), e);
+        }
+      }
+      throw e;
+
+    } finally {
+      session.close();
+    }
+  }
 
 
 }

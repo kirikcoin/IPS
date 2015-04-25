@@ -3,7 +3,9 @@ package mobi.eyeline.ips.utils
 import groovy.transform.InheritConstructors
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.model.Answer
+import mobi.eyeline.ips.model.ExtLinkPage
 import mobi.eyeline.ips.model.OptionAnswer
+import mobi.eyeline.ips.model.Page
 import mobi.eyeline.ips.model.Question
 import mobi.eyeline.ips.model.QuestionOption
 import mobi.eyeline.ips.model.Survey
@@ -21,195 +23,223 @@ import static mobi.eyeline.ips.utils.ModelBuilderUtils.ListContext
 @SuppressWarnings("GrMethodMayBeStatic")
 class SurveyBuilder {
 
-    static Survey survey(Map _ = [:]) { new Survey(_) }
+  static Survey survey(Map _ = [:]) { new Survey(_) }
 
-    static Survey survey(Map _, @DelegatesTo(SurveyContext) Closure closure) {
-        new SurveyContext(survey(_)).invoke closure
+  static Survey survey(Map _, @DelegatesTo(SurveyContext) Closure closure) {
+    new SurveyContext(survey(_)).invoke closure
+  }
+
+  static Survey survey(@DelegatesTo(SurveyContext) Closure closure) {
+    new SurveyContext(null).invoke closure
+  }
+
+  static List<Survey> surveys(Map _, @DelegatesTo(SurveysContext) Closure closure) {
+    new SurveysContext(_).invoke closure
+  }
+
+  static List<Answer> answers(Map _, @DelegatesTo(AnswersContext) Closure closure) {
+    new AnswersContext(_).invoke closure
+  }
+
+  static Question question(Map _, @DelegatesTo(QuestionContext) Closure closure) {
+    new PagesContext(new SurveyContext(null), [:]).question(_, closure)
+  }
+
+  @InheritConstructors
+  static class SurveysContext extends ListContext<Survey> {
+
+    Survey survey(Map _, @DelegatesTo(SurveyContext) Closure closure) {
+      create(new Survey(common + _)) {
+        new SurveyContext(it).with closure
+      }
     }
 
-    static Survey survey(@DelegatesTo(SurveyContext) Closure closure) {
-        new SurveyContext(null).invoke closure
+    List<Survey> invoke(@DelegatesTo(SurveysContext) Closure closure) { super.invoke closure }
+  }
+
+  @InheritConstructors
+  static class AnswersContext extends ListContext<Answer> {
+
+    OptionAnswer optionAnswer(Map _) {
+      add(new OptionAnswer(common + _))
     }
 
-    static List<Survey> surveys(Map _, @DelegatesTo(SurveysContext) Closure closure) {
-        new SurveysContext(_).invoke closure
+    TextAnswer textAnswer(Map _) {
+      add(new TextAnswer(common + _))
     }
 
-    static List<Answer> answers(Map _, @DelegatesTo(AnswersContext) Closure closure) {
-        new AnswersContext(_).invoke closure
+    List<Answer> invoke(@DelegatesTo(AnswersContext) Closure closure) { super.invoke closure }
+  }
+
+  @InheritConstructors
+  static class PagesContext extends ListContext<Page> {
+    protected SurveyContext surveyContext = new SurveyContext(null)
+
+    PagesContext(SurveyContext surveyContext, Map commonArgs) {
+      this(commonArgs)
+      this.surveyContext = surveyContext
     }
 
-    static Question question(Map _, @DelegatesTo(QuestionContext) Closure closure) {
-        new QuestionsContext(new SurveyContext(null), [:]).question(_, closure)
+    Question question(Map _) {
+      surveyContext.bind(add(new Question(_))) {
+        surveyContext.enclosing.pages << it
+        it.survey = surveyContext.enclosing
+      }
     }
 
-    @InheritConstructors static class SurveysContext extends ListContext<Survey> {
-
-        Survey survey(Map _, @DelegatesTo(SurveyContext) Closure closure) {
-            create(new Survey(common + _)) {
-                new SurveyContext(it).with closure
-            }
-        }
-
-        List<Survey> invoke(@DelegatesTo(SurveysContext) Closure closure) { super.invoke closure }
+    Question question(Map args, @DelegatesTo(QuestionContext) Closure closure) {
+      question(question(args), closure)
     }
 
-    @InheritConstructors static class AnswersContext extends ListContext<Answer> {
-
-        OptionAnswer optionAnswer(Map _) {
-            add(new OptionAnswer(common + _))
-        }
-
-        TextAnswer textAnswer(Map _) {
-            add(new TextAnswer(common + _))
-        }
-
-        List<Answer> invoke(@DelegatesTo(AnswersContext) Closure closure) { super.invoke closure }
+    ExtLinkPage extLink(Map _) {
+      surveyContext.bind(add(new ExtLinkPage(_))) {
+        surveyContext.enclosing.pages << it
+        it.survey = surveyContext.enclosing
+      }
     }
 
-    @InheritConstructors static class QuestionsContext extends ListContext<Question> {
-
-        private SurveyContext surveyContext = new SurveyContext(null)
-
-        QuestionsContext(SurveyContext surveyContext, Map commonArgs) {
-            this(commonArgs)
-            this.surveyContext = surveyContext
-        }
-
-        Question question(Map _) {
-            surveyContext.bind(add(new Question(_))) {
-                surveyContext.enclosing.questions << it
-                it.survey = surveyContext.enclosing
-            }
-        }
-
-        Question question(Map args, @DelegatesTo(QuestionContext) Closure closure) {
-            question(question(args), closure)
-        }
-
-        static Question question(Question question, @DelegatesTo(QuestionContext) Closure closure) {
-            new QuestionContext(question).with closure
-            question
-        }
-
-        List<Question> invoke(@DelegatesTo(QuestionsContext) Closure closure) {
-            super.invoke closure
-
-            // Resolve deferred references.
-            list.collectMany { it.options }
-                    .findAll { QuestionOption opt -> opt.nextQuestion instanceof DeferredReference }
-                    .each { QuestionOption opt ->
-                opt.nextQuestion = (opt.nextQuestion as DeferredReference<Question>).resolve(list)
-            }
-
-            list.findAll { Question q -> q.defaultQuestion instanceof DeferredReference }
-                    .each { Question q ->
-                q.defaultQuestion = (q.defaultQuestion as DeferredReference<Question>).resolve(list)
-            }
-
-            list
-        }
-
-        /**
-         * @return Question reference.
-         */
-        Question ref(Map classifier) { new DeferredQuestion(classifier) }
+    ExtLinkPage extLink(Map args, @DelegatesTo(ExtLinkContext) Closure closure) {
+      extLink extLink(args), closure
     }
 
+    static Question question(Question question, @DelegatesTo(QuestionContext) Closure closure) {
+      new QuestionContext(question).with closure
+      question
+    }
+
+    static ExtLinkPage extLink(ExtLinkPage extLink, @DelegatesTo(ExtLinkContext) Closure closure) {
+      new ExtLinkContext(extLink).with closure; extLink
+    }
+
+    List<Page> invoke(@DelegatesTo(PagesContext) Closure closure) {
+      super.invoke closure
+
+      final questions = list.findAll { it instanceof Question } as List<Question>
+
+      // Resolve deferred references.
+      questions.collectMany { it.options }
+          .findAll { QuestionOption opt -> opt.nextPage instanceof DeferredReference }
+          .each { QuestionOption opt ->
+        opt.nextPage = (opt.nextPage as DeferredReference<Page>).resolve(list)
+      }
+
+      questions.findAll { Question q -> q.defaultPage instanceof DeferredReference }
+          .each { Question q ->
+        q.defaultPage = (q.defaultPage as DeferredReference<Page>).resolve(list)
+      }
+
+      list
+    }
 
     /**
-     * Utilities for creation of {@link Survey} properties.
+     * @return Page reference.
      */
-    @InheritConstructors static class SurveyContext extends Context<Survey> {
+    Page ref(Map classifier) { new DeferredPage(classifier) }
+  }
 
-        /**
-         * Creates {@link SurveyDetails} and binds to the enclosing survey.
-         */
-        SurveyDetails details(Map args) {
-            bind(new SurveyDetails(args)) {
-                it.survey = enclosing
-                enclosing.details = it
-            }
-        }
+  /**
+   * Utilities for creation of {@link Survey} properties.
+   */
+  @InheritConstructors
+  static class SurveyContext extends Context<Survey> {
 
-        /**
-         * Creates {@link SurveyInvitation} and binds to the enclosing survey.
-         */
-        SurveyInvitation invitation(Map args) {
-            bind(new SurveyInvitation(args)) {
-                it.survey = enclosing
-            }
-        }
-
-        /**
-         * Creates a {@link User} and binds to the enclosing survey as an owner.
-         */
-        User owner(Map args) {
-            bind(new User(args)) {
-                it.createdSurveys = it.createdSurveys?:[]
-                it.createdSurveys << enclosing
-                enclosing.owner = it
-            }
-        }
-
-        /**
-         * Creates {@link SurveyStats} and binds to the enclosing survey.
-         */
-        SurveyStats statistics(Map args) {
-            bind(new SurveyStats(args)) {
-                it.survey = enclosing
-                enclosing.statistics = it
-            }
-        }
-
-        /**
-         * Creates {@link SurveyStats} and binds to the enclosing survey.
-         * @param closure Invoked in the corresponding {@link SurveyStatisticsContext}
-         */
-        SurveyStats statistics(Map args, @DelegatesTo(SurveyStatisticsContext) Closure closure) {
-            SurveyStats statistics = statistics(args)
-            new SurveyStatisticsContext(statistics).with closure
-            statistics
-        }
-
-        /**
-         * Allows to create a set of {@link Question questions} and binds them to the enclosing survey.
-         */
-        List<Question> questions(@DelegatesTo(QuestionsContext) Closure closure) {
-            new QuestionsContext(this, [:]).invoke closure
-        }
-
+    /**
+     * Creates {@link SurveyDetails} and binds to the enclosing survey.
+     */
+    SurveyDetails details(Map args) {
+      bind(new SurveyDetails(args)) {
+        it.survey = enclosing
+        enclosing.details = it
+      }
     }
 
-    @InheritConstructors static class SurveyStatisticsContext extends Context<SurveyStats> {
-
-        AccessNumber accessNumber(Map _) {
-            accessNumber(new AccessNumber(_))
-        }
-
-        AccessNumber accessNumber(AccessNumber accessNumber) {
-            bind(accessNumber) {
-                enclosing.accessNumber = it
-            }
-        }
+    /**
+     * Creates {@link SurveyInvitation} and binds to the enclosing survey.
+     */
+    SurveyInvitation invitation(Map args) {
+      bind(new SurveyInvitation(args)) {
+        it.survey = enclosing
+      }
     }
 
-    @InheritConstructors static class QuestionContext extends Context<Question> {
-
-        QuestionOption option(Map _) {
-            bind(new QuestionOption(_)) {
-                enclosing.options << it
-                it.question = enclosing
-            }
-        }
+    /**
+     * Creates a {@link User} and binds to the enclosing survey as an owner.
+     */
+    User owner(Map args) {
+      bind(new User(args)) {
+        it.createdSurveys = it.createdSurveys ?: []
+        it.createdSurveys << enclosing
+        enclosing.owner = it
+      }
     }
 
-    static class DeferredQuestion extends Question implements DeferredReference<Question> {
-        final Map classifier
-        DeferredQuestion(Map classifier) { this.classifier = classifier }
-
-        Question resolve(List<Question> others) { resolve(others, classifier) }
+    /**
+     * Creates {@link SurveyStats} and binds to the enclosing survey.
+     */
+    SurveyStats statistics(Map args) {
+      bind(new SurveyStats(args)) {
+        it.survey = enclosing
+        enclosing.statistics = it
+      }
     }
 
+    /**
+     * Creates {@link SurveyStats} and binds to the enclosing survey.
+     * @param closure Invoked in the corresponding {@link SurveyStatisticsContext}
+     */
+    SurveyStats statistics(Map args, @DelegatesTo(SurveyStatisticsContext) Closure closure) {
+      SurveyStats statistics = statistics(args)
+      new SurveyStatisticsContext(statistics).with closure
+      statistics
+    }
+
+    /**
+     * Allows to create a set of {@link Question questions} and binds them to the enclosing survey.
+     */
+    List<Question> pages(@DelegatesTo(PagesContext) Closure closure) {
+      new PagesContext(this, [:]).invoke closure
+    }
+
+  }
+
+  @InheritConstructors
+  static class SurveyStatisticsContext extends Context<SurveyStats> {
+
+    AccessNumber accessNumber(Map _) {
+      accessNumber(new AccessNumber(_))
+    }
+
+    AccessNumber accessNumber(AccessNumber accessNumber) {
+      bind(accessNumber) {
+        enclosing.accessNumber = it
+      }
+    }
+  }
+
+  @InheritConstructors
+  static class QuestionContext extends Context<Question> {
+
+    QuestionOption option(Map _) {
+      bind(new QuestionOption(_)) {
+        enclosing.options << it
+        it.question = enclosing
+      }
+    }
+  }
+
+  @InheritConstructors
+  static class ExtLinkContext extends Context<ExtLinkPage> {
+
+  }
+
+  static class DeferredPage extends Page implements DeferredReference<Page> {
+    final Map classifier
+    DeferredPage(Map classifier) { this.classifier = classifier }
+
+    Page resolve(List<Page> others) { resolve(others, classifier) }
+
+    @Override String getTitle() { '' }
+    @Override int getActiveIndex() { 0 }
+  }
 
 }

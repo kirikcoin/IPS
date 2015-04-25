@@ -17,100 +17,100 @@ import java.util.NoSuchElementException;
  */
 public class PolynomialPermutation implements NumberBijection {
 
-    private final long maxValue;
-    private final Expression expression;
+  private final long maxValue;
+  private final Expression expression;
 
-    public PolynomialPermutation(long maxValue) {
-        if (maxValue <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-        this.maxValue = maxValue;
-        this.expression = createExpression();
+  public PolynomialPermutation(long maxValue) {
+    if (maxValue <= 0) {
+      throw new IllegalArgumentException();
     }
 
-    private Expression createExpression() {
-        // Let maxValue = p1^k1 * p2^k2 * .. * pn^kn.
-        final Multiset<Long> primes = PrimeUtils.factorize(maxValue);
+    this.maxValue = maxValue;
+    this.expression = createExpression();
+  }
 
-        final long p1 = getMultiPrime(primes);
+  private Expression createExpression() {
+    // Let maxValue = p1^k1 * p2^k2 * .. * pn^kn.
+    final Multiset<Long> primes = PrimeUtils.factorize(maxValue);
 
-        // a = p1 * p2^k2 * .. * pn^kn.
-        long a = p1;
-        for (Long prime : primes.elementSet()) {
-            if (prime != p1) {
-                a *= BigInteger.valueOf(prime).pow(primes.count(prime)).longValue();
-            }
-        }
+    final long p1 = getMultiPrime(primes);
 
-        // a * x^2 + x + (maxValue / 3 - 1)
-        // The latter coefficient is an arbitrary constant - the value doesn't really matter
-        // as all the computations are performed modulo maxValue.
-        return new Expression(a, 1, maxValue / 3 - 1);
+    // a = p1 * p2^k2 * .. * pn^kn.
+    long a = p1;
+    for (Long prime : primes.elementSet()) {
+      if (prime != p1) {
+        a *= BigInteger.valueOf(prime).pow(primes.count(prime)).longValue();
+      }
     }
 
-    /**
-     * Determines the maximal of prime factors {@literal P} of {@linkplain #maxValue set size}
-     * for which the set size is divisible by {@code P^2}.
-     * <br/>
-     * The maximal one is taken just to extend the variation whereas
-     * it's not a mandatory requirement for QPP.
-     */
-    private long getMultiPrime(Multiset<Long> primes) {
-        final List<Long> multiprimes = new ArrayList<>();
-        for (Long prime : primes.elementSet()) {
-            if (primes.count(prime) > 1) {
-                multiprimes.add(prime);
-            }
-        }
+    // a * x^2 + x + (maxValue / 3 - 1)
+    // The latter coefficient is an arbitrary constant - the value doesn't really matter
+    // as all the computations are performed modulo maxValue.
+    return new Expression(a, 1, maxValue / 3 - 1);
+  }
 
-        try {
-            return Collections.max(multiprimes);
-        } catch (NoSuchElementException e) {
-            // Well, if there's no prime P (!= 1) for which the number N of elements in our set
-            // can be divided by P^2, QPP construction is impossible.
-            throw new IllegalArgumentException(
-                    "Invalid range for polynomial permutation: " + maxValue);
-        }
+  /**
+   * Determines the maximal of prime factors {@literal P} of {@linkplain #maxValue set size}
+   * for which the set size is divisible by {@code P^2}.
+   * <br/>
+   * The maximal one is taken just to extend the variation whereas
+   * it's not a mandatory requirement for QPP.
+   */
+  private long getMultiPrime(Multiset<Long> primes) {
+    final List<Long> multiprimes = new ArrayList<>();
+    for (Long prime : primes.elementSet()) {
+      if (primes.count(prime) > 1) {
+        multiprimes.add(prime);
+      }
     }
 
-    @Override
-    public long apply(long from) {
-        assert from >= 0 && from < maxValue;
+    try {
+      return Collections.max(multiprimes);
+    } catch (NoSuchElementException e) {
+      // Well, if there's no prime P (!= 1) for which the number N of elements in our set
+      // can be divided by P^2, QPP construction is impossible.
+      throw new IllegalArgumentException(
+          "Invalid range for polynomial permutation: " + maxValue);
+    }
+  }
 
-        return expression.apply(from).mod(BigInteger.valueOf(maxValue)).longValue();
+  @Override
+  public long apply(long from) {
+    assert from >= 0 && from < maxValue;
+
+    return expression.apply(from).mod(BigInteger.valueOf(maxValue)).longValue();
+  }
+
+  @Override
+  public String toString() {
+    return String.format("%s (mod %d)", expression, maxValue);
+  }
+
+  /**
+   * {@code a * x^2 + b * x + c} polynomial.
+   */
+  private static class Expression {
+    final BigInteger a;
+    final BigInteger b;
+    final BigInteger c;
+
+    public Expression(long a, long b, long c) {
+      this.a = BigInteger.valueOf(a);
+      this.b = BigInteger.valueOf(b);
+      this.c = BigInteger.valueOf(c);
+    }
+
+    public BigInteger apply(long x) {
+      return apply(BigInteger.valueOf(x));
+    }
+
+    private BigInteger apply(BigInteger x) {
+      return x.pow(2).multiply(a).add(b.multiply(x)).add(c);
     }
 
     @Override
     public String toString() {
-        return String.format("%s (mod %d)", expression, maxValue);
+      return String.format("%d * x^2 + %d * x + %d", a, b, c);
     }
-
-    /**
-     * {@code a * x^2 + b * x + c} polynomial.
-     */
-    private static class Expression {
-        final BigInteger a;
-        final BigInteger b;
-        final BigInteger c;
-
-        public Expression(long a, long b, long c) {
-            this.a = BigInteger.valueOf(a);
-            this.b = BigInteger.valueOf(b);
-            this.c = BigInteger.valueOf(c);
-        }
-
-        public BigInteger apply(long x) {
-            return apply(BigInteger.valueOf(x));
-        }
-
-        private BigInteger apply(BigInteger x) {
-            return x.pow(2).multiply(a).add(b.multiply(x)).add(c);
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%d * x^2 + %d * x + %d", a, b, c);
-        }
-    }
+  }
 }

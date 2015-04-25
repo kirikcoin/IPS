@@ -10,28 +10,28 @@ import javax.security.auth.login.LoginException;
 
 public class IPSAuthenticator {
 
-    private static final Logger logger = LoggerFactory.getLogger(IPSAuthenticator.class);
+  private static final Logger logger = LoggerFactory.getLogger(IPSAuthenticator.class);
 
-    public User findUser(String login, String password) throws LoginException {
-        final User user;
-        try {
-            user = Services.instance().getUserRepository().getUser(login, password);
+  public User findUser(String login, String password) throws LoginException {
+    final User user;
+    try {
+      user = Services.getInstance().getUserRepository().getUser(login, password);
 
-        } catch (HibernateException e) {
-            throw new LoginException(e.getMessage());
-        }
-
-        if (user == null) {
-            logger.info("User not found for login = [" + login + "]," +
-                    " password = [" + password + "]");
-            return null;
-        }
-
-        if (user.isBlocked()) {
-            logger.info("Account is blocked for login = [" + login + "]");
-            return null;
-        }
-
-        return user;
+    } catch (HibernateException e) {
+      throw new LoginException(e.getMessage());
     }
+
+    if (user == null) {
+      logger.info("User not found for login = [" + login + "]," +
+          " password = [" + password + "]");
+      return null;
+    }
+
+    if (user.isBlocked()) {
+      logger.info("Account is blocked for login = [" + login + "]");
+      return null;
+    }
+
+    return user;
+  }
 }

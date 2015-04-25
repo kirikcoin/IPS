@@ -7,25 +7,19 @@
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
-      <link rel="STYLESHEET" type="text/css"
-            href="#{resources.path}/resources/pages/surveys/statistics.less"/>
-
-      <script type="text/javascript"
-              src="#{resources.path}/resources/pages/surveys/statistics.js#{resources.version}">
-      </script>
+      <h:outputStylesheet library="pages" name="surveys/statistics.less"/>
+      <h:outputScript library="pages" name="surveys/statistics.js" target="head"/>
     </ui:define>
 
     <ui:define name="scripts">
-      <script type="text/javascript">
-        // <![CDATA[
+      <h:outputScript>
         page.init();
 
         $(function () {
           $('form').attr('action',
               '/pages/surveys/statistics.faces?id=#{surveyStatsController.surveyId}');
         });
-        // ]]>
-      </script>
+      </h:outputScript>
 
     </ui:define>
 

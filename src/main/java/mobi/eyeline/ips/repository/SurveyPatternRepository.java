@@ -6,11 +6,11 @@ import org.slf4j.LoggerFactory;
 
 public class SurveyPatternRepository extends BaseRepository<SurveyPattern, Integer> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SurveyPatternRepository.class);
+  private static final Logger logger = LoggerFactory.getLogger(SurveyPatternRepository.class);
 
-    public SurveyPatternRepository(DB db) {
-        super(db);
-    }
+  public SurveyPatternRepository(DB db) {
+    super(db);
+  }
 
 
 }

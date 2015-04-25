@@ -11,23 +11,23 @@ import javax.validation.constraints.NotNull;
 @Entity
 @DiscriminatorValue("text_answer")
 public class TextAnswer extends Answer {
-    /**
-     * Текст ответа на вопрос.
-     */
-    @Column(name = "answer_text")
-    @NotNull(message = "{answer.validation.text.empty}")
-    private String text;
+  /**
+   * Текст ответа на вопрос.
+   */
+  @Column(name = "answer_text")
+  @NotNull(message = "{answer.validation.text.empty}")
+  private String text;
 
-    public String getText() {
-        return text;
-    }
+  public String getText() {
+    return text;
+  }
 
-    public void setText(String text) {
-        this.text = text;
-    }
+  public void setText(String text) {
+    this.text = text;
+  }
 
-    @Override
-    public String getAnswer() {
-        return text;
-    }
+  @Override
+  public String getAnswer() {
+    return text;
+  }
 }

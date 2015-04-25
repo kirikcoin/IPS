@@ -51,12 +51,6 @@ var page = {
 
   },
 
-  showQuestionDeleteDialog: function (id) {
-    ips.$byId('questionId').val(id);
-    jsfc('questionDeleteDialog').show();
-    return false;
-  },
-
   showSurveyDeleteDialog: function (id) {
     jsfc('deleteDialog').show();
     return false;
@@ -129,13 +123,34 @@ var page = {
     return false;
   },
 
+  /** @private */
+  _bindSelectShortMenu: function () {
+    $('#questionModificationDialog_div')
+        .find('select')
+        .each(function (i, e) { new ips.SelectShortMenu($(e)) } );
+  },
 
   onQuestionModificationDialog: function() {
+    this._bindSelectShortMenu();
+
+    var self = this;
+    jsfc('questionOptions').addListener(function (event) {
+      if (event.type == 'added') self._bindSelectShortMenu();
+    });
+
     jsfc('questionModificationDialog').show();
+  },
+
+  onExtLinkModificationDialog: function () {
+    jsfc('extLinkModificationDialog').show();
   },
 
   onQuestionDeleteDialog: function() {
     jsfc('questionDeleteDialog').show();
+  },
+
+  onExtLinkDeleteDialog: function() {
+    jsfc('extLinkDeleteDialog').show();
   },
 
   onPreviewClick: function() {

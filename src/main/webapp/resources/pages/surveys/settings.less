@@ -71,9 +71,6 @@ span.option-number {
   color: @light;
 }
 
-
-
-
 // 308 px is height most acceptable for 11 lines(28*11 = 308)
 #scrollableVariants{
   overflow: auto;
@@ -295,4 +292,34 @@ div.eyeline_inputDate input {
 
 #tabs > div {
   display: none;
+}
+
+input#serviceName, input#serviceUrl {
+  width: 100%;
+
+  &.validationError {
+    width: 95%;
+  }
+}
+
+.eyeline_button#btnAddExtLink {
+  width: 100%;
+}
+
+#groupEditorQuestions_header {
+  margin-top: 0;
+}
+
+.columnOptionsList .placeholder {
+  padding-left: 25px;
+}
+
+
+table.extLink {
+  div.defaultOption {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 1000px;
+  }
 }
