@@ -1,21 +1,29 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.model.AccessNumber;
 import mobi.eyeline.ips.model.ExtLinkPage;
 import mobi.eyeline.ips.model.Page;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.model.SurveyStats;
+import mobi.eyeline.ips.repository.AccessNumberRepository;
 import mobi.eyeline.ips.repository.ExtLinkPageRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 public class SurveyService {
 
@@ -27,19 +35,22 @@ public class SurveyService {
   private final QuestionOptionRepository questionOptionRepository;
   private final SurveyInvitationRepository surveyInvitationRepository;
   private final InvitationDeliveryRepository invitationDeliveryRepository;
+  private final AccessNumberRepository accessNumberRepository;
 
   public SurveyService(SurveyRepository surveyRepository,
                        QuestionRepository questionRepository,
                        ExtLinkPageRepository extLinkPageRepository,
                        QuestionOptionRepository questionOptionRepository,
                        SurveyInvitationRepository surveyInvitationRepository,
-                       InvitationDeliveryRepository invitationDeliveryRepository) {
+                       InvitationDeliveryRepository invitationDeliveryRepository,
+                       AccessNumberRepository accessNumberRepository) {
     this.surveyRepository = surveyRepository;
     this.questionRepository = questionRepository;
     this.extLinkPageRepository = extLinkPageRepository;
     this.questionOptionRepository = questionOptionRepository;
     this.surveyInvitationRepository = surveyInvitationRepository;
     this.invitationDeliveryRepository = invitationDeliveryRepository;
+    this.accessNumberRepository = accessNumberRepository;
   }
 
   /**
@@ -161,9 +172,16 @@ public class SurveyService {
   public void delete(Survey survey) {
     survey.setActive(false);
 
-    if (survey.getStatistics().getAccessNumber() != null) {
-      survey.getStatistics().setAccessNumber(null);
+    // Unbind access numbers so they get back to the common pool.
+    final SurveyStats accNumberRoot = survey.getStatistics();
+    if (!isEmpty(accNumberRoot.getAccessNumbers())) {
+      for (AccessNumber number : accNumberRoot.getAccessNumbers()) {
+        number.setSurveyStats(null);
+        accessNumberRepository.update(number);
+      }
+      accNumberRoot.setAccessNumbers(Collections.<AccessNumber>emptyList());
     }
+
     surveyRepository.update(survey);
   }
 }

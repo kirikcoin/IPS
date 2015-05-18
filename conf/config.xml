@@ -27,6 +27,13 @@
     <param name="hibernate.connection.username" type="string">user</param>
     <param name="hibernate.connection.password" type="string">password</param>
 
+    <!-- PROD, USE WITH CARE -->
+<!--
+    <param name="hibernate.connection.url" type="string">jdbc:mysql://192.168.10.19/ips?useUnicode=true&amp;characterEncoding=UTF-8</param>
+    <param name="hibernate.connection.username" type="string">ips</param>
+    <param name="hibernate.connection.password" type="string">password</param>
+-->
+
     <!-- Local DB. -->
 
     <!--<param name="hibernate.connection.url" type="string">jdbc:mysql://localhost/ips?useUnicode=true&amp;characterEncoding=UTF-8</param>

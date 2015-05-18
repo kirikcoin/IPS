@@ -7,14 +7,17 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Статистика опроса.
@@ -31,9 +34,6 @@ public class SurveyStats implements Serializable {
   @GenericGenerator(name = "SharedPrimaryKeyGenerator", strategy = "foreign", parameters = @Parameter(name = "property", value = "survey"))
   private Integer id;
 
-  /*@Id
-  @JoinColumn(name = "survey_id")
-  @OneToOne(optional = false, cascade = CascadeType.ALL)*/
   @OneToOne
   @PrimaryKeyJoinColumn
   private Survey survey;
@@ -51,11 +51,10 @@ public class SurveyStats implements Serializable {
   private String campaign;
 
   /**
-   * Ссылка на C2S/USSD-номер опроса.
+   * C2S/USSD-номера опроса.
    */
-  @JoinColumn(name = "number_id")
-  @OneToOne(optional = true)
-  private AccessNumber accessNumber;
+  @OneToMany(mappedBy = "surveyStats", fetch = FetchType.EAGER)
+  private List<AccessNumber> accessNumbers = new ArrayList<>();
 
   /**
    * Дата последнего обновления количества показов (поля sent).
@@ -108,12 +107,12 @@ public class SurveyStats implements Serializable {
     this.campaign = campaign;
   }
 
-  public AccessNumber getAccessNumber() {
-    return accessNumber;
+  public List<AccessNumber> getAccessNumbers() {
+    return accessNumbers;
   }
 
-  public void setAccessNumber(AccessNumber accessNumber) {
-    this.accessNumber = accessNumber;
+  public void setAccessNumbers(List<AccessNumber> accessNumbers) {
+    this.accessNumbers = accessNumbers;
   }
 
   public Date getLastUpdate() {
@@ -137,7 +136,6 @@ public class SurveyStats implements Serializable {
         "surveyId=" + getSurvey().getId() +
         ", sentCount=" + sentCount +
         ", campaign='" + campaign + '\'' +
-        ", accessNumber='" + accessNumber + '\'' +
         ", lastUpdate=" + lastUpdate +
         ", updateStatus=" + updateStatus +
         '}';

@@ -54,7 +54,7 @@ class ServicesImpl {
   final TimeZoneService timeZoneService
 
   ServicesImpl(Config config) {
-    db = new DB(config.getDatabaseProperties())
+    db = new DB(config.databaseProperties)
 
     timeSource = new TimeSource()
 
@@ -82,16 +82,17 @@ class ServicesImpl {
         extLinkPageRepository,
         questionOptionRepository,
         surveyInvitationRepository,
-        invitationDeliveryRepository)
+        invitationDeliveryRepository,
+        accessNumberRepository)
 
-    templateService = new TemplateService(config.getLoginUrl())
+    templateService = new TemplateService(config.loginUrl)
     mailService = new MailService(templateService,
         new SmtpSender(
-            config.getSmtpHost(),
-            config.getSmtpPort(),
-            config.getSmtpUsername(),
-            config.getSmtpPassword(),
-            config.getMailFrom()))
+            config.smtpHost,
+            config.smtpPort,
+            config.smtpUsername,
+            config.smtpPassword,
+            config.mailFrom))
     esdpServiceSupport = new EsdpServiceSupport(config)
 
     pushService = new PushService(config, esdpServiceSupport)

@@ -1,10 +1,12 @@
 package mobi.eyeline.ips.repository;
 
+import com.google.common.primitives.Ints;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNull;
 import static org.hibernate.criterion.Restrictions.or;
@@ -63,7 +66,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
     criteria.createAlias("statistics", "statistics");
     criteria.createAlias("client", "client");
     criteria.createAlias("owner", "owner", LEFT_OUTER_JOIN);
-    criteria.createAlias("statistics.accessNumber", "accessNumber", LEFT_OUTER_JOIN);
+    criteria.createAlias("statistics.accessNumbers", "accessNumber", LEFT_OUTER_JOIN);
 
     if (active != null) {
       criteria.add(eq("active", active));
@@ -85,7 +88,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
       final List<Criterion> filters = new ArrayList<>();
 
-      if (StringUtils.isNumeric(filter)) {
+      if (Ints.tryParse(filter) != null) {
         filters.add(eq("id", Integer.parseInt(filter)));
       }
       filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
@@ -99,12 +102,12 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
       ));
     }
 
+    criteria.setResultTransformer(DISTINCT_ROOT_ENTITY);
     criteria.setFirstResult(offset).setMaxResults(limit);
 
     // TODO: Order property to object graph path conversion should
     //       better be performed on controller level.
     if (orderProperty != null) {
-
       final String property;
       switch (orderProperty) {
         case "id":
@@ -121,9 +124,6 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
           break;
         case "period":
           property = "startDate";
-          break;
-        case "accessNumber":
-          property = "statistics.accessNumber";
           break;
         default:
           throw new RuntimeException("Unexpected sort column: " + orderProperty);
@@ -148,7 +148,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
     criteria.createAlias("details", "details");
     criteria.createAlias("statistics", "statistics");
     criteria.createAlias("client", "client", LEFT_OUTER_JOIN);
-    criteria.createAlias("statistics.accessNumber", "accessNumber", LEFT_OUTER_JOIN);
+    criteria.createAlias("statistics.accessNumbers", "accessNumber", LEFT_OUTER_JOIN);
 
     if (active != null) {
       criteria.add(eq("active", active));
@@ -170,7 +170,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
       final List<Criterion> filters = new ArrayList<>();
 
-      if (StringUtils.isNumeric(filter)) {
+      if (Ints.tryParse(filter) != null) {
         filters.add(eq("id", Integer.parseInt(filter)));
       }
 
@@ -185,7 +185,7 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
       ));
     }
 
-    criteria.setProjection(Projections.rowCount());
+    criteria.setProjection(Projections.countDistinct("id"));
 
     //noinspection unchecked
     return ((Number) criteria.uniqueResult()).intValue();

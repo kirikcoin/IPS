@@ -95,8 +95,7 @@ class SurveySettingsController extends BaseSurveyController {
   boolean showWarning
   boolean showDisabled
 
-  String accessNumberNumber
-  Integer accessNumberId
+  DynamicTableModel accessNumbersModel = new DynamicTableModel()
 
   TreeNode questionsGraph
 
@@ -130,8 +129,12 @@ class SurveySettingsController extends BaseSurveyController {
     showWarning = couponEnabled && (couponService.getPercentAvailable(survey) <= 10)
     showDisabled = couponEnabled && (couponsAvailable == 0)
 
-    accessNumberNumber = survey.statistics.accessNumber?.number
-    accessNumberId = survey.statistics.accessNumber?.id
+    accessNumbersModel = new DynamicTableModel()
+    persistedSurvey.statistics.accessNumbers?.collect { AccessNumber number ->
+      new DynamicTableRow() {{
+        setValue 'number', number.id
+      }}
+    }?.each { accessNumbersModel.addRow(it) }
   }
 
   List<SelectItem> getNextQuestionsList() {
@@ -284,11 +287,6 @@ class SurveySettingsController extends BaseSurveyController {
     persistedSurvey.startDate = survey.startDate
     persistedSurvey.endDate = survey.endDate
 
-    if (accessNumberId == null) {
-      persistedSurvey.statistics.accessNumber = null
-    } else {
-      persistedSurvey.statistics.accessNumber = accessNumberRepository.load(accessNumberId)
-    }
     persistedSurvey.client = survey.client
 
     try {
@@ -302,6 +300,51 @@ class SurveySettingsController extends BaseSurveyController {
     }
 
     goToSurvey(surveyId)
+  }
+
+  void saveAccessNumbers() {
+    final getNumber = { DynamicTableRow row -> row.getValue('number') as String }
+
+    final selectedNumberIds = accessNumbersModel
+        .rows
+        .collect { row -> getNumber(row) }
+        .findAll { !it.empty }
+        .collect { it.toInteger() }
+        .findAll { it > 0 }
+
+    final handleRemoved = {
+      persistedSurvey.statistics.accessNumbers
+          .findAll { num -> !(num.id in selectedNumberIds) }
+          .each { num ->
+        num.surveyStats = null
+        accessNumberRepository.update num
+      }
+    }
+
+    final handleAdded = {
+      selectedNumberIds
+          .findAll { id -> !(id in persistedSurvey.statistics.accessNumbers.collect { it.id }) }
+          .each { id ->
+        final num = accessNumberRepository.load(id)
+        num.surveyStats = persistedSurvey.statistics
+        accessNumberRepository.update(num)
+      }
+    }
+
+    handleRemoved()
+    handleAdded()
+
+    try {
+      esdpService.update(getCurrentUser(), persistedSurvey)
+      surveyRepository.update(persistedSurvey)
+
+    } catch (Exception e) {
+      logger.error(e.message, e)
+      addErrorMessage strings['esdp.error.survey.update']
+      return
+    }
+
+    goToSurvey surveyId
   }
 
   String deleteSurvey() {
@@ -629,20 +672,22 @@ class SurveySettingsController extends BaseSurveyController {
     handleUpdated()
   }
 
+  String getReadableAccessNumbers() {
+    final numberList = persistedSurvey.statistics?.accessNumbers?.collect { it.number }?.join(', ')
+    return numberList?:(BaseController.strings['no.access.numbers'] as String)
+  }
+
   List<SelectItem> getAvailableAccessNumbers() {
-    final List<SelectItem> items = [
-        new SelectItem(null, BaseController.strings['no.access.number'] as String)
-    ]
-
-    def available = { AccessNumber number ->
-      !number.surveyStats || (survey.statistics.accessNumber && (number.id == survey.statistics.accessNumber.id))
+    final available = { AccessNumber number ->
+      // Unbound or owned by the current survey.
+      !number.surveyStats || (survey.statistics.accessNumbers?.find { it.id == number.id })
     }
 
-    accessNumberRepository.list().each { number ->
-      items << new SelectItem(number.id, number.number, number.number, !available(number))
-    }
-
-    return items
+    [
+        new SelectItem(-1, '', '', true, false, true),
+        accessNumberRepository.list()
+            .collect { _ -> new SelectItem(_.id, _.number, _.number, !available(_)) }
+    ].flatten() as List<SelectItem>
   }
 
   static void goToSurvey(int surveyId) {

@@ -53,7 +53,8 @@ class UssdServiceCouponTest extends DbTestCase {
         extLinkPageRepository,
         questionOptionRepository,
         surveyInvitationRepository,
-        invitationDeliveryRepository)
+        invitationDeliveryRepository,
+        accessNumberRepository)
 
     pushService = new PushService(config, new EsdpServiceSupport(null) {
       @Override

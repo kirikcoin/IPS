@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model;
 
+import com.google.common.base.Function;
 import mobi.eyeline.ips.validation.MaxSize;
 import org.hibernate.annotations.Proxy;
 
@@ -8,7 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -29,7 +31,8 @@ public class AccessNumber {
   @Pattern(regexp = "[1-9\\.\\+\\*][0-9\\.\\+\\*#]+", message = "{survey.validation.access.number.invalid}")
   private String number;
 
-  @OneToOne(mappedBy = "accessNumber", optional = true)
+  @JoinColumn(name = "survey_id")
+  @ManyToOne
   private SurveyStats surveyStats;
 
   public Integer getId() {
@@ -63,4 +66,14 @@ public class AccessNumber {
         ", number='" + number + '\'' +
         '}';
   }
+
+  /** Number entity -> callable number. */
+  public static final Function<AccessNumber, String> AS_NUMBER =
+      new Function<AccessNumber, String>() {
+        @Override
+        public String apply(AccessNumber number) {
+          return number.getNumber();
+        }
+      };
+
 }

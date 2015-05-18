@@ -91,7 +91,7 @@ class SurveyListController extends BaseController {
               client: it.client?.fullName,
               startDate: it.startDate,
               endDate: it.endDate,
-              accessNumber: it.statistics.accessNumber?.number)
+              accessNumber: it.statistics.accessNumbers?.collect { it.number }?.join(', '))
         }
       }
 

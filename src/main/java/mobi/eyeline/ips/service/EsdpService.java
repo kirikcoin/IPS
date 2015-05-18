@@ -1,21 +1,29 @@
 package mobi.eyeline.ips.service;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.j256.simplejmx.common.JmxOperation;
 import com.j256.simplejmx.common.JmxResource;
 import mobi.eyeline.ips.external.EsdpSoapApi;
 import mobi.eyeline.ips.external.esdp.EsdpServiceException;
 import mobi.eyeline.ips.external.esdp.EsdpServiceManager;
 import mobi.eyeline.ips.external.esdp.Service;
+import mobi.eyeline.ips.model.AccessNumber;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.SurveyRepository;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static com.google.common.collect.Collections2.transform;
 import static com.j256.simplejmx.common.JmxOperationInfo.OperationAction.ACTION;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.join;
 
 @JmxResource(domainName = "mobi.eyeline.ips")
 public class EsdpService {
@@ -68,6 +76,41 @@ public class EsdpService {
         .deleteService(esdpServiceSupport.getKey(survey));
   }
 
+  /**
+   * Updates the list of access numbers bound to the specified survey.
+   */
+  public void update(User user,
+                     Survey survey,
+                     List<AccessNumber> accessNumbers) throws EsdpServiceException {
+    logger.debug("Updating service" +
+        " access numbers to [" + accessNumbers + "]," +
+        " survey = [" + survey + "]");
+
+    final Service service = getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
+        .getService(esdpServiceSupport.getKey(survey));
+
+    // C2S-numbers.
+    final String numberEntry = isEmpty(accessNumbers) ?
+        "" :
+        join(transform(accessNumbers, AccessNumber.AS_NUMBER), " ");
+
+    if (service.getProperties() == null) {
+      service.setProperties(new Service.Properties());
+    }
+    final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
+
+    Service.Properties.Entry sip = find(entries, "sip-number");
+    if (sip == null) {
+      sip = entry("sip-number", numberEntry);
+      entries.add(sip);
+    } else {
+      sip.setValue(numberEntry);
+    }
+
+    getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
+        .updateService(service);
+  }
+
   public void update(User user, Survey survey) throws EsdpServiceException {
     logger.debug("Updating service, survey = [" + survey + "]");
 
@@ -78,8 +121,10 @@ public class EsdpService {
     service.setTitle(survey.getDetails().getTitle());
 
     // C2S-number.
-    final String number = survey.getStatistics().getAccessNumber() == null ?
-        "" : survey.getStatistics().getAccessNumber().getNumber();
+    final List<AccessNumber> boundNumbers = survey.getStatistics().getAccessNumbers();
+    final String numberEntry = isEmpty(boundNumbers) ?
+        "" :
+        join(transform(boundNumbers, AccessNumber.AS_NUMBER), " ");
 
     if (service.getProperties() == null) {
       service.setProperties(new Service.Properties());
@@ -88,10 +133,10 @@ public class EsdpService {
 
     Service.Properties.Entry sip = find(entries, "sip-number");
     if (sip == null) {
-      sip = entry("sip-number", number);
+      sip = entry("sip-number", numberEntry);
       entries.add(sip);
     } else {
-      sip.setValue(number);
+      sip.setValue(numberEntry);
     }
 
     getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
