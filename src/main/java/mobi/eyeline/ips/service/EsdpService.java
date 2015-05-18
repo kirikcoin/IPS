@@ -1,7 +1,5 @@
 package mobi.eyeline.ips.service;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.j256.simplejmx.common.JmxOperation;
 import com.j256.simplejmx.common.JmxResource;
 import mobi.eyeline.ips.external.EsdpSoapApi;
@@ -12,9 +10,8 @@ import mobi.eyeline.ips.model.AccessNumber;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
+import mobi.eyeline.ips.repository.AccessNumberRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +31,18 @@ public class EsdpService {
   private final UssdService ussdService;
   private final EsdpServiceSupport esdpServiceSupport;
   private final SurveyRepository surveyRepository;
+  private final AccessNumberRepository accessNumberRepository;
 
   public EsdpService(Config config,
                      UssdService ussdService,
                      EsdpServiceSupport esdpServiceSupport,
-                     SurveyRepository surveyRepository) {
+                     SurveyRepository surveyRepository,
+                     AccessNumberRepository accessNumberRepository) {
     this.config = config;
     this.ussdService = ussdService;
     this.esdpServiceSupport = esdpServiceSupport;
     this.surveyRepository = surveyRepository;
+    this.accessNumberRepository = accessNumberRepository;
   }
 
   public void save(User user, Survey survey) throws EsdpServiceException {
@@ -121,7 +121,7 @@ public class EsdpService {
     service.setTitle(survey.getDetails().getTitle());
 
     // C2S-number.
-    final List<AccessNumber> boundNumbers = survey.getStatistics().getAccessNumbers();
+    final List<AccessNumber> boundNumbers = accessNumberRepository.list(survey);
     final String numberEntry = isEmpty(boundNumbers) ?
         "" :
         join(transform(boundNumbers, AccessNumber.AS_NUMBER), " ");

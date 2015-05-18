@@ -1,11 +1,6 @@
 package mobi.eyeline.ips.repository
 
-import mobi.eyeline.ips.model.AccessNumber
-import mobi.eyeline.ips.model.Question
-import mobi.eyeline.ips.model.QuestionOption
-import mobi.eyeline.ips.model.Role
-import mobi.eyeline.ips.model.UiProfile
-import mobi.eyeline.ips.model.User
+import mobi.eyeline.ips.model.*
 
 import static mobi.eyeline.ips.model.Role.MANAGER
 import static mobi.eyeline.ips.utils.SurveyBuilder.survey
@@ -121,15 +116,12 @@ class SurveyRepositoryTest extends DbTestCase {
     assertIds([1, 2, 4], list(null, null, 'A', null, null, false, Integer.MAX_VALUE, 0))
     assertIds([1, 4, 2], list(null, null, 'A', null, 'title', true, Integer.MAX_VALUE, 0))
     assertIds([4, 2, 1], list(null, null, 'A', null, 'id', false, Integer.MAX_VALUE, 0))
-    assertIds([3, 2, 1], list(null, null, '', true, 'accessNumber', false, Integer.MAX_VALUE, 0))
     assertIds([4, 2, 3, 1], list(null, null, '', null, 'state', false, Integer.MAX_VALUE, 0))
 
     assertIds([1, 3], list(null, null, 'F', true, null, false, Integer.MAX_VALUE, 0))
-    assertIds([1, 2, 3], list(null, null, '7', true, null, false, Integer.MAX_VALUE, 0))
-    assertIds([3], list(null, null, '07', true, null, false, Integer.MAX_VALUE, 0))
+    assertIds([], list(null, null, '7', true, null, false, Integer.MAX_VALUE, 0))
+    assertIds([], list(null, null, '07', true, null, false, Integer.MAX_VALUE, 0))
     assertIds([2], list(user2, null, '', true, null, false, Integer.MAX_VALUE, 0))
-
-
   }
 
   void testListWithSymbols() {
@@ -142,8 +134,6 @@ class SurveyRepositoryTest extends DbTestCase {
     assertIds([2, 3], list(null, null, '_', null, null, false, Integer.MAX_VALUE, 0))
     assertIds([1, 4], list(null, null, '%', null, null, false, Integer.MAX_VALUE, 0))
     assertIds([1, 2], list(null, null, '\\', null, null, false, Integer.MAX_VALUE, 0))
-
-
   }
 
   void testListOwners() {
@@ -162,10 +152,10 @@ class SurveyRepositoryTest extends DbTestCase {
 
     assertEquals(3, surveyRepository.count(null, null, 'A', null))
     assertEquals(3, surveyRepository.count(null, null, 'F', null))
-    assertEquals(4, surveyRepository.count(null, null, '7913', null))
+    assertEquals(0, surveyRepository.count(null, null, '7913', null))
 
     assertEquals(2, surveyRepository.count(null, null, 'A', true))
-    assertEquals(3, surveyRepository.count(null, null, '7913', true))
+    assertEquals(0, surveyRepository.count(null, null, '7913', true))
     assertEquals(1, surveyRepository.count(null, null, '4', null))
     assertEquals(1, surveyRepository.count(user1, null, '', null))
   }
@@ -192,7 +182,7 @@ class SurveyRepositoryTest extends DbTestCase {
       userRepository.save u
     }
 
-    def accessNumbers = [
+    final accessNumbers = [
         new AccessNumber(number: '79130000005'),
         new AccessNumber(number: '79130000006'),
         new AccessNumber(number: '79130000007'),
@@ -213,37 +203,32 @@ class SurveyRepositoryTest extends DbTestCase {
     [
         survey(id: 1, client: user1, startDate: new Date() + 2, endDate: new Date() + 4) {
           details(title: 'A A%\\')
-          statistics([:]) {
-            accessNumber(accessNumbers[0])
-          }
+          statistics([:])
         },
 
         survey(id: 2, client: user2, owner: user6,
             startDate: new Date() - 4, endDate: new Date() + 1) {
           details(title: 'B A_\\')
-          statistics([:]) {
-            accessNumber(accessNumbers[1])
-          }
+          statistics([:])
         },
 
         survey(id: 3, client: user3, owner: user5,
             startDate: new Date() - 4, endDate: new Date() + 2) {
           details(title: 'D C _')
-          statistics([:]) {
-            accessNumber(accessNumbers[2])
-          }
+          statistics([:])
         },
 
         survey(id: 4, client: user4, active: false,
             startDate: new Date() - 4, endDate: new Date() - 2) {
           details(title: 'A C%')
-          statistics([:]) {
-            accessNumber(accessNumbers[3])
-          }
+          statistics([:])
         }
 
     ].each { s ->
       surveyRepository.save s
+
+      accessNumbers[s.id - 1].surveyStats = s.statistics
+      accessNumberRepository.update(accessNumbers[s.id - 1])
     }
   }
 

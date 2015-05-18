@@ -43,6 +43,7 @@ class ServicesImpl {
   final CouponService couponService
   final UssdService ussdService
   final EsdpService esdpService
+  final AccessNumbersService accessNumbersService
   final MadvUpdateService madvUpdateService
   final SegmentationService segmentationService
   final ResultsExportService resultsExportService
@@ -110,7 +111,8 @@ class ServicesImpl {
         questionRepository,
         questionOptionRepository,
         extLinkPageRepository)
-    esdpService = new EsdpService(config, ussdService, esdpServiceSupport, surveyRepository)
+    esdpService = new EsdpService(config, ussdService, esdpServiceSupport, surveyRepository, accessNumberRepository)
+    accessNumbersService = new AccessNumbersService(accessNumberRepository, esdpService)
 
     madvUpdateService = new MadvUpdateService(
         config,

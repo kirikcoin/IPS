@@ -7,17 +7,13 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Статистика опроса.
@@ -49,12 +45,6 @@ public class SurveyStats implements Serializable {
    */
   @Column(name = "campaign")
   private String campaign;
-
-  /**
-   * C2S/USSD-номера опроса.
-   */
-  @OneToMany(mappedBy = "surveyStats", fetch = FetchType.EAGER)
-  private List<AccessNumber> accessNumbers = new ArrayList<>();
 
   /**
    * Дата последнего обновления количества показов (поля sent).
@@ -105,14 +95,6 @@ public class SurveyStats implements Serializable {
 
   public void setCampaign(String campaign) {
     this.campaign = campaign;
-  }
-
-  public List<AccessNumber> getAccessNumbers() {
-    return accessNumbers;
-  }
-
-  public void setAccessNumbers(List<AccessNumber> accessNumbers) {
-    this.accessNumbers = accessNumbers;
   }
 
   public Date getLastUpdate() {

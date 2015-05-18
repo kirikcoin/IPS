@@ -5,6 +5,7 @@ import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
 import mobi.eyeline.ips.model.SurveyStats
+import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.EsdpService
@@ -27,6 +28,7 @@ class SurveyListController extends BaseController {
 
   @Inject private SurveyRepository surveyRepository
   @Inject private UserRepository userRepository
+  @Inject private AccessNumberRepository accessNumberRepository
 
   @Inject private EsdpService esdpService
   @Inject private SurveyService surveyService
@@ -91,7 +93,7 @@ class SurveyListController extends BaseController {
               client: it.client?.fullName,
               startDate: it.startDate,
               endDate: it.endDate,
-              accessNumber: it.statistics.accessNumbers?.collect { it.number }?.join(', '))
+              accessNumber: accessNumberRepository.list(it)?.collect { it.number }?.join(', '))
         }
       }
 

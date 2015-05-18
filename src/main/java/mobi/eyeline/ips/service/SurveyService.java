@@ -6,7 +6,6 @@ import mobi.eyeline.ips.model.Page;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Survey;
-import mobi.eyeline.ips.model.SurveyStats;
 import mobi.eyeline.ips.repository.AccessNumberRepository;
 import mobi.eyeline.ips.repository.ExtLinkPageRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
@@ -14,13 +13,10 @@ import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.SurveyInvitationRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -173,13 +169,12 @@ public class SurveyService {
     survey.setActive(false);
 
     // Unbind access numbers so they get back to the common pool.
-    final SurveyStats accNumberRoot = survey.getStatistics();
-    if (!isEmpty(accNumberRoot.getAccessNumbers())) {
-      for (AccessNumber number : accNumberRoot.getAccessNumbers()) {
+    final List<AccessNumber> associatedC2S = accessNumberRepository.list(survey);
+    if (!isEmpty(associatedC2S)) {
+      for (AccessNumber number : associatedC2S) {
         number.setSurveyStats(null);
         accessNumberRepository.update(number);
       }
-      accNumberRoot.setAccessNumbers(Collections.<AccessNumber>emptyList());
     }
 
     surveyRepository.update(survey);

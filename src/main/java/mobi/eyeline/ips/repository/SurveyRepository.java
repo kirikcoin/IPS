@@ -3,52 +3,28 @@ package mobi.eyeline.ips.repository;
 import com.google.common.primitives.Ints;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.User;
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
-import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.isNull;
-import static org.hibernate.criterion.Restrictions.or;
+import static org.hibernate.criterion.Restrictions.*;
 import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
 
 
 public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
-  private static final Logger logger = LoggerFactory.getLogger(SurveyRepository.class);
-
   public SurveyRepository(DB db) {
     super(db);
   }
 
-    /*
-    static DetachedCriteria getCriteriaSurvey(User user) {
-        final DetachedCriteria criteria = DetachedCriteria
-                .forClass(Survey.class)
-                .createAlias("details", "details")
-                .createAlias("client", "client");
-
-        if (user.getRole() == Role.CLIENT) {
-            criteria.add(Restrictions.eq("client.id", user.getId()));
-        }
-        return criteria;
-    } */
-
-  // TODO: Extract complex `list' methods to static `DetachedQuery` properties
-  //       for direct use in controllers. This should result in code reuse, reduce
-  //       duplication and clean up method signatures.
   public List<Survey> list(User user,
                            User owner,
                            String filter,
@@ -66,7 +42,6 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
     criteria.createAlias("statistics", "statistics");
     criteria.createAlias("client", "client");
     criteria.createAlias("owner", "owner", LEFT_OUTER_JOIN);
-    criteria.createAlias("statistics.accessNumbers", "accessNumber", LEFT_OUTER_JOIN);
 
     if (active != null) {
       criteria.add(eq("active", active));
@@ -92,7 +67,6 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
         filters.add(eq("id", Integer.parseInt(filter)));
       }
       filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
-      filters.add(EscapedRestrictions.ilike("accessNumber.number", filter, MatchMode.ANYWHERE));
       if (user == null) {
         filters.add(EscapedRestrictions.ilike("client.fullName", filter, MatchMode.ANYWHERE));
       }
@@ -148,7 +122,6 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
     criteria.createAlias("details", "details");
     criteria.createAlias("statistics", "statistics");
     criteria.createAlias("client", "client", LEFT_OUTER_JOIN);
-    criteria.createAlias("statistics.accessNumbers", "accessNumber", LEFT_OUTER_JOIN);
 
     if (active != null) {
       criteria.add(eq("active", active));
@@ -175,7 +148,6 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
       }
 
       filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
-      filters.add(EscapedRestrictions.ilike("accessNumber.number", filter, MatchMode.ANYWHERE));
       if (user == null) {
         filters.add(EscapedRestrictions.ilike("client.fullName", filter, MatchMode.ANYWHERE));
       }

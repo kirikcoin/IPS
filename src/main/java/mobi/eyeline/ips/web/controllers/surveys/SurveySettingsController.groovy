@@ -43,6 +43,7 @@ class SurveySettingsController extends BaseSurveyController {
   @Inject private EsdpService esdpService
   @Inject private EsdpServiceSupport esdpServiceSupport
   @Inject private UssdService ussdService
+  @Inject private AccessNumbersService accessNumbersService
 
   String errorId
 
@@ -130,7 +131,7 @@ class SurveySettingsController extends BaseSurveyController {
     showDisabled = couponEnabled && (couponsAvailable == 0)
 
     accessNumbersModel = new DynamicTableModel()
-    persistedSurvey.statistics.accessNumbers?.collect { AccessNumber number ->
+    accessNumberRepository.list(persistedSurvey)?.collect { AccessNumber number ->
       new DynamicTableRow() {{
         setValue 'number', number.id
       }}
@@ -312,31 +313,8 @@ class SurveySettingsController extends BaseSurveyController {
         .collect { it.toInteger() }
         .findAll { it > 0 }
 
-    final handleRemoved = {
-      persistedSurvey.statistics.accessNumbers
-          .findAll { num -> !(num.id in selectedNumberIds) }
-          .each { num ->
-        num.surveyStats = null
-        accessNumberRepository.update num
-      }
-    }
-
-    final handleAdded = {
-      selectedNumberIds
-          .findAll { id -> !(id in persistedSurvey.statistics.accessNumbers.collect { it.id }) }
-          .each { id ->
-        final num = accessNumberRepository.load(id)
-        num.surveyStats = persistedSurvey.statistics
-        accessNumberRepository.update(num)
-      }
-    }
-
-    handleRemoved()
-    handleAdded()
-
     try {
-      esdpService.update(getCurrentUser(), persistedSurvey)
-      surveyRepository.update(persistedSurvey)
+      accessNumbersService.tryUpdateNumbers getCurrentUser(), persistedSurvey, selectedNumberIds
 
     } catch (Exception e) {
       logger.error(e.message, e)
@@ -673,14 +651,14 @@ class SurveySettingsController extends BaseSurveyController {
   }
 
   String getReadableAccessNumbers() {
-    final numberList = persistedSurvey.statistics?.accessNumbers?.collect { it.number }?.join(', ')
+    final numberList = accessNumberRepository.list(persistedSurvey)?.collect { it.number }?.join(', ')
     return numberList?:(BaseController.strings['no.access.numbers'] as String)
   }
 
   List<SelectItem> getAvailableAccessNumbers() {
     final available = { AccessNumber number ->
       // Unbound or owned by the current survey.
-      !number.surveyStats || (survey.statistics.accessNumbers?.find { it.id == number.id })
+      !number.surveyStats || (accessNumberRepository.list(persistedSurvey)?.find { it.id == number.id })
     }
 
     [

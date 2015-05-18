@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.repository;
 
 import mobi.eyeline.ips.model.AccessNumber;
+import mobi.eyeline.ips.model.Survey;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -97,5 +98,17 @@ public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer
 
     final Criteria criteria = session.createCriteria(AccessNumber.class);
     return (AccessNumber) criteria.add(eq("number", number)).uniqueResult();
+  }
+
+  public List<AccessNumber> list(Survey survey) {
+    final Session session = getSessionFactory().openSession();
+    try {
+      final Criteria criteria = session.createCriteria(AccessNumber.class);
+      //noinspection unchecked
+      return (List<AccessNumber>) criteria.add(eq("surveyStats", survey.getStatistics())).list();
+
+    } finally {
+      session.close();
+    }
   }
 }

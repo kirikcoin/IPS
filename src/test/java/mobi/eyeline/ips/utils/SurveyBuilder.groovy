@@ -1,19 +1,7 @@
 package mobi.eyeline.ips.utils
 
 import groovy.transform.InheritConstructors
-import mobi.eyeline.ips.model.AccessNumber
-import mobi.eyeline.ips.model.Answer
-import mobi.eyeline.ips.model.ExtLinkPage
-import mobi.eyeline.ips.model.OptionAnswer
-import mobi.eyeline.ips.model.Page
-import mobi.eyeline.ips.model.Question
-import mobi.eyeline.ips.model.QuestionOption
-import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.model.SurveyDetails
-import mobi.eyeline.ips.model.SurveyInvitation
-import mobi.eyeline.ips.model.SurveyStats
-import mobi.eyeline.ips.model.TextAnswer
-import mobi.eyeline.ips.model.User
+import mobi.eyeline.ips.model.*
 
 import static mobi.eyeline.ips.utils.ModelBuilderUtils.Context
 import static mobi.eyeline.ips.utils.ModelBuilderUtils.Deferred.DeferredReference
@@ -204,16 +192,6 @@ class SurveyBuilder {
 
   @InheritConstructors
   static class SurveyStatisticsContext extends Context<SurveyStats> {
-
-    AccessNumber accessNumber(Map _) {
-      accessNumber(new AccessNumber(_))
-    }
-
-    AccessNumber accessNumber(AccessNumber accessNumber) {
-      bind(accessNumber) {
-        enclosing.accessNumber = it
-      }
-    }
   }
 
   @InheritConstructors

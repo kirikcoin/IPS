@@ -19,9 +19,6 @@ class SurveyServiceTest extends DbTestCase {
 
   SurveyService surveyService
 
-  def newQ = { id -> new Question(id: id) }
-  def newO = { id, next -> new QuestionOption(id: id, nextPage: next) }
-
   void setUp() {
     super.setUp()
 
@@ -130,7 +127,7 @@ class SurveyServiceTest extends DbTestCase {
     assertNull accessNumberRepository.get(4).surveyStats
 
     // 3.3. And we can see those number From the associated survey mapping.
-    assertEquals([1, 2], surveyRepository.get(1).statistics.accessNumbers.collect { it.id })
+    assertEquals([1, 2], accessNumberRepository.list(surveyRepository.get(1)).collect { it.id })
 
     // 4. Delete the survey
     surveyService.delete(surveyRepository.get(1))
