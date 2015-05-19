@@ -62,13 +62,18 @@ public class OuterRequest {
       return null;
     }
 
-    return trimToNull(String.valueOf(session.getAttribute(PARAM_STORED_SOURCE)));
+    final Object attribute = session.getAttribute(PARAM_STORED_SOURCE);
+    return (attribute == null) ? null : attribute.toString().trim();
   }
 
   public void setStoredSource(String value) {
     final HttpSession session = request.getSession();
     if (session != null) {
-      session.setAttribute(PARAM_STORED_SOURCE, value);
+      session.removeAttribute(PARAM_STORED_SOURCE);
+
+      if (value != null) {
+        session.setAttribute(PARAM_STORED_SOURCE, value);
+      }
     }
   }
 
