@@ -45,6 +45,14 @@ public class Respondent implements Serializable {
   @NotEmpty
   private String msisdn;
 
+  /**
+   * Канал респондента.
+   *
+   * В случае звонка на C2S-номер - значение этого номера; в противном случае пусто.
+   */
+  @Column(name = "source")
+  private String source;
+
   @Column(name = "registered", nullable = false)
   private Date startDate = new Date();
 
@@ -89,6 +97,14 @@ public class Respondent implements Serializable {
 
   public void setMsisdn(String msisdn) {
     this.msisdn = msisdn;
+  }
+
+  public String getSource() {
+    return source;
+  }
+
+  public void setSource(String source) {
+    this.source = source;
   }
 
   public Date getStartDate() {

@@ -1,13 +1,14 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.Respondent
+import mobi.eyeline.ips.model.Survey
 
 import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 
 @Mixin(RepositoryMock)
 class RespondentRepositoryTest extends DbTestCase {
 
-  def survey1, survey2, survey3
+  Survey survey1, survey2, survey3
 
   void setUp() {
     super.setUp()
@@ -31,11 +32,14 @@ class RespondentRepositoryTest extends DbTestCase {
   }
 
   void testFindOrCreate() {
-    respondentRepository.findOrCreate('79130000001', survey1)
+    respondentRepository.findOrCreate('79130000001', survey1, null)
     assertEquals 6, respondentRepository.list().size()
 
-    respondentRepository.findOrCreate('79130000002', survey1)
+    respondentRepository.findOrCreate('79130000001', survey1, '123')
     assertEquals 7, respondentRepository.list().size()
+
+    respondentRepository.findOrCreate('79130000002', survey1, null)
+    assertEquals 8, respondentRepository.list().size()
   }
 
   private void fillTestData() {

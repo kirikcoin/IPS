@@ -32,11 +32,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN_DEPRECATED;
@@ -92,8 +92,12 @@ public class UssdService implements MessageHandler {
     baseUrl = config.getBaseSurveyUrl();
   }
 
-  public UssdResponseModel handle(Map<String, String[]> parameters)
+  public UssdResponseModel handle(HttpServletRequest request)
       throws MissingParameterException {
+    return handle(new OuterRequest(request));
+  }
+
+  public UssdResponseModel handle(OuterRequest request) throws MissingParameterException {
 
     final StopWatch timer;
     if (logger.isTraceEnabled()) {
@@ -106,22 +110,20 @@ public class UssdService implements MessageHandler {
 
     UssdResponseModel response = null;
     try {
-      response = handle0(new OuterRequest(parameters));
+      response = handle0(request);
 
     } catch (RuntimeException e) {
-      logger.error("Error processing USSD request, parameters: " +
-          RequestParseUtils.toString(parameters), e);
+      logger.error("Error processing USSD request: [" + request + "]", e);
       response = fatalError();
 
     } catch (MissingParameterException e) {
-      logger.error("Bad USSD request, parameters: " +
-          RequestParseUtils.toString(parameters), e);
+      logger.error("Bad USSD request: [" + request + "]", e);
       throw e;
 
     } finally {
       if (timer != null) {
-        logger.trace("USSD request, millis: " + timer.getTime() +
-            ". Request: " + RequestParseUtils.toString(parameters) + "," +
+        logger.trace("USSD request, millis: " + timer.getTime() + "." +
+            " Request: [" + request + "]," +
             " response: [" + response + "]");
       }
     }
@@ -150,7 +152,7 @@ public class UssdService implements MessageHandler {
     }
   }
 
-  private UssdResponseModel handleStartPage(OuterRequest origRequest,
+  private UssdResponseModel handleStartPage(OuterRequest outerRequest,
                                             String msisdn,
                                             int surveyId,
                                             boolean skipValidation) {
@@ -166,10 +168,17 @@ public class UssdService implements MessageHandler {
     }
 
     // Ensure we've got an entry in `respondents' for this survey.
-    final Respondent respondent =
-        respondentRepository.findOrCreate(msisdn, survey);
 
-    return surveyStart(origRequest, survey, respondent, skipValidation);
+    final String source = outerRequest.getSource();
+    if (source != null && outerRequest.getStoredSource() == null) {
+      // Put into session if not yet done so.
+      outerRequest.setStoredSource(source);
+    }
+
+    final Respondent respondent =
+        respondentRepository.findOrCreate(msisdn, survey, source);
+
+    return surveyStart(outerRequest, survey, respondent, skipValidation);
   }
 
   @Override
@@ -186,8 +195,16 @@ public class UssdService implements MessageHandler {
       }
     }
 
+    final String source = outerRequest.getSource();
+    if (source != null && outerRequest.getStoredSource() == null) {
+      logger.warn("Source found in headers, not in session for non-initial request." +
+          " Request: [" + outerRequest + "]");
+      // Put into session if not yet done so.
+      outerRequest.setStoredSource(source);
+    }
+
     final Respondent respondent =
-        respondentRepository.findOrCreate(msisdn, survey);
+        respondentRepository.findOrCreate(msisdn, survey, source);
 
     respondent.setAnswersCount(respondent.getAnswersCount() + 1);
     respondentRepository.update(respondent);
@@ -215,8 +232,16 @@ public class UssdService implements MessageHandler {
       return surveyNotFound();
     }
 
+    final String source = outerRequest.getSource();
+    if (source != null && outerRequest.getStoredSource() == null) {
+      logger.warn("Source found in headers, not in session for non-initial request." +
+          " Request: [" + outerRequest + "]");
+      // Put into session if not yet done so.
+      outerRequest.setStoredSource(source);
+    }
+
     final Respondent respondent =
-        respondentRepository.findOrCreate(msisdn, survey);
+        respondentRepository.findOrCreate(msisdn, survey, source);
 
     final Answer lastAnswer = answerRepository.getLast(survey, respondent);
 

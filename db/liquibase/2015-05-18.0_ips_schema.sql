@@ -16,3 +16,6 @@ SET
 -- Remove `number_id' from `survey_stats'
 ALTER TABLE `survey_stats` DROP FOREIGN KEY `survey_stats_ibfk_1`;
 ALTER TABLE `survey_stats` DROP `number_id`;
+
+-- C2S mark for respondent.
+ALTER TABLE `respondents` ADD `source` VARCHAR(255) NULL;

@@ -56,31 +56,35 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
     }
   }
 
-  private Respondent find(Session session,
-                          Survey survey,
-                          String msisdn) {
+  private Respondent find(Session session, Survey survey, String msisdn, String source) {
 
     return (Respondent) session.createQuery(
-        "from Respondent where msisdn = :msisdn and survey = :survey")
+        "from Respondent" +
+        " where" +
+        " msisdn = :msisdn and" +
+        " survey = :survey and" +
+        " ((source = :source) or (source is null and :source is null))")
         .setString("msisdn", msisdn)
         .setEntity("survey", survey)
+        .setString("source", source)
         .uniqueResult();
   }
 
-  public Respondent findOrCreate(String msisdn, Survey survey) {
+  public Respondent findOrCreate(String msisdn, Survey survey, String source) {
     final Session session = getSessionFactory().openSession();
     Transaction transaction = null;
     try {
       transaction = session.beginTransaction();
 
-      Respondent respondent = find(session, survey, msisdn);
+      Respondent respondent = find(session, survey, msisdn, source);
       if (respondent == null) {
         respondent = new Respondent();
         respondent.setMsisdn(msisdn);
         respondent.setSurvey(survey);
+        respondent.setSource(source);
         session.save(respondent);
 
-        respondent = find(session, survey, msisdn);
+        respondent = find(session, survey, msisdn, source);
       }
 
       transaction.commit();

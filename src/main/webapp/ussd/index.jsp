@@ -15,9 +15,7 @@
   final UssdResponseModel model;
 
   try {
-    @SuppressWarnings("unchecked")
-    final Map<String, String[]> parameters = request.getParameterMap();
-    model = Services.getInstance().getUssdService().handle(parameters);
+    model = Services.getInstance().getUssdService().handle(request);
 
   } catch (MissingParameterException e) {
     response.setStatus(HttpStatus.SC_BAD_REQUEST);      // Avoid displaying HTTP-400 error page.
