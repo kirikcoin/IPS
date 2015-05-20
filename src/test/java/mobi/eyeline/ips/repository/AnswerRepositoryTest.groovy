@@ -32,8 +32,8 @@ class AnswerRepositoryTest extends DbTestCase {
   void testCount3() {
     fillTestData()
 
-    assertEquals(1, answerRepository.count(survey(1), now, now + 1, '', null))
-    assertEquals(1, answerRepository.count(survey(1), now, now + 2, '02', null))
+    assertEquals(1, answerRepository.count(survey(1), now, now + 1, '', null, null))
+    assertEquals(1, answerRepository.count(survey(1), now, now + 2, '02', null, null))
   }
 
   void testCount4() {
@@ -46,7 +46,7 @@ class AnswerRepositoryTest extends DbTestCase {
     fillTestData()
 
     def results = answerRepository.list(
-        survey(1), now, now + 4, '', null, false, Integer.MAX_VALUE, 0)
+        survey(1), now, now + 4, '', null, null, false, Integer.MAX_VALUE, 0)
 
     assertThat results, hasSize(2)
 
@@ -67,7 +67,7 @@ class AnswerRepositoryTest extends DbTestCase {
     fillTestData()
 
     def results = answerRepository.list(
-        survey(1), now, now + 4, '02', null, false, Integer.MAX_VALUE, 0)
+        survey(1), now, now + 4, '02', null, null, false, Integer.MAX_VALUE, 0)
 
     assertThat results, hasSize(1)
 
@@ -82,7 +82,7 @@ class AnswerRepositoryTest extends DbTestCase {
     fillTestData()
 
     def results = answerRepository.list(
-        survey(1), now, now + 4, '', 'respondent', true, Integer.MAX_VALUE, 0)
+        survey(1), now, now + 4, '', null, 'respondent', true, Integer.MAX_VALUE, 0)
 
     assertThat results, hasSize(2)
 

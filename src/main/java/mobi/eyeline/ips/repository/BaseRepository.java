@@ -57,12 +57,19 @@ public abstract class BaseRepository<E, K extends Serializable> {
   public E load(K id) {
     final Session session = getSessionFactory().openSession();
     try {
-      //noinspection unchecked
-      return (E) session.load(entityClass, id);
+      return load(session, id);
 
     } finally {
       session.close();
     }
+  }
+
+  /**
+   * Fails if nothing found.
+   */
+  public E load(Session session, K id) {
+    //noinspection unchecked
+    return (E) session.load(entityClass, id);
   }
 
   public List<E> load(List<K> ids) {

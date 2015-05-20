@@ -31,6 +31,7 @@ public class ResultsExportService {
                        Date periodStart,
                        Date periodEnd,
                        String filter,
+                       Integer accessNumber,
                        TimeZone timeZone,
                        Locale locale) {
 
@@ -47,6 +48,7 @@ public class ResultsExportService {
             periodStart,
             periodEnd,
             filter,
+            accessNumber,
             null,    // hasCoupon: doesn't really matter
             timeZone,
             locale,
@@ -79,6 +81,7 @@ public class ResultsExportService {
 
         csvWriter.writeNext([
             session.respondent.msisdn,
+            session.respondent.source,
             answer.question.activeIndex + 1,
             answer.question.title,
             answerOptionNumber,
@@ -95,6 +98,7 @@ public class ResultsExportService {
                        Date periodStart,
                        Date periodEnd,
                        String filter,
+                       Integer accessNumber,
                        TimeZone timeZone,
                        Locale locale) {
 
@@ -111,6 +115,7 @@ public class ResultsExportService {
             periodStart,
             periodEnd,
             filter,
+            accessNumber,
             true,    // with coupons only
             timeZone,
             locale,
@@ -131,6 +136,7 @@ public class ResultsExportService {
     sessions.each { session ->
       csvWriter.writeNext([
           session.respondent.msisdn,
+          session.respondent.source,
           session.respondent.coupon
       ] as String[])
     }
@@ -142,6 +148,7 @@ public class ResultsExportService {
                            Date periodStart,
                            Date periodEnd,
                            String filter,
+                           Integer accessNumber,
                            TimeZone timeZone,
                            Locale locale) {
 
@@ -158,6 +165,7 @@ public class ResultsExportService {
             periodStart,
             periodEnd,
             filter,
+            accessNumber,
             null,    // coupons don't matter
             timeZone,
             locale,
@@ -181,25 +189,31 @@ public class ResultsExportService {
     sessions.each { session ->
       csvWriter.writeNext([
           session.respondent.msisdn,
+          session.respondent.source,
           df.format(session.respondent.startDate)
       ] as String[])
     }
   }
 
-  private void iterateResults(CSVWriter csvWriter,
-                              Survey survey,
-                              Date periodStart,
-                              Date periodEnd,
-                              String filter,
-                              Boolean hasCoupon,
-                              TimeZone timeZone,
-                              Locale locale,
-                              @ClosureParams(value = SimpleType, options = ['List<SurveySession>', 'CSVWriter', 'TimeZone', 'Locale']) Closure doWrite) {
+  private void iterateResults(
+      CSVWriter csvWriter,
+      Survey survey,
+      Date periodStart,
+      Date periodEnd,
+      String filter,
+      Integer accessNumber,
+      Boolean hasCoupon,
+      TimeZone timeZone,
+      Locale locale,
+      @ClosureParams(value = SimpleType,
+          options = ['List<SurveySession>', 'CSVWriter', 'TimeZone', 'Locale']) Closure doWrite) {
+
     final int count = answerRepository.count(
         survey,
         periodStart,
         periodEnd,
         filter,
+        accessNumber,
         hasCoupon)
 
     // Write in chunks.
@@ -209,6 +223,7 @@ public class ResultsExportService {
           periodStart,
           periodEnd,
           filter,
+          accessNumber,
           hasCoupon,
           chunkSize,
           i * chunkSize)

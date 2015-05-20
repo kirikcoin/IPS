@@ -431,7 +431,7 @@ class UssdServiceTest extends DbTestCase {
         survey(),
         survey().startDate,
         survey().endDate,
-        null,
+        null, null,
         null,
         false,
         Integer.MAX_VALUE,

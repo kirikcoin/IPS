@@ -78,7 +78,7 @@
                 </h:panelGroup>
               </f:facet>
 
-              <h:panelGrid columns="3">
+              <h:panelGrid columns="4">
                 <h:panelGroup>
                   <h:outputLabel value="#{bundle['results.period.start']}:" for="periodStart"/>
                   <eye:inputDate id="periodStart"
@@ -106,6 +106,14 @@
                   <eye:inputText id="filter"
                                  value="#{surveyResultsController.filter}"
                                  onkeydown="return page.filterKeyDown(event)"/>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.access.number']}:" for="accessNumber"/>
+                  <h:selectOneMenu id="accessNumber"
+                                   value="#{surveyResultsController.accessNumber}">
+                    <f:selectItems value="#{surveyResultsController.accessNumbers}"/>
+                  </h:selectOneMenu>
                 </h:panelGroup>
 
               </h:panelGrid>
@@ -173,6 +181,12 @@
                               title="#{bundle['results.list.respondent']}"
                               sortable="true">
                     <h:outputText value="#{row.respondent.msisdn}"/>
+                  </eye:column>
+
+                  <eye:column name="source"
+                              title="#{bundle['results.access.number']}"
+                              sortable="true">
+                    <h:outputText value="#{row.respondent.source}"/>
                   </eye:column>
 
                   <eye:column name="date"

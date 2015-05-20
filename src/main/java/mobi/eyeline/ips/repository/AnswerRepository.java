@@ -34,8 +34,11 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
   private static final Logger logger = LoggerFactory.getLogger(AnswerRepository.class);
 
-  public AnswerRepository(DB db) {
+  private final AccessNumberRepository accessNumberRepository;
+
+  public AnswerRepository(DB db, AccessNumberRepository accessNumberRepository) {
     super(db);
+    this.accessNumberRepository = accessNumberRepository;
   }
 
   public void clear(Survey survey, Respondent respondent) {
@@ -144,6 +147,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                                   Date from,
                                   Date to,
                                   String filter,
+                                  Integer accessNumberId,
                                   String orderProperty,
                                   boolean asc,
                                   int limit,
@@ -151,7 +155,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
     final Session session = getSessionFactory().getCurrentSession();
 
-    final Criteria criteria = getCriteria(session, survey, from, to, null, filter);
+    final Criteria criteria = getCriteria(session, survey, from, to, null, filter, accessNumberId);
     criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
 
     criteria.setFirstResult(offset).setMaxResults(limit);
@@ -168,6 +172,9 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
             break;
           case "questions":
             property = "answersCount";
+            break;
+          case "source":
+            property = "source";
             break;
           default:
             throw new RuntimeException("Unexpected sort column: " + orderProperty);
@@ -197,13 +204,15 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                                   Date from,
                                   Date to,
                                   String filter,
+                                  Integer accessNumberId,
                                   Boolean hasCoupon,
                                   int limit,
                                   int offset) {
 
     final Session session = getSessionFactory().getCurrentSession();
 
-    final Criteria criteria = getCriteria(session, survey, from, to, hasCoupon, filter);
+    final Criteria criteria =
+        getCriteria(session, survey, from, to, hasCoupon, filter, accessNumberId);
     criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
 
     criteria.setFirstResult(offset).setMaxResults(limit);
@@ -225,11 +234,13 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                    Date from,
                    Date to,
                    String filter,
+                   Integer accessNumberId,
                    Boolean hasCoupon) {
 
     final Session session = getSessionFactory().getCurrentSession();
 
-    final Criteria criteria = getCriteria(session, survey, from, to, hasCoupon, filter);
+    final Criteria criteria =
+        getCriteria(session, survey, from, to, hasCoupon, filter, accessNumberId);
 
     criteria.setProjection(Projections.rowCount());
 
@@ -242,7 +253,8 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                                Date from,
                                Date to,
                                Boolean hasCoupon,
-                               String filter) {
+                               String filter,
+                               Integer accessNumberId) {
     final Criteria criteria = session.createCriteria(Respondent.class);
 
     criteria.add(Restrictions.eq("survey", survey));
@@ -258,6 +270,12 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
       criteria.add(ilike("msisdn", filter, MatchMode.ANYWHERE));
     }
+
+    if (accessNumberId != null) {
+      final String number = accessNumberRepository.load(session, accessNumberId).getNumber();
+      criteria.add(Restrictions.eq("source", number));
+    }
+
     return criteria;
   }
 
