@@ -54,18 +54,47 @@
             <h:panelGrid columns="4"
                          columnClasses="tab,tab_active,tab,tab"
                          style="width:auto">
-              <h:outputLink value="settings.faces?id=#{surveyResultsController.surveyId}">
-                <h:outputText value="#{bundle['survey.details.tab.settings']}"/>
-              </h:outputLink>
-              <h:outputLink value="#">
-                <h:outputText value="#{bundle['survey.details.tab.results']}"/>
-              </h:outputLink>
-              <h:outputLink value="statistics.faces?id=#{surveyResultsController.surveyId}">
-                <h:outputText value="#{bundle['survey.details.tab.stats']}"/>
-              </h:outputLink>
-              <h:outputLink value="invitations.faces?id=#{surveyResultsController.surveyId}">
-                <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
-              </h:outputLink>
+
+              <h:panelGroup layout="block">
+                <h:outputLink value="settings.faces?id=#{surveyResultsController.surveyId}">
+                  <h:outputText value="#{bundle['survey.details.tab.settings']}"/>
+                </h:outputLink>
+              </h:panelGroup>
+
+              <h:panelGroup layout="block">
+                <h:outputLink value="#">
+                  <h:outputText value="#{bundle['survey.details.tab.results']}"/>
+                </h:outputLink>
+              </h:panelGroup>
+
+              <h:panelGroup layout="block">
+                <h:outputLink value="#">
+                  <h:outputText value="#{bundle['survey.details.tab.stats']}"/> &#x25BE;
+                </h:outputLink>
+                <ul>
+                  <li>
+                    <h:outputLink value="statistics.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.response']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.delivery']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.c2s']}"/>
+                    </h:outputLink>
+                  </li>
+                </ul>
+              </h:panelGroup>
+
+              <h:panelGroup layout="block">
+                <h:outputLink value="invitations.faces?id=#{surveyResultsController.surveyId}">
+                  <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
+                </h:outputLink>
+              </h:panelGroup>
             </h:panelGrid>
           </h:panelGroup>
 

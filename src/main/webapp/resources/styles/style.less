@@ -277,9 +277,12 @@ table.table-narrow {
     border-right: 1px solid #9E9FA0;
     padding: 7px 14px;
 
-    a {
-      color: #ffffff!important;
+    & > a {
+      color: #ffffff !important;
       text-shadow: #414243 0px 1px 0px;
+    }
+
+    a {
       text-decoration: none;
     }
   }
@@ -495,5 +498,44 @@ input.hasDatepicker {
 
   li.ui-state-active {
     background: #FFFFFF;
+  }
+}
+
+
+// DROP-DOWN MENU IN TABS --------------------------------------------------------------------------
+
+.tabs {
+  .tab:hover ul, .tab_active:hover ul {
+    display: block;
+  }
+
+  .tab ul, .tab_active ul {
+    position: absolute;
+    display: none;
+    z-index: 2;
+  }
+
+  li {
+    display: block;
+    position: relative;
+    padding: 7px;
+
+    border-bottom: 1px solid #9E9FA0;
+
+    &:hover {
+      background-color: rgba(0,0,0,.0980392);
+    }
+
+    a {
+      color: #000000 !important;
+    }
+  }
+
+  ul {
+    margin-left: -14px;
+    margin-top: 7px;
+    padding-left: 0;
+
+    background-color: #F0F0F0;
   }
 }

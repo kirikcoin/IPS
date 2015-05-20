@@ -103,9 +103,28 @@
               <h:outputLink value="results.faces?id=#{surveyInvitesController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.results']}"/>
               </h:outputLink>
-              <h:outputLink value="statistics.faces?id=#{surveyInvitesController.surveyId}">
-                <h:outputText value="#{bundle['survey.details.tab.stats']}"/>
-              </h:outputLink>
+              <h:panelGroup layout="block">
+                <h:outputLink value="#">
+                  <h:outputText value="#{bundle['survey.details.tab.stats']}"/> &#x25BE;
+                </h:outputLink>
+                <ul>
+                  <li>
+                    <h:outputLink value="statistics.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.response']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.delivery']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.c2s']}"/>
+                    </h:outputLink>
+                  </li>
+                </ul>
+              </h:panelGroup>
               <h:outputLink value="#">
                 <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
               </h:outputLink>
