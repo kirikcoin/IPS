@@ -67,7 +67,7 @@
                     </h:outputLink>
                   </li>
                   <li>
-                    <h:outputLink value="statistics.faces?id=#{surveyResultsStatsController.surveyId}">
+                    <h:outputLink value="statistics-deliveries.faces?id=#{surveyResultsStatsController.surveyId}">
                       <h:outputText value="#{bundle['survey.details.tab.stats.delivery']}"/>
                     </h:outputLink>
                   </li>
@@ -128,7 +128,8 @@
 
               <eye:buttons>
                 <eye:button>
-                  <h:commandLink value="#{bundle['results.button.show']}" styleClass="button-green"
+                  <h:commandLink value="#{bundle['results.button.show']}"
+                                 styleClass="button-green"
                                  onclick="return page.onShow();">
                     <f:ajax execute="@all" render=":charts"/>
                   </h:commandLink>
