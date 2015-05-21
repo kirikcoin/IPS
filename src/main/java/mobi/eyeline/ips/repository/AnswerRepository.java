@@ -26,9 +26,11 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.criterion.Restrictions.eq;
+import static org.hibernate.criterion.Restrictions.ge;
 import static org.hibernate.criterion.Restrictions.ilike;
 import static org.hibernate.criterion.Restrictions.isNotNull;
 import static org.hibernate.criterion.Restrictions.isNull;
+import static org.hibernate.criterion.Restrictions.le;
 
 public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
@@ -257,10 +259,10 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                                Integer accessNumberId) {
     final Criteria criteria = session.createCriteria(Respondent.class);
 
-    criteria.add(Restrictions.eq("survey", survey));
+    criteria.add(eq("survey", survey));
 
-    criteria.add(Restrictions.ge("startDate", from));
-    criteria.add(Restrictions.le("startDate", to));
+    criteria.add(ge("startDate", from));
+    criteria.add(le("startDate", to));
     if (hasCoupon != null) {
       criteria.add(hasCoupon ? isNotNull("coupon") : isNull("coupon"));
     }
@@ -273,53 +275,102 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
     if (accessNumberId != null) {
       final String number = accessNumberRepository.load(session, accessNumberId).getNumber();
-      criteria.add(Restrictions.eq("source", number));
+      criteria.add(eq("source", number));
     }
 
     return criteria;
   }
 
-  public int count(QuestionOption option) {
+  /**
+   * Counts the number of times the given {@linkplain QuestionOption option} was chosen.
+   *
+   * @param from    Results time frame: start. Ignored if {@code null}.
+   * @param to      Results time frame: end. Ignored if {@code null}.
+   * @param source  Respondent source, e.g. C2S number.
+   */
+  public int count(QuestionOption option,
+                   Date from,
+                   Date to,
+                   String source) {
     final Session session = getSessionFactory().openSession();
     try {
-      final Number count = (Number) session.createQuery(
-          "select count(answer)" +
-              " from OptionAnswer answer" +
-              " where answer.option = :option")
-          .setEntity("option", option)
-          .uniqueResult();
-      return count.intValue();
+      final Criteria criteria = session
+          .createCriteria(OptionAnswer.class)
+          .setProjection(Projections.rowCount())
+          .add(eq("option", option));
+
+      if (from != null)     criteria.add(ge("date", from));
+      if (to != null)       criteria.add(le("date", to));
+
+      if (source != null) {
+        criteria.createAlias("respondent", "respondent");
+        criteria.add(eq("respondent.source", source));
+      }
+
+      return ((Number) criteria.uniqueResult()).intValue();
 
     } finally {
       session.close();
     }
   }
 
-  public int count(Question question) {
+  /**
+   * Counts the number of answers (of any possible kind) for the given
+   * {@linkplain Question question}.
+   *
+   * @param from    Results time frame: start. Ignored if {@code null}.
+   * @param to      Results time frame: end. Ignored if {@code null}.
+   * @param source  Respondent source, e.g. C2S number.
+   */
+  public int count(Question question, Date from, Date to, String source) {
     final Session session = getSessionFactory().openSession();
     try {
-      final Number count = (Number) session.createQuery(
-          "select count(answer)" +
-              " from Answer answer" +
-              " where answer.question = :question")
-          .setEntity("question", question)
-          .uniqueResult();
-      return count.intValue();
+
+      final Criteria criteria = session
+          .createCriteria(Answer.class)
+          .setProjection(Projections.rowCount())
+          .add(eq("question", question));
+
+      if (from != null)     criteria.add(ge("date", from));
+      if (to != null)       criteria.add(le("date", to));
+
+      if (source != null) {
+        criteria.createAlias("respondent", "respondent");
+        criteria.add(eq("respondent.source", source));
+      }
+
+      return ((Number) criteria.uniqueResult()).intValue();
 
     } finally {
       session.close();
     }
   }
 
-  public int countTextAnswers(Question question) {
+  /**
+   * Counts the number of times a text answer was given to the specified question.
+   *
+   * @param from    Results time frame: start. Ignored if {@code null}.
+   * @param to      Results time frame: end. Ignored if {@code null}.
+   * @param source  Respondent source, e.g. C2S number.
+   */
+  public int countTextAnswers(Question question, Date from, Date to, String source) {
     final Session session = getSessionFactory().openSession();
     try {
-      final Number count = (Number) session
+
+      final Criteria criteria = session
           .createCriteria(TextAnswer.class)
-          .add(eq("question", question))
-          .setProjection(Projections.rowCount()).uniqueResult();
+          .setProjection(Projections.rowCount())
+          .add(eq("question", question));
 
-      return count.intValue();
+      if (from != null)     criteria.add(ge("date", from));
+      if (to != null)       criteria.add(le("date", to));
+
+      if (source != null) {
+        criteria.createAlias("respondent", "respondent");
+        criteria.add(eq("respondent.source", source));
+      }
+
+      return ((Number) criteria.uniqueResult()).intValue();
 
     } finally {
       session.close();

@@ -34,7 +34,7 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
     }
 
     def countAnswers = { Survey s ->
-      s.activeQuestions.collect { Question q -> answerRepository.count(q) }.sum(0) as int
+      s.activeQuestions.collect { Question q -> answerRepository.count(q, null, null, null) }.sum(0) as int
     }
 
     def model = new BarModel()
@@ -77,11 +77,11 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
     PieModel getOptionsRatioModel(Question question) {
       new PieModel().with {
         question.activeOptions.each { QuestionOption opt ->
-          addPart("${opt.answer}", answerRepository.count(opt))
+          addPart("${opt.answer}", answerRepository.count(opt, null, null, null))
         }
 
         addPart(strings['survey.stats.arbitrary.answer'] as String,
-            answerRepository.countTextAnswers(question) as Number)
+            answerRepository.countTextAnswers(question, null, null, null) as Number)
 
         it as PieModel
       }
@@ -98,7 +98,7 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
         addSection('').with {
           addValue(
               strings['survey.stats.response.ratio.answered'] as String,
-              answerRepository.count(question))
+              answerRepository.count(question, null, null, null))
           addValue(
               strings['survey.stats.response.ratio.sent'] as String,
               question.sentCount)
@@ -107,8 +107,9 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
       }
     }
 
-    int count(QuestionOption opt) { answerRepository.count opt }
+    int count(QuestionOption opt) { answerRepository.count opt, null, null, null }
 
-    int defaultAnswersCount(Question question) { answerRepository.countTextAnswers question }
+    int defaultAnswersCount(Question question) { answerRepository.countTextAnswers question, null, null, null
+    }
   }
 }
