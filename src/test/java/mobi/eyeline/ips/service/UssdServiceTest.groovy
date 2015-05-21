@@ -241,8 +241,8 @@ class UssdServiceTest extends DbTestCase {
     assertEquals 1, respondent().survey.id
     assertEquals 1, questionRepository.load(1).sentCount
     survey().with {
-      assertEquals 0, respondentRepository.countFinishedBySurvey(it)
-      assertEquals 1, respondentRepository.countBySurvey(it)
+      assertEquals 0, respondentRepository.countFinishedBySurvey(it, false, null)
+      assertEquals 1, respondentRepository.countBySurvey(it, null, null, false, null)
     }
 
     //
@@ -274,8 +274,8 @@ class UssdServiceTest extends DbTestCase {
 
     assertEquals 2, respondent().answersCount
     survey().with {
-      assertEquals 0, respondentRepository.countFinishedBySurvey(it)
-      assertEquals 1, respondentRepository.countBySurvey(it)
+      assertEquals 0, respondentRepository.countFinishedBySurvey(it, false, null)
+      assertEquals 1, respondentRepository.countBySurvey(it, null, null, false, null)
     }
 
     //
@@ -339,8 +339,8 @@ class UssdServiceTest extends DbTestCase {
     }
 
     survey().with {
-      assertEquals 1, respondentRepository.countFinishedBySurvey(it)
-      assertEquals 1, respondentRepository.countBySurvey(it)
+      assertEquals 1, respondentRepository.countFinishedBySurvey(it, false, null)
+      assertEquals 1, respondentRepository.countBySurvey(it, null, null, false, null)
     }
   }
 
@@ -419,7 +419,7 @@ class UssdServiceTest extends DbTestCase {
         (PARAM_SURVEY_ID): sid
     ])
 
-    assertEquals 0, respondentRepository.countFinishedBySurvey(survey())
+    assertEquals 0, respondentRepository.countFinishedBySurvey(survey(), false, null)
     assertNull 'Stats should be cleared',
         answerRepository.getLast(survey(), respondentRepository.load(1))
 

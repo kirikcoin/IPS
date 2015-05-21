@@ -1,10 +1,8 @@
 var page = {
 
   init: function () {
-    /* Nothing here. */
 
     (function (_) {
-      // And add some plot options.
       _.clientOptions = {
         enablePadding: true,
         plotOverrides: {

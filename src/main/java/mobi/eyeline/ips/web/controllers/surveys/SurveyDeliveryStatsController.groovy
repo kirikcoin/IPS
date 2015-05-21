@@ -16,7 +16,7 @@ class SurveyDeliveryStatsController extends BaseSurveyReadOnlyController {
   @Inject private SurveyService surveyService
 
   BarModel getInvitationsRatioModel() {
-    BarModel model = new BarModel()
+    final model = new BarModel()
 
     model.addSection(
         ''
@@ -24,9 +24,10 @@ class SurveyDeliveryStatsController extends BaseSurveyReadOnlyController {
       addValue(strings['survey.stats.overall.respondents.invitations'] as String,
           surveyService.countInvitations(survey))
       addValue(strings['survey.stats.overall.respondents.respondents'] as String,
-          respondentRepository.countBySurvey(survey))
+          // The ones with `null' source come from deliveries.
+          respondentRepository.countBySurvey(survey, null, null, true, null))
       addValue(strings['survey.stats.overall.respondents.finished'] as String,
-          respondentRepository.countFinishedBySurvey(survey))
+          respondentRepository.countFinishedBySurvey(survey, true, null))
     }
 
     return model

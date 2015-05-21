@@ -59,9 +59,9 @@ class SurveyStatsController extends BaseSurveyReadOnlyController {
       addValue(strings['survey.stats.overall.respondents.invitations'] as String,
           surveyService.countInvitations(survey))
       addValue(strings['survey.stats.overall.respondents.respondents'] as String,
-          respondentRepository.countBySurvey(survey))
+          respondentRepository.countBySurvey(survey, null, null, false, null))
       addValue(strings['survey.stats.overall.respondents.finished'] as String,
-          respondentRepository.countFinishedBySurvey(survey))
+          respondentRepository.countFinishedBySurvey(survey, false, null))
     }
 
     return model

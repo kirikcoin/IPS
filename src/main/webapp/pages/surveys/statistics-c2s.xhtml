@@ -1,0 +1,186 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi" xmlns:c="http://java.sun.com/jsp/jstl/core"
+    >
+
+  <ui:composition template="/templates/main.xhtml">
+    <ui:define name="head">
+      <h:outputStylesheet library="pages" name="surveys/statistics-c2s.less"/>
+      <h:outputScript library="pages" name="surveys/statistics-c2s.js" target="head"/>
+    </ui:define>
+
+    <ui:define name="scripts">
+      <h:outputScript>
+        page.init();
+
+        $(function () {
+          $('form').attr('action',
+              '/pages/surveys/statistics.faces?id=#{surveyC2sStatsController.surveyId}');
+        });
+      </h:outputScript>
+
+    </ui:define>
+
+    <ui:define name="content">
+      <h:form id="content" prependId="false">
+
+        <h:inputHidden id="id" value="#{surveyC2sStatsController.surveyId}"/>
+
+        <h:panelGroup layout="block" styleClass="border-shadow">
+
+          <h:panelGrid columns="2" styleClass="page-header">
+            <h:panelGroup layout="block">
+              <h:outputText value="ID-#{surveyC2sStatsController.survey.id}"
+                            style="font-weight:normal"/>
+              <h:outputText value="#{surveyC2sStatsController.survey.details.title}"
+                            style="margin-left: 20px"/>
+            </h:panelGroup>
+            <h:panelGroup styleClass="page-header-buttons">
+              <h:outputLink value="/pages/surveys/index.faces"
+                            styleClass="button-heading">
+                <h:outputText value="&lt; #{bundle['survey.details.link.back']}"/>
+              </h:outputLink>
+            </h:panelGroup>
+          </h:panelGrid>
+
+          <h:panelGroup layout="block" styleClass="tabs">
+            <h:panelGrid columns="4"
+                         columnClasses="tab,tab,tab_active,tab"
+                         style="width:auto">
+              <h:outputLink value="settings.faces?id=#{surveyC2sStatsController.surveyId}">
+                <h:outputText value="#{bundle['survey.details.tab.settings']}"/>
+              </h:outputLink>
+              <h:outputLink value="results.faces?id=#{surveyC2sStatsController.surveyId}">
+                <h:outputText value="#{bundle['survey.details.tab.results']}"/>
+              </h:outputLink>
+              <h:panelGroup layout="block">
+                <h:outputLink value="#">
+                  <h:outputText value="#{bundle['survey.details.tab.stats']}"/> &#x25BE;
+                </h:outputLink>
+                <ul>
+                  <li>
+                    <h:outputLink value="statistics-results.faces?id=#{surveyC2sStatsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.response']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics-deliveries.faces?id=#{surveyC2sStatsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.delivery']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="#">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.c2s']}"/>
+                    </h:outputLink>
+                  </li>
+                </ul>
+              </h:panelGroup>
+              <h:outputLink value="invitations.faces?id=#{surveyC2sStatsController.surveyId}">
+                <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
+              </h:outputLink>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" styleClass="page-body">
+
+            <eye:collapsingGroup opened="true" id="groupFilter">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['results.group.filter']}"/>
+                </h:panelGroup>
+              </f:facet>
+
+              <h:panelGrid columns="2">
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.period.start']}:" for="periodStart"/>
+                  <eye:inputDate id="periodStart"
+                                 inputTime="true"
+                                 value="#{surveyC2sStatsController.periodStart}"
+                                 minDate="#{surveyC2sStatsController.survey.startDate}"
+                                 maxDate="#{surveyC2sStatsController.survey.endDate}">
+                    <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                  </eye:inputDate>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.period.end']}:" for="periodEnd"/>
+                  <eye:inputDate id="periodEnd"
+                                 inputTime="true"
+                                 value="#{surveyC2sStatsController.periodEnd}"
+                                 minDate="#{surveyC2sStatsController.survey.startDate}"
+                                 maxDate="#{surveyC2sStatsController.survey.endDate}">
+                    <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                  </eye:inputDate>
+                </h:panelGroup>
+              </h:panelGrid>
+
+              <eye:buttons>
+                <eye:button>
+                  <h:commandLink value="#{bundle['results.button.show']}"
+                                 styleClass="button-green"
+                                 onclick="return page.onShow();">
+                    <f:ajax execute="@all" render=":charts"/>
+                  </h:commandLink>
+                </eye:button>
+              </eye:buttons>
+            </eye:collapsingGroup>
+
+            <h:panelGroup id="charts">
+
+              <eye:collapsingGroup opened="true">
+                <f:facet name="header">
+                  <h:outputText value="#{bundle['survey.stats.respondents.per.c2s']}"/>
+                </f:facet>
+                <eye:barChart
+                    id="barRatio"
+                    intValues="true"
+                    height="320"
+                    width="500"
+                    bars="#{surveyC2sStatsController.barModel}"
+                    stackMode="false"
+                    horizontal="false"
+                    immediatlyRender="true">
+
+                  <c:forEach items="#{surveyC2sStatsController.accessNumbers}" var="c2s">
+                    <!--@elvariable id="c2s" type="mobi.eyeline.ips.model.AccessNumber"-->
+                    <eye:bar name="#{c2s.number}" color="#{surveyC2sStatsController.colorLoop(c2s)}"/>
+                  </c:forEach>
+                </eye:barChart>
+              </eye:collapsingGroup>
+
+              <eye:collapsingGroup opened="true">
+                <f:facet name="header">
+                  <h:outputText value="#{bundle['survey.stats.respondents.per.c2s.date']}"/>
+                </f:facet>
+
+                <eye:lineChart id="lineRatio"
+                               height="320"
+                               width="500"
+                               lines="#{surveyC2sStatsController.lineModel}"
+                               x_dateStyle="%d.%m.%Y"
+                               x_ticks="#{surveyC2sStatsController.datePoints.size()}"
+                               y_int="true">
+
+                  <c:forEach items="#{surveyC2sStatsController.accessNumbers}" var="c2s">
+                    <!--@elvariable id="c2s" type="mobi.eyeline.ips.model.AccessNumber"-->
+                    <eye:line name="#{c2s.number}" color="#{surveyC2sStatsController.colorLoop(c2s)}"/>
+                  </c:forEach>
+                </eye:lineChart>
+              </eye:collapsingGroup>
+
+            </h:panelGroup>
+
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" styleClass="page-footer"/>
+
+        </h:panelGroup>
+
+      </h:form>
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>
