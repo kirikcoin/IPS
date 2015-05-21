@@ -83,22 +83,28 @@
           </h:panelGroup>
 
           <h:panelGroup layout="block" styleClass="page-body">
-            <eye:barChart
-                id="respondentsRatio"
-                intValues="true"
-                height="320"
-                width="500"
-                bars="#{surveyDeliveryStatsController.invitationsRatioModel}"
-                stackMode="false"
-                horizontal="false"
-                immediatlyRender="false">
-              <eye:bar name="#{bundle['survey.stats.overall.respondents.invitations']}"
-                       color="yellow"/>
-              <eye:bar name="#{bundle['survey.stats.overall.respondents.respondents']}"
-                       color="#adff2f"/>
-              <eye:bar name="#{bundle['survey.stats.overall.respondents.finished']}"
-                       color="green"/>
-            </eye:barChart>
+            <eye:collapsingGroup opened="true">
+              <f:facet name="header">
+                <h:outputText value="#{bundle['survey.stats.overall.respondents.title']}"/>
+              </f:facet>
+
+              <eye:barChart
+                  id="respondentsRatio"
+                  intValues="true"
+                  height="320"
+                  width="500"
+                  bars="#{surveyDeliveryStatsController.invitationsRatioModel}"
+                  stackMode="false"
+                  horizontal="false"
+                  immediatlyRender="false">
+                <eye:bar name="#{bundle['survey.stats.overall.respondents.invitations']}"
+                         color="yellow"/>
+                <eye:bar name="#{bundle['survey.stats.overall.respondents.respondents']}"
+                         color="#adff2f"/>
+                <eye:bar name="#{bundle['survey.stats.overall.respondents.finished']}"
+                         color="green"/>
+              </eye:barChart>
+            </eye:collapsingGroup>
           </h:panelGroup>
 
           <h:panelGroup layout="block" styleClass="page-footer"/>

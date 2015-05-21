@@ -19,7 +19,7 @@ class SurveyDeliveryStatsController extends BaseSurveyReadOnlyController {
     BarModel model = new BarModel()
 
     model.addSection(
-        strings['survey.stats.overall.respondents.title']
+        ''
     ).with {
       addValue(strings['survey.stats.overall.respondents.invitations'] as String,
           surveyService.countInvitations(survey))
