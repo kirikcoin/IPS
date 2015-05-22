@@ -107,15 +107,6 @@
   </navigation-rule>
 
   <navigation-rule>
-    <description>Survey statistics</description>
-    <navigation-case>
-      <from-outcome>SURVEY_STATS</from-outcome>
-      <to-view-id>/pages/surveys/statistics.xhtml</to-view-id>
-      <redirect/>
-    </navigation-case>
-  </navigation-rule>
-
-  <navigation-rule>
     <description>Survey results</description>
     <navigation-case>
       <from-outcome>SURVEY_INVITES</from-outcome>

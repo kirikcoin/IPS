@@ -2,7 +2,8 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi">
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc">
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -28,26 +29,12 @@
         <h:inputHidden id="id" value="#{surveyDeliveryStatsController.surveyId}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
-
-          <h:panelGrid columns="2" styleClass="page-header">
-            <h:panelGroup layout="block">
-              <h:outputText value="ID-#{surveyDeliveryStatsController.survey.id}"
-                            style="font-weight:normal"/>
-              <h:outputText value="#{surveyDeliveryStatsController.survey.details.title}"
-                            style="margin-left: 20px"/>
-            </h:panelGroup>
-            <h:panelGroup styleClass="page-header-buttons">
-              <h:outputLink value="/pages/surveys/index.faces"
-                            styleClass="button-heading">
-                <h:outputText value="&lt; #{bundle['survey.details.link.back']}"/>
-              </h:outputLink>
-            </h:panelGroup>
-          </h:panelGrid>
+          <ips:survey-page-header survey="#{surveyDeliveryStatsController.survey}"/>
 
           <h:panelGroup layout="block" styleClass="tabs">
             <h:panelGrid columns="4"
                          columnClasses="tab,tab,tab_active,tab"
-                         style="width:auto">
+                         style="width: auto">
               <h:outputLink value="settings.faces?id=#{surveyDeliveryStatsController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.settings']}"/>
               </h:outputLink>

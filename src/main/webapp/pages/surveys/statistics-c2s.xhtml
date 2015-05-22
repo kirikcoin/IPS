@@ -3,7 +3,8 @@
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
         xmlns:eye="http://jsfcomponents.eyeline.mobi"
-        xmlns:c="http://java.sun.com/jsp/jstl/core">
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc">
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -30,21 +31,7 @@
         <h:inputHidden id="id" value="#{surveyC2sStatsController.surveyId}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
-
-          <h:panelGrid columns="2" styleClass="page-header">
-            <h:panelGroup layout="block">
-              <h:outputText value="ID-#{surveyC2sStatsController.survey.id}"
-                            style="font-weight:normal"/>
-              <h:outputText value="#{surveyC2sStatsController.survey.details.title}"
-                            style="margin-left: 20px"/>
-            </h:panelGroup>
-            <h:panelGroup styleClass="page-header-buttons">
-              <h:outputLink value="/pages/surveys/index.faces"
-                            styleClass="button-heading">
-                <h:outputText value="&lt; #{bundle['survey.details.link.back']}"/>
-              </h:outputLink>
-            </h:panelGroup>
-          </h:panelGrid>
+          <ips:survey-page-header survey="#{surveyC2sStatsController.survey}"/>
 
           <h:panelGroup layout="block" styleClass="tabs">
             <h:panelGrid columns="4"
