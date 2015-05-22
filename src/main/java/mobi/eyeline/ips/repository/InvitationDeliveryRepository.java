@@ -71,7 +71,7 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
 
     criteria.add(eq("survey", survey));
     criteria.setProjection(Projections.rowCount());
-    return ((Number) criteria.uniqueResult()).intValue();
+    return fetchInt(criteria);
   }
 
   public void saveWithSubscribers(final InvitationDelivery delivery,

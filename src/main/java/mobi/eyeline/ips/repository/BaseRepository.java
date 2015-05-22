@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.repository;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -207,6 +208,10 @@ public abstract class BaseRepository<E, K extends Serializable> {
     } finally {
       session.close();
     }
+  }
+
+  protected int fetchInt(Criteria criteria) {
+    return ((Number) criteria.uniqueResult()).intValue();
   }
 
 }

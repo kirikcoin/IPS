@@ -66,6 +66,6 @@ public class SurveyInvitationRepository extends BaseRepository<SurveyInvitation,
 
     criteria.add(Restrictions.eq("survey", survey));
     criteria.setProjection(Projections.rowCount());
-    return ((Number) criteria.uniqueResult()).intValue();
+    return fetchInt(criteria);
   }
 }

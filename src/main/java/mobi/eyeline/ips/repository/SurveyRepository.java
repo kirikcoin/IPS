@@ -36,45 +36,9 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
     final Session session = getSessionFactory().getCurrentSession();
 
-    final Criteria criteria = session.createCriteria(Survey.class).setCacheable(true);
+    final Criteria criteria = createQuery(user, owner, filter, active, session);
 
-    criteria.createAlias("details", "details");
     criteria.createAlias("statistics", "statistics");
-    criteria.createAlias("client", "client");
-    criteria.createAlias("owner", "owner", LEFT_OUTER_JOIN);
-
-    if (active != null) {
-      criteria.add(eq("active", active));
-    }
-
-    if (user != null) {
-      criteria.add(eq("client.id", user.getId()));
-    }
-
-    if (owner != null) {
-      criteria.add(or(
-          isNull("owner.id"),
-          eq("owner.id", owner.getId())
-      ));
-    }
-
-    if (isNotBlank(filter)) {
-      filter = filter.trim();
-
-      final List<Criterion> filters = new ArrayList<>();
-
-      if (Ints.tryParse(filter) != null) {
-        filters.add(eq("id", Integer.parseInt(filter)));
-      }
-      filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
-      if (user == null) {
-        filters.add(EscapedRestrictions.ilike("client.fullName", filter, MatchMode.ANYWHERE));
-      }
-
-      criteria.add(or(
-          filters.toArray(new Criterion[filters.size()])
-      ));
-    }
 
     criteria.setResultTransformer(DISTINCT_ROOT_ENTITY);
     criteria.setFirstResult(offset).setMaxResults(limit);
@@ -110,18 +74,12 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
     return (List<Survey>) criteria.list();
   }
 
-  public int count(User user,
-                   User owner,
-                   String filter,
-                   Boolean active) {
-
-    final Session session = getSessionFactory().getCurrentSession();
-
-    final Criteria criteria = session.createCriteria(Survey.class);
+  private Criteria createQuery(User user, User owner, String filter, Boolean active, Session session) {
+    final Criteria criteria = session.createCriteria(Survey.class).setCacheable(true);
 
     criteria.createAlias("details", "details");
-    criteria.createAlias("statistics", "statistics");
-    criteria.createAlias("client", "client", LEFT_OUTER_JOIN);
+    criteria.createAlias("client", "client");
+    criteria.createAlias("owner", "owner", LEFT_OUTER_JOIN);
 
     if (active != null) {
       criteria.add(eq("active", active));
@@ -146,7 +104,6 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
       if (Ints.tryParse(filter) != null) {
         filters.add(eq("id", Integer.parseInt(filter)));
       }
-
       filters.add(EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE));
       if (user == null) {
         filters.add(EscapedRestrictions.ilike("client.fullName", filter, MatchMode.ANYWHERE));
@@ -156,6 +113,16 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
           filters.toArray(new Criterion[filters.size()])
       ));
     }
+    return criteria;
+  }
+
+  public int count(User user,
+                   User owner,
+                   String filter,
+                   Boolean active) {
+
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = createQuery(user, owner, filter, active, session);
 
     criteria.setProjection(Projections.countDistinct("id"));
 

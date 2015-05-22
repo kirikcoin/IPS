@@ -15,7 +15,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.ge;
-import static org.hibernate.criterion.Restrictions.ilike;
-import static org.hibernate.criterion.Restrictions.isNotNull;
-import static org.hibernate.criterion.Restrictions.isNull;
-import static org.hibernate.criterion.Restrictions.le;
+import static org.hibernate.criterion.Restrictions.*;
 
 public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
@@ -188,16 +182,17 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
       criteria.addOrder(asc ? Order.asc(property) : Order.desc(property));
     }
 
-    @SuppressWarnings("unchecked")
-    final List<Respondent> respondents = (List<Respondent>) criteria.list();
+    //noinspection unchecked
+    return asSessions(survey, (List<Respondent>) criteria.list());
+  }
 
+  private List<SurveySession> asSessions(Survey survey, List<Respondent> respondents) {
     final List<SurveySession> results = new ArrayList<>(respondents.size());
     for (Respondent respondent : respondents) {
       results.add(
           new SurveySession(survey, respondent, list(respondent))
       );
     }
-
     return results;
   }
 
@@ -219,17 +214,8 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
     criteria.setFirstResult(offset).setMaxResults(limit);
 
-    @SuppressWarnings("unchecked")
-    final List<Respondent> respondents = (List<Respondent>) criteria.list();
-
-    final List<SurveySession> results = new ArrayList<>(respondents.size());
-    for (Respondent respondent : respondents) {
-      results.add(
-          new SurveySession(survey, respondent, list(respondent))
-      );
-    }
-
-    return results;
+    //noinspection unchecked
+    return asSessions(survey, (List<Respondent>) criteria.list());
   }
 
   public int count(Survey survey,
@@ -246,8 +232,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
     criteria.setProjection(Projections.rowCount());
 
-    //noinspection unchecked
-    return ((Number) criteria.uniqueResult()).intValue();
+    return fetchInt(criteria);
   }
 
   private Criteria getCriteria(Session session,
@@ -325,25 +310,34 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
   public int count(Question question, Date from, Date to, String source) {
     final Session session = getSessionFactory().openSession();
     try {
-
-      final Criteria criteria = session
-          .createCriteria(Answer.class)
-          .setProjection(Projections.rowCount())
-          .add(eq("question", question));
-
-      if (from != null)     criteria.add(ge("date", from));
-      if (to != null)       criteria.add(le("date", to));
-
-      if (source != null) {
-        criteria.createAlias("respondent", "respondent");
-        criteria.add(eq("respondent.source", source));
-      }
-
-      return ((Number) criteria.uniqueResult()).intValue();
+      final Criteria criteria = createQuery(session, Answer.class, question, from, to, source);
+      return fetchInt(criteria);
 
     } finally {
       session.close();
     }
+  }
+
+  private Criteria createQuery(Session session,
+                               Class<? extends Answer> clazz,
+                               Question question,
+                               Date from,
+                               Date to,
+                               String source) {
+
+    final Criteria criteria = session
+        .createCriteria(clazz)
+        .setProjection(Projections.rowCount())
+        .add(eq("question", question));
+
+    if (from != null)     criteria.add(ge("date", from));
+    if (to != null)       criteria.add(le("date", to));
+
+    if (source != null) {
+      criteria.createAlias("respondent", "respondent");
+      criteria.add(eq("respondent.source", source));
+    }
+    return criteria;
   }
 
   /**
@@ -356,21 +350,8 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
   public int countTextAnswers(Question question, Date from, Date to, String source) {
     final Session session = getSessionFactory().openSession();
     try {
-
-      final Criteria criteria = session
-          .createCriteria(TextAnswer.class)
-          .setProjection(Projections.rowCount())
-          .add(eq("question", question));
-
-      if (from != null)     criteria.add(ge("date", from));
-      if (to != null)       criteria.add(le("date", to));
-
-      if (source != null) {
-        criteria.createAlias("respondent", "respondent");
-        criteria.add(eq("respondent.source", source));
-      }
-
-      return ((Number) criteria.uniqueResult()).intValue();
+      final Criteria criteria = createQuery(session, TextAnswer.class, question, from, to, source);
+      return fetchInt(criteria);
 
     } finally {
       session.close();

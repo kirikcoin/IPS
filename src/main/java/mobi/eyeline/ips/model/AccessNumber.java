@@ -67,7 +67,7 @@ public class AccessNumber {
 
   @Override
   public int hashCode() {
-    return getNumber().hashCode();
+    return getNumber() == null ? 0 : getNumber().hashCode();
   }
 
   @Override
