@@ -60,6 +60,17 @@ public class AccessNumber {
   }
 
   @Override
+  public boolean equals(Object o) {
+    return this == o ||
+        (o instanceof AccessNumber && getNumber().equals(((AccessNumber) o).getNumber()));
+  }
+
+  @Override
+  public int hashCode() {
+    return getNumber().hashCode();
+  }
+
+  @Override
   public String toString() {
     return "AccessNumber{" +
         "id=" + id +

@@ -5,9 +5,7 @@ import groovy.transform.Memoized
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.repository.AccessNumberRepository
-import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.repository.RespondentRepository
-import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.util.jsf.components.chart.bar.BarModel
 import mobi.eyeline.util.jsf.components.chart.line.LineModel
 
@@ -30,8 +28,8 @@ class SurveyC2sStatsController extends BaseSurveyReadOnlyController {
 
   @PostConstruct
   void init() {
-    periodStart = survey.startDate
-    periodEnd = survey.endDate
+    periodStart = survey.startDate.clearTime()
+    periodEnd = survey.endDate.clearTime()
   }
 
   List<AccessNumber> getAccessNumbers() {
@@ -51,10 +49,24 @@ class SurveyC2sStatsController extends BaseSurveyReadOnlyController {
     model.addSection(
         ''
     ).with {
+
+      final from = (periodStart.clone() as Date).clearTime() - 1
+      final to = (periodEnd.clone() as Date).clearTime()
+
       accessNumbers.each { num ->
-        addValue(
-            num.number,
-            respondentRepository.countBySurvey(getSurvey(), periodStart, periodEnd, true, num.number))
+        addValue(num.number, getCount(from, to, num.number))
+      }
+    }
+
+    model
+  }
+
+  LineModel<Date, Number> getLineModel() {
+    final model = LineModel.createDateModel()
+
+    datePoints.each { date ->
+      accessNumbers.each { num ->
+        model.addPoint num.number, date, getCount(date, date + 1, num.number)
       }
     }
 
@@ -62,28 +74,14 @@ class SurveyC2sStatsController extends BaseSurveyReadOnlyController {
   }
 
   @Memoized
-  LineModel<Date, Number> getLineModel() {
-    final model = LineModel.createDateModel()
-
-    datePoints.each { date ->
-      accessNumbers.each { num ->
-        final count = respondentRepository.countBySurvey(
-            getSurvey(),
-            date,
-            date + 1,
-            true,
-            num.number)
-
-        model.addPoint num.number, date, count
-      }
-    }
-
-    model
+  private int getCount(Date from, Date to, String number) {
+    respondentRepository.countBySurvey(getSurvey(), from, to, true, number)
   }
 
   List<Date> getDatePoints() {
     Date start = periodStart.clone() as Date
     start.clearTime()
+    start -= 1
 
     final rc = []
     while (start < periodEnd) {

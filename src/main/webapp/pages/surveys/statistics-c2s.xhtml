@@ -2,8 +2,8 @@
         xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://java.sun.com/jsf/html"
         xmlns:ui="http://java.sun.com/jsf/facelets"
-        xmlns:eye="http://jsfcomponents.eyeline.mobi" xmlns:c="http://java.sun.com/jsp/jstl/core"
-    >
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:c="http://java.sun.com/jsp/jstl/core">
 
   <ui:composition template="/templates/main.xhtml">
     <ui:define name="head">
@@ -13,6 +13,7 @@
 
     <ui:define name="scripts">
       <h:outputScript>
+        page.INVALID_DATE_MSG = '#{bundle["survey.validation.date.format"]}';
         page.init();
 
         $(function () {
@@ -157,9 +158,11 @@
 
                 <eye:lineChart id="lineRatio"
                                height="320"
-                               width="500"
+                               width="1170"
                                lines="#{surveyC2sStatsController.lineModel}"
                                x_dateStyle="%d.%m.%Y"
+                               showLegend="true"
+                               legendLocation="ne"
                                x_ticks="#{surveyC2sStatsController.datePoints.size()}"
                                y_int="true">
 
