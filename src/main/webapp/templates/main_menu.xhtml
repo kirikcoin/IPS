@@ -75,6 +75,7 @@
               <c:set var="surveyList"   value="${fn:contains(view.viewId, 'pages/surveys')}"/>
               <c:set var="clientsList"  value="${fn:contains(view.viewId, 'pages/clients')}"/>
               <c:set var="numbersList"  value="${fn:contains(view.viewId, 'pages/admin/accessNumbers')}"/>
+              <c:set var="statistics"   value="${fn:contains(view.viewId, 'pages/statistics')}"/>
 
               <h:panelGroup rendered="#{userSession.authenticated}">
                 <h:link value="#{bundle['main.menu.surveys']}"
@@ -89,6 +90,10 @@
                         outcome="ACCESS_NUMBERS"
                         styleClass="#{numbersList ? 'menuButtonSelected' : 'menuButton'}"
                         rendered="#{userSession.c2sAllowed}"/>
+                <h:link value="#{bundle['main.menu.statistics']}"
+                        outcome="STATISTICS"
+                        styleClass="#{statistics ? 'menuButtonSelected' : 'menuButton'}"
+                        rendered="#{userSession.globalStatisticsAllowed}"/>
               </h:panelGroup>
             </div>
           </td>

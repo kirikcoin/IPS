@@ -125,6 +125,15 @@
   </navigation-rule>
 
   <navigation-rule>
+    <description>Global statistics</description>
+    <navigation-case>
+      <from-outcome>STATISTICS</from-outcome>
+      <to-view-id>/pages/statistics/c2s.xhtml</to-view-id>
+      <redirect/>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
     <description>Блокирование/разблокирование пользователя на странице заказчиков</description>
 
     <navigation-case>

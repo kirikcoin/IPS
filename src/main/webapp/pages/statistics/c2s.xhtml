@@ -1,0 +1,158 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi">
+
+  <ui:composition template="/templates/main.xhtml">
+
+    <ui:define name="head">
+      <h:outputStylesheet library="pages" name="statistics/c2s.less"/>
+      <h:outputScript library="pages" name="statistics/c2s.js" target="head"/>
+    </ui:define>
+
+    <ui:define name="scripts">
+      <h:outputScript>
+        $(function() {
+          page.init();
+        });
+      </h:outputScript>
+    </ui:define>
+
+    <ui:define name="content">
+
+      <h:form id="content" prependId="false">
+
+        <h:panelGroup layout="block" styleClass="border-shadow">
+
+          <h:panelGrid columns="1" styleClass="page-header">
+            <h:outputText value="#{bundle['global.stats.c2s.header']}"/>
+          </h:panelGrid>
+
+          <h:panelGroup layout="block" styleClass="page-body">
+
+            <eye:collapsingGroup opened="true" id="groupFilter">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['results.group.filter']}"/>
+                </h:panelGroup>
+              </f:facet>
+
+              <h:panelGrid columns="4">
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.period.start']}:" for="periodStart"/>
+                  <eye:inputDate id="periodStart"
+                                 inputTime="true"
+                                 value="#{globalStatController.periodStart}">
+                    <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                  </eye:inputDate>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.period.end']}:" for="periodEnd"/>
+                  <eye:inputDate id="periodEnd"
+                                 inputTime="true"
+                                 value="#{globalStatController.periodEnd}">
+                    <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                  </eye:inputDate>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['global.stats.c2s.survey.name']}:" for="filter"/>
+                  <eye:inputText id="filter"
+                                 value="#{globalStatController.filter}"/>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.access.number']}:" for="accessNumber"/>
+                  <h:selectOneMenu id="accessNumber"
+                                   value="#{globalStatController.accessNumber}">
+                    <f:selectItems value="#{globalStatController.accessNumbers}"/>
+                  </h:selectOneMenu>
+                </h:panelGroup>
+
+              </h:panelGrid>
+
+              <eye:buttons>
+                <eye:button>
+                  <h:outputLink value="#"
+                                onclick="jsfc('resultsTable').update(true); return false;"
+                                styleClass="button-green">
+                    <h:outputText value="#{bundle['results.button.search']}"/>
+                  </h:outputLink>
+                </eye:button>
+              </eye:buttons>
+            </eye:collapsingGroup>
+
+            <eye:collapsingGroup opened="true" id="groupResults">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['results.group.results']}"/>
+                </h:panelGroup>
+              </f:facet>
+
+              <eye:buttons id="downloadButtonsPanel">
+                <eye:button id="downloadButton">
+                  <h:commandLink styleClass="button-green"
+                                 value="#{bundle['results.button.download']}">
+                    <eye:fileDownloadListener method="#{globalStatController.download}"
+                                              contentType="text/csv"
+                                              filename="c2s_stats.csv"/>
+                  </h:commandLink>
+                </eye:button>
+              </eye:buttons>
+
+              <eye:dataTable id="resultsTable"
+                             value="#{globalStatController.model}"
+                             var="row"
+                             pageSize="50"
+                             tableClass="grid">
+                <!--@elvariable id="row" type="mobi.eyeline.ips.web.controllers.stats.globalStatController.C2sResponseModel"-->
+
+                <f:facet name="ifEmpty">
+                  <h:outputText value="#{bundle['results.empty']}"/>
+                </f:facet>
+
+                <eye:row>
+
+                  <eye:column name="surveyId"
+                              title="#{bundle['survey.list.table.id']}"
+                              sortable="true"
+                              defaultSortOrder="desc">
+                    <h:outputText value="#{row.surveyId}"/>
+                  </eye:column>
+                  <eye:column name="surveyName"
+                              title="#{bundle['global.stats.c2s.survey.name']}"
+                              sortable="true">
+                    <h:outputText value="#{row.surveyName}"/>
+                  </eye:column>
+
+                  <eye:column name="c2s"
+                              title="#{bundle['results.access.number']}"
+                              sortable="true">
+                    <h:outputText value="#{row.c2s}"/>
+                  </eye:column>
+
+                  <eye:column name="nRespondents"
+                              title="#{bundle['global.stats.c2s.respondents.count']}"
+                              sortable="true"
+                              defaultSortOrder="desc">
+                    <h:outputText value="#{row.nRespondents}"/>
+                  </eye:column>
+                </eye:row>
+              </eye:dataTable>
+            </eye:collapsingGroup>
+
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" styleClass="page-footer"/>
+
+        </h:panelGroup>
+
+      </h:form>
+
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

@@ -7,15 +7,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.ge;
-import static org.hibernate.criterion.Restrictions.lt;
+import static org.hibernate.criterion.Restrictions.*;
 
 public class RespondentRepository extends BaseRepository<Respondent, Integer> {
 
@@ -61,6 +61,35 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
     } finally {
       session.close();
     }
+  }
+
+  public Map<String, Integer> countBySurvey(Survey survey,
+                                            Date from,
+                                            Date to,
+                                            List<String> source) {
+
+    final Session session = getSessionFactory().getCurrentSession();
+
+    //noinspection unchecked
+    final List<Object[]> results = (List<Object[]>) session.createQuery(
+        "select r.source, count(r)" +
+        " from Respondent r" +
+        " where r.survey = :survey and r.startDate >= :from and r.startDate < :to and r.source in :sources " +
+        " group by r.source")
+        .setEntity("survey", survey)
+        .setParameterList("sources", source)
+        .setDate("from", from)
+        .setDate("to", to)
+        .list();
+
+    final Map<String, Integer> map = new HashMap<>();
+    if (results != null && !results.isEmpty()) {
+      for (Object[] row : results) {
+        map.put((String) row[0], ((Number) row[1]).intValue());
+      }
+    }
+
+    return map;
   }
 
   /**

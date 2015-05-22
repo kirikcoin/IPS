@@ -19,3 +19,5 @@ ALTER TABLE `survey_stats` DROP `number_id`;
 
 -- C2S mark for respondent.
 ALTER TABLE `respondents` ADD `source` VARCHAR(255) NULL;
+
+ALTER TABLE `respondents` ADD INDEX `idx_search_1` (`survey_id`, `registered`, `source`)

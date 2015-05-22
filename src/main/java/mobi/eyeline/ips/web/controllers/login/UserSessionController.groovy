@@ -33,4 +33,7 @@ class UserSessionController extends BaseController {
 
   @Memoized
   boolean isC2sAllowed() { getCurrentUser().showC2s }
+
+  @Memoized
+  boolean isGlobalStatisticsAllowed() { isClientRole() || isManagerRole() }
 }
