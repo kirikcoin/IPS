@@ -37,6 +37,8 @@ class GlobalStatController extends BaseController {
   String filter
   Integer accessNumber
 
+  boolean showEmptyRows
+
   @PostConstruct
   void init() {
     periodStart = new Date().clearTime() - 30
@@ -44,7 +46,10 @@ class GlobalStatController extends BaseController {
   }
 
   DataTableModel getModel() {
-    final list = loadResults(periodStart, periodEnd, filter, accessNumber)
+    List<C2sResponseModel> list = loadResults(periodStart, periodEnd, filter, accessNumber)
+    if (!showEmptyRows) {
+      list = list.findAll { it.nRespondents > 0 } as List
+    }
 
     return new DataTableModel() {
       @Override
@@ -73,7 +78,12 @@ class GlobalStatController extends BaseController {
         // Add header line.
         csvWriter.writeNext(header as String[])
 
-        loadResults(periodStart, periodEnd, filter, accessNumber).each { _ ->
+        List<C2sResponseModel> results = loadResults(periodStart, periodEnd, filter, accessNumber)
+        if (!showEmptyRows) {
+          results = results.findAll { it.nRespondents > 0 } as List
+        }
+
+        results.each { _ ->
           csvWriter.writeNext([
               _.surveyId,
               _.surveyName,

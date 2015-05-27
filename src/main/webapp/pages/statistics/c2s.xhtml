@@ -73,15 +73,24 @@
 
               </h:panelGrid>
 
-              <eye:buttons>
-                <eye:button>
-                  <h:outputLink value="#"
-                                onclick="jsfc('resultsTable').update(true); return false;"
-                                styleClass="button-green">
-                    <h:outputText value="#{bundle['results.button.search']}"/>
-                  </h:outputLink>
-                </eye:button>
-              </eye:buttons>
+              <h:panelGrid columns="2">
+                <eye:buttons>
+                  <eye:button>
+                    <h:outputLink value="#"
+                                  onclick="return page.doUpdate();"
+                                  styleClass="button-green">
+                      <h:outputText value="#{bundle['results.button.search']}"/>
+                    </h:outputLink>
+                  </eye:button>
+                </eye:buttons>
+
+                <h:panelGroup styleClass="show-empty-rows-panel">
+                  <h:selectBooleanCheckbox id="showEmptyRows"
+                                           value="#{globalStatController.showEmptyRows}"/>
+                  <h:outputLabel for="showEmptyRows"
+                                 value="#{bundle['global.stats.c2s.showEmptyRows']}"/>
+                </h:panelGroup>
+              </h:panelGrid>
             </eye:collapsingGroup>
 
             <eye:collapsingGroup opened="true" id="groupResults">
@@ -106,6 +115,7 @@
                              value="#{globalStatController.model}"
                              var="row"
                              pageSize="50"
+                             visible="false"
                              tableClass="grid">
                 <!--@elvariable id="row" type="mobi.eyeline.ips.web.controllers.stats.globalStatController.C2sResponseModel"-->
 
@@ -141,6 +151,11 @@
                   </eye:column>
                 </eye:row>
               </eye:dataTable>
+
+              <h:panelGroup styleClass="resultsTablePlaceholder">
+                <h:outputText value="#{bundle['global.stats.c2s.press.to.show']}"/>
+              </h:panelGroup>
+
             </eye:collapsingGroup>
 
           </h:panelGroup>
