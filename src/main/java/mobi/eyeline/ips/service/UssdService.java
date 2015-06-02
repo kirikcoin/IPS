@@ -167,14 +167,17 @@ public class UssdService implements MessageHandler {
       }
     }
 
-    // Ensure we've got an entry in `respondents' for this survey.
+    // Not that the HTTP session is not automatically terminated on survey completion, for now
+    // it's being kept alive for about half an hour (being attached to SMPP session).
+    // As source is stored in the session, we cannot trust it during request for an initial page.
+    outerRequest.setStoredSource(null);
 
     final String source = outerRequest.getSource();
-    if (source != null && outerRequest.getStoredSource() == null) {
-      // Put into session if not yet done so.
+    if (source != null) {
       outerRequest.setStoredSource(source);
     }
 
+    // Ensure we've got an entry in `respondents' for this survey.
     final Respondent respondent =
         respondentRepository.findOrCreate(msisdn, survey, source);
 
