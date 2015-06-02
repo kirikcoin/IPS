@@ -17,11 +17,41 @@ var page = {
   },
 
   doUpdate: function () {
-    $('.resultsTablePlaceholder').hide();
+    var resultsTable = jsfc('resultsTable');
 
-    jsfc('resultsTable').setVisible(true);
-    jsfc('resultsTable').update(true);
+    if (page._checkDatesValid()) {
+      $('.resultsTablePlaceholder').hide();
+
+      resultsTable.setVisible(true);
+      resultsTable.update(true);
+    }
+
     return false;
+  },
+
+  /**
+   * @return {boolean}  True iff date inputs contain valid values.
+   * @private
+   */
+  _checkDatesValid: function () {
+    var $periodStart = $('#periodStart'),
+        $periodEnd = $('#periodEnd'),
+
+        checkFormat = function ($input) {
+          if (ips.utils.isDate($input.val())) return true;
+
+          $input.addClass('validationError');
+          ips.message.error(page.INVALID_DATE_MSG);
+          return false;
+        },
+
+        error = false;
+
+    ips.message.hideAll();
+    if (!checkFormat($periodStart)) error = true;
+    if (!checkFormat($periodEnd))   error = true;
+
+    return !error;
   }
 
 };

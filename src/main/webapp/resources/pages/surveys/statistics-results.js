@@ -11,8 +11,6 @@ var page = {
         $periodEnd = $('#periodEnd'),
 
         checkFormat = function ($input) {
-          $input.removeClass('validationError');
-
           if (ips.utils.isDate($input.val())) return true;
 
           $input.addClass('validationError');
@@ -22,6 +20,7 @@ var page = {
 
         error = false;
 
+    ips.message.hideAll();
     if (!checkFormat($periodStart)) error = true;
     if (!checkFormat($periodEnd))   error = true;
 

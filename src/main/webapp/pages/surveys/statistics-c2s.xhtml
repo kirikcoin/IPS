@@ -14,10 +14,10 @@
 
     <ui:define name="scripts">
       <h:outputScript>
-        page.INVALID_DATE_MSG = '#{bundle["survey.validation.date.format"]}';
-        page.init();
-
         $(function () {
+          page.INVALID_DATE_MSG = '#{bundle["survey.validation.date.format"]}';
+          page.init();
+
           $('form').attr('action',
               '/pages/surveys/statistics.faces?id=#{surveyC2sStatsController.surveyId}');
         });

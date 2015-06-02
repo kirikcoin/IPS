@@ -21,6 +21,7 @@
     <ui:define name="scripts">
       <h:outputScript>
         $(function () {
+          page.INVALID_DATE_MSG = '#{bundle["survey.validation.date.format"]}';
           page.init();
 
           $('form').attr('action',
@@ -138,7 +139,7 @@
             <eye:buttons>
                 <eye:button>
                   <h:outputLink value="#"
-                                onclick="jsfc('resultsTable').update(true); return false;"
+                                onclick="return page.onSearch();"
                                 styleClass="button-green">
                     <h:outputText value="#{bundle['results.button.search']}"/>
                   </h:outputLink>
