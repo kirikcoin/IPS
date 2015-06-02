@@ -15,7 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hibernate.criterion.Restrictions.*;
+import static org.hibernate.criterion.Restrictions.eq;
+import static org.hibernate.criterion.Restrictions.ge;
+import static org.hibernate.criterion.Restrictions.isNull;
+import static org.hibernate.criterion.Restrictions.lt;
 
 public class RespondentRepository extends BaseRepository<Respondent, Integer> {
 
@@ -52,7 +55,8 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
       if (to != null)   criteria.add(lt("startDate", to));
 
       if (bySource) {
-        criteria.add(eq("source", source));
+        if (source == null) criteria.add(isNull("source"));
+        else                criteria.add(eq("source", source));
       }
 
       final Number count = (Number) criteria.uniqueResult();
@@ -112,7 +116,8 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
           .add(eq("finished", true));
 
       if (bySource) {
-        criteria.add(eq("source", source));
+        if (source == null) criteria.add(isNull("source"));
+        else                criteria.add(eq("source", source));
       }
 
       final Number count = (Number) criteria.uniqueResult();
