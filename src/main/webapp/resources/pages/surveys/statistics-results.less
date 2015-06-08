@@ -2,7 +2,7 @@
   font-style: italic;
 }
 
-.eyeline_collapsingGroupBody > table > tbody > tr > td {
+.eyeline_collapsingGroupBody:nth-child(2) > table > tbody > tr > td {
   width: 50%;
 }
 
@@ -57,4 +57,31 @@
 .page-body {
   // 16 px (typical margin-top for collapsing groups) - 5px (footer of page body)
   margin-bottom: 11px;
+}
+
+div.eyeline_inputDate input {
+  width: 130px;
+}
+
+.eyeline_inputDate, .eyeline_inputText {
+  padding-top: 5px;
+  padding-bottom: 10px;
+}
+
+select#accessNumber {
+  width: 100%;
+}
+
+.eyeline_collapsingGroupBody {
+  padding-top: 5px;
+}
+
+#groupFilter_body {
+  table:first-child > tbody > tr > td {
+    width: 33%;
+  }
+}
+
+.resultsTable {
+  width: 490px !important;
 }

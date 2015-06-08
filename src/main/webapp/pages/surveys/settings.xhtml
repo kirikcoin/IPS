@@ -114,9 +114,28 @@
               <h:outputLink value="results.faces?id=#{surveySettingsController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.results']}"/>
               </h:outputLink>
-              <h:outputLink value="statistics.faces?id=#{surveySettingsController.surveyId}">
-                <h:outputText value="#{bundle['survey.details.tab.stats']}"/>
-              </h:outputLink>
+              <h:panelGroup layout="block">
+                <h:outputLink value="#">
+                  <h:outputText value="#{bundle['survey.details.tab.stats']}"/> &#x25BE;
+                </h:outputLink>
+                <ul>
+                  <li>
+                    <h:outputLink value="statistics-results.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.response']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics-deliveries.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.delivery']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics-c2s.faces?id=#{surveyResultsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.c2s']}"/>
+                    </h:outputLink>
+                  </li>
+                </ul>
+              </h:panelGroup>
               <h:outputLink value="invitations.faces?id=#{surveySettingsController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
               </h:outputLink>
@@ -172,12 +191,6 @@
                                  for="client"/>
                   <h:outputText id="client"
                                 value="#{surveySettingsController.persistedSurvey.client.fullName}"/>
-
-                  <!-- Access number -->
-                  <h:outputLabel value="#{bundle['survey.list.table.access.number']}:"
-                                 for="accessNumber"/>
-                  <h:outputText id="accessNumber"
-                                value="#{surveySettingsController.accessNumberNumber}"/>
 
                   <!-- Poll external URL -->
                   <h:outputLabel value="#{bundle['survey.external.url']}"
@@ -237,14 +250,6 @@
                                      style="margin-left: 0; margin-right: 0">
                       <f:selectItems value="#{clientController.getClients(userSession.currentUser)}" />
                     </h:selectOneMenu>
-
-                    <h:outputLabel value="#{bundle['survey.list.table.access.number']}:"
-                                   for="newAccessNumber"/>
-                    <h:selectOneMenu id="newAccessNumber"
-                                     value="#{surveySettingsController.accessNumberId}">
-                      <f:selectItems value="#{surveySettingsController.availableAccessNumbers}"/>
-                    </h:selectOneMenu>
-
                   </h:panelGrid>
 
                   <eye:buttons>
@@ -259,6 +264,75 @@
                       <h:outputLink styleClass="button-green"
                                     value="#"
                                     onclick="return page.onEditSettingsCancel();">
+                        <h:outputText value="#{bundle['survey.create.button.cancel']}"/>
+                      </h:outputLink>
+                    </eye:button>
+                    <eye:space/>
+                  </eye:buttons>
+                </h:panelGroup>
+
+              </h:panelGroup>
+            </eye:collapsingGroup>
+
+
+            <!--
+                Access number settings.
+            -->
+
+            <eye:collapsingGroup opened="true" id="groupAccessNumbers">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['survey.list.table.access.numbers']}"/>
+                  <h:commandLink value="#{bundle['survey.settings.modify']}"
+                                 onclick="return page.onEditAccessNumbersClick();"
+                                 styleClass="modify-left"
+                                 rendered="#{userSession.surveyModificationAllowed}"/>
+                </h:panelGroup>
+              </f:facet>
+              <h:panelGroup>
+                <h:panelGrid id="accessNumbersDisplay"
+                             styleClass="accessNumbersDisplay"
+                             columns="2"
+                             columnClasses="settings-left,settings-right">
+
+                  <!-- List of numbers -->
+                  <h:outputLabel value="#{bundle['survey.list.table.access.numbers.list']}"
+                                 for="accessNumbers"/>
+                  <h:outputText id="accessNumbers"
+                                value="#{surveySettingsController.readableAccessNumbers}"/>
+                </h:panelGrid>
+
+                <h:panelGroup id="accessNumbersDialog"
+                              style="display: none"
+                              layout="block"
+                              rendered="#{userSession.surveyModificationAllowed}">
+
+                  <eye:dynamicTable value="#{surveySettingsController.accessNumbersModel}"
+                                    tableClass="table-narrow"
+                                    dragRows="false">
+                    <eye:selectColumn name="number"
+                                      values="#{surveySettingsController.availableAccessNumbers}"
+                                      var="var"
+                                      itemLabel="#{var.label}"
+                                      itemValue="#{var.value}"
+                                      itemDescription="#{var.description}"
+                                      itemDisabled="#{var.disabled}"
+                                      allowEditAfterAdd="true"
+                                      uniqueValues="true"/>
+                  </eye:dynamicTable>
+
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green btnSubmit"
+                                     value="#{bundle['survey.settings.save']}"
+                                     action="#{surveySettingsController.saveAccessNumbers}">
+                        <f:param name="errorId" value="accessNumbersDialog"/>
+                      </h:commandLink>
+                    </eye:button>
+                    <eye:button>
+                      <h:outputLink styleClass="button-green"
+                                    value="#"
+                                    onclick="return page.onEditAccessNumbersCancel();">
                         <h:outputText value="#{bundle['survey.create.button.cancel']}"/>
                       </h:outputLink>
                     </eye:button>

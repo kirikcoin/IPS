@@ -43,7 +43,7 @@
 
   <context-param>
     <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
-    <param-value>-1</param-value>
+    <param-value>0</param-value>
   </context-param>
 
   <context-param>
@@ -293,6 +293,21 @@
     <auth-constraint>
       <role-name>admin</role-name>
       <role-name>manager</role-name>
+    </auth-constraint>
+    <user-data-constraint>
+      <transport-guarantee>NONE</transport-guarantee>
+    </user-data-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Global statistics</web-resource-name>
+      <url-pattern>/pages/statistics/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+      <role-name>manager</role-name>
+      <role-name>client</role-name>
     </auth-constraint>
     <user-data-constraint>
       <transport-guarantee>NONE</transport-guarantee>

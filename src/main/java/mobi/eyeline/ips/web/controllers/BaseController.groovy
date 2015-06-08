@@ -26,7 +26,7 @@ import static java.util.Collections.emptyMap
 @Slf4j('logger')
 abstract class BaseController implements Serializable {
 
-  @Inject private UserRepository userRepository
+  @Inject private transient UserRepository userRepository
 
   BaseController() {
     logger.trace "Controller instantiated: [${this.class.name}]"

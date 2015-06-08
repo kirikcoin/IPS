@@ -1,10 +1,12 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.model.AccessNumber;
 import mobi.eyeline.ips.model.ExtLinkPage;
 import mobi.eyeline.ips.model.Page;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Survey;
+import mobi.eyeline.ips.repository.AccessNumberRepository;
 import mobi.eyeline.ips.repository.ExtLinkPageRepository;
 import mobi.eyeline.ips.repository.InvitationDeliveryRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
@@ -17,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 public class SurveyService {
 
   private static final Logger logger = LoggerFactory.getLogger(SurveyService.class);
@@ -27,19 +31,22 @@ public class SurveyService {
   private final QuestionOptionRepository questionOptionRepository;
   private final SurveyInvitationRepository surveyInvitationRepository;
   private final InvitationDeliveryRepository invitationDeliveryRepository;
+  private final AccessNumberRepository accessNumberRepository;
 
   public SurveyService(SurveyRepository surveyRepository,
                        QuestionRepository questionRepository,
                        ExtLinkPageRepository extLinkPageRepository,
                        QuestionOptionRepository questionOptionRepository,
                        SurveyInvitationRepository surveyInvitationRepository,
-                       InvitationDeliveryRepository invitationDeliveryRepository) {
+                       InvitationDeliveryRepository invitationDeliveryRepository,
+                       AccessNumberRepository accessNumberRepository) {
     this.surveyRepository = surveyRepository;
     this.questionRepository = questionRepository;
     this.extLinkPageRepository = extLinkPageRepository;
     this.questionOptionRepository = questionOptionRepository;
     this.surveyInvitationRepository = surveyInvitationRepository;
     this.invitationDeliveryRepository = invitationDeliveryRepository;
+    this.accessNumberRepository = accessNumberRepository;
   }
 
   /**
@@ -161,9 +168,15 @@ public class SurveyService {
   public void delete(Survey survey) {
     survey.setActive(false);
 
-    if (survey.getStatistics().getAccessNumber() != null) {
-      survey.getStatistics().setAccessNumber(null);
+    // Unbind access numbers so they get back to the common pool.
+    final List<AccessNumber> associatedC2S = accessNumberRepository.list(survey);
+    if (!isEmpty(associatedC2S)) {
+      for (AccessNumber number : associatedC2S) {
+        number.setSurveyStats(null);
+        accessNumberRepository.update(number);
+      }
     }
+
     surveyRepository.update(survey);
   }
 }

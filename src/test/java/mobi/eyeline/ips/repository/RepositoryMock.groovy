@@ -32,11 +32,11 @@ class RepositoryMock {
     surveyStatsRepository = new SurveyStatsRepository(db)
     surveyRepository = new SurveyRepository(db)
     questionOptionRepository = new QuestionOptionRepository(db)
-    answerRepository = new AnswerRepository(db)
+    accessNumberRepository = new AccessNumberRepository(db)
+    answerRepository = new AnswerRepository(db, accessNumberRepository)
     surveyInvitationRepository = new SurveyInvitationRepository(db)
     invitationDeliveryRepository = new InvitationDeliveryRepository(db)
     deliverySubscriberRepository = new DeliverySubscriberRepository(db)
     surveyPatternRepository = new SurveyPatternRepository(db)
-    accessNumberRepository = new AccessNumberRepository(db)
   }
 }

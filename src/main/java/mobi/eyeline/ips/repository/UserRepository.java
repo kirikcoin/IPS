@@ -116,26 +116,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
                          int limit,
                          int offset) {
     final Session session = getSessionFactory().getCurrentSession();
-    final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
-
-    if (isNotBlank(filter)) {
-      filter = filter.trim();
-
-      final Criterion filters = or(
-          EscapedRestrictions.ilike("fullName", filter, MatchMode.ANYWHERE),
-          EscapedRestrictions.ilike("company", filter, MatchMode.ANYWHERE),
-          EscapedRestrictions.ilike("login", filter, MatchMode.ANYWHERE),
-          EscapedRestrictions.ilike("email", filter, MatchMode.ANYWHERE)
-      );
-
-      criteria.add(filters);
-    }
-
-    if (manager != null) {
-      criteria.add(Restrictions.eq("manager", manager));
-    }
-
-    criteria.add(Restrictions.eq("role", Role.CLIENT));
+    final Criteria criteria = createQuery(manager, filter, session);
     criteria.setFirstResult(offset).setMaxResults(limit);
 
     // TODO: may be in controller too
@@ -170,6 +151,14 @@ public class UserRepository extends BaseRepository<User, Integer> {
 
   public int count(User manager, String filter) {
     final Session session = getSessionFactory().getCurrentSession();
+
+    final Criteria criteria = createQuery(manager, filter, session);
+    criteria.setProjection(Projections.rowCount());
+
+    return fetchInt(criteria);
+  }
+
+  private Criteria createQuery(User manager, String filter, Session session) {
     final Criteria criteria = session.createCriteria(User.class).setCacheable(true);
 
     if (isNotBlank(filter)) {
@@ -190,9 +179,7 @@ public class UserRepository extends BaseRepository<User, Integer> {
     }
 
     criteria.add(Restrictions.eq("role", Role.CLIENT));
-    criteria.setProjection(Projections.rowCount());
-
-    return ((Number) criteria.uniqueResult()).intValue();
+    return criteria;
   }
 
 }

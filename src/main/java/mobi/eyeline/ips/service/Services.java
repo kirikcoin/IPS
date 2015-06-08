@@ -177,6 +177,11 @@ public class Services {
   }
 
   @Produces
+  public AccessNumbersService getAccessNumbersService() {
+    return instance.getAccessNumbersService();
+  }
+
+  @Produces
   public MadvUpdateService getMadvUpdateService() {
     return instance.getMadvUpdateService();
   }

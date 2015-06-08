@@ -49,6 +49,18 @@ var page = {
       });
     });
 
+    // Prohibit adding access number entry with a placeholder value.
+    $(function () {
+      var $accessNumbersDialog = $('#accessNumbersDialog'),
+          $addBtn = $accessNumbersDialog.find('.eyeline_addbutton'),
+          addBtn = $addBtn[0],
+          prevHandler = addBtn.onclick;
+      addBtn.onclick = function (e) {
+        var $newValue = $accessNumbersDialog.find('select[id$="newcell_number"]');
+        if ($newValue.val() > 0) prevHandler(e);
+      }
+    });
+
   },
 
   showSurveyDeleteDialog: function (id) {
@@ -116,6 +128,25 @@ var page = {
 
     $("#newSurveyStartDate").val($("#settingsStartDate").val());
     $("#newSurveyEndDate").val($("#settingsEndDate").val());
+
+    page.enableEditables();
+    ips.message.hideAll();
+
+    return false;
+  },
+
+  onEditAccessNumbersClick: function () {
+    $('.accessNumbersDisplay').hide();
+    $('#accessNumbersDialog').show();
+
+    page.disableEditables();
+
+    return false;
+  },
+
+  onEditAccessNumbersCancel: function() {
+    $('#accessNumbersDialog').hide();
+    $('.accessNumbersDisplay').show();
 
     page.enableEditables();
     ips.message.hideAll();

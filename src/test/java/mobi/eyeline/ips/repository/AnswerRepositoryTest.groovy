@@ -19,34 +19,37 @@ class AnswerRepositoryTest extends DbTestCase {
 
   void testCount1() {
     fillTestData()
-    assertEquals([3, 3, 3], questionRepository.list().collect { answerRepository.count it })
+    assertEquals([3, 3, 3], questionRepository.list()
+        .collect { answerRepository.count it, null, null, null })
   }
 
   void testCount2() {
     fillTestData()
 
     assertEquals([2, 1, 0, 1, 0, 1, 0, 1, 1],
-        questionOptionRepository.list().collect { answerRepository.count it })
+        questionOptionRepository.list().collect { answerRepository.count it, null, null, null })
   }
 
   void testCount3() {
     fillTestData()
 
-    assertEquals(1, answerRepository.count(survey(1), now, now + 1, '', null))
-    assertEquals(1, answerRepository.count(survey(1), now, now + 2, '02', null))
+    assertEquals(1, answerRepository.count(survey(1), now, now + 1, '', null, null))
+    assertEquals(1, answerRepository.count(survey(1), now, now + 2, '02', null, null))
   }
 
   void testCount4() {
     fillTestData()
 
-    assertEquals([0, 1, 1], questionRepository.list().collect(answerRepository.&countTextAnswers))
+    assertEquals([0, 1, 1], questionRepository.list().collect { q ->
+      answerRepository.countTextAnswers(q, null, null, null)
+    })
   }
 
   void testList1() {
     fillTestData()
 
     def results = answerRepository.list(
-        survey(1), now, now + 4, '', null, false, Integer.MAX_VALUE, 0)
+        survey(1), now, now + 4, '', null, null, false, Integer.MAX_VALUE, 0)
 
     assertThat results, hasSize(2)
 
@@ -67,7 +70,7 @@ class AnswerRepositoryTest extends DbTestCase {
     fillTestData()
 
     def results = answerRepository.list(
-        survey(1), now, now + 4, '02', null, false, Integer.MAX_VALUE, 0)
+        survey(1), now, now + 4, '02', null, null, false, Integer.MAX_VALUE, 0)
 
     assertThat results, hasSize(1)
 
@@ -82,7 +85,7 @@ class AnswerRepositoryTest extends DbTestCase {
     fillTestData()
 
     def results = answerRepository.list(
-        survey(1), now, now + 4, '', 'respondent', true, Integer.MAX_VALUE, 0)
+        survey(1), now, now + 4, '', null, 'respondent', true, Integer.MAX_VALUE, 0)
 
     assertThat results, hasSize(2)
 

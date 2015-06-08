@@ -1,14 +1,13 @@
 package mobi.eyeline.ips.repository;
 
 import mobi.eyeline.ips.model.AccessNumber;
+import mobi.eyeline.ips.model.Survey;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -18,8 +17,6 @@ import static org.hibernate.criterion.Restrictions.or;
 import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
 
 public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer> {
-
-  private static final Logger logger = LoggerFactory.getLogger(AccessNumberRepository.class);
 
   public AccessNumberRepository(DB db) {
     super(db);
@@ -31,21 +28,7 @@ public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer
                                  int limit,
                                  int offset) {
     final Session session = getSessionFactory().getCurrentSession();
-    final Criteria criteria = session.createCriteria(AccessNumber.class);
-
-    criteria.createAlias("surveyStats", "surveyStats", LEFT_OUTER_JOIN);
-    criteria.createAlias("surveyStats.survey", "survey", LEFT_OUTER_JOIN);
-    criteria.createAlias("survey.details", "details", LEFT_OUTER_JOIN);
-
-    if (isNotBlank(filter)) {
-      filter = filter.trim();
-
-      final Criterion filters = or(
-          EscapedRestrictions.ilike("number", filter, MatchMode.ANYWHERE),
-          EscapedRestrictions.ilike("details.title", filter, MatchMode.ANYWHERE)
-      );
-      criteria.add(filters);
-    }
+    final Criteria criteria = createQuery(session, filter);
 
     criteria.setFirstResult(offset).setMaxResults(limit);
 
@@ -69,8 +52,7 @@ public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer
     return (List<AccessNumber>) criteria.list();
   }
 
-  public int count(String filter) {
-    final Session session = getSessionFactory().getCurrentSession();
+  private Criteria createQuery(Session session, String filter) {
     final Criteria criteria = session.createCriteria(AccessNumber.class);
 
     criteria.createAlias("surveyStats", "surveyStats", LEFT_OUTER_JOIN);
@@ -86,10 +68,16 @@ public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer
       );
       criteria.add(filters);
     }
+    return criteria;
+  }
+
+  public int count(String filter) {
+    final Session session = getSessionFactory().getCurrentSession();
+    final Criteria criteria = createQuery(session, filter);
 
     criteria.setProjection(Projections.rowCount());
 
-    return ((Number) criteria.uniqueResult()).intValue();
+    return fetchInt(criteria);
   }
 
   public AccessNumber find(String number) {
@@ -97,5 +85,17 @@ public class AccessNumberRepository extends BaseRepository<AccessNumber, Integer
 
     final Criteria criteria = session.createCriteria(AccessNumber.class);
     return (AccessNumber) criteria.add(eq("number", number)).uniqueResult();
+  }
+
+  public List<AccessNumber> list(Survey survey) {
+    final Session session = getSessionFactory().openSession();
+    try {
+      final Criteria criteria = session.createCriteria(AccessNumber.class);
+      //noinspection unchecked
+      return (List<AccessNumber>) criteria.add(eq("surveyStats", survey.getStatistics())).list();
+
+    } finally {
+      session.close();
+    }
   }
 }

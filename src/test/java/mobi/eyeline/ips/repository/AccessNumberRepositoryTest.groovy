@@ -25,25 +25,30 @@ class AccessNumberRepositoryTest extends DbTestCase {
 
     [
         survey(id: 1) {
-          statistics(accessNumber: numbers[0])
+          statistics([:])
         },
 
         survey(id: 2) {
-          statistics(accessNumber: numbers[1])
+          statistics([:])
         },
 
         survey(id: 3) {
-          statistics(accessNumber: numbers[2])
+          statistics([:])
         },
 
         survey(id: 4) {
-          statistics(accessNumber: numbers[3])
+          statistics([:])
         }
 
     ].each { s ->
       s.startDate = new Date()
       s.endDate = new Date()
       surveyRepository.save(s)
+    }
+
+    numbers.eachWithIndex { num, i ->
+      num.surveyStats = surveyRepository.get(i + 1).statistics
+      accessNumberRepository.update(num)
     }
   }
 

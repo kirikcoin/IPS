@@ -9,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -31,9 +30,6 @@ public class SurveyStats implements Serializable {
   @GenericGenerator(name = "SharedPrimaryKeyGenerator", strategy = "foreign", parameters = @Parameter(name = "property", value = "survey"))
   private Integer id;
 
-  /*@Id
-  @JoinColumn(name = "survey_id")
-  @OneToOne(optional = false, cascade = CascadeType.ALL)*/
   @OneToOne
   @PrimaryKeyJoinColumn
   private Survey survey;
@@ -49,13 +45,6 @@ public class SurveyStats implements Serializable {
    */
   @Column(name = "campaign")
   private String campaign;
-
-  /**
-   * Ссылка на C2S/USSD-номер опроса.
-   */
-  @JoinColumn(name = "number_id")
-  @OneToOne(optional = true)
-  private AccessNumber accessNumber;
 
   /**
    * Дата последнего обновления количества показов (поля sent).
@@ -108,14 +97,6 @@ public class SurveyStats implements Serializable {
     this.campaign = campaign;
   }
 
-  public AccessNumber getAccessNumber() {
-    return accessNumber;
-  }
-
-  public void setAccessNumber(AccessNumber accessNumber) {
-    this.accessNumber = accessNumber;
-  }
-
   public Date getLastUpdate() {
     return lastUpdate;
   }
@@ -137,7 +118,6 @@ public class SurveyStats implements Serializable {
         "surveyId=" + getSurvey().getId() +
         ", sentCount=" + sentCount +
         ", campaign='" + campaign + '\'' +
-        ", accessNumber='" + accessNumber + '\'' +
         ", lastUpdate=" + lastUpdate +
         ", updateStatus=" + updateStatus +
         '}';

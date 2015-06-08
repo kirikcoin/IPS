@@ -43,6 +43,7 @@ class ServicesImpl {
   final CouponService couponService
   final UssdService ussdService
   final EsdpService esdpService
+  final AccessNumbersService accessNumbersService
   final MadvUpdateService madvUpdateService
   final SegmentationService segmentationService
   final ResultsExportService resultsExportService
@@ -54,7 +55,7 @@ class ServicesImpl {
   final TimeZoneService timeZoneService
 
   ServicesImpl(Config config) {
-    db = new DB(config.getDatabaseProperties())
+    db = new DB(config.databaseProperties)
 
     timeSource = new TimeSource()
 
@@ -66,12 +67,12 @@ class ServicesImpl {
     surveyStatsRepository = new SurveyStatsRepository(db)
     surveyRepository = new SurveyRepository(db)
     questionOptionRepository = new QuestionOptionRepository(db)
-    answerRepository = new AnswerRepository(db)
+    accessNumberRepository = new AccessNumberRepository(db)
+    answerRepository = new AnswerRepository(db, accessNumberRepository)
     surveyInvitationRepository = new SurveyInvitationRepository(db)
     invitationDeliveryRepository = new InvitationDeliveryRepository(db)
     deliverySubscriberRepository = new DeliverySubscriberRepository(db)
     surveyPatternRepository = new SurveyPatternRepository(db)
-    accessNumberRepository = new AccessNumberRepository(db)
 
     madvSoapApi = new MadvSoapApi(config)
     madvService = new MadvService()
@@ -82,16 +83,17 @@ class ServicesImpl {
         extLinkPageRepository,
         questionOptionRepository,
         surveyInvitationRepository,
-        invitationDeliveryRepository)
+        invitationDeliveryRepository,
+        accessNumberRepository)
 
-    templateService = new TemplateService(config.getLoginUrl())
+    templateService = new TemplateService(config.loginUrl)
     mailService = new MailService(templateService,
         new SmtpSender(
-            config.getSmtpHost(),
-            config.getSmtpPort(),
-            config.getSmtpUsername(),
-            config.getSmtpPassword(),
-            config.getMailFrom()))
+            config.smtpHost,
+            config.smtpPort,
+            config.smtpUsername,
+            config.smtpPassword,
+            config.mailFrom))
     esdpServiceSupport = new EsdpServiceSupport(config)
 
     pushService = new PushService(config, esdpServiceSupport)
@@ -109,7 +111,8 @@ class ServicesImpl {
         questionRepository,
         questionOptionRepository,
         extLinkPageRepository)
-    esdpService = new EsdpService(config, ussdService, esdpServiceSupport, surveyRepository)
+    esdpService = new EsdpService(config, ussdService, esdpServiceSupport, surveyRepository, accessNumberRepository)
+    accessNumbersService = new AccessNumbersService(accessNumberRepository, esdpService)
 
     madvUpdateService = new MadvUpdateService(
         config,

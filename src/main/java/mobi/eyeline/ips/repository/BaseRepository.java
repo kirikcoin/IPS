@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.repository;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -57,12 +58,19 @@ public abstract class BaseRepository<E, K extends Serializable> {
   public E load(K id) {
     final Session session = getSessionFactory().openSession();
     try {
-      //noinspection unchecked
-      return (E) session.load(entityClass, id);
+      return load(session, id);
 
     } finally {
       session.close();
     }
+  }
+
+  /**
+   * Fails if nothing found.
+   */
+  public E load(Session session, K id) {
+    //noinspection unchecked
+    return (E) session.load(entityClass, id);
   }
 
   public List<E> load(List<K> ids) {
@@ -200,6 +208,10 @@ public abstract class BaseRepository<E, K extends Serializable> {
     } finally {
       session.close();
     }
+  }
+
+  protected int fetchInt(Criteria criteria) {
+    return ((Number) criteria.uniqueResult()).intValue();
   }
 
 }

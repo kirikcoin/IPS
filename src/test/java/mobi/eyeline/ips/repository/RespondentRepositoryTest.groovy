@@ -1,13 +1,14 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.Respondent
+import mobi.eyeline.ips.model.Survey
 
 import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 
 @Mixin(RepositoryMock)
 class RespondentRepositoryTest extends DbTestCase {
 
-  def survey1, survey2, survey3
+  Survey survey1, survey2, survey3
 
   void setUp() {
     super.setUp()
@@ -18,24 +19,27 @@ class RespondentRepositoryTest extends DbTestCase {
   }
 
   void testCountBySurvey() {
-    assertEquals 1, respondentRepository.countBySurvey(survey1)
-    assertEquals 2, respondentRepository.countBySurvey(survey2)
-    assertEquals 3, respondentRepository.countBySurvey(survey3)
+    assertEquals 1, respondentRepository.countBySurvey(survey1, null, null, false, null)
+    assertEquals 2, respondentRepository.countBySurvey(survey2, null, null, false, null)
+    assertEquals 3, respondentRepository.countBySurvey(survey3, null, null, false, null)
   }
 
   void testCountFinishedBySurvey() {
-    assertEquals 0, respondentRepository.countFinishedBySurvey(survey1)
-    assertEquals 1, respondentRepository.countFinishedBySurvey(survey2)
-    assertEquals 3, respondentRepository.countFinishedBySurvey(survey3)
+    assertEquals 0, respondentRepository.countFinishedBySurvey(survey1, false, null)
+    assertEquals 1, respondentRepository.countFinishedBySurvey(survey2, false, null)
+    assertEquals 3, respondentRepository.countFinishedBySurvey(survey3, false, null)
 
   }
 
   void testFindOrCreate() {
-    respondentRepository.findOrCreate('79130000001', survey1)
+    respondentRepository.findOrCreate('79130000001', survey1, null)
     assertEquals 6, respondentRepository.list().size()
 
-    respondentRepository.findOrCreate('79130000002', survey1)
+    respondentRepository.findOrCreate('79130000001', survey1, '123')
     assertEquals 7, respondentRepository.list().size()
+
+    respondentRepository.findOrCreate('79130000002', survey1, null)
+    assertEquals 8, respondentRepository.list().size()
   }
 
   private void fillTestData() {

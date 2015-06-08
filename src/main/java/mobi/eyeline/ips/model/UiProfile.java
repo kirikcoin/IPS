@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 import static mobi.eyeline.ips.model.UiProfile.Skin.MOBAK;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
@@ -21,7 +22,7 @@ import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 @Table(name = "ui_profiles")
 @Proxy(lazy = false)
 @Cache(usage = READ_WRITE)
-public class UiProfile {
+public class UiProfile implements Serializable {
 
   @Id
   @Column(name = "id")

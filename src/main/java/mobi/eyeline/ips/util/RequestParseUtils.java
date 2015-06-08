@@ -3,13 +3,14 @@ package mobi.eyeline.ips.util;
 import mobi.eyeline.ips.messages.MissingParameterException;
 import org.apache.commons.lang3.BooleanUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Utilities for {@code String -> String[]} maps handing.
- */
 public class RequestParseUtils {
 
   public static int getInt(Map<String, String[]> map, String key)
@@ -100,5 +101,25 @@ public class RequestParseUtils {
     result.append("}");
 
     return result.toString();
+  }
+
+  public static Map<String, String> getHeaders(final HttpServletRequest request) {
+    return new LinkedHashMap<String, String>() {{
+      final Enumeration<String> names = request.getHeaderNames();
+      while (names.hasMoreElements()) {
+        final String name = names.nextElement();
+        put(name, request.getHeader(name));
+      }
+    }};
+  }
+
+  public static Map<String, Object> getSessionAttributes(final HttpSession session) {
+    return new LinkedHashMap<String, Object>() {{
+      final Enumeration<String> names = session.getAttributeNames();
+      while (names.hasMoreElements()) {
+        final String name = names.nextElement();
+        put(name, session.getAttribute(name));
+      };
+    }};
   }
 }

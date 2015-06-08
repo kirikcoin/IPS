@@ -47,7 +47,8 @@ class MadvUpdateServiceTest extends DbTestCase {
         extLinkPageRepository,
         questionOptionRepository,
         surveyInvitationRepository,
-        invitationDeliveryRepository)
+        invitationDeliveryRepository,
+        accessNumberRepository)
   }
 
   MadvUpdateService createService(Config config, MadvSoapApi api) {

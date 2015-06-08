@@ -1,0 +1,215 @@
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:ui="http://java.sun.com/jsf/facelets"
+        xmlns:eye="http://jsfcomponents.eyeline.mobi"
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:ips="http://java.sun.com/jsf/composite/ipsc">
+
+  <ui:composition template="/templates/main.xhtml">
+    <ui:define name="head">
+      <h:outputStylesheet library="pages" name="surveys/statistics-results.less"/>
+      <h:outputScript library="pages" name="surveys/statistics-results.js" target="head"/>
+    </ui:define>
+
+    <ui:define name="scripts">
+      <h:outputScript>
+        page.INVALID_DATE_MSG = '#{bundle["survey.validation.date.format"]}';
+        page.init();
+
+        $(function () {
+          $('form').attr('action',
+            '/pages/surveys/statistics-results.faces?id=#{surveyResultsStatsController.surveyId}');
+        });
+      </h:outputScript>
+
+    </ui:define>
+
+    <ui:define name="content">
+      <h:form id="content" prependId="false">
+
+        <h:inputHidden id="id" value="#{surveyResultsStatsController.surveyId}"/>
+
+        <h:panelGroup layout="block" styleClass="border-shadow">
+
+          <ips:survey-page-header survey="#{surveyResultsStatsController.survey}"/>
+
+          <h:panelGroup layout="block" styleClass="tabs">
+            <h:panelGrid columns="4"
+                         columnClasses="tab,tab,tab_active,tab"
+                         style="width:auto">
+              <h:outputLink value="settings.faces?id=#{surveyResultsStatsController.surveyId}">
+                <h:outputText value="#{bundle['survey.details.tab.settings']}"/>
+              </h:outputLink>
+              <h:outputLink value="results.faces?id=#{surveyResultsStatsController.surveyId}">
+                <h:outputText value="#{bundle['survey.details.tab.results']}"/>
+              </h:outputLink>
+              <h:panelGroup layout="block">
+                <h:outputLink value="#">
+                  <h:outputText value="#{bundle['survey.details.tab.stats']}"/> &#x25BE;
+                </h:outputLink>
+                <ul>
+                  <li>
+                    <h:outputLink value="#">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.response']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics-deliveries.faces?id=#{surveyResultsStatsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.delivery']}"/>
+                    </h:outputLink>
+                  </li>
+                  <li>
+                    <h:outputLink value="statistics-c2s.faces?id=#{surveyResultsStatsController.surveyId}">
+                      <h:outputText value="#{bundle['survey.details.tab.stats.c2s']}"/>
+                    </h:outputLink>
+                  </li>
+                </ul>
+              </h:panelGroup>
+              <h:outputLink value="invitations.faces?id=#{surveyResultsStatsController.surveyId}">
+                <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
+              </h:outputLink>
+            </h:panelGrid>
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" styleClass="page-body">
+
+            <eye:collapsingGroup opened="true" id="groupFilter">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['results.group.filter']}"/>
+                </h:panelGroup>
+              </f:facet>
+
+              <h:panelGrid columns="3">
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.period.start']}:" for="periodStart"/>
+                  <eye:inputDate id="periodStart"
+                                 inputTime="true"
+                                 value="#{surveyResultsStatsController.periodStart}"
+                                 minDate="#{surveyResultsStatsController.survey.startDate}"
+                                 maxDate="#{surveyResultsStatsController.survey.endDate}">
+                    <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                  </eye:inputDate>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.period.end']}:" for="periodEnd"/>
+                  <eye:inputDate id="periodEnd"
+                                 inputTime="true"
+                                 value="#{surveyResultsStatsController.periodEnd}"
+                                 minDate="#{surveyResultsStatsController.survey.startDate}"
+                                 maxDate="#{surveyResultsStatsController.survey.endDate}">
+                    <f:convertDateTime timeZone="#{userSession.timeZone}"/>
+                  </eye:inputDate>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                  <h:outputLabel value="#{bundle['results.access.number']}:" for="accessNumber"/>
+                  <h:selectOneMenu id="accessNumber"
+                                   value="#{surveyResultsStatsController.accessNumber}">
+                    <f:selectItems value="#{surveyResultsStatsController.accessNumbers}"/>
+                  </h:selectOneMenu>
+                </h:panelGroup>
+
+              </h:panelGrid>
+
+              <eye:buttons>
+                <eye:button>
+                  <h:commandLink value="#{bundle['results.button.show']}"
+                                 styleClass="button-green"
+                                 onclick="return page.onShow();">
+                    <f:ajax execute="@all" render=":charts"/>
+                  </h:commandLink>
+                </eye:button>
+              </eye:buttons>
+            </eye:collapsingGroup>
+
+            <eye:collapsingGroup opened="true" id="groupResults">
+              <f:facet name="header">
+                <h:outputText value="#{bundle['survey.stats.results']}"/>
+              </f:facet>
+
+              <eye:buttons>
+                <eye:button>
+                  <h:commandLink styleClass="button-green"
+                                 value="#{bundle['survey.stats.download']}">
+                    <eye:fileDownloadListener method="#{surveyResultsStatsController.download}"
+                                              contentType="text/csv"
+                                              filename="survey_#{surveyResultsStatsController.surveyId}_statistics.csv"/>
+                  </h:commandLink>
+                </eye:button>
+              </eye:buttons>
+
+              <h:panelGroup layout="block" id="charts">
+                <c:forEach items="#{surveyResultsStatsController.survey.activeQuestions}" var="question">
+
+                  <h3>
+                    <h:outputText value="#{question.activeIndex + 1}. #{question.title}"/>
+                  </h3>
+
+                  <h:outputText value="#{bundle['survey.stats.question.no.data']}"
+                                styleClass="placeholder"
+                                rendered="#{surveyResultsStatsController.getTotalCount(question) eq 0}"/>
+
+                  <h:panelGrid columns="2"
+                               styleClass="question_details"
+                               rendered="#{surveyResultsStatsController.getTotalCount(question) ne 0}">
+                    <eye:pieChart id="optionsRatio_#{question.id}"
+                                  pie="#{surveyResultsStatsController.getOptionsRatioModel(question)}"
+                                  immediatlyRender="true"
+                                  height="500"
+                                  width="490">
+                      <c:forEach items="#{question.activeOptions}" var="opt">
+                        <eye:pie name="#{opt.answer}"
+                                 color="#{surveyResultsStatsController.colorLoop(opt)}"/>
+                      </c:forEach>
+
+                      <eye:pie name="#{bundle['survey.stats.arbitrary.answer']}"
+                               color="#B3B3B2"/>
+
+                    </eye:pieChart>
+                    <h:panelGrid>
+                      <h:panelGrid columns="3"
+                                   styleClass="resultsTable eyeline_list grid"
+                                   columnClasses="col1,col2,col3">
+                        <h:outputText/>
+                        <h:outputText value="#{bundle['survey.stats.answer']}"/>
+                        <h:outputText value="#{bundle['survey.stats.count']}"/>
+
+                        <c:forEach items="#{question.activeOptions}" var="opt">
+                          <h:panelGroup style="background-color: #{surveyResultsStatsController.colorLoop(opt)}"
+                                        styleClass="legend-color"
+                                        layout="block"/>
+                          <h:outputText value="#{opt.answer}"/>
+                          <h:outputText value="#{surveyResultsStatsController.count(opt)}"/>
+                        </c:forEach>
+                        <c:if test="#{question.enabledDefaultAnswer}">
+                          <h:panelGroup style="background-color: #B3B3B2"
+                                        styleClass="legend-color"
+                                        layout="block"/>
+                          <h:outputText value="#{bundle['survey.stats.arbitrary.answer']}" styleClass="italic"/>
+                          <h:outputText value="#{surveyResultsStatsController.getTextAnswersCount(question)}"/>
+                        </c:if>
+                      </h:panelGrid>
+                    </h:panelGrid>
+                  </h:panelGrid>
+
+
+                </c:forEach>
+              </h:panelGroup>
+
+            </eye:collapsingGroup>
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" styleClass="page-footer"/>
+
+        </h:panelGroup>
+
+      </h:form>
+
+    </ui:define>
+
+  </ui:composition>
+
+</f:view>

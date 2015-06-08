@@ -2,17 +2,19 @@ package mobi.eyeline.ips.service
 
 import mobi.eyeline.ips.external.esdp.EsdpServiceManager
 import mobi.eyeline.ips.external.esdp.Service
-import mobi.eyeline.ips.model.AccessNumber
-import mobi.eyeline.ips.model.Survey
-import mobi.eyeline.ips.model.User
+import mobi.eyeline.ips.model.*
 import mobi.eyeline.ips.properties.Config
 import mobi.eyeline.ips.properties.DefaultMockConfig
+import mobi.eyeline.ips.repository.AccessNumberRepository
+import mobi.eyeline.ips.repository.DbTestCase
+import mobi.eyeline.ips.repository.RepositoryMock
 
 import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.hasSize
 
-class EsdpServiceTest extends GroovyTestCase {
+@Mixin(RepositoryMock)
+class EsdpServiceTest extends DbTestCase {
 
   UssdService ussdService
 
@@ -22,6 +24,8 @@ class EsdpServiceTest extends GroovyTestCase {
   void setUp() {
     super.setUp()
 
+    initRepository db
+
     ussdService = new UssdService(
         new DefaultMockConfig(),
         null, null, null, null, null, null, null, null, null) {
@@ -30,7 +34,8 @@ class EsdpServiceTest extends GroovyTestCase {
     }
 
     serviceManager = new MockEsdpServiceManager()
-    esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
+    esdpService = new MockEsdpService(
+        new DefaultMockConfig(), ussdService, serviceManager, accessNumberRepository)
   }
 
   void testSave() {
@@ -71,11 +76,19 @@ class EsdpServiceTest extends GroovyTestCase {
         new Service(properties: new Service.Properties())
       }
     }
-    esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
 
-    def survey = survey(id: 42) {
+    final anrMock = new AccessNumberRepository(db) {
+      @Override List<AccessNumber> list(Survey survey) { [] }
+
+      @Override protected Class<AccessNumber> getEntityClass() { AccessNumber }
+    }
+
+    esdpService = new MockEsdpService(
+        new DefaultMockConfig(), ussdService, serviceManager, anrMock)
+
+    final survey = survey(id: 42) {
       details(title: 'Survey 1')
-      statistics(accessNumber: null)
+      statistics([:])
       owner(id: 53)
     }
 
@@ -96,29 +109,59 @@ class EsdpServiceTest extends GroovyTestCase {
         new Service(properties: new Service.Properties())
       }
     }
-    esdpService = new MockEsdpService(new DefaultMockConfig(), ussdService, serviceManager)
+    esdpService = new MockEsdpService(
+        new DefaultMockConfig(), ussdService, serviceManager, accessNumberRepository)
 
-    def survey = survey(id: 42) {
+    final uiProfile = new UiProfile()
+
+    final user = new User(
+        id: 42,
+        password: '123',
+        login: 'user',
+        fullName: 'user',
+        email: 'user@example.com',
+        role: Role.MANAGER,
+        uiProfile: uiProfile)
+
+    userRepository.save user
+
+    def survey = survey(id: 42, startDate: new Date(), endDate: new Date(), owner: user) {
       details(title: 'Survey 1')
-      statistics(accessNumber: new AccessNumber(number: '123'))
-      owner(id: 53)
+      statistics([:])
     }
+
+    final id = surveyRepository.save(survey)
+    survey = surveyRepository.get(id)
+
+    accessNumberRepository.save(new AccessNumber(number: '123', surveyStats: survey.statistics))
 
     esdpService.update(new User(), survey)
 
+    // One C2S
     assertThat serviceManager.calledMethods, hasSize(1)
     def service = serviceManager.calledMethods[0][1]
 
     assertEquals '123', service.properties.entry.find { e -> e.key == 'sip-number' }.value
     assertEquals 'Survey 1', service.title
+
+    // Two C2S entries
+    accessNumberRepository.save(new AccessNumber(number: '456', surveyStats: survey.statistics))
+    esdpService.update(new User(), survey)
+
+    service = serviceManager.calledMethods[1][1]
+
+    assertEquals '123 456', service.properties.entry.find { e -> e.key == 'sip-number' }.value
   }
 
   static class MockEsdpService extends EsdpService {
 
     final EsdpServiceManager api
 
-    MockEsdpService(Config config, UssdService ussdService, EsdpServiceManager api) {
-      super(config, ussdService, createMockEsdp(), null)
+    MockEsdpService(Config config,
+                    UssdService ussdService,
+                    EsdpServiceManager api,
+                    AccessNumberRepository accessNumberRepository) {
+      super(config, ussdService, createMockEsdp(), null, accessNumberRepository)
       this.api = api
     }
 
