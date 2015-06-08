@@ -12,7 +12,7 @@ import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.util.jsf.components.chart.pie.PieModel
 
 import javax.annotation.PostConstruct
-import javax.faces.bean.ViewScoped
+import javax.faces.view.ViewScoped
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
 import javax.inject.Inject

@@ -10,7 +10,7 @@ import mobi.eyeline.util.jsf.components.chart.bar.BarModel
 import mobi.eyeline.util.jsf.components.chart.line.LineModel
 
 import javax.annotation.PostConstruct
-import javax.faces.bean.ViewScoped
+import javax.faces.view.ViewScoped
 import javax.inject.Inject
 import javax.inject.Named
 
