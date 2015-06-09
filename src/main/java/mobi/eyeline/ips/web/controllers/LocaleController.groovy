@@ -3,8 +3,8 @@ package mobi.eyeline.ips.web.controllers
 import mobi.eyeline.ips.model.User
 import mobi.eyeline.ips.web.IPSViewHandler
 
+import javax.enterprise.context.SessionScoped
 import javax.enterprise.inject.Model
-import javax.faces.bean.SessionScoped
 import javax.faces.context.FacesContext
 
 @Model

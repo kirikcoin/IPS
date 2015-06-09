@@ -20,8 +20,8 @@ import javax.inject.Named
 @ViewScoped
 class SurveyC2sStatsController extends BaseSurveyReadOnlyController {
 
-  @Inject private RespondentRepository respondentRepository
-  @Inject private AccessNumberRepository accessNumberRepository
+  @Inject private transient RespondentRepository respondentRepository
+  @Inject private transient AccessNumberRepository accessNumberRepository
 
   Date periodStart
   Date periodEnd
