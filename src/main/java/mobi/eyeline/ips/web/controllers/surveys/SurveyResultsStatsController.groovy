@@ -12,9 +12,9 @@ import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.util.jsf.components.chart.pie.PieModel
 
 import javax.annotation.PostConstruct
-import javax.faces.view.ViewScoped
 import javax.faces.context.FacesContext
 import javax.faces.model.SelectItem
+import javax.faces.view.ViewScoped
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -24,10 +24,10 @@ import javax.inject.Named
 @ViewScoped
 class SurveyResultsStatsController extends BaseSurveyReadOnlyController {
 
-  @Inject private AnswerRepository answerRepository
-  @Inject private RespondentRepository respondentRepository
-  @Inject private SurveyService surveyService
-  @Inject private AccessNumberRepository accessNumberRepository
+  @Inject private transient AnswerRepository answerRepository
+  @Inject private transient RespondentRepository respondentRepository
+  @Inject private transient SurveyService surveyService
+  @Inject private transient AccessNumberRepository accessNumberRepository
 
   Date periodStart
   Date periodEnd
