@@ -15,8 +15,8 @@ import javax.inject.Named
 @RequestScoped
 @Named("baseSurveyReadOnlyController")
 class BaseSurveyReadOnlyController extends BaseController {
-  @Inject protected SurveyRepository surveyRepository
-  @Inject protected ExternalContext externalContext
+  @Inject protected transient SurveyRepository surveyRepository
+  @Inject protected transient ExternalContext externalContext
 
   Integer surveyId
   Survey survey
