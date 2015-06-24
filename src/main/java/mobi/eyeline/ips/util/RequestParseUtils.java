@@ -23,8 +23,7 @@ public class RequestParseUtils {
     }
   }
 
-  public static int getInt(Map<String, String[]> map, String key, Integer defaultValue)
-      throws MissingParameterException {
+  public static int getInt(Map<String, String[]> map, String key, Integer defaultValue) {
 
     try {
       return getInt(map, key);
@@ -119,7 +118,7 @@ public class RequestParseUtils {
       while (names.hasMoreElements()) {
         final String name = names.nextElement();
         put(name, session.getAttribute(name));
-      };
+      }
     }};
   }
 }

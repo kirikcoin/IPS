@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -74,20 +75,18 @@ public class RequestParam {
     }
 
     public List<String> asList() {
-      List<String> result = new ArrayList<String>();
+      List<String> result = new ArrayList<>();
       String[] res = request.getParameterValues(param);
       if (res == null)
         res = request.getParameterValues(param.toLowerCase());
       if (res != null) {
-        for (String val : res) {
-          result.add(val);
-        }
+        Collections.addAll(result, res);
       }
       return result;
     }
 
     public <T extends Enum> List<T> asEnumList(Class<T> clazz) {
-      List<T> result = new ArrayList<T>();
+      List<T> result = new ArrayList<>();
       for (String val : asList()) {
         result.add((T) Enum.valueOf(clazz, val));
       }

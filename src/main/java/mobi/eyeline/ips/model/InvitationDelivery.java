@@ -194,10 +194,10 @@ public class InvitationDelivery implements Serializable {
 
   @AssertTrue(message = "Interval and number of retries must be not empty.")
   private boolean isValidRetriesFields() {
-    return (retriesEnabled) ? (retriesMax != null && retriesIntervalMinutes != null) : true;
+    return (!retriesEnabled) || (retriesMax != null && retriesIntervalMinutes != null);
   }
 
-  public static enum State {
+  public enum State {
 
     /**
      * Valid, not running.
@@ -222,7 +222,7 @@ public class InvitationDelivery implements Serializable {
     }
   }
 
-  public static enum Type {
+  public enum Type {
 
     /**
      * Subscriber gets USSD message.

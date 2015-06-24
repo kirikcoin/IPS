@@ -138,7 +138,7 @@ public abstract class UssdOption {
     }
   }
 
-  public static enum UssdOptionType {
+  public enum UssdOptionType {
 
     /**
      * Answer to a question.

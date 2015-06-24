@@ -14,7 +14,7 @@ public enum InvitationUpdateStatus {
    */
   private final String message;
 
-  private InvitationUpdateStatus(String name, String message) {
+  InvitationUpdateStatus(String name, String message) {
     this.name = name;
     this.message = message;
   }

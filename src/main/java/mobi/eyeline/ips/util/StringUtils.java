@@ -12,7 +12,7 @@ public class StringUtils {
       return null;
     }
 
-    final ArrayList<String> parts = new ArrayList<String>();
+    final ArrayList<String> parts = new ArrayList<>();
     for (String part : data.split(separators)) {
       if (org.apache.commons.lang3.StringUtils.isNotBlank(part)) {
         parts.add(part.trim());

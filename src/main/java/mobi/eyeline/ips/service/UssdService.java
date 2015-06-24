@@ -26,7 +26,6 @@ import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
-import mobi.eyeline.ips.util.RequestParseUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;

@@ -37,7 +37,7 @@ class FetchThread extends LoopThread {
     }
   }
 
-  private void doProcess(DeliveryWrapper delivery) throws InterruptedException {
+  private void doProcess(DeliveryWrapper delivery) {
     if (!delivery.shouldBeFilled()) {
       if (logger.isDebugEnabled()) {
         logger.debug("Delivery-" + delivery.getModel().getId() + ": delivery is full, no messages fetched");

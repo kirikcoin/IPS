@@ -8,38 +8,38 @@ import java.util.Properties;
 
 public interface Config {
 
-  public String getSmtpHost();
-  public int getSmtpPort();
-  public String getSmtpUsername();
-  public String getSmtpPassword();
-  public String getMailFrom();
-  public String getLoginUrl();
+  String getSmtpHost();
+  int getSmtpPort();
+  String getSmtpUsername();
+  String getSmtpPassword();
+  String getMailFrom();
+  String getLoginUrl();
 
-  public Properties getDatabaseProperties();
+  Properties getDatabaseProperties();
 
-  public boolean isMadvUpdateEnabled();
-  public int getMadvUpdateDelayMinutes();
-  public String getMadvUrl();
-  public String getMadvUserLogin();
-  public String getMadvUserPassword();
+  boolean isMadvUpdateEnabled();
+  int getMadvUpdateDelayMinutes();
+  String getMadvUrl();
+  String getMadvUserLogin();
+  String getMadvUserPassword();
 
-  public int getSadsMaxSessions();
-  public String getBaseSurveyUrl();
+  int getSadsMaxSessions();
+  String getBaseSurveyUrl();
 
-  public int getPushThreadsNumber();
-  public int getMessageQueueBaseline();
-  public int getStateUpdateBatchSize();
-  public int getRetryAttempts();
-  public long getSentExpirationDelaySeconds();
-  public long getFetchedExpirationDelaySeconds();
+  int getPushThreadsNumber();
+  int getMessageQueueBaseline();
+  int getStateUpdateBatchSize();
+  int getRetryAttempts();
+  long getSentExpirationDelaySeconds();
+  long getFetchedExpirationDelaySeconds();
 
-  public String getEsdpEndpointUrl();
+  String getEsdpEndpointUrl();
 
-  public boolean isJmxEnabled();
-  public String getJmxHost();
-  public int getJmxPort();
+  boolean isJmxEnabled();
+  String getJmxHost();
+  int getJmxPort();
 
-  public static class XmlConfigImpl implements Config {
+  class XmlConfigImpl implements Config {
 
     private final String smtpHost;
     private final int smtpPort;

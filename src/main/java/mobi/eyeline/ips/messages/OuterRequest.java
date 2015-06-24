@@ -8,7 +8,6 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 public class OuterRequest {
 

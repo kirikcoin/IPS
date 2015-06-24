@@ -1,8 +1,6 @@
 package mobi.eyeline.ips.model;
 
 import com.google.common.base.Predicate;
-import mobi.eyeline.ips.service.SegmentationService;
-import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.util.ListUtils;
 import mobi.eyeline.ips.validation.MaxSize;
 import org.hibernate.annotations.Cache;

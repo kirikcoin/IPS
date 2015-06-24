@@ -2,7 +2,6 @@ package mobi.eyeline.ips.web.servlets;
 
 import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.repository.UserRepository;
-import mobi.eyeline.ips.service.Services;
 import mobi.eyeline.ips.web.controllers.LogoBean;
 import org.apache.http.HttpStatus;
 
