@@ -10,6 +10,7 @@ import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.repository.RespondentRepository
 import mobi.eyeline.ips.repository.SurveyRepository
 import mobi.eyeline.ips.util.DataTableUtil
+import mobi.eyeline.ips.util.LocaleUtil
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableModel
 import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
@@ -71,7 +72,7 @@ class GlobalStatController extends BaseController {
         strings['global.stats.c2s.respondents.count']
     ]
 
-    os.withWriter('UTF-8') { Writer writer ->
+    os.withWriter(LocaleUtil.exportCharset) { Writer writer ->
       final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
 
       try {

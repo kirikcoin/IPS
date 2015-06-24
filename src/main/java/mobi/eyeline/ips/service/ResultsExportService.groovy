@@ -10,6 +10,7 @@ import mobi.eyeline.ips.model.OptionAnswer
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveySession
 import mobi.eyeline.ips.repository.AnswerRepository
+import mobi.eyeline.ips.util.LocaleUtil
 
 import java.text.DateFormat
 
@@ -35,7 +36,7 @@ public class ResultsExportService {
                        TimeZone timeZone,
                        Locale locale) {
 
-    os.withWriter('UTF-8') { Writer writer ->
+    os.withWriter(LocaleUtil.exportCharset) { Writer writer ->
       final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
 
       try {
@@ -102,7 +103,7 @@ public class ResultsExportService {
                        TimeZone timeZone,
                        Locale locale) {
 
-    os.withWriter('UTF-8') { Writer writer ->
+    os.withWriter(LocaleUtil.exportCharset) { Writer writer ->
       final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
 
       try {
@@ -152,7 +153,7 @@ public class ResultsExportService {
                            TimeZone timeZone,
                            Locale locale) {
 
-    os.withWriter('UTF-8') { Writer writer ->
+    os.withWriter(LocaleUtil.exportCharset) { Writer writer ->
       final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
 
       try {
