@@ -9,6 +9,7 @@ import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.repository.RespondentRepository
 import mobi.eyeline.ips.service.SurveyService
+import mobi.eyeline.ips.util.LocaleUtil
 import mobi.eyeline.util.jsf.components.chart.pie.PieModel
 
 import javax.annotation.PostConstruct
@@ -48,7 +49,7 @@ class SurveyResultsStatsController extends BaseSurveyReadOnlyController {
 
   @SuppressWarnings("GroovyUnusedDeclaration")
   void download(FacesContext context, OutputStream os) {
-    os.withWriter('UTF-8') { Writer writer ->
+    os.withWriter(LocaleUtil.exportCharset) { Writer writer ->
       final csvWriter = new CSVWriter(writer, ';' as char)
       try {
         // Add header line.
