@@ -9,15 +9,15 @@ import javax.faces.context.FacesContext
 @CompileStatic
 class LocaleUtil {
 
-    static String getExportCharset() {
-        try {
-            final lang = FacesContext.currentInstance.viewRoot.locale.language
-            return lang == 'ru' ? 'cp1251' : 'UTF-8'
+  static String getExportCharset() {
+    try {
+      final lang = FacesContext.currentInstance.viewRoot.locale.language
+      return lang == 'ru' ? 'cp1251' : 'UTF-8'
 
-        } catch (Exception e) {
-            log.error 'Error determining export charset', e
-            return 'UTF-8'
-        }
+    } catch (Exception e) {
+      log.error 'Error determining export charset', e
+      return 'UTF-8'
     }
+  }
 
 }
