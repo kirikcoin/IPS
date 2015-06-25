@@ -87,7 +87,7 @@ public class DeliverySubscriber implements Serializable {
         '}';
   }
 
-  public static enum State {
+  public enum State {
 
     /**
      * Initial state.

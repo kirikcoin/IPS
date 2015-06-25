@@ -62,7 +62,7 @@ public class UiProfile implements Serializable {
     this.skin = skin;
   }
 
-  public static enum Skin {
+  public enum Skin {
     MOBAK,
     ARAKS;
 

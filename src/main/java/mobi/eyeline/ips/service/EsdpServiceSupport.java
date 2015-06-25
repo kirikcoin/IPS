@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.Hacks;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.properties.Config;
 import org.apache.http.client.utils.URIBuilder;
@@ -17,8 +18,12 @@ public class EsdpServiceSupport {
     try {
       final URIBuilder builder = new URIBuilder(config.getEsdpEndpointUrl());
       final String port = builder.getPort() >= 0 ? ":" + builder.getPort() : "";
-      return builder.getScheme() + "://" + builder.getHost() + port +
+
+      final String uri = builder.getScheme() + "://" + builder.getHost() + port +
           "/push?service=" + getKey(survey);
+
+      //noinspection ConstantConditions
+      return Hacks.ENABLE_C2S_SOURCE_HEURISTICS ? uri + "&delivery=true" : uri;
 
     } catch (URISyntaxException e) {
       throw new RuntimeException(e);

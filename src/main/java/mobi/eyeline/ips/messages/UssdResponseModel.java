@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static java.util.Objects.requireNonNull;
-
 public class UssdResponseModel {
 
   /**

@@ -125,6 +125,6 @@ public class JmxBeansService {
   }
 
   @MXBean
-  public static interface StatisticsMXBean extends Statistics {
+  public interface StatisticsMXBean extends Statistics {
   }
 }

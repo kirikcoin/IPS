@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.web.servlets;
 
+import mobi.eyeline.ips.util.RequestParseUtils;
 import mobi.eyeline.ips.util.StringUtils;
 import mobi.eyeline.util.jsf.components.utils.NumberUtils;
 
@@ -9,8 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static mobi.eyeline.ips.util.RequestParseUtils.toQueryString;
 import static org.apache.http.HttpStatus.SC_BAD_REQUEST;
 
 public class ServiceServlet extends HttpServlet {
@@ -34,8 +38,13 @@ public class ServiceServlet extends HttpServlet {
       return;
     }
 
+    // Ensure all parameters are passed through.
+    final Map<String, String[]> parameters = new HashMap<>();
+    parameters.putAll(req.getParameterMap());
+    parameters.put("survey_id", new String[] { String.valueOf(surveyId) });
+
     // Forward to the handler JSP.
-    final String jsp = "/ussd/index.jsp?survey_id=" + surveyId;
+    final String jsp = "/ussd/index.jsp" + toQueryString(parameters);
     final RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(jsp);
     dispatcher.forward(req, resp);
   }

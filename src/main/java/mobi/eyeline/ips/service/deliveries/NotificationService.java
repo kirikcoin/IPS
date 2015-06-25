@@ -32,9 +32,9 @@ public class NotificationService {
 
   private final DeliveryService deliveryService;
 
-  private NotificationServiceThread thread;
+  private final NotificationServiceThread thread;
 
-  private DeliverySubscriberRepository deliverySubscriberRepository;
+  private final DeliverySubscriberRepository deliverySubscriberRepository;
 
   public NotificationService(TimeSource timeSource, DeliverySubscriberRepository deliverySubscriberRepository, DeliveryService deliveryService) {
     this.deliverySubscriberRepository = deliverySubscriberRepository;
@@ -57,7 +57,7 @@ public class NotificationService {
     thread.start();
   }
 
-  public boolean handleNotification(Notification notification) throws InterruptedException {
+  public boolean handleNotification(Notification notification) {
 
     DeliverySubscriber deliverySubscriber = deliverySubscriberRepository.get(notification.getId());
     InvitationDelivery delivery = deliverySubscriber.getInvitationDelivery();

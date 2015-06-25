@@ -85,7 +85,7 @@ public class LessFilter extends HttpFilter {
   }
 
   private byte[] lessToCss(final HttpServletRequest request,
-                           RespWrapper response) throws ServletException, UnsupportedEncodingException {
+                           RespWrapper response) throws ServletException {
     long start = System.currentTimeMillis();
     byte[] css;
     try {

@@ -40,7 +40,7 @@ public abstract class ResourcePool<T> {
     }
   }
 
-  public static interface ResourceCallable<V, T> {
+  public interface ResourceCallable<V, T> {
     V call(T resource) throws Exception;
   }
 }

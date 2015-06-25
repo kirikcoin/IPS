@@ -23,7 +23,7 @@ public class DeliveryWrapper {
   private final InvitationDelivery invitationDelivery;
   private final int messagesQueueSize;
   private final Queue<Message> messages = new ConcurrentLinkedQueue<>();
-  //Number of respondent commited attempts. First attempt number put here on first message sent.
+  // Number of respondent committed attempts. First attempt number is put here on the first message sent.
   private final HashMap<String, Integer> respondentCommittedAttemptsNumber = new HashMap<>();
 
   private volatile long proposedDelayMillis;

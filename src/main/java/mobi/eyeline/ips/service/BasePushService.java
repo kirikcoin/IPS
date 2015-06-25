@@ -183,7 +183,7 @@ public abstract class BasePushService {
   //
   //
 
-  private static interface RequestWithListener {
+  private interface RequestWithListener {
     RequestExecutionListener getRequestExecutionListener();
   }
 

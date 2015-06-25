@@ -32,6 +32,7 @@ var ips = new (function() {
      * Отображает на экране сообщение об ошибке
      * @param {String} errorText текст сообщения об ошибке
      * @param {String} [elementId] опциональный идентификатор DOM-элемента, из-за которого произошла ошибка. К данному элементу будет применен стиль validationError
+     * @param {String} [skipMarker] If set, error label won't be attached to the element with "elementId"
      */
     this.error = function (errorText, elementId, skipMarker) {
       clearTimeout(infoMessageTimer);

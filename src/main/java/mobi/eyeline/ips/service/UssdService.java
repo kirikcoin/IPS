@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.Hacks;
 import mobi.eyeline.ips.messages.AnswerOption;
 import mobi.eyeline.ips.messages.BadCommandOption;
 import mobi.eyeline.ips.messages.MessageHandler;
@@ -9,6 +10,7 @@ import mobi.eyeline.ips.messages.UssdOption;
 import mobi.eyeline.ips.messages.UssdResponseModel;
 import mobi.eyeline.ips.messages.UssdResponseModel.OptionsResponseModel;
 import mobi.eyeline.ips.messages.UssdResponseModel.TextUssdResponseModel;
+import mobi.eyeline.ips.model.AccessNumber;
 import mobi.eyeline.ips.model.Answer;
 import mobi.eyeline.ips.model.ExtLinkPage;
 import mobi.eyeline.ips.model.OptionAnswer;
@@ -20,13 +22,13 @@ import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.SurveyDetails;
 import mobi.eyeline.ips.model.TextAnswer;
 import mobi.eyeline.ips.properties.Config;
+import mobi.eyeline.ips.repository.AccessNumberRepository;
 import mobi.eyeline.ips.repository.AnswerRepository;
 import mobi.eyeline.ips.repository.ExtLinkPageRepository;
 import mobi.eyeline.ips.repository.QuestionOptionRepository;
 import mobi.eyeline.ips.repository.QuestionRepository;
 import mobi.eyeline.ips.repository.RespondentRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
-import mobi.eyeline.ips.util.RequestParseUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
@@ -43,6 +45,8 @@ import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN_DEPRECATED;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID;
 import static mobi.eyeline.ips.messages.UssdResponseModel.USSD_BUNDLE;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 /**
  * Mobilizer landing page rendering.
@@ -61,6 +65,7 @@ public class UssdService implements MessageHandler {
   private final QuestionRepository questionRepository;
   private final QuestionOptionRepository questionOptionRepository;
   private final ExtLinkPageRepository extLinkPageRepository;
+  private final AccessNumberRepository accessNumberRepository;
 
   private final String baseUrl;
 
@@ -76,7 +81,8 @@ public class UssdService implements MessageHandler {
                      AnswerRepository answerRepository,
                      QuestionRepository questionRepository,
                      QuestionOptionRepository questionOptionRepository,
-                     ExtLinkPageRepository extLinkPageRepository) {
+                     ExtLinkPageRepository extLinkPageRepository,
+                     AccessNumberRepository accessNumberRepository) {
 
     this.surveyService = surveyService;
     this.pushService = pushService;
@@ -88,6 +94,7 @@ public class UssdService implements MessageHandler {
     this.questionRepository = questionRepository;
     this.questionOptionRepository = questionOptionRepository;
     this.extLinkPageRepository = extLinkPageRepository;
+    this.accessNumberRepository = accessNumberRepository;
 
     baseUrl = config.getBaseSurveyUrl();
   }
@@ -172,7 +179,21 @@ public class UssdService implements MessageHandler {
     // As source is stored in the session, we cannot trust it during request for an initial page.
     outerRequest.setStoredSource(null);
 
-    final String source = outerRequest.getSource();
+    String source = outerRequest.getSource();
+
+    if (Hacks.ENABLE_C2S_SOURCE_HEURISTICS) {
+      // If we can't determine a C2S source number from request:
+      //  - Make sure that's not a delivery or preview: these requests are IPS-initiated
+      //    and have a specific request attribute
+      //  - And use the first one of the currently attached C2S numbers as a source.
+      if (!outerRequest.getUrlParams().containsKey("delivery")) {
+        final List<AccessNumber> c2s = accessNumberRepository.list(survey);
+        if (isNotEmpty(c2s)) {
+          source = c2s.iterator().next().getNumber();
+        }
+      }
+    }
+
     if (source != null) {
       outerRequest.setStoredSource(source);
     }

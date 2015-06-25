@@ -119,7 +119,7 @@ public class SurveyPattern implements Serializable {
   /**
    * @see mobi.eyeline.ips.util.PatternUtil Pattern mode to regular expression correspondence.
    */
-  public static enum Mode {
+  public enum Mode {
     DIGITS,
     DIGITS_AND_LATIN
   }
