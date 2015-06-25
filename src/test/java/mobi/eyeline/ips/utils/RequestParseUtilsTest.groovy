@@ -5,6 +5,7 @@ import mobi.eyeline.ips.messages.MissingParameterException
 import static mobi.eyeline.ips.util.RequestParseUtils.getBoolean
 import static mobi.eyeline.ips.util.RequestParseUtils.getInt
 import static mobi.eyeline.ips.util.RequestParseUtils.getString
+import static mobi.eyeline.ips.util.RequestParseUtils.toQueryString
 import static mobi.eyeline.ips.util.RequestParseUtils.toString
 
 class RequestParseUtilsTest extends GroovyTestCase {
@@ -48,5 +49,16 @@ class RequestParseUtilsTest extends GroovyTestCase {
 
   void testToString2() {
     assertEquals "{}", toString(asMap([:]))
+  }
+
+  void testQueryString() {
+
+    assertEquals '', toQueryString(asMap([:]))
+
+    assertEquals '?a=1&b=2', toQueryString(asMap(['a': '1', 'b': 2]))
+    assertEquals '?a=1&a=2', toQueryString(['a': (['1', '2'] as String[])])
+
+    assertEquals '?a=1&a=2&b=3',
+        toQueryString(['a': (['1', '2'] as String[]), 'b': (['3'] as String[])])
   }
 }

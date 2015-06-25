@@ -28,7 +28,7 @@ class EsdpServiceTest extends DbTestCase {
 
     ussdService = new UssdService(
         new DefaultMockConfig(),
-        null, null, null, null, null, null, null, null, null) {
+        null, null, null, null, null, null, null, null, null, accessNumberRepository) {
       @Override
       String getSurveyUrl(Survey survey) { "http://surveys?id=$survey.id" }
     }

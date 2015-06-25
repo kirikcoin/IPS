@@ -102,6 +102,35 @@ public class RequestParseUtils {
     return result.toString();
   }
 
+  public static String toQueryString(Map<String, String[]> map) {
+    if (map.isEmpty()) {
+      return "";
+    }
+
+    final StringBuilder buf = new StringBuilder();
+
+    buf.append("?");
+
+    for (Iterator<Map.Entry<String, String[]>> iterator = map.entrySet().iterator(); iterator.hasNext(); ) {
+      final Map.Entry<String, String[]> entry = iterator.next();
+
+      final String[] value = entry.getValue();
+      for (int i = 0; i < value.length; i++) {
+        final String val = value[i];
+        buf.append(entry.getKey()).append("=").append(val);
+        if (i != value.length - 1) {
+          buf.append("&");
+        }
+      }
+
+      if (iterator.hasNext()) {
+        buf.append("&");
+      }
+    }
+
+    return buf.toString();
+  }
+
   public static Map<String, String> getHeaders(final HttpServletRequest request) {
     return new LinkedHashMap<String, String>() {{
       final Enumeration<String> names = request.getHeaderNames();

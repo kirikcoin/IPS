@@ -110,7 +110,8 @@ class ServicesImpl {
         answerRepository,
         questionRepository,
         questionOptionRepository,
-        extLinkPageRepository)
+        extLinkPageRepository,
+        accessNumberRepository)
     esdpService = new EsdpService(config, ussdService, esdpServiceSupport, surveyRepository, accessNumberRepository)
     accessNumbersService = new AccessNumbersService(accessNumberRepository, esdpService)
 
