@@ -203,6 +203,7 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                                   String filter,
                                   Integer accessNumberId,
                                   Boolean hasCoupon,
+                                  Order sortOrder,
                                   int limit,
                                   int offset) {
 
@@ -210,6 +211,9 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
 
     final Criteria criteria =
         getCriteria(session, survey, from, to, hasCoupon, filter, accessNumberId);
+    if (sortOrder != null) {
+      criteria.addOrder(sortOrder);
+    }
     criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
 
     criteria.setFirstResult(offset).setMaxResults(limit);

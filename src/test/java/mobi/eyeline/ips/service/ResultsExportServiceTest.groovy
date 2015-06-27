@@ -23,7 +23,7 @@ class ResultsExportServiceTest extends DbTestCase {
                         List<String> header, Survey survey, Date from, Date to, String filter) {
 
     String actual = new ByteArrayOutputStream().with {
-      exportService.writeResultsCsv it, header, survey, from, to, filter, null, TimeZone.getTimeZone('UTC'), Locale.forLanguageTag('ru')
+      exportService.writeResultsCsv it, header, survey, from, to, filter, null, TimeZone.getTimeZone('UTC'), Locale.forLanguageTag('ru'), null
       toString 'UTF-8'
     }
 

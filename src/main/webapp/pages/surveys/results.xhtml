@@ -188,7 +188,8 @@
                              value="#{surveyResultsController.tableModel}"
                              var="row"
                              pageSize="50"
-                             tableClass="grid">
+                             tableClass="grid"
+                             sortOrder="#{surveyResultsController.sortOrder}">
                 <f:facet name="ifEmpty">
                   <h:outputText value="#{bundle['results.empty']}"/>
                 </f:facet>

@@ -10,7 +10,9 @@ import mobi.eyeline.ips.model.OptionAnswer
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveySession
 import mobi.eyeline.ips.repository.AnswerRepository
+import mobi.eyeline.ips.util.DataTableUtil
 import mobi.eyeline.ips.util.LocaleUtil
+import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
 import java.text.DateFormat
 
@@ -34,7 +36,8 @@ public class ResultsExportService {
                        String filter,
                        Integer accessNumber,
                        TimeZone timeZone,
-                       Locale locale) {
+                       Locale locale,
+                       DataTableSortOrder sortOrder) {
 
     os.withWriter(LocaleUtil.exportCharset) { Writer writer ->
       final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
@@ -53,6 +56,7 @@ public class ResultsExportService {
             null,    // hasCoupon: doesn't really matter
             timeZone,
             locale,
+            sortOrder,
             this.&writeResultsData
         )
 
@@ -101,7 +105,8 @@ public class ResultsExportService {
                        String filter,
                        Integer accessNumber,
                        TimeZone timeZone,
-                       Locale locale) {
+                       Locale locale,
+                       DataTableSortOrder sortOrder) {
 
     os.withWriter(LocaleUtil.exportCharset) { Writer writer ->
       final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
@@ -120,6 +125,7 @@ public class ResultsExportService {
             true,    // with coupons only
             timeZone,
             locale,
+            sortOrder,
             this.&writeCouponsData
         )
 
@@ -151,7 +157,8 @@ public class ResultsExportService {
                            String filter,
                            Integer accessNumber,
                            TimeZone timeZone,
-                           Locale locale) {
+                           Locale locale,
+                           DataTableSortOrder sortOrder) {
 
     os.withWriter(LocaleUtil.exportCharset) { Writer writer ->
       final CSVWriter csvWriter = new CSVWriter(writer, ';' as char)
@@ -170,6 +177,7 @@ public class ResultsExportService {
             null,    // coupons don't matter
             timeZone,
             locale,
+            sortOrder,
             this.&writeRespondentsData
         )
 
@@ -206,6 +214,7 @@ public class ResultsExportService {
       Boolean hasCoupon,
       TimeZone timeZone,
       Locale locale,
+      DataTableSortOrder sortOrder,
       @ClosureParams(value = SimpleType,
           options = ['List<SurveySession>', 'CSVWriter', 'TimeZone', 'Locale']) Closure doWrite) {
 
@@ -226,6 +235,9 @@ public class ResultsExportService {
           filter,
           accessNumber,
           hasCoupon,
+          DataTableUtil.orderBy(
+              sortOrder,
+              ['respondent': 'msisdn', 'date': 'startDate', 'questions': 'answersCount']),
           chunkSize,
           i * chunkSize)
       doWrite records, csvWriter, timeZone, locale
