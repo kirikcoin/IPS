@@ -40,6 +40,9 @@ class GlobalStatController extends BaseController {
 
   boolean showEmptyRows
 
+  /** Current sort order of the results table. */
+  DataTableSortOrder sortOrder
+
   @PostConstruct
   void init() {
     periodStart = new Date().clearTime() - 30
@@ -79,9 +82,14 @@ class GlobalStatController extends BaseController {
         // Add header line.
         csvWriter.writeNext(header as String[])
 
-        List<C2sResponseModel> results = loadResults(periodStart, periodEnd, filter, accessNumber)
+        List<C2sResponseModel> results =
+            loadResults(periodStart, periodEnd, filter, accessNumber)
         if (!showEmptyRows) {
           results = results.findAll { it.nRespondents > 0 } as List
+        }
+
+        if (sortOrder) {
+          results = DataTableUtil.sort(results, sortOrder)
         }
 
         results.each { _ ->

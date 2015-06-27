@@ -30,6 +30,9 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
 
   boolean hasCoupons
 
+  /** Current sort order of the results table. */
+  DataTableSortOrder sortOrder
+
   @PostConstruct
   void init() {
     periodStart = survey.startDate
@@ -84,7 +87,16 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
     ]
 
     resultsExportService.writeResultsCsv(
-        os, header, getSurvey(), periodStart, periodEnd, filter, accessNumber > 0 ? accessNumber : null, getTimeZone(), getLocale())
+        os,
+        header,
+        getSurvey(),
+        periodStart,
+        periodEnd,
+        filter,
+        accessNumber > 0 ? accessNumber : null,
+        getTimeZone(),
+        getLocale(),
+        sortOrder)
   }
 
   @SuppressWarnings("GroovyUnusedDeclaration")
@@ -96,7 +108,16 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
     ]
 
     resultsExportService.writeCouponsCsv(
-        os, header, getSurvey(), periodStart, periodEnd, filter, accessNumber > 0 ? accessNumber : null, getTimeZone(), getLocale())
+        os,
+        header,
+        getSurvey(),
+        periodStart,
+        periodEnd,
+        filter,
+        accessNumber > 0 ? accessNumber : null,
+        getTimeZone(),
+        getLocale(),
+        sortOrder)
   }
 
   @SuppressWarnings("GroovyUnusedDeclaration")
@@ -116,7 +137,8 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
         filter,
         accessNumber > 0 ? accessNumber : null,
         getTimeZone(),
-        getLocale())
+        getLocale(),
+        sortOrder)
   }
 
   List<SelectItem> getAccessNumbers() {
