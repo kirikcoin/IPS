@@ -3,7 +3,21 @@ package mobi.eyeline.ips.service
 import groovy.transform.CompileStatic
 import mobi.eyeline.ips.external.MadvSoapApi
 import mobi.eyeline.ips.properties.Config
-import mobi.eyeline.ips.repository.*
+import mobi.eyeline.ips.repository.AccessNumberRepository
+import mobi.eyeline.ips.repository.AnswerRepository
+import mobi.eyeline.ips.repository.DB
+import mobi.eyeline.ips.repository.DeliverySubscriberRepository
+import mobi.eyeline.ips.repository.ExtLinkPageRepository
+import mobi.eyeline.ips.repository.InvitationDeliveryRepository
+import mobi.eyeline.ips.repository.PageRepository
+import mobi.eyeline.ips.repository.QuestionOptionRepository
+import mobi.eyeline.ips.repository.QuestionRepository
+import mobi.eyeline.ips.repository.RespondentRepository
+import mobi.eyeline.ips.repository.SurveyInvitationRepository
+import mobi.eyeline.ips.repository.SurveyPatternRepository
+import mobi.eyeline.ips.repository.SurveyRepository
+import mobi.eyeline.ips.repository.SurveyStatsRepository
+import mobi.eyeline.ips.repository.UserRepository
 import mobi.eyeline.ips.service.deliveries.DeliveryPushService
 import mobi.eyeline.ips.service.deliveries.DeliveryService
 import mobi.eyeline.ips.service.deliveries.NotificationService
@@ -53,6 +67,8 @@ class ServicesImpl {
 
   final CsvParseService csvParseService
   final TimeZoneService timeZoneService
+
+  final MobilizerServiceRegistryClient mobilizerServiceRegistryClient
 
   ServicesImpl(Config config) {
     db = new DB(config.databaseProperties)
@@ -135,6 +151,8 @@ class ServicesImpl {
 
     csvParseService = new CsvParseService()
     timeZoneService = new TimeZoneService()
+
+    mobilizerServiceRegistryClient = new MobilizerServiceRegistryClient()
   }
 
   void start() {

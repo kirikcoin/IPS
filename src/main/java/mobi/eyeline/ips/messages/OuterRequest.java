@@ -1,11 +1,14 @@
 package mobi.eyeline.ips.messages;
 
+import mobi.eyeline.ips.model.RespondentSource;
 import mobi.eyeline.ips.util.RequestParseUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 
+import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.C2S;
+import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.TELEGRAM;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -55,17 +58,16 @@ public class OuterRequest {
     return RequestParseUtils.getBoolean(getUrlParams(), key, defaultValue);
   }
 
-  public String getStoredSource() {
+  public RespondentSource getStoredSource() {
     final HttpSession session = request.getSession();
     if (session == null) {
       return null;
     }
 
-    final Object attribute = session.getAttribute(PARAM_STORED_SOURCE);
-    return (attribute == null) ? null : attribute.toString().trim();
+    return (RespondentSource) session.getAttribute(PARAM_STORED_SOURCE);
   }
 
-  public void setStoredSource(String value) {
+  public void setStoredSource(RespondentSource value) {
     final HttpSession session = request.getSession();
     if (session != null) {
       session.removeAttribute(PARAM_STORED_SOURCE);
@@ -76,13 +78,23 @@ public class OuterRequest {
     }
   }
 
-  public String getSource() {
+  public RespondentSource getSource() {
     // Set by Mobilizer.
     final String connector = request.getHeader("X-Connector");
     final String description = request.getHeader("X-Connector-Description");
 
     if ("sip".equalsIgnoreCase(trimToEmpty(connector)) && isNotBlank(description)) {
-      return description.trim();
+      final RespondentSource source = new RespondentSource();
+      source.setSource(description.trim());
+      source.setSourceType(C2S);
+      return source;
+    }
+
+    if ("telegram".equalsIgnoreCase(trimToEmpty(connector)) && isNotBlank(description)) {
+      final RespondentSource source = new RespondentSource();
+      source.setSource(description.trim());
+      source.setSourceType(TELEGRAM);
+      return source;
     }
 
     return getStoredSource();

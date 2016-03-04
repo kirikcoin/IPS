@@ -20,6 +20,7 @@ import java.util.List;
 import static com.google.common.collect.Collections2.transform;
 import static com.j256.simplejmx.common.JmxOperationInfo.OperationAction.ACTION;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.join;
 
 @JmxResource(domainName = "mobi.eyeline.ips")
@@ -111,11 +112,44 @@ public class EsdpService {
         .updateService(service);
   }
 
+  /**
+   * Updates Telegram token.
+   */
+  public void update(User user,
+                     Survey survey,
+                     String telegramToken) throws EsdpServiceException {
+
+    final Service service = getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
+        .getService(esdpServiceSupport.getKey(survey));
+
+    if (service.getProperties() == null) {
+      service.setProperties(new Service.Properties());
+    }
+    final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
+
+    Service.Properties.Entry sip = find(entries, "telegram.token");
+    if (sip == null) {
+      sip = entry("telegram.token", telegramToken);
+      entries.add(sip);
+    } else {
+      sip.setValue(telegramToken);
+    }
+
+    getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
+        .updateService(service);
+  }
+
   public void update(User user, Survey survey) throws EsdpServiceException {
     logger.debug("Updating service, survey = [" + survey + "]");
 
     final Service service = getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
         .getService(esdpServiceSupport.getKey(survey));
+
+    // Properties boilerplate.
+    if (service.getProperties() == null) {
+      service.setProperties(new Service.Properties());
+    }
+    final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
 
     // Title.
     service.setTitle(survey.getDetails().getTitle());
@@ -126,17 +160,25 @@ public class EsdpService {
         "" :
         join(transform(boundNumbers, AccessNumber.AS_NUMBER), " ");
 
-    if (service.getProperties() == null) {
-      service.setProperties(new Service.Properties());
-    }
-    final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
-
     Service.Properties.Entry sip = find(entries, "sip-number");
     if (sip == null) {
       sip = entry("sip-number", numberEntry);
       entries.add(sip);
     } else {
       sip.setValue(numberEntry);
+    }
+
+    // Telegram token.
+    final String telegramToken = survey.getStatistics().getTelegramToken();
+    final String telegramTokenEntry =
+        isBlank(telegramToken) ? "" : telegramToken.trim();
+
+    Service.Properties.Entry telegram = find(entries, "telegram.token");
+    if (telegram == null) {
+      telegram = entry("telegram.token", telegramTokenEntry);
+      entries.add(telegram);
+    } else {
+      telegram.setValue(telegramTokenEntry);
     }
 
     getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())

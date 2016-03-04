@@ -18,6 +18,7 @@ import mobi.eyeline.ips.model.Page;
 import mobi.eyeline.ips.model.Question;
 import mobi.eyeline.ips.model.QuestionOption;
 import mobi.eyeline.ips.model.Respondent;
+import mobi.eyeline.ips.model.RespondentSource;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.model.SurveyDetails;
 import mobi.eyeline.ips.model.TextAnswer;
@@ -45,7 +46,7 @@ import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN_DEPRECATED;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION;
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SURVEY_ID;
 import static mobi.eyeline.ips.messages.UssdResponseModel.USSD_BUNDLE;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.C2S;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 /**
@@ -179,7 +180,7 @@ public class UssdService implements MessageHandler {
     // As source is stored in the session, we cannot trust it during request for an initial page.
     outerRequest.setStoredSource(null);
 
-    String source = outerRequest.getSource();
+    RespondentSource source = outerRequest.getSource();
 
     if (Hacks.ENABLE_C2S_SOURCE_HEURISTICS) {
       // If we can't determine a C2S source number from request:
@@ -189,7 +190,10 @@ public class UssdService implements MessageHandler {
       if (!outerRequest.getUrlParams().containsKey("delivery")) {
         final List<AccessNumber> c2s = accessNumberRepository.list(survey);
         if (isNotEmpty(c2s)) {
-          source = c2s.iterator().next().getNumber();
+          final String c2sSource = c2s.iterator().next().getNumber();
+          source = new RespondentSource();
+          source.setSource(c2sSource);
+          source.setSourceType(C2S);
         }
       }
     }
@@ -219,7 +223,7 @@ public class UssdService implements MessageHandler {
       }
     }
 
-    final String source = outerRequest.getSource();
+    final RespondentSource source = outerRequest.getSource();
     if (source != null && outerRequest.getStoredSource() == null) {
       logger.warn("Source found in headers, not in session for non-initial request." +
           " Request: [" + outerRequest + "]");
@@ -256,7 +260,7 @@ public class UssdService implements MessageHandler {
       return surveyNotFound();
     }
 
-    final String source = outerRequest.getSource();
+    final RespondentSource source = outerRequest.getSource();
     if (source != null && outerRequest.getStoredSource() == null) {
       logger.warn("Source found in headers, not in session for non-initial request." +
           " Request: [" + outerRequest + "]");

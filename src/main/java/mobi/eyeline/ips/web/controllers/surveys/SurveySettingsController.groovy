@@ -4,9 +4,26 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.components.tree.TreeEdge
 import mobi.eyeline.ips.components.tree.TreeNode
-import mobi.eyeline.ips.model.*
-import mobi.eyeline.ips.repository.*
-import mobi.eyeline.ips.service.*
+import mobi.eyeline.ips.model.AccessNumber
+import mobi.eyeline.ips.model.ExtLinkPage
+import mobi.eyeline.ips.model.Page
+import mobi.eyeline.ips.model.Question
+import mobi.eyeline.ips.model.QuestionOption
+import mobi.eyeline.ips.model.SurveyPattern
+import mobi.eyeline.ips.repository.AccessNumberRepository
+import mobi.eyeline.ips.repository.ExtLinkPageRepository
+import mobi.eyeline.ips.repository.PageRepository
+import mobi.eyeline.ips.repository.QuestionRepository
+import mobi.eyeline.ips.repository.UserRepository
+import mobi.eyeline.ips.service.AccessNumbersService
+import mobi.eyeline.ips.service.CouponService
+import mobi.eyeline.ips.service.EsdpService
+import mobi.eyeline.ips.service.EsdpServiceSupport
+import mobi.eyeline.ips.service.MobilizerSegmentation
+import mobi.eyeline.ips.service.MobilizerServiceRegistryClient
+import mobi.eyeline.ips.service.PushService
+import mobi.eyeline.ips.service.SurveyService
+import mobi.eyeline.ips.service.UssdService
 import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
@@ -23,7 +40,9 @@ import javax.validation.ConstraintViolation
 import java.text.MessageFormat
 
 import static mobi.eyeline.ips.web.controllers.TimeZoneHelper.formatDateTime
-import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.*
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.COUPON
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.DISABLED
+import static mobi.eyeline.ips.web.controllers.surveys.SurveySettingsController.EndSmsType.SMS
 
 @SuppressWarnings('UnnecessaryQualifiedReference')
 @CompileStatic
@@ -44,6 +63,7 @@ class SurveySettingsController extends BaseSurveyController {
   @Inject private EsdpServiceSupport esdpServiceSupport
   @Inject private UssdService ussdService
   @Inject private AccessNumbersService accessNumbersService
+  @Inject private MobilizerServiceRegistryClient mobilizerServiceRegistryClient
 
   String errorId
 
@@ -324,6 +344,32 @@ class SurveySettingsController extends BaseSurveyController {
 
     goToSurvey surveyId
   }
+
+  void saveTelegramToken() {
+    final newToken = survey.statistics.telegramToken
+
+    final botName = mobilizerServiceRegistryClient.getTelegramBotName newToken
+    if (newToken && !botName) {
+      addErrorMessage strings['telegram.api.error']
+      return
+    }
+
+    try {
+      esdpService.update currentUser, persistedSurvey, newToken
+
+      persistedSurvey.statistics.telegramToken = newToken
+      persistedSurvey.statistics.telegramUsername = botName
+      surveyRepository.update persistedSurvey
+
+    } catch (Exception e) {
+      logger.error(e.message, e)
+      addErrorMessage strings['esdp.error.survey.update']
+      return
+    }
+
+    goToSurvey surveyId
+  }
+
 
   String deleteSurvey() {
     // Feels safer to reload
@@ -653,6 +699,10 @@ class SurveySettingsController extends BaseSurveyController {
   String getReadableAccessNumbers() {
     final numberList = accessNumberRepository.list(persistedSurvey)?.collect { it.number }?.join(', ')
     return numberList?:(BaseController.strings['no.access.numbers'] as String)
+  }
+
+  String getReadableTelegramToken() {
+    persistedSurvey.statistics.telegramToken ?: (BaseController.strings['no.telegram.token'] as String)
   }
 
   List<SelectItem> getAvailableAccessNumbers() {

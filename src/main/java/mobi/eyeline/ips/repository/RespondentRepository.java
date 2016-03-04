@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.repository;
 
 import mobi.eyeline.ips.model.Respondent;
+import mobi.eyeline.ips.model.RespondentSource;
 import mobi.eyeline.ips.model.Survey;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -128,7 +129,7 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
     }
   }
 
-  private Respondent find(Session session, Survey survey, String msisdn, String source) {
+  private Respondent find(Session session, Survey survey, String msisdn, RespondentSource source) {
 
     return (Respondent) session.createQuery(
         "from Respondent" +
@@ -138,11 +139,11 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
         " ((source = :source) or (source is null and :source is null))")
         .setString("msisdn", msisdn)
         .setEntity("survey", survey)
-        .setString("source", source)
+        .setEntity("source", source)
         .uniqueResult();
   }
 
-  public Respondent findOrCreate(String msisdn, Survey survey, String source) {
+  public Respondent findOrCreate(String msisdn, Survey survey, RespondentSource source) {
     final Session session = getSessionFactory().openSession();
     Transaction transaction = null;
     try {

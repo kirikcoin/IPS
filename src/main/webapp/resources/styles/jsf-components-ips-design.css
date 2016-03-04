@@ -61,11 +61,11 @@ td.eyeline_buttons_right {
 
 .menu-bar ul.sub_menu li a,
 table.eyeline_buttons div.menu-bar a {
-    color: #161E49;
+    /*color: #161E49;*/
 }
 
 .menu-bar ul.sub_menu li a:hover {
-    color: #079239;
+    /*color: #079239;*/
 }
 
 .menu-bar ul.sub_menu li {
