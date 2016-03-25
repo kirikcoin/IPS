@@ -88,8 +88,8 @@ public class ResultsExportService {
 
         final resp = session.respondent
         csvWriter.writeNext([
-            resp.source.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
-            resp.source.name,
+            resp.source?.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
+            resp.source?.name,
             answer.question.activeIndex + 1,
             answer.question.title,
             answerOptionNumber,
@@ -146,8 +146,8 @@ public class ResultsExportService {
     sessions.each { session ->
       final resp = session.respondent
       csvWriter.writeNext([
-          resp.source.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
-          resp.source.name,
+          resp.source?.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
+          resp.source?.name,
           resp.coupon
       ] as String[])
     }
@@ -202,8 +202,8 @@ public class ResultsExportService {
     sessions.each { session ->
       final resp = session.respondent
       csvWriter.writeNext([
-          resp.source.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
-          resp.source.name,
+          resp.source?.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
+          resp.source?.name,
           df.format(resp.startDate)
       ] as String[])
     }

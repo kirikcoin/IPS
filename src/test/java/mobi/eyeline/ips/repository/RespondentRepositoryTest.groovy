@@ -1,8 +1,10 @@
 package mobi.eyeline.ips.repository
 
 import mobi.eyeline.ips.model.Respondent
+import mobi.eyeline.ips.model.RespondentSource
 import mobi.eyeline.ips.model.Survey
 
+import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.C2S
 import static mobi.eyeline.ips.utils.SurveyBuilder.survey
 
 @Mixin(RepositoryMock)
@@ -35,7 +37,8 @@ class RespondentRepositoryTest extends DbTestCase {
     respondentRepository.findOrCreate('79130000001', survey1, null)
     assertEquals 6, respondentRepository.list().size()
 
-    respondentRepository.findOrCreate('79130000001', survey1, '123')
+    respondentRepository.findOrCreate(
+        '79130000001', survey1, new RespondentSource(source: '123', sourceType: C2S))
     assertEquals 7, respondentRepository.list().size()
 
     respondentRepository.findOrCreate('79130000002', survey1, null)

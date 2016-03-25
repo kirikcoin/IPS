@@ -5,6 +5,7 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -74,12 +75,23 @@ public class RequestParseUtils {
   public static String getString(Map<String, String[]> map, String key)
       throws MissingParameterException {
 
-    final String[] values = map.get(key);
-    if ((values != null) && (values.length > 0) && (values[0] != null)) {
-      return values[0];
+    final String val;
+    {
+      final String[] values = map.get(key);
+      if ((values != null) && (values.length > 0) && (values[0] != null)) {
+        val = values[0];
+
+      } else {
+        throw new MissingParameterException(key);
+      }
     }
 
-    throw new MissingParameterException(key);
+    try {
+      return new String(val.getBytes("ISO-8859-1"), "UTF-8");
+
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static String toString(Map<String, String[]> map) {
