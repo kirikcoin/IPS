@@ -24,6 +24,13 @@ class RespondentSource {
   @Enumerated(EnumType.STRING)
   RespondentSourceType sourceType
 
+  RespondentSource() {}
+
+  RespondentSource(String source, RespondentSourceType sourceType) {
+    this.source = source
+    this.sourceType = sourceType
+  }
+
   boolean equals(o) {
     if (this.is(o)) return true
     if (getClass() != o.class) return false

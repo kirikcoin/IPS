@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.C2S;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.ge;
 import static org.hibernate.criterion.Restrictions.isNull;
@@ -59,7 +60,7 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
 
       if (bySource) {
         if (source == null) criteria.add(isNull("source"));
-        else                criteria.add(eq("source", source));
+        else                criteria.add(eq("source", new RespondentSource(source, C2S)));
       }
 
       final Number count = (Number) criteria.uniqueResult();
@@ -79,9 +80,9 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
 
     //noinspection unchecked
     final List<Object[]> results = (List<Object[]>) session.createQuery(
-        "select r.source, count(r)" +
+        "select r.source.source, count(r)" +
         " from Respondent r" +
-        " where r.survey = :survey and r.startDate >= :from and r.startDate < :to and r.source in :sources " +
+        " where r.survey = :survey and r.startDate >= :from and r.startDate < :to and r.source.source in :sources " +
         " group by r.source")
         .setEntity("survey", survey)
         .setParameterList("sources", source)
