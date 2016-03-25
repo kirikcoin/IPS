@@ -39,6 +39,10 @@ class RespondentSource {
     return result
   }
 
+  String getName() {
+    sourceType == RespondentSourceType.TELEGRAM ? 'Telegram' : source
+  }
+
   @Override String toString() { "RespondentSource{source='$source', sourceType=$sourceType}" }
 
   /**

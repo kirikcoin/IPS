@@ -22,7 +22,8 @@ public abstract class UssdOption {
 
   public static final String PARAM_MESSAGE_TYPE = "type";
 
-  public static final String PARAM_BAD_COMMAND = "bad_command";
+  public static final String PARAM_BAD_COMMAND  = "bad_command";
+  public static final String PARAM_INPUT        = "input";
 
   private final int key;
   private final String text;
@@ -121,6 +122,10 @@ public abstract class UssdOption {
 
     if (options.get(PARAM_BAD_COMMAND) != null) {
       return BadCommandOption.parse(options);
+    }
+
+    if (options.get(PARAM_INPUT) != null) {
+      return ArbitraryAnswerOption.parse(options);
     }
 
     if (options.get(PARAM_MESSAGE_TYPE) == null) {

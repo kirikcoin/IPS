@@ -30,6 +30,7 @@ class FailingMockConfig implements Config {
   long getFetchedExpirationDelaySeconds() { fail() }
 
   String getEsdpEndpointUrl() { fail() }
+  String getRegistryApiUrl() { fail() }
 
   boolean isJmxEnabled() { fail() }
   String getJmxHost() { fail() }

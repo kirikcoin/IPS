@@ -2,6 +2,7 @@ package mobi.eyeline.ips.service;
 
 import mobi.eyeline.ips.Hacks;
 import mobi.eyeline.ips.messages.AnswerOption;
+import mobi.eyeline.ips.messages.ArbitraryAnswerOption;
 import mobi.eyeline.ips.messages.BadCommandOption;
 import mobi.eyeline.ips.messages.MessageHandler;
 import mobi.eyeline.ips.messages.MissingParameterException;
@@ -276,13 +277,37 @@ public class UssdService implements MessageHandler {
     final Page current = (lastAnswer == null) ?
         survey.getFirstQuestion() : getNextPage(lastAnswer);
 
-    if ((current instanceof Question) && ((Question) current).isEnabledDefaultAnswer()) {
-      return processDefaultQuestion(outerRequest, request, survey, respondent, (Question) current);
-
-    } else {
-      return page(outerRequest, current, request.isSkipValidation());
-    }
+    return page(outerRequest, current, request.isSkipValidation());
   }
+
+  @Override
+  public UssdResponseModel handle(String msisdn, ArbitraryAnswerOption request, OuterRequest outerRequest) {
+    final Survey survey =
+        surveyService.findSurvey(request.getSurveyId(), request.isSkipValidation());
+
+    if (survey == null) {
+      return surveyNotFound();
+    }
+
+    final RespondentSource source = outerRequest.getSource();
+    if (source != null && outerRequest.getStoredSource() == null) {
+      logger.warn("Source found in headers, not in session for non-initial request." +
+          " Request: [" + outerRequest + "]");
+      // Put into session if not yet done so.
+      outerRequest.setStoredSource(source);
+    }
+
+    final Respondent respondent =
+        respondentRepository.findOrCreate(msisdn, survey, source);
+
+    final Answer lastAnswer = answerRepository.getLast(survey, respondent);
+
+    final Page current = (lastAnswer == null) ?
+        survey.getFirstQuestion() : getNextPage(lastAnswer);
+
+    return processDefaultQuestion(outerRequest, request, survey, respondent, (Question) current);
+  }
+
 
   private Page getNextPage(Answer lastAnswer) {
     final Question lastAnsweredQuestion = lastAnswer.getQuestion();
@@ -295,7 +320,7 @@ public class UssdService implements MessageHandler {
   }
 
   private UssdResponseModel processDefaultQuestion(OuterRequest outerRequest,
-                                                   BadCommandOption request,
+                                                   ArbitraryAnswerOption request,
                                                    Survey survey,
                                                    Respondent respondent,
                                                    Question question) {
@@ -324,11 +349,11 @@ public class UssdService implements MessageHandler {
   //
 
   private UssdResponseModel surveyNotFound() {
-    return new UssdResponseModel.NoSurveyResponseModel();
+    return new UssdResponseModel.NoSurveyResponseModel(-1);
   }
 
   private UssdResponseModel fatalError() {
-    return new UssdResponseModel.ErrorResponseModel();
+    return new UssdResponseModel.ErrorResponseModel(-1);
   }
 
   private UssdResponseModel surveyFinish(OuterRequest origRequest,
@@ -343,7 +368,8 @@ public class UssdService implements MessageHandler {
     final String endText = survey.getDetails().getEndText();
     return new TextUssdResponseModel((endText == null) ?
         USSD_BUNDLE.getString("ussd.end.text.default") :
-        endText);
+        endText,
+        survey.getId());
   }
 
   private void processEndSms(Respondent respondent, Survey survey) {
@@ -370,7 +396,11 @@ public class UssdService implements MessageHandler {
     }
 
     pushService.scheduleSendSms(
-        survey, details.getEndSmsFrom(), message, respondent.getMsisdn());
+        survey,
+        details.getEndSmsFrom(),
+        message,
+        respondent.getMsisdn(),
+        respondent.getSource());
   }
 
   private UssdResponseModel surveyStart(OuterRequest origRequest,
@@ -429,7 +459,8 @@ public class UssdService implements MessageHandler {
     question.setSentCount(question.getSentCount() + 1);
     questionRepository.update(question);
 
-    return new OptionsResponseModel(question.getTitle(), renderedOptions);
+    return new OptionsResponseModel(
+        question.getTitle(), renderedOptions, question.isEnabledDefaultAnswer(), question.getSurvey().getId());
   }
 
   /**
@@ -453,7 +484,7 @@ public class UssdService implements MessageHandler {
       }};
 
       final UssdResponseModel.RedirectUssdResponseModel response =
-          new UssdResponseModel.RedirectUssdResponseModel(uri.build().toString());
+          new UssdResponseModel.RedirectUssdResponseModel(uri.build().toString(), extLink.getSurvey().getId());
 
       extLink.setSentCount(extLink.getSentCount() + 1);
       extLinkPageRepository.update(extLink);

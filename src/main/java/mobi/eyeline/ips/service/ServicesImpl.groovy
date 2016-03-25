@@ -152,7 +152,7 @@ class ServicesImpl {
     csvParseService = new CsvParseService()
     timeZoneService = new TimeZoneService()
 
-    mobilizerServiceRegistryClient = new MobilizerServiceRegistryClient()
+    mobilizerServiceRegistryClient = new MobilizerServiceRegistryClient(config.registryApiUrl)
   }
 
   void start() {

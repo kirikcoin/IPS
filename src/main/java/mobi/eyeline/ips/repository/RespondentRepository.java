@@ -7,7 +7,9 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,16 +132,13 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
   }
 
   private Respondent find(Session session, Survey survey, String msisdn, RespondentSource source) {
+    final Criterion sourceRestriction = source != null ?
+        Restrictions.eq("source", source) : Restrictions.isNull("source");
 
-    return (Respondent) session.createQuery(
-        "from Respondent" +
-        " where" +
-        " msisdn = :msisdn and" +
-        " survey = :survey and" +
-        " ((source = :source) or (source is null and :source is null))")
-        .setString("msisdn", msisdn)
-        .setEntity("survey", survey)
-        .setEntity("source", source)
+    return (Respondent) session.createCriteria(Respondent.class)
+        .add(Restrictions.eq("msisdn", msisdn))
+        .add(Restrictions.eq("survey", survey))
+        .add(sourceRestriction)
         .uniqueResult();
   }
 

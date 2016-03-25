@@ -28,6 +28,8 @@
             page.onEditSettingsClick();
           } else if ("#{surveySettingsController.errorId}" == 'endMessageDialog') {
             page.onEditEndMessageClick();
+          } else if ("#{surveySettingsController.errorId}" == 'telegramDialog') {
+            page.onEditTelegramClick();
           } else if ("#{surveySettingsController.errorId}" == 'questionModificationDialog') {
             page.onQuestionModificationDialog();
           } else if ("#{surveySettingsController.errorId}" == 'extLinkModificationDialog') {
@@ -77,6 +79,7 @@
 
         <h:inputHidden id="settingsStartDate" value="#{surveySettingsController.settingsStartDate}"/>
         <h:inputHidden id="settingsEndDate" value="#{surveySettingsController.settingsEndDate}"/>
+        <h:inputHidden id="settingsTelegramToken" value="#{surveySettingsController.persistedSurvey.statistics.telegramToken}"/>
         <h:inputHidden id="openedGraph" value="#{surveySettingsController.openedGraph}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">

@@ -2,11 +2,10 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="mobi.eyeline.ips.messages.MissingParameterException" %>
 <%@ page import="mobi.eyeline.ips.messages.UssdResponseModel" %>
+<%@ page import="mobi.eyeline.ips.messages.UssdResponseModel.RedirectUssdResponseModel" %>
 <%@ page import="mobi.eyeline.ips.service.Services" %>
-<%@ page import="java.util.Map" %>
 <%@ page import="org.apache.http.HttpStatus" %>
 <%@ page import="static mobi.eyeline.ips.messages.UssdResponseModel.TextUssdResponseModel" %>
-<%@ page import="mobi.eyeline.ips.messages.UssdResponseModel.RedirectUssdResponseModel" %>
 <%@ page language="java"
          trimDirectiveWhitespaces="true"
          contentType="text/xml; charset=utf-8" %>
@@ -38,11 +37,23 @@
 <c:if test="${not empty model}">
   <page version="2.0">
 
-    <div>
-      <c:out value="${model.text}"/>
-      <br/>
-    </div>
+    <c:choose>
+      <c:when test="${model.defaultAnswerEnabled}">
+        <div>
+          <input navigationId="submit" name="input" title="${model.text}"/>
+        </div>
+        <navigation id="submit">
+          <link accesskey="0" pageId="/ussd/index.jsp?survey_id=${model.surveyId}">OK</link>
+        </navigation>
+      </c:when>
 
+      <c:otherwise>
+        <div>
+          <c:out value="${model.text}"/>
+          <br/>
+        </div>
+      </c:otherwise>
+    </c:choose>
 
     <c:choose>
         <c:when test="${empty model.options and not showFinalMessage}">

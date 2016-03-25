@@ -12,6 +12,7 @@ import mobi.eyeline.ips.model.User;
 import mobi.eyeline.ips.properties.Config;
 import mobi.eyeline.ips.repository.AccessNumberRepository;
 import mobi.eyeline.ips.repository.SurveyRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +75,7 @@ public class EsdpService {
     logger.debug("Deleting service, survey = [" + survey + "]");
 
     getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
-        .deleteService(esdpServiceSupport.getKey(survey));
+        .deleteService(esdpServiceSupport.getServiceId(survey));
   }
 
   /**
@@ -88,7 +89,7 @@ public class EsdpService {
         " survey = [" + survey + "]");
 
     final Service service = getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
-        .getService(esdpServiceSupport.getKey(survey));
+        .getService(esdpServiceSupport.getServiceId(survey));
 
     // C2S-numbers.
     final String numberEntry = isEmpty(accessNumbers) ?
@@ -119,20 +120,22 @@ public class EsdpService {
                      Survey survey,
                      String telegramToken) throws EsdpServiceException {
 
+    telegramToken = StringUtils.trimToEmpty(telegramToken);
+
     final Service service = getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
-        .getService(esdpServiceSupport.getKey(survey));
+        .getService(esdpServiceSupport.getServiceId(survey));
 
     if (service.getProperties() == null) {
       service.setProperties(new Service.Properties());
     }
     final List<Service.Properties.Entry> entries = service.getProperties().getEntry();
 
-    Service.Properties.Entry sip = find(entries, "telegram.token");
-    if (sip == null) {
-      sip = entry("telegram.token", telegramToken);
-      entries.add(sip);
+    Service.Properties.Entry entry = find(entries, "telegram.token");
+    if (entry == null) {
+      entry = entry("telegram.token", telegramToken);
+      entries.add(entry);
     } else {
-      sip.setValue(telegramToken);
+      entry.setValue(telegramToken);
     }
 
     getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
@@ -143,7 +146,7 @@ public class EsdpService {
     logger.debug("Updating service, survey = [" + survey + "]");
 
     final Service service = getApi(user.getEsdpLogin(), user.getEsdpPasswordHash())
-        .getService(esdpServiceSupport.getKey(survey));
+        .getService(esdpServiceSupport.getServiceId(survey));
 
     // Properties boilerplate.
     if (service.getProperties() == null) {
@@ -216,7 +219,7 @@ public class EsdpService {
 
   private boolean hasService(String login, String passwordHash, Survey survey) {
     try {
-      return getApi(login, passwordHash).getService(esdpServiceSupport.getKey(survey)) != null;
+      return getApi(login, passwordHash).getService(esdpServiceSupport.getServiceId(survey)) != null;
     } catch (Exception e) {
       logger.debug(e.getMessage());
       return false;

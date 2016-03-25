@@ -17,10 +17,26 @@ public class UssdResponseModel {
   /** If non-null, redirect to the specified URL. */
   private final String redirectUrl;
 
-  protected UssdResponseModel(String text, List<UssdOption> options, String performRedirect) {
+  private final boolean defaultAnswerEnabled;
+  private final int surveyId;
+
+  protected UssdResponseModel(String text,
+                              List<UssdOption> options,
+                              String performRedirect,
+                              boolean defaultAnswerEnabled,
+                              int surveyId) {
     this.text = text;
     this.options = options;
     this.redirectUrl = performRedirect;
+    this.defaultAnswerEnabled = defaultAnswerEnabled;
+    this.surveyId = surveyId;
+  }
+
+  protected UssdResponseModel(String text,
+                              List<UssdOption> options,
+                              String performRedirect,
+                              int surveyId) {
+    this(text, options, performRedirect, false, surveyId);
   }
 
   public String getText() {
@@ -35,12 +51,20 @@ public class UssdResponseModel {
     return redirectUrl;
   }
 
+  public boolean isDefaultAnswerEnabled() {
+    return defaultAnswerEnabled;
+  }
+
+  public int getSurveyId() {
+    return surveyId;
+  }
+
   /**
    * Model with no options, just text.
    */
   public static class TextUssdResponseModel extends UssdResponseModel {
-    public TextUssdResponseModel(String text) {
-      super(text, Collections.<UssdOption>emptyList(), null);
+    public TextUssdResponseModel(String text, int surveyId) {
+      super(text, Collections.<UssdOption>emptyList(), null, surveyId);
     }
   }
 
@@ -48,8 +72,15 @@ public class UssdResponseModel {
    * Model with no options, just text.
    */
   public static class OptionsResponseModel extends UssdResponseModel {
-    public OptionsResponseModel(String text, List<? extends UssdOption> options) {
-      super(text, Collections.unmodifiableList(options), null);
+    public OptionsResponseModel(String text, List<? extends UssdOption> options, int surveyId) {
+      this(text, options, false, surveyId);
+    }
+
+    public OptionsResponseModel(String text,
+                                List<? extends UssdOption> options,
+                                boolean defaultAnswerEnabled,
+                                int surveyId) {
+      super(text, Collections.unmodifiableList(options), null, defaultAnswerEnabled, surveyId);
     }
   }
 
@@ -57,8 +88,8 @@ public class UssdResponseModel {
    * Indicates that request asks for an unavailable survey.
    */
   public static class NoSurveyResponseModel extends TextUssdResponseModel {
-    public NoSurveyResponseModel() {
-      super(USSD_BUNDLE.getString("ussd.survey.not.available"));
+    public NoSurveyResponseModel(int surveyId) {
+      super(USSD_BUNDLE.getString("ussd.survey.not.available"), surveyId);
     }
   }
 
@@ -66,8 +97,8 @@ public class UssdResponseModel {
    * Perform redirect.
    */
   public static class RedirectUssdResponseModel extends UssdResponseModel {
-    public RedirectUssdResponseModel(String url) {
-      super(null, Collections.<UssdOption>emptyList(), url);
+    public RedirectUssdResponseModel(String url, int surveyId) {
+      super(null, Collections.<UssdOption>emptyList(), url, surveyId);
     }
   }
 
@@ -75,8 +106,8 @@ public class UssdResponseModel {
    * Indicates some kind of request handling error.
    */
   public static class ErrorResponseModel extends TextUssdResponseModel {
-    public ErrorResponseModel() {
-      super(USSD_BUNDLE.getString("ussd.error"));
+    public ErrorResponseModel(int surveyId) {
+      super(USSD_BUNDLE.getString("ussd.error"), surveyId);
     }
 
     @Override

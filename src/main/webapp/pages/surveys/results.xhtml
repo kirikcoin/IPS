@@ -199,13 +199,14 @@
                   <eye:column name="respondent"
                               title="#{bundle['results.list.respondent']}"
                               sortable="true">
-                    <h:outputText value="#{row.respondent.msisdn}"/>
+                    <h:outputText value="#{row.respondent.source.sourceType == 'TELEGRAM' ?
+                        'Telegram-'.concat(row.respondent.msisdn) : row.respondent.msisdn}"/>
                   </eye:column>
 
                   <eye:column name="source"
                               title="#{bundle['results.access.number']}"
                               sortable="true">
-                    <h:outputText value="#{row.respondent.source}"/>
+                    <h:outputText value="#{row.respondent.source.name}"/>
                   </eye:column>
 
                   <eye:column name="date"

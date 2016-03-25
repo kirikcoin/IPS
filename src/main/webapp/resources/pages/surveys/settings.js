@@ -167,6 +167,8 @@ var page = {
     $('#telegramDialog').hide();
     $('.telegramDisplay').show();
 
+    $("#newTelegramToken").val($("#settingsTelegramToken").val());
+    
     page.enableEditables();
     ips.message.hideAll();
 

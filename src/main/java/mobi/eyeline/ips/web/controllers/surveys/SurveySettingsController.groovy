@@ -21,6 +21,8 @@ import mobi.eyeline.ips.service.EsdpService
 import mobi.eyeline.ips.service.EsdpServiceSupport
 import mobi.eyeline.ips.service.MobilizerSegmentation
 import mobi.eyeline.ips.service.MobilizerServiceRegistryClient
+import mobi.eyeline.ips.service.MobilizerServiceRegistryClient.ServiceRegistryException.TokenAlreadyTaken
+import mobi.eyeline.ips.service.MobilizerServiceRegistryClient.ServiceRegistryException.TokenInvalid
 import mobi.eyeline.ips.service.PushService
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.service.UssdService
@@ -346,12 +348,36 @@ class SurveySettingsController extends BaseSurveyController {
   }
 
   void saveTelegramToken() {
+
+    def fail = { Closure _ ->
+      errorId = FacesContext.currentInstance.externalContext.requestParameterMap['errorId']
+      _.call()
+    }
+
     final newToken = survey.statistics.telegramToken
 
-    final botName = mobilizerServiceRegistryClient.getTelegramBotName newToken
-    if (newToken && !botName) {
-      addErrorMessage strings['telegram.api.error']
-      return
+    String botName = null
+    if (newToken) {
+      try {
+        botName = mobilizerServiceRegistryClient.getTelegramBotName \
+         esdpServiceSupport.getServiceId(survey), newToken
+
+      } catch (TokenInvalid ignored) {
+        fail { addErrorMessage strings['telegram.token.invalid'], 'newTelegramToken' }
+        return
+
+      } catch (TokenAlreadyTaken ignored) {
+        fail { addErrorMessage strings['telegram.token.already.taken'], 'newTelegramToken' }
+        return
+
+      } catch (Exception e) {
+        logger.error "Failed checking token [$newToken], surveyId = [$survey.id]", e
+      }
+
+      if (!botName) {
+        fail { addErrorMessage strings['telegram.api.error'] }
+        return
+      }
     }
 
     try {
@@ -363,7 +389,7 @@ class SurveySettingsController extends BaseSurveyController {
 
     } catch (Exception e) {
       logger.error(e.message, e)
-      addErrorMessage strings['esdp.error.survey.update']
+      fail { addErrorMessage strings['esdp.error.survey.update'] }
       return
     }
 
