@@ -87,6 +87,7 @@
 
   <section name="esdp">
     <param name="endpoint.url" type="string">http://localhost/console2/service-api?wsdl</param>
+    <param name="registry.api.url" type="string">http://localhost/registry</param>
   </section>
 
   <section name="jmx">
