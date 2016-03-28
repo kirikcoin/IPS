@@ -65,6 +65,7 @@ public class EsdpService {
     entries.add(entry("description", survey.getDetails().getTitle()));
     entries.add(entry("use-method-post", "false"));
     entries.add(entry("force-transaction-mode", "true"));   // Note: transactional!
+    entries.add(entry("telegram.links.realignment.enabled", "true"));
     entries.add(entry("start-page", ussdService.getSurveyUrl(survey)));
     entries.add(entry("inform-url", config.getBaseSurveyUrl() + "/inform"));
 
