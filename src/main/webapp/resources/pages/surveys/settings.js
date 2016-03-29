@@ -61,6 +61,8 @@ var page = {
       }
     });
 
+    // Preview drop-down: avoid page scrolling on click.
+    $('.menu-bar > a[href="#"]').click(function(e) { e.preventDefault(); return false; });
   },
 
   showSurveyDeleteDialog: function (id) {
