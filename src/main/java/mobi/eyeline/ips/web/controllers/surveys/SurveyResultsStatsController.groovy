@@ -10,6 +10,7 @@ import mobi.eyeline.ips.repository.AnswerRepository
 import mobi.eyeline.ips.repository.RespondentRepository
 import mobi.eyeline.ips.service.SurveyService
 import mobi.eyeline.ips.util.LocaleUtil
+import mobi.eyeline.ips.web.controllers.ColorLoop
 import mobi.eyeline.util.jsf.components.chart.pie.PieModel
 
 import javax.annotation.PostConstruct
@@ -101,11 +102,8 @@ class SurveyResultsStatsController extends BaseSurveyReadOnlyController {
     }
   }
 
-  @SuppressWarnings("GrMethodMayBeStatic")
-  String colorLoop(QuestionOption opt) {
-    def colors = ['green', '#adff2f', 'blue', 'yellow', 'black', 'magenta']
-    return colors[opt.activeIndex % colors.size()]
-  }
+  @SuppressWarnings('GrMethodMayBeStatic')
+  String colorLoop(QuestionOption opt) {  ColorLoop.colorLoop opt.activeIndex }
 
   int count(QuestionOption opt) {
     answerRepository.count opt, periodStart, periodEnd, source

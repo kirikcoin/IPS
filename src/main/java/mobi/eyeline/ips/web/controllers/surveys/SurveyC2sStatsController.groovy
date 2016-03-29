@@ -6,6 +6,7 @@ import groovy.util.logging.Slf4j
 import mobi.eyeline.ips.model.AccessNumber
 import mobi.eyeline.ips.repository.AccessNumberRepository
 import mobi.eyeline.ips.repository.RespondentRepository
+import mobi.eyeline.ips.web.controllers.ColorLoop
 import mobi.eyeline.util.jsf.components.chart.bar.BarModel
 import mobi.eyeline.util.jsf.components.chart.line.LineModel
 
@@ -36,13 +37,8 @@ class SurveyC2sStatsController extends BaseSurveyReadOnlyController {
     accessNumberRepository.list(getSurvey())
   }
 
-  @SuppressWarnings("GrMethodMayBeStatic")
-  String colorLoop(AccessNumber num) {
-    final colors = ['green', '#adff2f', 'blue', 'yellow', 'black', 'magenta']
-
-    final idx = accessNumbers.indexOf(num)
-    return colors[idx % colors.size()]
-  }
+  @SuppressWarnings('GrMethodMayBeStatic')
+  String colorLoop(AccessNumber num) { ColorLoop.colorLoop accessNumbers.indexOf(num) }
 
   BarModel getBarModel() {
     final model = new BarModel()
