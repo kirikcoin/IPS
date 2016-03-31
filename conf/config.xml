@@ -4,7 +4,7 @@
 
   <section name="mail">
 
-    <param name="smtp.host" type="string">max.sibinco.ru</param>
+    <param name="smtp.host" type="string">127.0.0.1</param>
     <param name="smtp.port" type="int">25</param>
     <param name="smtp.username" type="string">user</param>
     <param name="smtp.password" type="string">password</param>
@@ -87,6 +87,7 @@
 
   <section name="esdp">
     <param name="endpoint.url" type="string">http://localhost/console2/service-api?wsdl</param>
+    <param name="registry.api.url" type="string">http://localhost/registry</param>
   </section>
 
   <section name="jmx">

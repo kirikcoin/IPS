@@ -46,6 +46,12 @@ public class SurveyStats implements Serializable {
   @Column(name = "campaign")
   private String campaign;
 
+  @Column(name = "telegram_token")
+  private String telegramToken;
+
+  @Column(name = "telegram_username")
+  private String telegramUsername;
+
   /**
    * Дата последнего обновления количества показов (поля sent).
    */
@@ -95,6 +101,22 @@ public class SurveyStats implements Serializable {
 
   public void setCampaign(String campaign) {
     this.campaign = campaign;
+  }
+
+  public String getTelegramToken() {
+    return telegramToken;
+  }
+
+  public void setTelegramToken(String telegramToken) {
+    this.telegramToken = telegramToken;
+  }
+
+  public String getTelegramUsername() {
+    return telegramUsername;
+  }
+
+  public void setTelegramUsername(String telegramUsername) {
+    this.telegramUsername = telegramUsername;
   }
 
   public Date getLastUpdate() {

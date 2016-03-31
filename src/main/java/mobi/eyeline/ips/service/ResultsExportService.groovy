@@ -16,6 +16,8 @@ import mobi.eyeline.util.jsf.components.data_table.model.DataTableSortOrder
 
 import java.text.DateFormat
 
+import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.TELEGRAM
+
 @CompileStatic
 @Slf4j('logger')
 public class ResultsExportService {
@@ -84,9 +86,10 @@ public class ResultsExportService {
         answerOptionNumber =
             (answer instanceof OptionAnswer) ? (answer as OptionAnswer).option.activeIndex + 1 : -1
 
+        final resp = session.respondent
         csvWriter.writeNext([
-            session.respondent.msisdn,
-            session.respondent.source,
+            resp.source?.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
+            resp.source?.name,
             answer.question.activeIndex + 1,
             answer.question.title,
             answerOptionNumber,
@@ -141,10 +144,11 @@ public class ResultsExportService {
                                 TimeZone timeZone,
                                 Locale locale) {
     sessions.each { session ->
+      final resp = session.respondent
       csvWriter.writeNext([
-          session.respondent.msisdn,
-          session.respondent.source,
-          session.respondent.coupon
+          resp.source?.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
+          resp.source?.name,
+          resp.coupon
       ] as String[])
     }
   }
@@ -196,10 +200,11 @@ public class ResultsExportService {
     df.timeZone = timeZone
 
     sessions.each { session ->
+      final resp = session.respondent
       csvWriter.writeNext([
-          session.respondent.msisdn,
-          session.respondent.source,
-          df.format(session.respondent.startDate)
+          resp.source?.sourceType == TELEGRAM ? "Telegram-$resp.msisdn" : resp.msisdn,
+          resp.source?.name,
+          df.format(resp.startDate)
       ] as String[])
     }
   }

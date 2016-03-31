@@ -1,12 +1,15 @@
 package mobi.eyeline.ips.repository;
 
 import mobi.eyeline.ips.model.Respondent;
+import mobi.eyeline.ips.model.RespondentSource;
 import mobi.eyeline.ips.model.Survey;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.C2S;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.ge;
 import static org.hibernate.criterion.Restrictions.isNull;
@@ -56,7 +60,7 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
 
       if (bySource) {
         if (source == null) criteria.add(isNull("source"));
-        else                criteria.add(eq("source", source));
+        else                criteria.add(eq("source", new RespondentSource(source, C2S)));
       }
 
       final Number count = (Number) criteria.uniqueResult();
@@ -76,9 +80,9 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
 
     //noinspection unchecked
     final List<Object[]> results = (List<Object[]>) session.createQuery(
-        "select r.source, count(r)" +
+        "select r.source.source, count(r)" +
         " from Respondent r" +
-        " where r.survey = :survey and r.startDate >= :from and r.startDate < :to and r.source in :sources " +
+        " where r.survey = :survey and r.startDate >= :from and r.startDate < :to and r.source.source in :sources " +
         " group by r.source")
         .setEntity("survey", survey)
         .setParameterList("sources", source)
@@ -128,21 +132,18 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
     }
   }
 
-  private Respondent find(Session session, Survey survey, String msisdn, String source) {
+  private Respondent find(Session session, Survey survey, String msisdn, RespondentSource source) {
+    final Criterion sourceRestriction = source != null ?
+        Restrictions.eq("source", source) : Restrictions.isNull("source");
 
-    return (Respondent) session.createQuery(
-        "from Respondent" +
-        " where" +
-        " msisdn = :msisdn and" +
-        " survey = :survey and" +
-        " ((source = :source) or (source is null and :source is null))")
-        .setString("msisdn", msisdn)
-        .setEntity("survey", survey)
-        .setString("source", source)
+    return (Respondent) session.createCriteria(Respondent.class)
+        .add(Restrictions.eq("msisdn", msisdn))
+        .add(Restrictions.eq("survey", survey))
+        .add(sourceRestriction)
         .uniqueResult();
   }
 
-  public Respondent findOrCreate(String msisdn, Survey survey, String source) {
+  public Respondent findOrCreate(String msisdn, Survey survey, RespondentSource source) {
     final Session session = getSessionFactory().openSession();
     Transaction transaction = null;
     try {

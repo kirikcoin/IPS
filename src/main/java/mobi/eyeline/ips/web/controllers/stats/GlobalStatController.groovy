@@ -59,7 +59,7 @@ class GlobalStatController extends BaseController {
       @Override
       List getRows(int startPos, int count, DataTableSortOrder sortOrder) {
         def slice = sortOrder ? DataTableUtil.sort(list, sortOrder) : list
-        slice[startPos..<Math.min(startPos + count, rowsCount)]
+        startPos > rowsCount ? [] : slice[startPos..<Math.min(startPos + count, rowsCount)]
       }
 
       final int rowsCount = list.size()

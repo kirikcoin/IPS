@@ -20,7 +20,7 @@ public class EsdpServiceSupport {
       final String port = builder.getPort() >= 0 ? ":" + builder.getPort() : "";
 
       final String uri = builder.getScheme() + "://" + builder.getHost() + port +
-          "/push?service=" + getKey(survey);
+          "/push?service=" + getServiceId(survey);
 
       //noinspection ConstantConditions
       return Hacks.ENABLE_C2S_SOURCE_HEURISTICS ? uri + "&delivery=true" : uri;
@@ -30,7 +30,7 @@ public class EsdpServiceSupport {
     }
   }
 
-  String getKey(Survey survey) {
+  public String getServiceId(Survey survey) {
     final String provider = survey.getOwner().getEsdpProvider();
     return provider + "." + getTag(survey);
   }

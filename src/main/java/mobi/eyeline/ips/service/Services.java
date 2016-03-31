@@ -221,4 +221,10 @@ public class Services {
   public TimeZoneService getTimeZoneService() {
     return instance.getTimeZoneService();
   }
+
+  @Produces
+  public MobilizerServiceRegistryClient getMobilizerServiceRegistryClient() {
+    return instance.getMobilizerServiceRegistryClient();
+  }
+  
 }

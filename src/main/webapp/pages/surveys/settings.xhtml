@@ -28,6 +28,8 @@
             page.onEditSettingsClick();
           } else if ("#{surveySettingsController.errorId}" == 'endMessageDialog') {
             page.onEditEndMessageClick();
+          } else if ("#{surveySettingsController.errorId}" == 'telegramDialog') {
+            page.onEditTelegramClick();
           } else if ("#{surveySettingsController.errorId}" == 'questionModificationDialog') {
             page.onQuestionModificationDialog();
           } else if ("#{surveySettingsController.errorId}" == 'extLinkModificationDialog') {
@@ -77,6 +79,7 @@
 
         <h:inputHidden id="settingsStartDate" value="#{surveySettingsController.settingsStartDate}"/>
         <h:inputHidden id="settingsEndDate" value="#{surveySettingsController.settingsEndDate}"/>
+        <h:inputHidden id="settingsTelegramToken" value="#{surveySettingsController.persistedSurvey.statistics.telegramToken}"/>
         <h:inputHidden id="openedGraph" value="#{surveySettingsController.openedGraph}"/>
 
         <h:panelGroup layout="block" styleClass="border-shadow">
@@ -304,8 +307,7 @@
 
                 <h:panelGroup id="accessNumbersDialog"
                               style="display: none"
-                              layout="block"
-                              rendered="#{userSession.surveyModificationAllowed}">
+                              layout="block">
 
                   <eye:dynamicTable value="#{surveySettingsController.accessNumbersModel}"
                                     tableClass="table-narrow"
@@ -333,6 +335,77 @@
                       <h:outputLink styleClass="button-green"
                                     value="#"
                                     onclick="return page.onEditAccessNumbersCancel();">
+                        <h:outputText value="#{bundle['survey.create.button.cancel']}"/>
+                      </h:outputLink>
+                    </eye:button>
+                    <eye:space/>
+                  </eye:buttons>
+                </h:panelGroup>
+
+              </h:panelGroup>
+            </eye:collapsingGroup>
+
+
+            <!--
+                Telegram settings.
+            -->
+
+            <eye:collapsingGroup opened="true" id="groupTelegram">
+              <f:facet name="header">
+                <h:panelGroup>
+                  <h:outputText value="#{bundle['survey.properties.telegram.token']}"/>
+                  <h:commandLink value="#{bundle['survey.settings.modify']}"
+                                 onclick="return page.onEditTelegramClick();"
+                                 styleClass="modify-left"
+                                 rendered="#{userSession.surveyModificationAllowed}"/>
+                </h:panelGroup>
+              </f:facet>
+              <h:panelGroup>
+                <h:panelGrid id="telegramDisplay"
+                             styleClass="telegramDisplay"
+                             columns="2"
+                             columnClasses="settings-left,settings-right">
+
+                  <h:outputLabel value="#{bundle['survey.properties.telegram.token.label']}"
+                                 for="telegramToken"/>
+                  <h:outputText id="telegramToken"
+                                value="#{surveySettingsController.readableTelegramToken}"/>
+
+                  <h:outputLabel value="#{bundle['survey.properties.telegram.username']}"
+                                 for="telegramUsername"
+                                 rendered="#{not empty surveySettingsController.survey.statistics.telegramUsername}"/>
+                  <h:outputText id="telegramUsername"
+                                value="#{surveySettingsController.survey.statistics.telegramUsername}"
+                                rendered="#{not empty surveySettingsController.survey.statistics.telegramUsername}"/>
+                </h:panelGrid>
+
+                <h:panelGroup id="telegramDialog"
+                              style="display: none"
+                              layout="block"
+                              rendered="#{userSession.surveyModificationAllowed}">
+
+                  <h:panelGrid columns="2"
+                               columnClasses="settings-left,settings-right">
+
+                    <h:outputLabel value="#{bundle['survey.properties.telegram.token.label']}"
+                                   for="newTelegramToken"/>
+                    <eye:inputText id="newTelegramToken"
+                                   maxlength="1024"
+                                   value="#{surveySettingsController.survey.statistics.telegramToken}"/>
+                  </h:panelGrid>
+
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink styleClass="button-green btnSubmit"
+                                     value="#{bundle['survey.settings.save']}"
+                                     action="#{surveySettingsController.saveTelegramToken}">
+                        <f:param name="errorId" value="telegramDialog"/>
+                      </h:commandLink>
+                    </eye:button>
+                    <eye:button>
+                      <h:outputLink styleClass="button-green"
+                                    value="#"
+                                    onclick="return page.onEditTelegramCancel();">
                         <h:outputText value="#{bundle['survey.create.button.cancel']}"/>
                       </h:outputLink>
                     </eye:button>
@@ -530,12 +603,12 @@
                     <h:panelGrid columns="2" columnClasses="previewLeft,previewRight">
                       <h:panelGroup>
                         <eye:buttons>
-                    <eye:button>
+                          <eye:button>
                             <h:commandLink value="#{bundle['survey.settings.question.add']}"
                                            action="#{surveySettingsController.modifyQuestion(null)}"
                                            styleClass="button-green" style="width: 1px"
                                            rendered="#{userSession.surveyModificationAllowed}"/>
-                    </eye:button>
+                          </eye:button>
                           <eye:button id="btnAddExtLink" visible="#{empty surveySettingsController.persistedSurvey.activeQuestions ? false : true}">
                             <h:commandLink value="#{bundle['survey.settings.ext.link.add']}"
                                            action="#{surveySettingsController.modifyExtLink(null)}"
@@ -546,7 +619,8 @@
                       </h:panelGroup>
 
                       <eye:buttons
-                          rendered="#{not empty surveySettingsController.survey.activeQuestions}">
+                          rendered="#{not empty surveySettingsController.survey.activeQuestions and
+                                      empty surveySettingsController.survey.statistics.telegramToken}">
                         <eye:button>
                           <h:outputLink styleClass="button-green"
                                         onclick="return page.onPreviewClick();">
@@ -554,6 +628,27 @@
                           </h:outputLink>
                         </eye:button>
                       </eye:buttons>
+
+                      <eye:menubar label="#{bundle['survey.settings.preview']} &#x25BE;"
+                                   menuBarStyle="button-green"
+                                   subMenuStyle="preview-submenu"
+                                   rendered="#{not empty surveySettingsController.survey.activeQuestions and
+                                               not empty surveySettingsController.survey.statistics.telegramToken}">
+                        <eye:menubaritem>
+                          <h:outputLink styleClass="button-green"
+                                        onclick="return page.onPreviewClick();">
+                            <h:outputText value="#{bundle['survey.settings.preview.push']}"/>
+                          </h:outputLink>
+                        </eye:menubaritem>
+
+                        <eye:menubaritem>
+                          <h:outputLink styleClass="button-green"
+                                        onclick="return page.onTelegramPreviewClick();">
+                            <h:outputText value="#{bundle['survey.settings.preview.push.telegram']}"/>
+                          </h:outputLink>
+                        </eye:menubaritem>
+                      </eye:menubar>
+
                     </h:panelGrid>
 
             </eye:collapsingGroup>
@@ -966,6 +1061,29 @@
                              onclick="return page.onDialogCancel('surveyPreviewDialog');"/>
             </eye:button>
             <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
+
+        <!-- Survey preview via Telegram dialog -->
+        <eye:dialog id="surveyTelegramPreviewDialog"
+                    title="#{bundle['survey.settings.preview.title']}"
+                    width="400">
+
+          <h:outputText value="#{bundle['survey.settings.preview.telegram.text']}: "/>
+
+          <h:outputLink id="previewTelegram"
+                        value="https://telegram.me/#{surveySettingsController.survey.statistics.telegramUsername}"
+                        target="_blank">
+            <h:outputText value="@#{surveySettingsController.survey.statistics.telegramUsername}"/>
+          </h:outputLink>
+
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink styleClass="button-green"
+                             value="#{bundle['survey.settings.preview.telegram.ok']}"
+                             onclick="return page.onDialogCancel('surveyTelegramPreviewDialog');"/>
+            </eye:button>
           </eye:buttons>
 
         </eye:dialog>

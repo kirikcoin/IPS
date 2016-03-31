@@ -16,6 +16,7 @@ import mobi.eyeline.ips.utils.SurveyBuilder
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_ANSWER_ID
 import static mobi.eyeline.ips.messages.AnswerOption.PARAM_QUESTION_ID
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_BAD_COMMAND
+import static mobi.eyeline.ips.messages.UssdOption.PARAM_INPUT
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_MESSAGE_TYPE
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_MSISDN_DEPRECATED
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION
@@ -95,7 +96,7 @@ class UssdServiceTest extends DbTestCase {
   def textAnswer(option, text) {
     def props = [:]
     props.putAll option.properties
-    props.put PARAM_BAD_COMMAND, text
+    props.put PARAM_INPUT, text
     props[UssdOption.PARAM_MSISDN_DEPRECATED] = msisdn
     request(props)
   }

@@ -1,6 +1,7 @@
 package mobi.eyeline.ips.service
 
 import mobi.eyeline.ips.messages.UssdResponseModel
+import mobi.eyeline.ips.model.RespondentSource
 import mobi.eyeline.ips.model.Role
 import mobi.eyeline.ips.model.Survey
 import mobi.eyeline.ips.model.SurveyDetails
@@ -63,7 +64,7 @@ class UssdServiceCouponTest extends DbTestCase {
       def textSent = []
 
       @Override
-      void scheduleSendSms(Survey survey, String from, String text, String msisdn) {
+      void scheduleSendSms(Survey survey, String from, String text, String msisdn, RespondentSource source) {
         textSent << text
       }
     }

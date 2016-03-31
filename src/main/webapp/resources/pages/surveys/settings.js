@@ -61,6 +61,8 @@ var page = {
       }
     });
 
+    // Preview drop-down: avoid page scrolling on click.
+    $('.menu-bar > a[href="#"]').click(function(e) { e.preventDefault(); return false; });
   },
 
   showSurveyDeleteDialog: function (id) {
@@ -154,6 +156,27 @@ var page = {
     return false;
   },
 
+  onEditTelegramClick: function () {
+    $('.telegramDisplay').hide();
+    $('#telegramDialog').show();
+
+    page.disableEditables();
+
+    return false;
+  },
+
+  onEditTelegramCancel: function() {
+    $('#telegramDialog').hide();
+    $('.telegramDisplay').show();
+
+    $("#newTelegramToken").val($("#settingsTelegramToken").val());
+    
+    page.enableEditables();
+    ips.message.hideAll();
+
+    return false;
+  },
+
   /** @private */
   _bindSelectShortMenu: function () {
     $('#questionModificationDialog_div')
@@ -186,6 +209,12 @@ var page = {
 
   onPreviewClick: function() {
     jsfc('surveyPreviewDialog').show();
+
+    return false;
+  },
+
+  onTelegramPreviewClick: function() {
+    jsfc('surveyTelegramPreviewDialog').show();
 
     return false;
   },

@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.service;
 
+import mobi.eyeline.ips.model.RespondentSource;
 import mobi.eyeline.ips.model.Survey;
 import mobi.eyeline.ips.properties.Config;
 import org.apache.http.client.utils.URIBuilder;
@@ -12,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static mobi.eyeline.ips.messages.UssdOption.PARAM_SKIP_VALIDATION;
+import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.TELEGRAM;
 
 public class PushService extends BasePushService {
 
@@ -55,21 +57,27 @@ public class PushService extends BasePushService {
   public void scheduleSendSms(final Survey survey,
                               final String from,
                               final String text,
-                              final String msisdn) {
+                              final String msisdn,
+                              final RespondentSource source) {
 
     executor.submit(new Runnable() {
       @Override
       public void run() {
         try {
-          sendSms(survey, from, text, msisdn);
+          if (source != null && source.getSourceType() == TELEGRAM) {
+            sendTelegramPush(survey, text, msisdn);
+          } else {
+            sendSms(survey, from, text, msisdn);
+          }
+
         } catch (URISyntaxException | IOException e) {
-          logger.error("Error sending SMS PUSH-request, " +
+          logger.error("Error sending PUSH-request, " +
               "survey = [" + survey + "], msisdn = [" + msisdn + "]", e);
         }
       }
     });
 
-    logger.debug("Scheduled SMS PUSH request:" +
+    logger.debug("Scheduled PUSH request:" +
         " survey = [" + survey + "], msisdn = [" + msisdn + "]");
   }
 
@@ -85,6 +93,29 @@ public class PushService extends BasePushService {
         .addParameter("subscriber", msisdn)
         .addParameter(PARAM_SKIP_VALIDATION, "true")
         .addParameter("scenario", "default-noinform");
+
+    doRequest(builder.build());
+  }
+
+  protected void sendTelegramPush(Survey survey,
+                                  String text,
+                                  String chatId)
+      throws URISyntaxException, IOException {
+
+    assert survey.getDetails().isEndSmsEnabled();
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("Sending Telegram PUSH request for:" +
+          " survey = [" + survey + "]," +
+          " chatId = [" + chatId + "]," +
+          " message = [" + text + "]");
+    }
+
+    final URIBuilder builder = new URIBuilder(esdpServiceSupport.getServiceUrl(survey))
+        .addParameter("scenario", "push-noinform")
+        .addParameter("protocol", "telegram")
+        .addParameter("subscriber", chatId)
+        .addParameter("message", text);
 
     doRequest(builder.build());
   }

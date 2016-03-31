@@ -34,6 +34,7 @@ public interface Config {
   long getFetchedExpirationDelaySeconds();
 
   String getEsdpEndpointUrl();
+  String getRegistryApiUrl();
 
   boolean isJmxEnabled();
   String getJmxHost();
@@ -69,6 +70,7 @@ public interface Config {
     private final long fetchedExpirationDelaySeconds;
 
     private final String esdpEndpointUrl;
+    private final String registryApiUrl;
 
     private final boolean jmxEnabled;
     private final String jmxHost;
@@ -117,6 +119,7 @@ public interface Config {
       final XmlConfigSection esdp = xmlConfig.getSection("esdp");
       {
         esdpEndpointUrl = esdp.getString("endpoint.url");
+        registryApiUrl = esdp.getString("registry.api.url");
       }
 
       final XmlConfigSection jmx = xmlConfig.getSection("jmx");
@@ -230,6 +233,11 @@ public interface Config {
     @Override
     public String getEsdpEndpointUrl() {
       return esdpEndpointUrl;
+    }
+
+    @Override
+    public String getRegistryApiUrl() {
+      return registryApiUrl;
     }
 
     @Override

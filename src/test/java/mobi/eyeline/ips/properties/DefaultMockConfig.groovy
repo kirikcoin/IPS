@@ -27,6 +27,7 @@ class DefaultMockConfig extends FailingMockConfig {
   long getFetchedExpirationDelaySeconds() { 600 }
 
   String getEsdpEndpointUrl() { '' }
+  String getRegistryApiUrl() { '' }
 
   boolean isJmxEnabled() { false }
   String getJmxHost() { '' }

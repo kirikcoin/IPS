@@ -7,6 +7,8 @@ import mobi.eyeline.ips.components.tree.TreeNode
 import mobi.eyeline.ips.model.*
 import mobi.eyeline.ips.repository.*
 import mobi.eyeline.ips.service.*
+import mobi.eyeline.ips.service.MobilizerServiceRegistryClient.ServiceRegistryException.TokenAlreadyTaken
+import mobi.eyeline.ips.service.MobilizerServiceRegistryClient.ServiceRegistryException.TokenInvalid
 import mobi.eyeline.ips.util.SurveyTreeUtil
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.PhoneValidator
@@ -44,6 +46,7 @@ class SurveySettingsController extends BaseSurveyController {
   @Inject private EsdpServiceSupport esdpServiceSupport
   @Inject private UssdService ussdService
   @Inject private AccessNumbersService accessNumbersService
+  @Inject private MobilizerServiceRegistryClient mobilizerServiceRegistryClient
 
   String errorId
 
@@ -325,6 +328,56 @@ class SurveySettingsController extends BaseSurveyController {
     goToSurvey surveyId
   }
 
+  void saveTelegramToken() {
+
+    def fail = { Closure _ ->
+      errorId = FacesContext.currentInstance.externalContext.requestParameterMap['errorId']
+      _.call()
+    }
+
+    final newToken = survey.statistics.telegramToken
+
+    String botName = null
+    if (newToken) {
+      try {
+        botName = mobilizerServiceRegistryClient.getTelegramBotName \
+         esdpServiceSupport.getServiceId(survey), newToken
+
+      } catch (TokenInvalid ignored) {
+        fail { addErrorMessage strings['telegram.token.invalid'], 'newTelegramToken' }
+        return
+
+      } catch (TokenAlreadyTaken ignored) {
+        fail { addErrorMessage strings['telegram.token.already.taken'], 'newTelegramToken' }
+        return
+
+      } catch (Exception e) {
+        logger.error "Failed checking token [$newToken], surveyId = [$survey.id]", e
+      }
+
+      if (!botName) {
+        fail { addErrorMessage strings['telegram.api.error'] }
+        return
+      }
+    }
+
+    try {
+      esdpService.update currentUser, persistedSurvey, newToken
+
+      persistedSurvey.statistics.telegramToken = newToken
+      persistedSurvey.statistics.telegramUsername = botName
+      surveyRepository.update persistedSurvey
+
+    } catch (Exception e) {
+      logger.error(e.message, e)
+      fail { addErrorMessage strings['esdp.error.survey.update'] }
+      return
+    }
+
+    goToSurvey surveyId
+  }
+
+
   String deleteSurvey() {
     // Feels safer to reload
     def survey = surveyRepository.load(surveyId)
@@ -484,6 +537,8 @@ class SurveySettingsController extends BaseSurveyController {
       }
     }
 
+    violations.addAll checkUniqueness(persistedQuestion)
+
     final List<String> fieldOrder = [
         'title',
         'validOptions',
@@ -508,6 +563,23 @@ class SurveySettingsController extends BaseSurveyController {
 
     updateQuestionsGraph()
     goToSurvey(surveyId)
+  }
+
+  @SuppressWarnings('GrMethodMayBeStatic')
+  private Collection<ConstraintViolation> checkUniqueness(Question q) {
+    q.activeOptions.with { all ->
+      all
+          .collectMany { i ->
+            // Compare by index as ID is not set yet for newly added options.
+            all.findAll { j -> j.answer.trim() == i.answer.trim() && j.activeIndex != i.activeIndex }
+          }
+          .unique { it.activeIndex }
+          .collect {
+            new SimpleConstraintViolation<>(
+                "options[$it.activeIndex].answer",
+                strings['question.option.duplicate'])
+          }
+    }
   }
 
   void saveExtLink() {
@@ -653,6 +725,10 @@ class SurveySettingsController extends BaseSurveyController {
   String getReadableAccessNumbers() {
     final numberList = accessNumberRepository.list(persistedSurvey)?.collect { it.number }?.join(', ')
     return numberList?:(BaseController.strings['no.access.numbers'] as String)
+  }
+
+  String getReadableTelegramToken() {
+    persistedSurvey.statistics.telegramToken ?: (BaseController.strings['no.telegram.token'] as String)
   }
 
   List<SelectItem> getAvailableAccessNumbers() {
