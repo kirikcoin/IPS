@@ -157,6 +157,10 @@ public class User implements Serializable {
   @Cache(usage = READ_WRITE)
   private User manager;
 
+  @Column(name = "allow_profile_change", columnDefinition = "BIT", nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean allowProfileChange = true;
+
   public User() {
   }
 
@@ -326,6 +330,14 @@ public class User implements Serializable {
 
   public void setManager(User manager) {
     this.manager = manager;
+  }
+
+  public boolean isAllowProfileChange() {
+    return allowProfileChange;
+  }
+
+  public void setAllowProfileChange(boolean allowProfileChange) {
+    this.allowProfileChange = allowProfileChange;
   }
 
   @AssertTrue(message = "uiProfile set for non-manager role")
