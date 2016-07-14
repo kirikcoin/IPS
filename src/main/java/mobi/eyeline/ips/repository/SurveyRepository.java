@@ -15,7 +15,9 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.criterion.CriteriaSpecification.DISTINCT_ROOT_ENTITY;
-import static org.hibernate.criterion.Restrictions.*;
+import static org.hibernate.criterion.Restrictions.eq;
+import static org.hibernate.criterion.Restrictions.isNull;
+import static org.hibernate.criterion.Restrictions.or;
 import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
 
 
@@ -38,7 +40,8 @@ public class SurveyRepository extends BaseRepository<Survey, Integer> {
 
     final Criteria criteria = createQuery(user, owner, filter, active, session);
 
-    criteria.createAlias("statistics", "statistics");
+    // XXX: this JOIN is probably for searching by access number, which we don't do now.
+    // criteria.createAlias("statistics", "statistics");
 
     criteria.setResultTransformer(DISTINCT_ROOT_ENTITY);
     criteria.setFirstResult(offset).setMaxResults(limit);

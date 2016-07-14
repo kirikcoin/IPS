@@ -53,11 +53,15 @@ var page = {
     $(function () {
       var $accessNumbersDialog = $('#accessNumbersDialog'),
           $addBtn = $accessNumbersDialog.find('.eyeline_addbutton'),
-          addBtn = $addBtn[0],
-          prevHandler = addBtn.onclick;
-      addBtn.onclick = function (e) {
-        var $newValue = $accessNumbersDialog.find('select[id$="newcell_number"]');
-        if ($newValue.val() > 0) prevHandler(e);
+          addBtn = $addBtn[0];
+      if (addBtn) {
+        var prevHandler = addBtn.onclick;
+        addBtn.onclick = function (e) {
+          var $newValue = $accessNumbersDialog.find('select[id$="newcell_number"]');
+          if ($newValue.val() > 0) prevHandler(e);
+        }
+      } else {
+        // Not rendered as C2S numbers are disabled for the current user.
       }
     });
 

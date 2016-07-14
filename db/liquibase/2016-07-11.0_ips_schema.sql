@@ -1,5 +1,5 @@
 -- liquibase formatted SQL
 -- changeset andy:20
 
-ALTER TABLE `users` ADD COLUMN `allow_profile_change` BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE `users` ADD COLUMN `lk_account` BOOLEAN NOT NULL DEFAULT FALSE;
 

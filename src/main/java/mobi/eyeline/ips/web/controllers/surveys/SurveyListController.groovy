@@ -69,6 +69,8 @@ class SurveyListController extends BaseController {
 
   DataTableModel getTableModel() {
 
+    final _lkUser = lkUser
+
     return new DataTableModel() {
       @Override
       public List getRows(int offset,
@@ -93,7 +95,8 @@ class SurveyListController extends BaseController {
               client: it.client?.fullName,
               startDate: it.startDate,
               endDate: it.endDate,
-              accessNumber: accessNumberRepository.list(it)?.collect { it.number }?.join(', '))
+              accessNumber:
+                  _lkUser ? '' : accessNumberRepository.list(it)?.collect { it.number }?.join(', '))
         }
       }
 

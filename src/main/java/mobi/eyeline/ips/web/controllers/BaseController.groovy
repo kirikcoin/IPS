@@ -71,7 +71,9 @@ abstract class BaseController implements Serializable {
 
   boolean isAdminRole() { return inRole(Role.ADMIN) }
 
-  boolean isProfileChangeAllowed() { currentUser?.allowProfileChange }
+  boolean isLkUser() {
+    currentUser?.lkAccount || currentUser?.manager?.lkAccount
+  }
 
   //
   //  Request/session routines.

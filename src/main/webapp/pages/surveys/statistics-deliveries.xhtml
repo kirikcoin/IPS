@@ -63,7 +63,8 @@
                   </li>
                 </ul>
               </h:panelGroup>
-              <h:outputLink value="invitations.faces?id=#{surveyDeliveryStatsController.surveyId}">
+              <h:outputLink value="invitations.faces?id=#{surveyDeliveryStatsController.surveyId}"
+                            rendered="#{not userSession.lkUser}">
                 <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
               </h:outputLink>
             </h:panelGrid>

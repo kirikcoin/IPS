@@ -32,8 +32,8 @@ class UserSessionController extends BaseController {
   boolean isInvitationDeliveryAllowed() { getCurrentUser().canSendInvitations }
 
   @Memoized
-  boolean isC2sAllowed() { getCurrentUser().showC2s }
+  boolean isC2sAllowed() { getCurrentUser().showC2s && !lkUser }
 
   @Memoized
-  boolean isGlobalStatisticsAllowed() { isClientRole() || isManagerRole() }
+  boolean isGlobalStatisticsAllowed() { (isClientRole() || isManagerRole()) && !lkUser }
 }
