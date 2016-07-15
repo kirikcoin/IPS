@@ -69,7 +69,7 @@ class SurveyListController extends BaseController {
 
   DataTableModel getTableModel() {
 
-    final _lkUser = lkUser
+    final _c2sAllowed = c2sAllowed
 
     return new DataTableModel() {
       @Override
@@ -96,7 +96,8 @@ class SurveyListController extends BaseController {
               startDate: it.startDate,
               endDate: it.endDate,
               accessNumber:
-                  _lkUser ? '' : accessNumberRepository.list(it)?.collect { it.number }?.join(', '))
+                  _c2sAllowed ? accessNumberRepository.list(it)?.collect { it.number }?.join(', ') : ''
+          )
         }
       }
 

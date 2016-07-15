@@ -39,11 +39,11 @@
 
                   <h:commandLink value="#{bundle['settings.managersettings.button']}"
                                  action="/skinsettings"
-                                 rendered="#{userSession.authenticated and userSession.managerRole and !userSession.lkUser}"
+                                 rendered="#{userSession.authenticated and userSession.managerRole and userSession.profileChangeAllowed}"
                                  styleClass="#{settings ? 'exitButtonSelected' : 'exitButton'}"/>
 
                   <h:outputText value=" | "
-                                rendered="#{userSession.authenticated and userSession.managerRole and !userSession.lkUser}"
+                                rendered="#{userSession.authenticated and userSession.managerRole and userSession.profileChangeAllowed}"
                                 styleClass="settingsSeparator"/>
 
                   <h:commandLink value="#{bundle['settings.exit.button']}"

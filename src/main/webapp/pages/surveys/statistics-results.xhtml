@@ -44,7 +44,7 @@
               <h:outputLink value="results.faces?id=#{surveyResultsStatsController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.results']}"/>
               </h:outputLink>
-              <h:panelGroup layout="block" rendered="#{not userSession.lkUser}">
+              <h:panelGroup layout="block" rendered="#{userSession.surveyStatsAllowed}">
                 <h:outputLink value="#">
                   <h:outputText value="#{bundle['survey.details.tab.stats']}"/> &#x25BE;
                 </h:outputLink>
@@ -66,11 +66,11 @@
                   </li>
                 </ul>
               </h:panelGroup>
-              <h:outputLink value="#" rendered="#{userSession.lkUser}">
+              <h:outputLink value="#" rendered="#{not userSession.surveyStatsAllowed}">
                 <h:outputText value="#{bundle['survey.details.tab.stats']}"/>
               </h:outputLink>
               <h:outputLink value="invitations.faces?id=#{surveyResultsStatsController.surveyId}"
-                            rendered="#{not userSession.lkUser}">
+                            rendered="#{userSession.invitationDeliveryAllowed}">
                 <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
               </h:outputLink>
             </h:panelGrid>

@@ -123,7 +123,7 @@ public class User implements Serializable {
   @OneToMany(mappedBy = "owner")
   private List<Survey> createdSurveys;
 
-  @Column(name = "can_send_invitations", columnDefinition = "BIT", nullable = false)
+  @Column(name = "allow_invitations", columnDefinition = "BIT", nullable = false)
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean canSendInvitations = false;
 
@@ -157,9 +157,29 @@ public class User implements Serializable {
   @Cache(usage = READ_WRITE)
   private User manager;
 
-  @Column(name = "lk_account", columnDefinition = "BIT", nullable = false)
-  @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean lkAccount = false;
+  @Column(name = "allow_c2s", columnDefinition = "BIT", nullable = false)
+  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  private boolean allowC2s = true;
+
+  @Column(name = "allow_overall_stats", columnDefinition = "BIT", nullable = false)
+  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  private boolean allowOverallStats = true;
+
+  @Column(name = "allow_survey_stats", columnDefinition = "BIT", nullable = false)
+  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  private boolean allowSurveyStats = true;
+
+  @Column(name = "allow_telegram", columnDefinition = "BIT", nullable = false)
+  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  private boolean allowTelegram = true;
+
+  @Column(name = "allow_preview", columnDefinition = "BIT", nullable = false)
+  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  private boolean allowPreview = true;
+
+  @Column(name = "allow_profile_change", columnDefinition = "BIT", nullable = false)
+  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  private boolean allowProfileChange = true;
 
   public User() {
   }
@@ -332,12 +352,52 @@ public class User implements Serializable {
     this.manager = manager;
   }
 
-  public boolean isLkAccount() {
-    return lkAccount;
+  public boolean isAllowC2s() {
+    return allowC2s;
   }
 
-  public void setLkAccount(boolean allowProfileChange) {
-    this.lkAccount = allowProfileChange;
+  public void setAllowC2s(boolean allowC2s) {
+    this.allowC2s = allowC2s;
+  }
+
+  public boolean isAllowOverallStats() {
+    return allowOverallStats;
+  }
+
+  public void setAllowOverallStats(boolean allowOverallStats) {
+    this.allowOverallStats = allowOverallStats;
+  }
+
+  public boolean isAllowSurveyStats() {
+    return allowSurveyStats;
+  }
+
+  public void setAllowSurveyStats(boolean allowSurveyStats) {
+    this.allowSurveyStats = allowSurveyStats;
+  }
+
+  public boolean isAllowTelegram() {
+    return allowTelegram;
+  }
+
+  public void setAllowTelegram(boolean allowTelegram) {
+    this.allowTelegram = allowTelegram;
+  }
+
+  public boolean isAllowPreview() {
+    return allowPreview;
+  }
+
+  public void setAllowPreview(boolean allowPreview) {
+    this.allowPreview = allowPreview;
+  }
+
+  public boolean isAllowProfileChange() {
+    return allowProfileChange;
+  }
+
+  public void setAllowProfileChange(boolean allowProfileChange) {
+    this.allowProfileChange = allowProfileChange;
   }
 
   @AssertTrue(message = "uiProfile set for non-manager role")

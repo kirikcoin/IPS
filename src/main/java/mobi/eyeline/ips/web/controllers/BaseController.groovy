@@ -71,8 +71,28 @@ abstract class BaseController implements Serializable {
 
   boolean isAdminRole() { return inRole(Role.ADMIN) }
 
-  boolean isLkUser() {
-    currentUser?.lkAccount || currentUser?.manager?.lkAccount
+  boolean isC2sAllowed() {
+    currentUser.showC2s && (currentUser?.allowC2s || currentUser?.manager?.allowC2s)
+  }
+
+  boolean isGlobalStatsAllowed() {
+    currentUser?.allowOverallStats || currentUser?.manager?.allowOverallStats
+  }
+
+  boolean isSurveyStatsAllowed() {
+    currentUser?.allowSurveyStats || currentUser?.manager?.allowSurveyStats
+  }
+
+  boolean isTelegramAllowed() {
+    return currentUser?.allowTelegram || currentUser?.manager?.allowTelegram
+  }
+
+  boolean isPreviewAllowed() {
+    return currentUser?.allowPreview || currentUser?.manager?.allowPreview
+  }
+
+  boolean isProfileChangeAllowed() {
+    return currentUser?.allowProfileChange || currentUser?.manager?.allowProfileChange
   }
 
   //

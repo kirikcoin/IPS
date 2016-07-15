@@ -95,7 +95,7 @@
               </eye:column>
               <eye:column name="accessNumber" title="#{bundle['survey.list.table.access.numbers']}"
                           sortable="false"
-                          visible="#{not userSession.lkUser}">
+                          visible="#{userSession.c2sAllowed}">
                 <h:outputText value="#{row.accessNumber}"/>
               </eye:column>
             </eye:row>
