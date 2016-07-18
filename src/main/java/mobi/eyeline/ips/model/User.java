@@ -158,27 +158,27 @@ public class User implements Serializable {
   private User manager;
 
   @Column(name = "allow_c2s", columnDefinition = "BIT", nullable = false)
-  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean allowC2s = true;
 
   @Column(name = "allow_overall_stats", columnDefinition = "BIT", nullable = false)
-  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean allowOverallStats = true;
 
   @Column(name = "allow_survey_stats", columnDefinition = "BIT", nullable = false)
-  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean allowSurveyStats = true;
 
   @Column(name = "allow_telegram", columnDefinition = "BIT", nullable = false)
-  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean allowTelegram = true;
 
   @Column(name = "allow_preview", columnDefinition = "BIT", nullable = false)
-  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean allowPreview = true;
 
   @Column(name = "allow_profile_change", columnDefinition = "BIT", nullable = false)
-  @Type(type = "orag.hibernate.type.NumericBooleanType")
+  @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean allowProfileChange = true;
 
   public User() {

@@ -83,7 +83,7 @@
                             rendered="#{not userSession.surveyStatsAllowed}">
                 <h:outputText value="#{bundle['survey.details.tab.stats']}"/>
               </h:outputLink>
-              <h:panelGroup layout="block" rendered="#{not userSession.invitationDeliveryAllowed}">
+              <h:panelGroup layout="block" rendered="#{userSession.invitationDeliveryAllowed}">
                 <h:outputLink value="invitations.faces?id=#{surveyResultsController.surveyId}">
                   <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
                 </h:outputLink>

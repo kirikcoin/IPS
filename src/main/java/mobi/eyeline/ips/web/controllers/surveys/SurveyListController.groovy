@@ -60,7 +60,7 @@ class SurveyListController extends BaseController {
   void init() {
     def now = new Date()
     newSurveyStartDate =
-        new Date((now + 1).clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
+        new Date(now.clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
     newSurveyEndDate = newSurveyStartDate + 7
 
     newSurveyStartDateOrig = formatDateTime(newSurveyStartDate, getTimeZone())
