@@ -165,10 +165,6 @@ public class User implements Serializable {
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean allowOverallStats = true;
 
-  @Column(name = "allow_survey_stats", columnDefinition = "BIT", nullable = false)
-  @Type(type = "org.hibernate.type.NumericBooleanType")
-  private boolean allowSurveyStats = true;
-
   @Column(name = "allow_telegram", columnDefinition = "BIT", nullable = false)
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean allowTelegram = true;
@@ -366,14 +362,6 @@ public class User implements Serializable {
 
   public void setAllowOverallStats(boolean allowOverallStats) {
     this.allowOverallStats = allowOverallStats;
-  }
-
-  public boolean isAllowSurveyStats() {
-    return allowSurveyStats;
-  }
-
-  public void setAllowSurveyStats(boolean allowSurveyStats) {
-    this.allowSurveyStats = allowSurveyStats;
   }
 
   public boolean isAllowTelegram() {

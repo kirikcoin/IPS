@@ -83,7 +83,7 @@ abstract class BaseController implements Serializable {
 
   boolean isSurveyStatsAllowed() {
     currentUser.manager != null ?
-        currentUser.manager.allowSurveyStats : currentUser.allowSurveyStats
+        currentUser.manager.canSendInvitations : currentUser.canSendInvitations
   }
 
   boolean isTelegramAllowed() {

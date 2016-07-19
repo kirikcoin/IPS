@@ -14,9 +14,6 @@ COMMENT 'Manager is allowed to bind C2S numbers';
 ALTER TABLE `users` ADD COLUMN `allow_overall_stats` BOOLEAN NOT NULL DEFAULT TRUE
 COMMENT 'Manager & associated clients are allowed to view inter-survey statistics';
 
-ALTER TABLE `users` ADD COLUMN `allow_survey_stats` BOOLEAN NOT NULL DEFAULT TRUE
-COMMENT 'Manager & associated clients are allowed to view survey statistics';
-
 ALTER TABLE `users` ADD COLUMN `allow_telegram` BOOLEAN NOT NULL DEFAULT TRUE
 COMMENT 'Manager & associated clients are allowed binding to Telegram channel';
 
