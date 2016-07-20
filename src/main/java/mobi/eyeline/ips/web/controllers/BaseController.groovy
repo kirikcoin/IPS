@@ -76,6 +76,10 @@ abstract class BaseController implements Serializable {
         currentUser.manager.allowC2s : currentUser.allowC2s
   }
 
+  boolean isC2sListAllowed() {
+    managerRole && currentUser.showC2s
+  }
+
   boolean isGlobalStatsAllowed() {
     currentUser.manager != null ?
         currentUser.manager.allowOverallStats : currentUser.allowOverallStats

@@ -5,6 +5,10 @@ ALTER TABLE `users`
   CHANGE COLUMN `can_send_invitations`
   `allow_invitations` BOOLEAN NOT NULL DEFAULT TRUE;
 
+ALTER TABLE `users`
+  CHANGE COLUMN `show_c2s`
+  `show_c2s_list` BOOLEAN NOT NULL DEFAULT FALSE;
+
 ALTER TABLE `users` ADD COLUMN `allow_profile_change` BOOLEAN NOT NULL DEFAULT TRUE
 COMMENT 'UI profile change is allowed';
 
