@@ -27,7 +27,7 @@ class MobilizerServiceRegistryClient {
           .with { it?.result?.username }
 
     } catch (e) {
-      log.error "Telegram API request failed, url = [$url]", e
+      log.error "Telegram API request failed", e
       return null
     }
   }

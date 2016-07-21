@@ -10,18 +10,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -123,11 +112,11 @@ public class User implements Serializable {
   @OneToMany(mappedBy = "owner")
   private List<Survey> createdSurveys;
 
-  @Column(name = "can_send_invitations", columnDefinition = "BIT", nullable = false)
+  @Column(name = "allow_invitations", columnDefinition = "BIT", nullable = false)
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean canSendInvitations = false;
 
-  @Column(name = "show_c2s", columnDefinition = "BIT", nullable = false)
+  @Column(name = "show_c2s_list", columnDefinition = "BIT", nullable = false)
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean showC2s = false;
 
@@ -156,6 +145,26 @@ public class User implements Serializable {
   @ManyToOne
   @Cache(usage = READ_WRITE)
   private User manager;
+
+  @Column(name = "allow_c2s", columnDefinition = "BIT", nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean allowC2s = true;
+
+  @Column(name = "allow_overall_stats", columnDefinition = "BIT", nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean allowOverallStats = true;
+
+  @Column(name = "allow_telegram", columnDefinition = "BIT", nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean allowTelegram = true;
+
+  @Column(name = "allow_preview", columnDefinition = "BIT", nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean allowPreview = true;
+
+  @Column(name = "allow_profile_change", columnDefinition = "BIT", nullable = false)
+  @Type(type = "org.hibernate.type.NumericBooleanType")
+  private boolean allowProfileChange = true;
 
   public User() {
   }
@@ -326,6 +335,46 @@ public class User implements Serializable {
 
   public void setManager(User manager) {
     this.manager = manager;
+  }
+
+  public boolean isAllowC2s() {
+    return allowC2s;
+  }
+
+  public void setAllowC2s(boolean allowC2s) {
+    this.allowC2s = allowC2s;
+  }
+
+  public boolean isAllowOverallStats() {
+    return allowOverallStats;
+  }
+
+  public void setAllowOverallStats(boolean allowOverallStats) {
+    this.allowOverallStats = allowOverallStats;
+  }
+
+  public boolean isAllowTelegram() {
+    return allowTelegram;
+  }
+
+  public void setAllowTelegram(boolean allowTelegram) {
+    this.allowTelegram = allowTelegram;
+  }
+
+  public boolean isAllowPreview() {
+    return allowPreview;
+  }
+
+  public void setAllowPreview(boolean allowPreview) {
+    this.allowPreview = allowPreview;
+  }
+
+  public boolean isAllowProfileChange() {
+    return allowProfileChange;
+  }
+
+  public void setAllowProfileChange(boolean allowProfileChange) {
+    this.allowProfileChange = allowProfileChange;
   }
 
   @AssertTrue(message = "uiProfile set for non-manager role")

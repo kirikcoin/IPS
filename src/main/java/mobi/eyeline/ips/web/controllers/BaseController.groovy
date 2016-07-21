@@ -71,6 +71,40 @@ abstract class BaseController implements Serializable {
 
   boolean isAdminRole() { return inRole(Role.ADMIN) }
 
+  boolean isC2sAllowed() {
+    currentUser.manager != null ?
+        currentUser.manager.allowC2s : currentUser.allowC2s
+  }
+
+  boolean isC2sListAllowed() {
+    managerRole && currentUser.showC2s
+  }
+
+  boolean isGlobalStatsAllowed() {
+    currentUser.manager != null ?
+        currentUser.manager.allowOverallStats : currentUser.allowOverallStats
+  }
+
+  boolean isSurveyStatsAllowed() {
+    currentUser.manager != null ?
+        currentUser.manager.canSendInvitations : currentUser.canSendInvitations
+  }
+
+  boolean isTelegramAllowed() {
+    currentUser.manager != null ?
+        currentUser.manager.allowTelegram : currentUser.allowTelegram
+  }
+
+  boolean isPreviewAllowed() {
+    currentUser.manager != null ?
+        currentUser.manager.allowPreview : currentUser.allowPreview
+  }
+
+  boolean isProfileChangeAllowed() {
+    currentUser.manager != null ?
+        currentUser.manager.allowProfileChange : currentUser.allowProfileChange
+  }
+
   //
   //  Request/session routines.
   //

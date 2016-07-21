@@ -117,7 +117,7 @@
               <h:outputLink value="results.faces?id=#{surveySettingsController.surveyId}">
                 <h:outputText value="#{bundle['survey.details.tab.results']}"/>
               </h:outputLink>
-              <h:panelGroup layout="block">
+              <h:panelGroup layout="block" rendered="#{userSession.surveyStatsAllowed}">
                 <h:outputLink value="#">
                   <h:outputText value="#{bundle['survey.details.tab.stats']}"/> &#x25BE;
                 </h:outputLink>
@@ -139,7 +139,12 @@
                   </li>
                 </ul>
               </h:panelGroup>
-              <h:outputLink value="invitations.faces?id=#{surveySettingsController.surveyId}">
+              <h:outputLink value="statistics-results.faces?id=#{surveyResultsController.surveyId}"
+                            rendered="#{not userSession.surveyStatsAllowed}">
+                <h:outputText value="#{bundle['survey.details.tab.stats']}"/>
+              </h:outputLink>
+              <h:outputLink value="invitations.faces?id=#{surveySettingsController.surveyId}"
+                            rendered="#{userSession.invitationDeliveryAllowed}">
                 <h:outputText value="#{bundle['survey.details.tab.invites']}"/>
               </h:outputLink>
             </h:panelGrid>
@@ -282,7 +287,7 @@
                 Access number settings.
             -->
 
-            <eye:collapsingGroup opened="true" id="groupAccessNumbers">
+            <eye:collapsingGroup opened="true" id="groupAccessNumbers" rendered="#{userSession.c2sAllowed}">
               <f:facet name="header">
                 <h:panelGroup>
                   <h:outputText value="#{bundle['survey.list.table.access.numbers']}"/>
@@ -350,7 +355,7 @@
                 Telegram settings.
             -->
 
-            <eye:collapsingGroup opened="true" id="groupTelegram">
+            <eye:collapsingGroup opened="true" id="groupTelegram" rendered="#{userSession.telegramAllowed}">
               <f:facet name="header">
                 <h:panelGroup>
                   <h:outputText value="#{bundle['survey.properties.telegram.token']}"/>
@@ -600,56 +605,59 @@
 
               </eye:tabs>
 
-                    <h:panelGrid columns="2" columnClasses="previewLeft,previewRight">
-                      <h:panelGroup>
-                        <eye:buttons>
-                          <eye:button>
-                            <h:commandLink value="#{bundle['survey.settings.question.add']}"
-                                           action="#{surveySettingsController.modifyQuestion(null)}"
-                                           styleClass="button-green" style="width: 1px"
-                                           rendered="#{userSession.surveyModificationAllowed}"/>
-                          </eye:button>
-                          <eye:button id="btnAddExtLink" visible="#{empty surveySettingsController.persistedSurvey.activeQuestions ? false : true}">
-                            <h:commandLink value="#{bundle['survey.settings.ext.link.add']}"
-                                           action="#{surveySettingsController.modifyExtLink(null)}"
-                                           styleClass="button-green" style="width: 100%"
-                                           rendered="#{userSession.surveyModificationAllowed}"/>
-                          </eye:button>
-                        </eye:buttons>
-                      </h:panelGroup>
+              <h:panelGrid columns="2" columnClasses="previewLeft,previewRight"
+                           rendered="#{userSession.surveyModificationAllowed or userSession.previewAllowed}">
+                <h:panelGroup>
+                  <eye:buttons>
+                    <eye:button>
+                      <h:commandLink value="#{bundle['survey.settings.question.add']}"
+                                     action="#{surveySettingsController.modifyQuestion(null)}"
+                                     styleClass="button-green" style="width: 1px"
+                                     rendered="#{userSession.surveyModificationAllowed}"/>
+                    </eye:button>
+                    <eye:button id="btnAddExtLink" visible="#{empty surveySettingsController.persistedSurvey.activeQuestions ? false : true}">
+                      <h:commandLink value="#{bundle['survey.settings.ext.link.add']}"
+                                     action="#{surveySettingsController.modifyExtLink(null)}"
+                                     styleClass="button-green" style="width: 100%"
+                                     rendered="#{userSession.surveyModificationAllowed}"/>
+                    </eye:button>
+                  </eye:buttons>
+                </h:panelGroup>
 
-                      <eye:buttons
-                          rendered="#{not empty surveySettingsController.survey.activeQuestions and
-                                      empty surveySettingsController.survey.statistics.telegramToken}">
-                        <eye:button>
-                          <h:outputLink styleClass="button-green"
-                                        onclick="return page.onPreviewClick();">
-                            <h:outputText value="#{bundle['survey.settings.preview']}"/>
-                          </h:outputLink>
-                        </eye:button>
-                      </eye:buttons>
+                <eye:buttons
+                    rendered="#{not empty surveySettingsController.survey.activeQuestions and
+                                      empty surveySettingsController.survey.statistics.telegramToken and userSession.previewAllowed}">
+                  <eye:button>
+                    <h:outputLink styleClass="button-green"
+                                  onclick="return page.onPreviewClick();">
+                      <h:outputText value="#{bundle['survey.settings.preview']}"/>
+                    </h:outputLink>
+                  </eye:button>
+                </eye:buttons>
 
-                      <eye:menubar label="#{bundle['survey.settings.preview']} &#x25BE;"
-                                   menuBarStyle="button-green"
-                                   subMenuStyle="preview-submenu"
-                                   rendered="#{not empty surveySettingsController.survey.activeQuestions and
-                                               not empty surveySettingsController.survey.statistics.telegramToken}">
-                        <eye:menubaritem>
-                          <h:outputLink styleClass="button-green"
-                                        onclick="return page.onPreviewClick();">
-                            <h:outputText value="#{bundle['survey.settings.preview.push']}"/>
-                          </h:outputLink>
-                        </eye:menubaritem>
+                <eye:menubar label="#{bundle['survey.settings.preview']} &#x25BE;"
+                             menuBarStyle="button-green"
+                             subMenuStyle="preview-submenu"
+                             rendered="#{not empty surveySettingsController.survey.activeQuestions and
+                                               not empty surveySettingsController.survey.statistics.telegramToken and userSession.previewAllowed}">
+                  <eye:menubaritem>
+                    <h:outputLink styleClass="button-green"
+                                  onclick="return page.onPreviewClick();">
+                      <h:outputText value="#{bundle['survey.settings.preview.push']}"/>
+                    </h:outputLink>
+                  </eye:menubaritem>
 
-                        <eye:menubaritem>
-                          <h:outputLink styleClass="button-green"
-                                        onclick="return page.onTelegramPreviewClick();">
-                            <h:outputText value="#{bundle['survey.settings.preview.push.telegram']}"/>
-                          </h:outputLink>
-                        </eye:menubaritem>
-                      </eye:menubar>
+                  <eye:menubaritem>
+                    <h:outputLink styleClass="button-green"
+                                  onclick="return page.onTelegramPreviewClick();">
+                      <h:outputText value="#{bundle['survey.settings.preview.push.telegram']}"/>
+                    </h:outputLink>
+                  </eye:menubaritem>
+                </eye:menubar>
 
-                    </h:panelGrid>
+                <h:panelGroup id="paddingIfNoPreview" layout="block" rendered="#{not userSession.previewAllowed}"/>
+
+              </h:panelGrid>
 
             </eye:collapsingGroup>
 
@@ -678,7 +686,7 @@
                                     value="#{surveySettingsController.persistedSurvey.details.endText}"/>
                       <h:outputText id="surveyEndTextPlaceholder"
                                     rendered="#{surveySettingsController.persistedSurvey.details.endText == null}"
-                                    value="#{bundle['survey.settings.not.specified']}"
+                                    value="#{bundle['survey.settings.message.none']}"
                                     styleClass="placeholder"/>
                     </h:panelGroup>
 
@@ -689,7 +697,7 @@
                                     rendered="#{surveySettingsController.persistedSurvey.details.endSmsEnabled}"/>
 
                       <h:outputText rendered="#{not surveySettingsController.persistedSurvey.details.endSmsEnabled}"
-                                    value="#{bundle['survey.settings.not.specified']}"
+                                    value="#{bundle['survey.settings.message.none']}"
                                     styleClass="placeholder"/>
                     </h:panelGroup>
 

@@ -60,7 +60,7 @@ class SurveyListController extends BaseController {
   void init() {
     def now = new Date()
     newSurveyStartDate =
-        new Date((now + 1).clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
+        new Date(now.clearTime().time + timeZoneService.getOffsetMillis(getTimeZone()))
     newSurveyEndDate = newSurveyStartDate + 7
 
     newSurveyStartDateOrig = formatDateTime(newSurveyStartDate, getTimeZone())
@@ -68,6 +68,8 @@ class SurveyListController extends BaseController {
   }
 
   DataTableModel getTableModel() {
+
+    final _c2sAllowed = c2sAllowed
 
     return new DataTableModel() {
       @Override
@@ -93,7 +95,9 @@ class SurveyListController extends BaseController {
               client: it.client?.fullName,
               startDate: it.startDate,
               endDate: it.endDate,
-              accessNumber: accessNumberRepository.list(it)?.collect { it.number }?.join(', '))
+              accessNumber:
+                  _c2sAllowed ? accessNumberRepository.list(it)?.collect { it.number }?.join(', ') : ''
+          )
         }
       }
 
