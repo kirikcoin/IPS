@@ -50,7 +50,7 @@ public class SurveyDetails implements Serializable {
   @Type(type = "org.hibernate.type.NumericBooleanType")
   private boolean endSmsEnabled;
 
-  @Column(name = "end_sms_text", columnDefinition = "varchar(255)")
+  @Column(name = "end_sms_text", columnDefinition = "TEXT")
   @MaxSize(SURVEY_END_TEXT_LENGTH)
   private String endSmsText;
 

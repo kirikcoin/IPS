@@ -1,5 +1,6 @@
 package mobi.eyeline.ips.model
 
+import static mobi.eyeline.ips.model.Constants.SURVEY_END_TEXT_LENGTH
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.empty
 import static org.hamcrest.Matchers.hasSize
@@ -30,7 +31,7 @@ class SurveyDetailsTest extends GroovyTestCase {
 
   void test4() {
     def violations =
-        validate new SurveyDetails(title: 't' * 46, endText: 'e' * 71)
+        validate new SurveyDetails(title: 't' * 46, endText: 'e' * (SURVEY_END_TEXT_LENGTH + 1))
     assertThat violations, hasSize(2)
   }
 
