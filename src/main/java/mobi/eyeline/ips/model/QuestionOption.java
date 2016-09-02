@@ -90,6 +90,13 @@ public class QuestionOption implements Serializable {
     return answer;
   }
 
+  public String getBriefAnswer() {
+    final int maxSize = 70;
+    return (getAnswer().length() <= maxSize) ?
+        getAnswer() :
+        getAnswer().substring(0, maxSize - 3) + "...";
+  }
+
   public void setAnswer(String answer) {
     this.answer = answer;
   }

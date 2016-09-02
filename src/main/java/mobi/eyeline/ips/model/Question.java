@@ -40,7 +40,7 @@ public class Question extends Page {
   /**
    * Текст вопроса, отображается для респондентов.
    */
-  @Column(name = "title", nullable = true)
+  @Column(name = "title", columnDefinition = "TEXT")
   @NotEmpty(message = "{question.validation.title.empty}")
   @MaxSize(QUESTION_TITLE_LENGTH)
   private String title;
