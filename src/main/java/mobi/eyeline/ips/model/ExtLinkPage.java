@@ -11,6 +11,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
+import static mobi.eyeline.ips.model.Constants.QUESTION_EXT_LINK_LENGTH;
+import static mobi.eyeline.ips.model.Constants.QUESTION_EXT_LINK_NAME_LENGTH;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 /**
@@ -26,13 +28,13 @@ public class ExtLinkPage extends Page {
 
   @Column(name = "ext_link_name", nullable = true)
   @NotEmpty(message = "{ext.link.validation.name.empty}")
-  @MaxSize(value = 70, message = "{ext.link.validation.name.size}")
+  @MaxSize(value = QUESTION_EXT_LINK_NAME_LENGTH, message = "{ext.link.validation.name.size}")
   private String serviceName;
 
   @Column(name = "ext_link_url", nullable = true)
   @NotEmpty(message = "{ext.link.validation.url.empty}")
   @URL(message = "{ext.link.validation.url.invalid}", regexp = PATTERN_URL)
-  @MaxSize(value = 255, message = "{ext.link.validation.url.size}")
+  @MaxSize(value = QUESTION_EXT_LINK_LENGTH, message = "{ext.link.validation.url.size}")
   private String serviceUrl;
 
   public ExtLinkPage() { }

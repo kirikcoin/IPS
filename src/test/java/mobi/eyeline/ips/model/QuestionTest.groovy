@@ -32,7 +32,7 @@ class QuestionTest extends GroovyTestCase {
   }
 
   void test4() {
-    def question = question(title: 't' * 71) {
+    def question = question(title: 't' * (Constants.QUESTION_TITLE_LENGTH + 1)) {
       option(answer: 'Foo')
     }
 
@@ -46,7 +46,9 @@ class QuestionTest extends GroovyTestCase {
   }
 
   void test6() {
-    assertThat validate(new QuestionOption(answer: 'a' * 71)), hasSize(1)
+    assertThat \
+      validate(new QuestionOption(answer: 'a' * (Constants.QUESTION_OPTION_LENGTH + 1))),
+      hasSize(1)
   }
 
   void test7() {

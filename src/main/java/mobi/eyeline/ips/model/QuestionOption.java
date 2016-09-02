@@ -19,6 +19,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+import static mobi.eyeline.ips.model.Constants.QUESTION_OPTION_LENGTH;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 /**
@@ -43,7 +44,7 @@ public class QuestionOption implements Serializable {
    */
   @Column(name = "answer", columnDefinition = "TEXT", nullable = false)
   @NotEmpty(message = "{question.option.answer.empty}")
-  @MaxSize(70)
+  @MaxSize(QUESTION_OPTION_LENGTH)
   private String answer;
 
   /**
@@ -87,6 +88,13 @@ public class QuestionOption implements Serializable {
 
   public String getAnswer() {
     return answer;
+  }
+
+  public String getBriefAnswer() {
+    final int maxSize = 70;
+    return (getAnswer().length() <= maxSize) ?
+        getAnswer() :
+        getAnswer().substring(0, maxSize - 3) + "...";
   }
 
   public void setAnswer(String answer) {
