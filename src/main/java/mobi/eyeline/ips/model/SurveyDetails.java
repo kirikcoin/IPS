@@ -19,6 +19,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.AssertTrue;
 import java.io.Serializable;
 
+import static mobi.eyeline.ips.model.Constants.SURVEY_END_TEXT_LENGTH;
+import static mobi.eyeline.ips.model.Constants.SURVEY_OA_LENGTH;
+import static mobi.eyeline.ips.model.Constants.SURVEY_TITLE_LENGTH;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 // TODO: Take localization into account.
@@ -33,14 +36,14 @@ public class SurveyDetails implements Serializable {
    */
   @Column(name = "title", columnDefinition = "varchar(200)", nullable = false)
   @NotEmpty(message = "{survey.validation.title.empty}")
-  @MaxSize(45)
+  @MaxSize(SURVEY_TITLE_LENGTH)
   private String title;
 
   /**
    * Сообщение, отображаемое про завершении опроса - после ответа на последний вопрос.
    */
   @Column(name = "end_text", columnDefinition = "TEXT")
-  @MaxSize(70)
+  @MaxSize(SURVEY_END_TEXT_LENGTH)
   private String endText;
 
   @Column(name = "end_sms_enabled", columnDefinition = "BIT", nullable = false)
@@ -48,11 +51,11 @@ public class SurveyDetails implements Serializable {
   private boolean endSmsEnabled;
 
   @Column(name = "end_sms_text", columnDefinition = "varchar(255)")
-  @MaxSize(255)
+  @MaxSize(SURVEY_END_TEXT_LENGTH)
   private String endSmsText;
 
   @Column(name = "end_sms_from", columnDefinition = "varchar(255)")
-  @MaxSize(70)
+  @MaxSize(SURVEY_OA_LENGTH)
   private String endSmsFrom;
 
   @Id

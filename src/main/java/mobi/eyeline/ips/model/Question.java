@@ -28,6 +28,7 @@ import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Lists.newArrayList;
 import static javax.persistence.CascadeType.ALL;
+import static mobi.eyeline.ips.model.Constants.QUESTION_TITLE_LENGTH;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Entity
@@ -41,7 +42,7 @@ public class Question extends Page {
    */
   @Column(name = "title", nullable = true)
   @NotEmpty(message = "{question.validation.title.empty}")
-  @MaxSize(70)
+  @MaxSize(QUESTION_TITLE_LENGTH)
   private String title;
 
   /**

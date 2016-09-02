@@ -431,7 +431,7 @@
                            value="#{bundle['invitations.deliveries.dialog.invitationtext']}" />
             <eye:inputText id="invitationText"
                            rows="3"
-                           maxlength="100"
+                           maxlength="#{forms.invitationTextSize}"
                            readonly="#{!invitationDeliveryController.invitationDelivery.state.editable}"
                            value="#{invitationDeliveryController.invitationDelivery.text}"/>
 

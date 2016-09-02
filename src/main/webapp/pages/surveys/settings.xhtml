@@ -230,7 +230,7 @@
                     <h:outputLabel value="#{bundle['survey.properties.title']}"
                                    for="newSurveyTitle"/>
                     <eye:inputText id="newSurveyTitle"
-                                   maxlength="45"
+                                   maxlength="#{forms.surveyTitleLength}"
                                    value="#{surveySettingsController.survey.details.title}"/>
 
                     <h:outputLabel value="#{bundle['survey.properties.period']}" for="newSurveyStartDate"/>
@@ -745,7 +745,7 @@
                     <h:outputLabel value="#{bundle['survey.settings.end.message.title.ussd']}"
                                    for="endText"/>
                     <eye:inputText id="endText"
-                                   maxlength="70"
+                                   maxlength="#{forms.surveyEndTextLength}"
                                    value="#{surveySettingsController.survey.details.endText}"/>
 
                     <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.enabled']}"
@@ -793,7 +793,7 @@
 
                     <h:panelGrid columns="1">
                       <eye:inputText id="endSmsText"
-                                     maxlength="70"
+                                     maxlength="#{forms.surveyCouponLength}"
                                      rows="3"
                                      value="#{surveySettingsController.survey.details.endSmsText}"/>
                       <h:outputText id="couponHint"
@@ -805,7 +805,7 @@
                       <h:outputLabel value="#{bundle['survey.settings.end.message.title.sms.number']}"
                                      for="endSmsFrom"/>
                       <eye:inputText id="endSmsFrom"
-                                     maxlength="70"
+                                     maxlength="#{forms.surveyOALength}"
                                      value="#{surveySettingsController.survey.details.endSmsFrom}"/>
                     </h:panelGroup>
                   </h:panelGrid>
@@ -929,7 +929,7 @@
                          for="title"/>
           <eye:inputText id="title"
                          rows="2"
-                         maxlength="70"
+                         maxlength="#{forms.questionTitleLength}"
                          value="#{surveySettingsController.question.title}"/>
 
           <br/>
@@ -960,7 +960,7 @@
                               allowEditAfterAdd="true"
                               allowEmpty="false"
                               columnClass="answerColumn"
-                              maxLength="70"/>
+                              maxLength="#{forms.questionOptionLength}"/>
 
               <eye:selectColumn name="nextQuestion"
                                 values="#{surveySettingsController.nextQuestionsList}"
@@ -1012,14 +1012,14 @@
           <h:outputLabel value="#{bundle['survey.settings.ext.link.modify.service.name']}:"
                          for="serviceName"/>
           <eye:inputText id="serviceName"
-                         maxlength="70"
+                         maxlength="#{forms.questionExtLinkNameLength}"
                          value="#{surveySettingsController.extLinkPage.serviceName}"/>
           <br/>
 
           <h:outputLabel value="#{bundle['survey.settings.ext.link.modify.service.url']}:"
                          for="serviceUrl"/>
           <eye:inputText id="serviceUrl"
-                         maxlength="255"
+                         maxlength="#{forms.questionExtLinkLength}"
                          value="#{surveySettingsController.extLinkPage.serviceUrl}"/>
           <br/>
 

@@ -23,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
+import static mobi.eyeline.ips.model.Constants.INVITATION_TEXT_LENGTH;
 import static org.hibernate.annotations.CacheConcurrencyStrategy.READ_WRITE;
 
 @Entity
@@ -53,7 +54,7 @@ public class InvitationDelivery implements Serializable {
   @Enumerated(EnumType.STRING)
   private State state = State.INACTIVE;
 
-  @MaxSize(value = 100, message = "{invitations.deliveries.dialog.invitationtext.size}")
+  @MaxSize(value = INVITATION_TEXT_LENGTH, message = "{invitations.deliveries.dialog.invitationtext.size}")
   @Column(name = "text", columnDefinition = "TEXT")
   private String text;
 
