@@ -34,4 +34,10 @@ class ExtLinkPageModelTest extends GroovyTestCase {
         validate new ExtLinkPage(serviceName: 'myService', serviceUrl: 'totally not an URL')
     assertThat violations, hasSize(1)
   }
+
+  void test4() {
+    final violations =
+        validate new ExtLinkPage(serviceName: 'myService', serviceUrl: 'http://10.151.0.44:38982/start?sid=18')
+    assertThat violations, hasSize(0)
+  }
 }
