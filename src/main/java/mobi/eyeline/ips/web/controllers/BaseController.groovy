@@ -105,6 +105,14 @@ abstract class BaseController implements Serializable {
         currentUser.manager.allowProfileChange : currentUser.allowProfileChange
   }
 
+  boolean isResultDeletionAllowed() {
+    managerRole
+  }
+
+  boolean isInvitationsDeletionAllowed() {
+    managerRole
+  }
+
   //
   //  Request/session routines.
   //

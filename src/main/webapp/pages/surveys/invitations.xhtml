@@ -292,7 +292,7 @@
                                     rendered="#{userSession.invitationDeliveryAllowed}">
 
                         <h:outputText value=" ("
-                                      rendered="#{row.state!='COMPLETED'}"/>
+                                      rendered="#{row.state!='COMPLETED' or userSession.invitationsDeletionAllowed}"/>
 
                         <h:commandLink value="#{bundle['invitations.deliveries.table.status.activate']}"
                                        onclick="return page.showActivateDialog('#{row.id}');"
@@ -311,8 +311,15 @@
                           <f:param name="modifiedDeliveryId" value="#{row.id}"/>
                         </h:commandLink>
 
+                        <h:outputText value=" | "
+                                      rendered="#{row.state!='COMPLETED' and userSession.invitationsDeletionAllowed}"/>
+
+                        <h:commandLink value="#{bundle['invitations.block.invitations.delivery.table.action.delete']}"
+                                       onclick="return page.onDeleteDelivery(#{row.id})"
+                                       rendered="#{userSession.invitationsDeletionAllowed}"/>
+
                         <h:outputText value=")"
-                                      rendered="#{row.state!='COMPLETED'}"/>
+                                      rendered="#{row.state!='COMPLETED' or userSession.invitationsDeletionAllowed}"/>
                       </h:panelGroup>
                     </eye:column>
 
@@ -544,6 +551,11 @@
                            title="#{bundle['invitations.block.invitations.delivery.remove.title']}"
                            text="#{bundle['invitations.block.invitations.delivery.remove.text']}"
                            action="#{surveyInvitesController.deleteInvite}"/>
+
+        <ips:confirmDialog id="removeDeliveryDialog"
+                           title="#{bundle['invitations.block.invitations.invitations.delivery.remove.title']}"
+                           text="#{bundle['invitations.block.invitations.invitations.delivery.remove.text']}"
+                           action="#{invitationDeliveryController.deleteDelivery}"/>
 
         <ips:confirmDialog id="deliveryActivateDialog"
                            text="#{bundle['invitations.deliveries.table.status.activate.dialog.text']}"

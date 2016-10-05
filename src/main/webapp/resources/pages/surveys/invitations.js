@@ -80,6 +80,12 @@ var page = {
     return false;
   },
 
+  onDeleteDelivery: function(deliveryId) {
+    $('#deliveryId').val(deliveryId);
+    jsfc('removeDeliveryDialog').show();
+    return false;
+  },
+
   onNewInviteCancel: function() {
     jsfc('newInviteDialog').hide();
     $("#inviteDate").val($("#newInviteDate").val());

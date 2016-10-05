@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -177,5 +178,41 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
     } finally {
       session.close();
     }
+  }
+
+  public void deleteAll(Collection<Integer> ids) {
+
+    final Session session = getSessionFactory().openSession();
+    Transaction transaction = null;
+    try {
+      transaction = session.beginTransaction();
+
+      for (Integer id : ids) {
+        final Respondent respondent = load(id);
+
+        session
+            .createQuery("delete from Answer where respondent = :respondent")
+            .setEntity("respondent", respondent)
+            .executeUpdate();
+
+        session.delete(respondent);
+      }
+
+      transaction.commit();
+
+    } catch (HibernateException e) {
+      if ((transaction != null) && transaction.isActive()) {
+        try {
+          transaction.rollback();
+        } catch (HibernateException ee) {
+          logger.error(e.getMessage(), e);
+        }
+      }
+      throw e;
+
+    } finally {
+      session.close();
+    }
+
   }
 }

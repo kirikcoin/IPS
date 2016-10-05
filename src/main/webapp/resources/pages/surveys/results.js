@@ -48,5 +48,13 @@ var page = {
     if (!checkFormat($periodEnd))   error = true;
 
     return !error;
+  },
+
+  onResultsDeleteNoResults: function() {
+    jsfc('resultsDeleteNoResultsDialog').show();
+  },
+
+  onResultsDeleteConfirmation: function() {
+    jsfc('resultsDeleteConfirmationDialog').show();
   }
 };
