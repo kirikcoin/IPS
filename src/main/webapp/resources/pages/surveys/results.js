@@ -3,10 +3,14 @@ var page = {
   INVALID_DATE_MSG: 'Invalid date format',
 
   init: function () {
-    jsfc('resultsTable').bind('update', function () {
+    var onRowsUpdate = function () {
       var hasResults = jsfc('resultsTable').getRowsCount() != 0;
       $('#downloadButtonsPanel').toggle(hasResults);
-    });
+    };
+
+    onRowsUpdate();
+
+    jsfc('resultsTable').bind('update', onRowsUpdate);
   },
 
   filterKeyDown: function (event) {

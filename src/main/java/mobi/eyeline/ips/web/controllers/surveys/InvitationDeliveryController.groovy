@@ -141,8 +141,9 @@ class InvitationDeliveryController extends BaseController {
   }
 
   void deleteDelivery() {
-    final deliveryId = getParamValue("deliveryId").asInteger()
+    final int deliveryId = getParamValue("deliveryId").asInteger()
 
+    deliveryService.stop deliveryId
     invitationDeliveryRepository.delete deliveryId
   }
 
