@@ -65,8 +65,8 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
             periodEnd,
             filter,
             accessNumber > 0 ? accessNumber : null,
-            sortOrder.columnId,
-            sortOrder.asc,
+            sortOrder?.columnId,
+            sortOrder?.asc,
             count,
             startPos)
       }
@@ -170,6 +170,7 @@ class SurveyResultsController extends BaseSurveyReadOnlyController {
 
   void doDeleteResults() {
     respondentRepository.deleteAll selectedRows.collect { it.toInteger() }
+    selectedRows = null
 
     FacesContext.currentInstance.externalContext
         .redirect("/pages/surveys/results.faces?id=${surveyId}")
