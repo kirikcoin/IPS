@@ -13,16 +13,10 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static mobi.eyeline.ips.model.RespondentSource.RespondentSourceType.C2S;
-import static org.hibernate.criterion.Restrictions.eq;
-import static org.hibernate.criterion.Restrictions.ge;
-import static org.hibernate.criterion.Restrictions.isNull;
-import static org.hibernate.criterion.Restrictions.lt;
+import static org.hibernate.criterion.Restrictions.*;
 
 public class RespondentRepository extends BaseRepository<Respondent, Integer> {
 
@@ -177,5 +171,42 @@ public class RespondentRepository extends BaseRepository<Respondent, Integer> {
     } finally {
       session.close();
     }
+  }
+
+  public void deleteAll(Collection<Integer> ids) {
+
+    final Session session = getSessionFactory().openSession();
+    Transaction transaction = null;
+    try {
+      transaction = session.beginTransaction();
+
+      for (Integer id : ids) {
+        final Respondent respondent = load(id);
+
+        session
+            .createQuery("delete from Answer where respondent = :respondent")
+            .setEntity("respondent", respondent)
+            .executeUpdate();
+
+        session.delete(respondent);
+      }
+
+      transaction.commit();
+      session.flush();
+
+    } catch (HibernateException e) {
+      if ((transaction != null) && transaction.isActive()) {
+        try {
+          transaction.rollback();
+        } catch (HibernateException ee) {
+          logger.error(e.getMessage(), e);
+        }
+      }
+      throw e;
+
+    } finally {
+      session.close();
+    }
+
   }
 }

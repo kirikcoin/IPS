@@ -11,8 +11,9 @@ import javax.faces.context.FacesContext
 @SessionScoped
 class LocaleController extends BaseController {
 
-  void changeLocale(String localeName) {
+  String changeLocale(String localeName) {
     setLocaleAttributes(new Locale(localeName))
+    FacesContext.currentInstance.viewRoot.viewId
   }
 
   private void setLocaleAttributes(Locale locale) {

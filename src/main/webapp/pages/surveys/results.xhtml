@@ -24,6 +24,13 @@
           page.INVALID_DATE_MSG = '#{bundle["survey.validation.date.format"]}';
           page.init();
 
+          if ("#{surveyResultsController.errorId}" == 'resultsDeleteNoResults') {
+            page.onResultsDeleteNoResults();
+
+          } else if ("#{surveyResultsController.errorId}" == 'resultsDeleteConfirmation') {
+            page.onResultsDeleteConfirmation();
+          }
+
           $('form').attr('action',
               '/pages/surveys/results.faces?id=#{surveyResultsController.surveyId}');
         });
@@ -186,14 +193,25 @@
                   </h:commandLink>
                 </eye:button>
 
+                <eye:space rendered="#{userSession.resultDeletionAllowed}"/>
+
+                <eye:button rendered="#{userSession.resultDeletionAllowed}">
+                  <h:commandLink value="#{bundle['results.delete.answers']}"
+                                 styleClass="button-green"
+                                 action="#{surveyResultsController.deleteResults}"/>
+                </eye:button>
+
               </eye:buttons>
 
               <eye:dataTable id="resultsTable"
                              value="#{surveyResultsController.tableModel}"
                              var="row"
+                             allowSelectedRows="#{userSession.managerRole}"
+                             selectedRows="#{surveyResultsController.selectedRows}"
                              pageSize="50"
                              tableClass="grid"
-                             sortOrder="#{surveyResultsController.sortOrder}">
+                             sortOrder="#{surveyResultsController.sortOrder}"
+                             immediatelyRendering="true">
                 <f:facet name="ifEmpty">
                   <h:outputText value="#{bundle['results.empty']}"/>
                 </f:facet>
@@ -258,6 +276,60 @@
           <h:panelGroup layout="block" styleClass="page-footer"/>
 
         </h:panelGroup>
+
+        <eye:dialog id="resultsDeleteNoResultsDialog"
+                    title="#{bundle['results.delete.dialog.header']}"
+                    width="300">
+
+          <h:panelGroup styleClass="confirmDialog_content"
+                        layout="block">
+            <h:outputText value="#{bundle['results.delete.no.answers']}"/>
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" style="margin:10px"/>
+
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink id="resultsDeleteNoResultsDialog_cancelButton"
+                             styleClass="button-green"
+                             value="#{bundle['dialog.cancel']}"
+                             onclick="jsfc('resultsDeleteNoResultsDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
+
+        <eye:dialog id="resultsDeleteConfirmationDialog"
+                    title="#{bundle['results.delete.dialog.header']}"
+                    width="400">
+
+          <h:panelGroup styleClass="resultsDeleteConfirmationDialog_content"
+                        layout="block">
+            <h:outputText value="#{bundle['results.delete.dialog.confirmation']}"/>
+          </h:panelGroup>
+
+          <h:panelGroup layout="block" style="margin:10px"/>
+
+          <eye:buttons>
+            <eye:button>
+              <h:commandLink id="resultsDeleteConfirmationDialog_confirmButton"
+                             styleClass="button-green"
+                             value="#{bundle['results.delete.dialog.do.delete']}"
+                             action="#{surveyResultsController.doDeleteResults}">
+              </h:commandLink>
+            </eye:button>
+
+            <eye:button>
+              <h:commandLink id="resultsDeleteConfirmationDialog_cancelButton"
+                             styleClass="button-green"
+                             value="#{bundle['dialog.cancel']}"
+                             onclick="jsfc('resultsDeleteConfirmationDialog').hide(); return false;"/>
+            </eye:button>
+            <eye:space/>
+          </eye:buttons>
+
+        </eye:dialog>
 
       </h:form>
 

@@ -8,7 +8,6 @@ import mobi.eyeline.ips.service.CsvParseService
 import mobi.eyeline.ips.service.CsvParseService.CsvLineException
 import mobi.eyeline.ips.service.CsvParseService.DuplicateMsisdnException
 import mobi.eyeline.ips.service.CsvParseService.InvalidMsisdnFormatException
-import mobi.eyeline.ips.service.Services
 import mobi.eyeline.ips.service.deliveries.DeliveryService
 import mobi.eyeline.ips.web.controllers.BaseController
 import mobi.eyeline.ips.web.validators.SimpleConstraintViolation
@@ -24,7 +23,9 @@ import javax.validation.ConstraintViolation
 import java.text.MessageFormat
 import java.util.regex.Pattern
 
-import static mobi.eyeline.ips.model.InvitationDelivery.State.*
+import static mobi.eyeline.ips.model.InvitationDelivery.State.ACTIVE
+import static mobi.eyeline.ips.model.InvitationDelivery.State.COMPLETED
+import static mobi.eyeline.ips.model.InvitationDelivery.State.INACTIVE
 import static mobi.eyeline.ips.model.InvitationDelivery.Type.NI_DIALOG
 
 @CompileStatic
@@ -137,6 +138,13 @@ class InvitationDeliveryController extends BaseController {
       retriesIntervalString = invitationDelivery.retriesIntervalMinutes
       dialogForEdit = false
     }
+  }
+
+  void deleteDelivery() {
+    final int deliveryId = getParamValue("deliveryId").asInteger()
+
+    deliveryService.stop deliveryId
+    invitationDeliveryRepository.delete deliveryId
   }
 
   public void saveDelivery() {

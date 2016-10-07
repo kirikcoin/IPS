@@ -347,15 +347,20 @@ span.stop_button a {
 /* Выделение записей */
 
 .select_button_area {
-    border: 1px solid #E4E0CE;
+    border: none;
 }
 .select_button_area td {
-    background-color: #F7F7F7;
+    /*background-color: white;*/
+    border: none !important;
+}
+
+.select_button_area > tbody > tr {
+    height: initial;
 }
 
 .select_button_area_clicked {
-    border: 1px solid #E4E0CE;
-    background-color: #E6E3D8;
+    /*border: 1px solid #E4E0CE;*/
+    /*background-color: #E6E3D8;*/
 }
 
 table.select_button_area td {
@@ -369,7 +374,6 @@ table.select_button_area td {
     cursor: pointer;
     width: 15px;
     height: 15px;
-    margin-left: 5px;
     margin-right: 5px;
 }
 
@@ -380,14 +384,12 @@ table.select_button_area td {
     background-repeat: no-repeat;
     width: 15px;
     height: 15px;
-    margin-right: 5px;
 }
 
 .select_menu_content {
-    background-color: #F0F0F0;
+    background-color: white;
     border: 1px solid #333333;
     font-family: Arial, Verdana, Helvetica, sans-serif;
-    font-size: 11px;
     font-weight: normal;
     margin-top: 20px;
     overflow: auto;
@@ -403,8 +405,10 @@ table.select_button_area td {
     padding-left: 12px;
     padding-right: 12px;
     color: #333333;
-    font-size: 11px;
-    font-family: Verdana, Arial, Tahoma, Helvetica, sans, sans-serif;
+}
+
+.select_menu_content span:hover {
+    color: #78a0bb;
 }
 
 /* Открытие/Закрытие inner rows */

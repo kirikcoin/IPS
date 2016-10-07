@@ -1,466 +1,2526 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="dataSourceStorage">
-  <data-source source="LOCAL" name="ips PRODUCTION" uuid="f8c5509d-e2a3-4f91-bf92-c16f95f8ac3d">
+  <data-source name="ips PRODUCTION" uuid="f8c5509d-e2a3-4f91-bf92-c16f95f8ac3d">
     <database-info product="" version="" jdbc-version="" driver-name="" driver-version=""/>
-    <schema name="" catalog="ips"/>
-    <table name="DATABASECHANGELOG" schema="" catalog="ips" type="TABLE">
-      <column name="ID" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="AUTHOR" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="FILENAME" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="DATEEXECUTED" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
-      <column name="ORDEREXECUTED" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="EXECTYPE" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
-      <column name="MD5SUM" sqlType="VARCHAR" precision="35" scale="0" nullable="true" jdbcType="12"/>
-      <column name="DESCRIPTION" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="COMMENTS" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="TAG" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="LIQUIBASE" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
-    </table>
-    <table name="DATABASECHANGELOGLOCK" schema="" catalog="ips" type="TABLE">
-      <column name="ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="LOCKED" sqlType="BIT" precision="1" scale="0" nullable="false" jdbcType="-7"/>
-      <column name="LOCKGRANTED" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
-      <column name="LOCKEDBY" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="ID"/>
-    </table>
-    <table name="access_numbers" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="number" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <exported-key name="survey_stats_ibfk_1" table="survey_stats" schema="" catalog="ips" columns="number_id"/>
-      <index name="UK_access_numbers_number" unique="true" columns="number"/>
-    </table>
-    <table name="answers" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="respondent_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="question_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="timestamp" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_answers_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_answers_question_options" columns="option_id" ref-table="question_options" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_answers_respondents" columns="respondent_id" ref-table="respondents" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_answers_question_options" unique="false" columns="option_id"/>
-      <index name="FK_answers_questions" unique="false" columns="question_id"/>
-      <index name="FK_answers_respondents" unique="false" columns="respondent_id"/>
-    </table>
-    <table name="deliveries" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="date" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
-      <column name="type" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="state" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0lOQUNUSVZFJw=="/>
-      <column name="current_position" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
-      <column name="speed" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" def="MQ=="/>
-      <column name="input_file_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_deliveries_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_delivery_subscribers_deliveries" table="delivery_subscribers" schema="" catalog="ips" columns="delivery_id"/>
-      <index name="FK_deliveries_surveys" unique="false" columns="survey_id"/>
-    </table>
-    <table name="delivery_subscribers" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="delivery_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="msisdn" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="state" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J05FVyc="/>
-      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_delivery_subscribers_deliveries" columns="delivery_id" ref-table="deliveries" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_delivery_subscribers_deliveries" unique="false" columns="delivery_id"/>
-      <index name="state_idx" unique="false" columns="state"/>
-    </table>
-    <table name="question_options" schema="" catalog="ips" type="TABLE">
-      <column name="question_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="answer" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
-      <column name="option_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
-      <column name="next_question" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_question_options_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="question_options_ibfk_1" columns="next_question" ref-table="questions" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_answers_question_options" table="answers" schema="" catalog="ips" columns="option_id"/>
-      <index name="FK_next_question_id" unique="false" columns="next_question"/>
-      <index name="FK_question_options_questions" unique="false" columns="question_id"/>
-    </table>
-    <table name="questions" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="title" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="question_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="sent_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_questions_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_answers_questions" table="answers" schema="" catalog="ips" columns="question_id"/>
-      <exported-key name="FK_question_options_questions" table="question_options" schema="" catalog="ips" columns="question_id"/>
-      <exported-key name="question_options_ibfk_1" table="question_options" schema="" catalog="ips" columns="next_question"/>
-      <index name="FK_questions_surveys" unique="false" columns="survey_id"/>
-    </table>
-    <table name="respondents" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="MSISDN" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="registered" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
-      <column name="answer_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="finished" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="coupon" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_respondents_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_answers_respondents" table="answers" schema="" catalog="ips" columns="respondent_id"/>
-      <index name="survey_coupon_key" unique="true" columns="survey_id,coupon"/>
-      <index name="FK_respondents_surveys" unique="false" columns="survey_id"/>
-      <index name="registered_idx" unique="false" columns="registered"/>
-    </table>
-    <table name="survey_invitations" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="date" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
-      <column name="value" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_survey_invitations_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_survey_invitations_surveys" unique="false" columns="survey_id"/>
-    </table>
-    <table name="survey_pattern" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="position" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="length" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="mode" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_survey_pattern_survey" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_survey_pattern_survey" unique="false" columns="survey_id"/>
-    </table>
-    <table name="survey_stats" schema="" catalog="ips" type="TABLE">
-      <column name="answeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="campaign" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="registeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="sent" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="update_status" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J3VuZGVmaW5lZCc="/>
-      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
-      <column name="number_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="survey_id"/>
-      <foreign-key name="FK_survey_stats_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="survey_stats_ibfk_1" columns="number_id" ref-table="access_numbers" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_survey_stats_number" unique="false" columns="number_id"/>
-    </table>
-    <table name="surveys" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
-      <column name="expires" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
-      <column name="startdate" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
-      <column name="owner_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="surveys_ibfk_1" columns="owner_id" ref-table="users" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_deliveries_surveys" table="deliveries" schema="" catalog="ips" columns="survey_id"/>
-      <exported-key name="FK_questions_surveys" table="questions" schema="" catalog="ips" columns="survey_id"/>
-      <exported-key name="FK_respondents_surveys" table="respondents" schema="" catalog="ips" columns="survey_id"/>
-      <exported-key name="FK_survey_invitations_surveys" table="survey_invitations" schema="" catalog="ips" columns="survey_id"/>
-      <exported-key name="FK_survey_pattern_survey" table="survey_pattern" schema="" catalog="ips" columns="survey_id"/>
-      <exported-key name="FK_survey_stats_surveys" table="survey_stats" schema="" catalog="ips" columns="survey_id"/>
-      <exported-key name="FK_surveys_text_surveys" table="surveys_text" schema="" catalog="ips" columns="survey_id"/>
-      <exported-key name="FK_surveys_users_surveys" table="surveys_users" schema="" catalog="ips" columns="survey_id"/>
-      <index name="surveys_owner_id" unique="false" columns="owner_id"/>
-    </table>
-    <table name="surveys_text" schema="" catalog="ips" type="TABLE">
-      <column name="end_text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
-      <column name="title" sqlType="VARCHAR" precision="200" scale="0" nullable="true" jdbcType="12"/>
-      <column name="welcome_text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="end_sms_enabled" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="end_sms_text" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="end_sms_from" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="survey_id"/>
-      <foreign-key name="FK_surveys_text_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-    </table>
-    <table name="surveys_users" schema="" catalog="ips" type="TABLE">
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="user_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="survey_id,user_id"/>
-      <foreign-key name="FK_surveys_users_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_surveys_users_users" columns="user_id" ref-table="users" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_surveys_users_users" unique="false" columns="user_id"/>
-    </table>
-    <table name="ui_profiles" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="icon" sqlType="BLOB" precision="65535" scale="0" nullable="true" jdbcType="-4"/>
-      <column name="skin" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <exported-key name="users_ibfk_1" table="users" schema="" catalog="ips" columns="ui_profile_id"/>
-    </table>
-    <table name="users" schema="" catalog="ips" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="email" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="full_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="users_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="blocked" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="role" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="company" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="phone_number" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="locale" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0VOJw=="/>
-      <column name="only_own_surveys" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="can_send_invitations" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="esdp_login" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="esdp_password" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="show_c2s" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="esdp_provider" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="time_zone_id" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0V1cm9wZS9Nb3Njb3cn"/>
-      <column name="ui_profile_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <column name="manager_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="users_ibfk_2" columns="manager_id" ref-table="users" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="users_ibfk_1" columns="ui_profile_id" ref-table="ui_profiles" ref-schema="" ref-catalog="ips" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="surveys_ibfk_1" table="surveys" schema="" catalog="ips" columns="owner_id"/>
-      <exported-key name="FK_surveys_users_users" table="surveys_users" schema="" catalog="ips" columns="user_id"/>
-      <exported-key name="users_ibfk_2" table="users" schema="" catalog="ips" columns="manager_id"/>
-      <index name="email" unique="true" columns="email"/>
-      <index name="users_name" unique="true" columns="users_name"/>
-      <index name="FK_user_manager" unique="false" columns="manager_id"/>
-      <index name="FK_users_ui_profiles" unique="false" columns="ui_profile_id"/>
-      <index name="role_id" unique="false" columns="role"/>
-    </table>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.6">
+      <schema id="1" name="ips">
+        <visible>1</visible>
+      </schema>
+      <table id="2" parent="1" name="DATABASECHANGELOG"/>
+      <table id="3" parent="1" name="DATABASECHANGELOGLOCK"/>
+      <table id="4" parent="1" name="access_numbers"/>
+      <table id="5" parent="1" name="answers"/>
+      <table id="6" parent="1" name="deliveries"/>
+      <table id="7" parent="1" name="delivery_subscribers"/>
+      <table id="8" parent="1" name="question_options"/>
+      <table id="9" parent="1" name="questions"/>
+      <table id="10" parent="1" name="respondents"/>
+      <table id="11" parent="1" name="survey_invitations"/>
+      <table id="12" parent="1" name="survey_pattern"/>
+      <table id="13" parent="1" name="survey_stats"/>
+      <table id="14" parent="1" name="surveys"/>
+      <table id="15" parent="1" name="surveys_text"/>
+      <table id="16" parent="1" name="surveys_users"/>
+      <table id="17" parent="1" name="ui_profiles"/>
+      <table id="18" parent="1" name="users"/>
+      <column id="19" parent="2" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="20" parent="2" name="AUTHOR">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="21" parent="2" name="FILENAME">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="22" parent="2" name="DATEEXECUTED">
+        <mandatory>1</mandatory>
+        <data-type>DATETIME(19)|93</data-type>
+      </column>
+      <column id="23" parent="2" name="ORDEREXECUTED">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="24" parent="2" name="EXECTYPE">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(10)|12</data-type>
+      </column>
+      <column id="25" parent="2" name="MD5SUM">
+        <data-type>VARCHAR(35)|12</data-type>
+      </column>
+      <column id="26" parent="2" name="DESCRIPTION">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="27" parent="2" name="COMMENTS">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="28" parent="2" name="TAG">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="29" parent="2" name="LIQUIBASE">
+        <data-type>VARCHAR(20)|12</data-type>
+      </column>
+      <column id="30" parent="3" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="31" parent="3" name="LOCKED">
+        <mandatory>1</mandatory>
+        <data-type>BIT(1)|-7</data-type>
+      </column>
+      <column id="32" parent="3" name="LOCKGRANTED">
+        <data-type>DATETIME(19)|93</data-type>
+      </column>
+      <column id="33" parent="3" name="LOCKEDBY">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <key id="34" parent="3" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="35" parent="4" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="36" parent="4" name="number">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <index id="37" parent="4" name="UK_access_numbers_number">
+        <columns>number</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <key id="38" parent="4" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="39" parent="5" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="40" parent="5" name="respondent_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="41" parent="5" name="question_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="42" parent="5" name="option_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="43" parent="5" name="timestamp">
+        <mandatory>1</mandatory>
+        <data-type>TIMESTAMP(19)|93</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <index id="44" parent="5" name="FK_answers_question_options">
+        <columns>option_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="45" parent="5" name="FK_answers_questions">
+        <columns>question_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="46" parent="5" name="FK_answers_respondents">
+        <columns>respondent_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="47" parent="5" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="48" parent="5" name="FK_answers_questions">
+        <columns>question_id</columns>
+        <ref-key>~.questions.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="49" parent="5" name="FK_answers_question_options">
+        <columns>option_id</columns>
+        <ref-key>~.question_options.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="50" parent="5" name="FK_answers_respondents">
+        <columns>respondent_id</columns>
+        <ref-key>~.respondents.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="51" parent="6" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="52" parent="6" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="53" parent="6" name="date">
+        <data-type>DATETIME(19)|93</data-type>
+      </column>
+      <column id="54" parent="6" name="type">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="55" parent="6" name="state">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+        <default-expression>&apos;INACTIVE&apos;</default-expression>
+      </column>
+      <column id="56" parent="6" name="current_position">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="57" parent="6" name="text">
+        <data-type>TEXT(65535)|-1</data-type>
+      </column>
+      <column id="58" parent="6" name="speed">
+        <data-type>INT(10)|4</data-type>
+        <default-expression>1</default-expression>
+      </column>
+      <column id="59" parent="6" name="input_file_name">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <index id="60" parent="6" name="FK_deliveries_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="61" parent="6" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="62" parent="6" name="FK_deliveries_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="63" parent="7" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="64" parent="7" name="delivery_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="65" parent="7" name="msisdn">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="66" parent="7" name="state">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+        <default-expression>&apos;NEW&apos;</default-expression>
+      </column>
+      <column id="67" parent="7" name="last_update">
+        <data-type>DATETIME(19)|93</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <index id="68" parent="7" name="FK_delivery_subscribers_deliveries">
+        <columns>delivery_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="69" parent="7" name="state_idx">
+        <columns>state</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="70" parent="7" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="71" parent="7" name="FK_delivery_subscribers_deliveries">
+        <columns>delivery_id</columns>
+        <ref-key>~.deliveries.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="72" parent="8" name="question_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="73" parent="8" name="answer">
+        <mandatory>1</mandatory>
+        <data-type>TEXT(65535)|-1</data-type>
+      </column>
+      <column id="74" parent="8" name="option_order">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="75" parent="8" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="76" parent="8" name="active">
+        <mandatory>1</mandatory>
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>1</default-expression>
+      </column>
+      <column id="77" parent="8" name="next_question">
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <index id="78" parent="8" name="FK_next_question_id">
+        <columns>next_question</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="79" parent="8" name="FK_question_options_questions">
+        <columns>question_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="80" parent="8" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="81" parent="8" name="FK_question_options_questions">
+        <columns>question_id</columns>
+        <ref-key>~.questions.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="82" parent="8" name="question_options_ibfk_1">
+        <columns>next_question</columns>
+        <ref-key>~.questions.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="83" parent="9" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="84" parent="9" name="title">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="85" parent="9" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="86" parent="9" name="question_order">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="87" parent="9" name="sent_count">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="88" parent="9" name="active">
+        <mandatory>1</mandatory>
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>1</default-expression>
+      </column>
+      <index id="89" parent="9" name="FK_questions_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="90" parent="9" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="91" parent="9" name="FK_questions_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="92" parent="10" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="93" parent="10" name="MSISDN">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="94" parent="10" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="95" parent="10" name="registered">
+        <mandatory>1</mandatory>
+        <data-type>TIMESTAMP(19)|93</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <column id="96" parent="10" name="answer_count">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="97" parent="10" name="finished">
+        <mandatory>1</mandatory>
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="98" parent="10" name="coupon">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <index id="99" parent="10" name="survey_coupon_key">
+        <columns>survey_id
+coupon</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <index id="100" parent="10" name="FK_respondents_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="101" parent="10" name="registered_idx">
+        <columns>registered</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="102" parent="10" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="103" parent="10" name="FK_respondents_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="104" parent="11" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="105" parent="11" name="date">
+        <mandatory>1</mandatory>
+        <data-type>DATETIME(19)|93</data-type>
+      </column>
+      <column id="106" parent="11" name="value">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="107" parent="11" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="108" parent="11" name="last_update">
+        <data-type>DATETIME(19)|93</data-type>
+      </column>
+      <index id="109" parent="11" name="FK_survey_invitations_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="110" parent="11" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="111" parent="11" name="FK_survey_invitations_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="112" parent="12" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="113" parent="12" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="114" parent="12" name="position">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="115" parent="12" name="length">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="116" parent="12" name="mode">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="117" parent="12" name="active">
+        <mandatory>1</mandatory>
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <index id="118" parent="12" name="FK_survey_pattern_survey">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="119" parent="12" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="120" parent="12" name="FK_survey_pattern_survey">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="121" parent="13" name="answeredCount">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="122" parent="13" name="campaign">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="123" parent="13" name="registeredCount">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="124" parent="13" name="sent">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="125" parent="13" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="126" parent="13" name="update_status">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+        <default-expression>&apos;undefined&apos;</default-expression>
+      </column>
+      <column id="127" parent="13" name="last_update">
+        <data-type>DATETIME(19)|93</data-type>
+      </column>
+      <column id="128" parent="13" name="number_id">
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <index id="129" parent="13" name="FK_survey_stats_number">
+        <columns>number_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="130" parent="13" name="PRIMARY">
+        <columns>survey_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="131" parent="13" name="FK_survey_stats_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="132" parent="13" name="survey_stats_ibfk_1">
+        <columns>number_id</columns>
+        <ref-key>~.access_numbers.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="133" parent="14" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="134" parent="14" name="active">
+        <mandatory>1</mandatory>
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>1</default-expression>
+      </column>
+      <column id="135" parent="14" name="expires">
+        <mandatory>1</mandatory>
+        <data-type>DATETIME(19)|93</data-type>
+      </column>
+      <column id="136" parent="14" name="startdate">
+        <mandatory>1</mandatory>
+        <data-type>DATETIME(19)|93</data-type>
+      </column>
+      <column id="137" parent="14" name="owner_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <index id="138" parent="14" name="surveys_owner_id">
+        <columns>owner_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="139" parent="14" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="140" parent="14" name="surveys_ibfk_1">
+        <columns>owner_id</columns>
+        <ref-key>~.users.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="141" parent="15" name="end_text">
+        <data-type>TEXT(65535)|-1</data-type>
+      </column>
+      <column id="142" parent="15" name="title">
+        <data-type>VARCHAR(200)|12</data-type>
+      </column>
+      <column id="143" parent="15" name="welcome_text">
+        <data-type>TEXT(65535)|-1</data-type>
+      </column>
+      <column id="144" parent="15" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="145" parent="15" name="end_sms_enabled">
+        <mandatory>1</mandatory>
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="146" parent="15" name="end_sms_text">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="147" parent="15" name="end_sms_from">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <key id="148" parent="15" name="PRIMARY">
+        <columns>survey_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="149" parent="15" name="FK_surveys_text_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="150" parent="16" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="151" parent="16" name="user_id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <index id="152" parent="16" name="FK_surveys_users_users">
+        <columns>user_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="153" parent="16" name="PRIMARY">
+        <columns>survey_id
+user_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="154" parent="16" name="FK_surveys_users_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="155" parent="16" name="FK_surveys_users_users">
+        <columns>user_id</columns>
+        <ref-key>~.users.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <column id="156" parent="17" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="157" parent="17" name="icon">
+        <data-type>BLOB(65535)|-4</data-type>
+      </column>
+      <column id="158" parent="17" name="skin">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <key id="159" parent="17" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="160" parent="18" name="id">
+        <mandatory>1</mandatory>
+        <data-type>INT(10)|4</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="161" parent="18" name="email">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="162" parent="18" name="full_name">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="163" parent="18" name="users_name">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="164" parent="18" name="password">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="165" parent="18" name="blocked">
+        <mandatory>1</mandatory>
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="166" parent="18" name="role">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="167" parent="18" name="company">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="168" parent="18" name="phone_number">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="169" parent="18" name="locale">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+        <default-expression>&apos;EN&apos;</default-expression>
+      </column>
+      <column id="170" parent="18" name="only_own_surveys">
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="171" parent="18" name="can_send_invitations">
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="172" parent="18" name="esdp_login">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="173" parent="18" name="esdp_password">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="174" parent="18" name="show_c2s">
+        <data-type>TINYINT(3)|-6</data-type>
+        <default-expression>0</default-expression>
+      </column>
+      <column id="175" parent="18" name="esdp_provider">
+        <data-type>VARCHAR(255)|12</data-type>
+      </column>
+      <column id="176" parent="18" name="time_zone_id">
+        <mandatory>1</mandatory>
+        <data-type>VARCHAR(255)|12</data-type>
+        <default-expression>&apos;Europe/Moscow&apos;</default-expression>
+      </column>
+      <column id="177" parent="18" name="ui_profile_id">
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <column id="178" parent="18" name="manager_id">
+        <data-type>INT(10)|4</data-type>
+      </column>
+      <index id="179" parent="18" name="email">
+        <columns>email</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <index id="180" parent="18" name="users_name">
+        <columns>users_name</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <index id="181" parent="18" name="FK_user_manager">
+        <columns>manager_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="182" parent="18" name="FK_users_ui_profiles">
+        <columns>ui_profile_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="183" parent="18" name="role_id">
+        <columns>role</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="184" parent="18" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="185" parent="18" name="users_ibfk_2">
+        <columns>manager_id</columns>
+        <ref-key>~.DATABASECHANGELOGLOCK.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="186" parent="18" name="users_ibfk_1">
+        <columns>ui_profile_id</columns>
+        <ref-key>~.ui_profiles.PRIMARY</ref-key>
+        <cascade-update-rule>no_action</cascade-update-rule>
+        <cascade-delete-rule>no_action</cascade-delete-rule>
+      </foreign-key>
+    </database-model>
   </data-source>
-  <data-source source="LOCAL" name="ips_migration_test@localhost" uuid="8a0faba2-40c8-473c-b7da-7c50341265f8">
-    <database-info product="MySQL" version="5.6.10" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.26 ( Revision: ${bzr.revision-id} )">
+  <data-source name="ips_migration_test@localhost" uuid="8a0faba2-40c8-473c-b7da-7c50341265f8">
+    <database-info product="MySQL" version="5.6.10" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
       <extra-name-characters>#@</extra-name-characters>
       <identifier-quote-string>`</identifier-quote-string>
     </database-info>
     <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
-    <schema name="" catalog="ips_migration_test"/>
-    <table name="DATABASECHANGELOG" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="ID" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="AUTHOR" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="FILENAME" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="DATEEXECUTED" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
-      <column name="ORDEREXECUTED" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="EXECTYPE" sqlType="VARCHAR" precision="10" scale="0" nullable="false" jdbcType="12"/>
-      <column name="MD5SUM" sqlType="VARCHAR" precision="35" scale="0" nullable="true" jdbcType="12"/>
-      <column name="DESCRIPTION" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="COMMENTS" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="TAG" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="LIQUIBASE" sqlType="VARCHAR" precision="20" scale="0" nullable="true" jdbcType="12"/>
-    </table>
-    <table name="DATABASECHANGELOGLOCK" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="ID" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="LOCKED" sqlType="BIT" precision="1" scale="0" nullable="false" jdbcType="-7"/>
-      <column name="LOCKGRANTED" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
-      <column name="LOCKEDBY" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="ID"/>
-    </table>
-    <table name="access_numbers" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="number" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <exported-key name="survey_stats_ibfk_1" table="survey_stats" schema="" catalog="ips_migration_test" columns="number_id"/>
-      <index name="UK_access_numbers_number" unique="true" columns="number"/>
-    </table>
-    <table name="answers" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="respondent_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="question_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="option_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="timestamp" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_answers_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_answers_question_options" columns="option_id" ref-table="question_options" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_answers_respondents" columns="respondent_id" ref-table="respondents" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_answers_question_options" unique="false" columns="option_id"/>
-      <index name="FK_answers_questions" unique="false" columns="question_id"/>
-      <index name="FK_answers_respondents" unique="false" columns="respondent_id"/>
-    </table>
-    <table name="deliveries" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="date" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
-      <column name="type" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
-      <column name="speed" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" def="MQ=="/>
-      <column name="input_file_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="state" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0lOQUNUSVZFJw=="/>
-      <column name="current_position" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_deliveries_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_delivery_abonents_deliveries" table="delivery_subscribers" schema="" catalog="ips_migration_test" columns="delivery_id"/>
-      <index name="FK_deliveries_surveys" unique="false" columns="survey_id"/>
-    </table>
-    <table name="delivery_subscribers" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="delivery_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="msisdn" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="state" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J05FVyc="/>
-      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA=" version="true"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_delivery_abonents_deliveries" columns="delivery_id" ref-table="deliveries" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_delivery_abonents_deliveries" unique="false" columns="delivery_id"/>
-      <index name="state_idx" unique="false" columns="state"/>
-    </table>
-    <table name="question_options" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="question_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="answer" sqlType="TEXT" precision="65535" scale="0" nullable="false" jdbcType="-1"/>
-      <column name="option_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
-      <column name="next_question" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_question_options_questions" columns="question_id" ref-table="questions" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="question_options_ibfk_1" columns="next_question" ref-table="questions" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_answers_question_options" table="answers" schema="" catalog="ips_migration_test" columns="option_id"/>
-      <index name="FK_question_options_questions" unique="false" columns="question_id"/>
-      <index name="next_question_id" unique="false" columns="next_question"/>
-    </table>
-    <table name="questions" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="title" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="question_order" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="sent_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_questions_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_answers_questions" table="answers" schema="" catalog="ips_migration_test" columns="question_id"/>
-      <exported-key name="FK_question_options_questions" table="question_options" schema="" catalog="ips_migration_test" columns="question_id"/>
-      <exported-key name="question_options_ibfk_1" table="question_options" schema="" catalog="ips_migration_test" columns="next_question"/>
-      <index name="FK_questions_surveys" unique="false" columns="survey_id"/>
-    </table>
-    <table name="respondents" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="MSISDN" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="registered" sqlType="TIMESTAMP" precision="19" scale="0" nullable="false" jdbcType="93" def="Q1VSUkVOVF9USU1FU1RBTVA="/>
-      <column name="answer_count" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="finished" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="coupon" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_respondents_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_answers_respondents" table="answers" schema="" catalog="ips_migration_test" columns="respondent_id"/>
-      <index name="survey_id" unique="true" columns="coupon"/>
-    </table>
-    <table name="survey_invitations" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="date" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
-      <column name="value" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_survey_invitations_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_survey_invitations_surveys" unique="false" columns="survey_id"/>
-    </table>
-    <table name="survey_pattern" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="position" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="length" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="mode" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="FK_survey_pattern_survey" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_survey_pattern_survey" unique="false" columns="survey_id"/>
-    </table>
-    <table name="survey_stats" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="answeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="campaign" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="registeredCount" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="sent" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" def="MA=="/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="update_status" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J3VuZGVmaW5lZCc="/>
-      <column name="last_update" sqlType="DATETIME" precision="19" scale="0" nullable="true" jdbcType="93"/>
-      <column name="number_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="survey_id"/>
-      <foreign-key name="FK_survey_stats_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="survey_stats_ibfk_1" columns="number_id" ref-table="access_numbers" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_survey_stats_number" unique="false" columns="number_id"/>
-    </table>
-    <table name="surveys" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="active" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MQ=="/>
-      <column name="expires" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
-      <column name="startdate" sqlType="DATETIME" precision="19" scale="0" nullable="false" jdbcType="93"/>
-      <column name="owner_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="surveys_ibfk_1" columns="owner_id" ref-table="users" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="FK_deliveries_surveys" table="deliveries" schema="" catalog="ips_migration_test" columns="survey_id"/>
-      <exported-key name="FK_questions_surveys" table="questions" schema="" catalog="ips_migration_test" columns="survey_id"/>
-      <exported-key name="FK_respondents_surveys" table="respondents" schema="" catalog="ips_migration_test" columns="survey_id"/>
-      <exported-key name="FK_survey_invitations_surveys" table="survey_invitations" schema="" catalog="ips_migration_test" columns="survey_id"/>
-      <exported-key name="FK_survey_pattern_survey" table="survey_pattern" schema="" catalog="ips_migration_test" columns="survey_id"/>
-      <exported-key name="FK_survey_stats_surveys" table="survey_stats" schema="" catalog="ips_migration_test" columns="survey_id"/>
-      <exported-key name="FK_surveys_text_surveys" table="surveys_text" schema="" catalog="ips_migration_test" columns="survey_id"/>
-      <exported-key name="FK_surveys_users_surveys" table="surveys_users" schema="" catalog="ips_migration_test" columns="survey_id"/>
-    </table>
-    <table name="surveys_text" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="end_text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
-      <column name="title" sqlType="VARCHAR" precision="200" scale="0" nullable="true" jdbcType="12"/>
-      <column name="welcome_text" sqlType="TEXT" precision="65535" scale="0" nullable="true" jdbcType="-1"/>
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="end_sms_enabled" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="end_sms_text" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="end_sms_from" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="survey_id"/>
-      <foreign-key name="FK_surveys_text_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-    </table>
-    <table name="surveys_users" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="survey_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <column name="user_id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4"/>
-      <primary-key name="PRIMARY" columns="survey_id,user_id"/>
-      <foreign-key name="FK_surveys_users_surveys" columns="survey_id" ref-table="surveys" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="FK_surveys_users_users" columns="user_id" ref-table="users" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <index name="FK_surveys_users_users" unique="false" columns="user_id"/>
-    </table>
-    <table name="ui_profiles" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="icon" sqlType="BLOB" precision="65535" scale="0" nullable="true" jdbcType="-4"/>
-      <column name="skin" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <exported-key name="users_ibfk_1" table="users" schema="" catalog="ips_migration_test" columns="ui_profile_id"/>
-    </table>
-    <table name="users" schema="" catalog="ips_migration_test" type="TABLE">
-      <column name="id" sqlType="INT" precision="10" scale="0" nullable="false" jdbcType="4" autoIncrement="true"/>
-      <column name="email" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="full_name" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="users_name" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="password" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="blocked" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <column name="role" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12"/>
-      <column name="company" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="phone_number" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="locale" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0VOJw=="/>
-      <column name="only_own_surveys" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="can_send_invitations" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="esdp_password" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="esdp_login" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="show_c2s" sqlType="TINYINT" precision="3" scale="0" nullable="true" jdbcType="-6" def="MA=="/>
-      <column name="esdp_provider" sqlType="VARCHAR" precision="255" scale="0" nullable="true" jdbcType="12"/>
-      <column name="time_zone_id" sqlType="VARCHAR" precision="255" scale="0" nullable="false" jdbcType="12" def="J0V1cm9wZS9Nb3Njb3cn"/>
-      <column name="ui_profile_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <column name="manager_id" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4"/>
-      <column name="show_all_clients" sqlType="TINYINT" precision="3" scale="0" nullable="false" jdbcType="-6" def="MA=="/>
-      <primary-key name="PRIMARY" columns="id"/>
-      <foreign-key name="users_ibfk_1" columns="ui_profile_id" ref-table="ui_profiles" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <foreign-key name="users_ibfk_2" columns="manager_id" ref-table="users" ref-schema="" ref-catalog="ips_migration_test" ref-columns="id" update-rule="3" delete-rule="3" deferrability="2"/>
-      <exported-key name="surveys_ibfk_1" table="surveys" schema="" catalog="ips_migration_test" columns="owner_id"/>
-      <exported-key name="FK_surveys_users_users" table="surveys_users" schema="" catalog="ips_migration_test" columns="user_id"/>
-      <exported-key name="users_ibfk_2" table="users" schema="" catalog="ips_migration_test" columns="manager_id"/>
-      <index name="email" unique="true" columns="email"/>
-      <index name="users_name" unique="true" columns="users_name"/>
-      <index name="FK_user_manager" unique="false" columns="manager_id"/>
-      <index name="FK_users_ui_profiles" unique="false" columns="ui_profile_id"/>
-      <index name="role_id" unique="false" columns="role"/>
-    </table>
-    <procedure name="fill_messages" schema="" catalog="ips_migration_test" type="1">
-      <prototype>
-        <parameter name="delivery" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" type="1" index="1"/>
-      </prototype>
-    </procedure>
-    <procedure name="fill_subscribers" schema="" catalog="ips_migration_test" type="1">
-      <prototype>
-        <parameter name="delivery" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" type="1" index="1"/>
-        <parameter name="subscribers" sqlType="INT" precision="10" scale="0" nullable="true" jdbcType="4" type="1" index="2"/>
-      </prototype>
-    </procedure>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.6">
+      <schema id="1" name="ips_migration_test">
+        <visible>1</visible>
+      </schema>
+      <schema id="2" name="blankapp"/>
+      <schema id="3" name="common_schema"/>
+      <schema id="4" name="confluence"/>
+      <schema id="5" name="gussdlk"/>
+      <schema id="6" name="gussdlk2"/>
+      <schema id="7" name="hostingapi"/>
+      <schema id="8" name="inet"/>
+      <schema id="9" name="information_schema"/>
+      <schema id="10" name="ips"/>
+      <schema id="11" name="ips_20160718"/>
+      <schema id="12" name="madvtest"/>
+      <schema id="13" name="madvtest_annas"/>
+      <schema id="14" name="mps"/>
+      <schema id="15" name="mps-20151209"/>
+      <schema id="16" name="mps_import1"/>
+      <schema id="17" name="mps_importtest"/>
+      <schema id="18" name="mps_migration_test"/>
+      <schema id="19" name="mps_migration_test_1"/>
+      <schema id="20" name="mysql"/>
+      <schema id="21" name="performance_schema"/>
+      <schema id="22" name="profile_storage"/>
+      <schema id="23" name="prpr-20150917"/>
+      <schema id="24" name="prpr-20150921"/>
+      <schema id="25" name="prpr-20150922"/>
+      <schema id="26" name="prpr-20150928"/>
+      <schema id="27" name="prpr-20151008"/>
+      <schema id="28" name="rpr_20150907"/>
+      <schema id="29" name="saa"/>
+      <schema id="30" name="sarotator1"/>
+      <schema id="31" name="sarotator2"/>
+      <schema id="32" name="sarotator_adg"/>
+      <schema id="33" name="smaq"/>
+      <schema id="34" name="smaq_test"/>
+      <schema id="35" name="t2c"/>
+      <schema id="36" name="teamcity"/>
+      <schema id="37" name="tele2_insurance"/>
+      <schema id="38" name="test"/>
+      <schema id="39" name="test1"/>
+      <schema id="40" name="testing"/>
+      <schema id="41" name="testlovemob"/>
+      <schema id="42" name="tipay"/>
+      <schema id="43" name="tipaydps"/>
+      <schema id="44" name="unibalance"/>
+      <schema id="45" name="zkh"/>
+      <schema id="46" name="zkh_test"/>
+      <table id="47" parent="1" name="DATABASECHANGELOG"/>
+      <table id="48" parent="1" name="DATABASECHANGELOGLOCK"/>
+      <table id="49" parent="1" name="access_numbers"/>
+      <table id="50" parent="1" name="answers"/>
+      <table id="51" parent="1" name="deliveries"/>
+      <table id="52" parent="1" name="delivery_subscribers"/>
+      <table id="53" parent="1" name="question_options"/>
+      <table id="54" parent="1" name="respondents"/>
+      <table id="55" parent="1" name="survey_invitations"/>
+      <table id="56" parent="1" name="survey_pattern"/>
+      <table id="57" parent="1" name="survey_stats"/>
+      <table id="58" parent="1" name="surveys"/>
+      <table id="59" parent="1" name="surveys_text"/>
+      <table id="60" parent="1" name="surveys_users"/>
+      <table id="61" parent="1" name="ui_profiles"/>
+      <table id="62" parent="1" name="users"/>
+      <table id="63" parent="1" name="pages"/>
+      <routine id="64" parent="1" name="fill_messages">
+        <routine-kind>PROCEDURE</routine-kind>
+      </routine>
+      <routine id="65" parent="1" name="fill_subscribers">
+        <routine-kind>PROCEDURE</routine-kind>
+      </routine>
+      <column id="66" parent="47" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="67" parent="47" name="AUTHOR">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="68" parent="47" name="FILENAME">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="69" parent="47" name="DATEEXECUTED">
+        <mandatory>1</mandatory>
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="70" parent="47" name="ORDEREXECUTED">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="71" parent="47" name="EXECTYPE">
+        <mandatory>1</mandatory>
+        <data-type>varchar(10)|0</data-type>
+      </column>
+      <column id="72" parent="47" name="MD5SUM">
+        <data-type>varchar(35)|0</data-type>
+      </column>
+      <column id="73" parent="47" name="DESCRIPTION">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="74" parent="47" name="COMMENTS">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="75" parent="47" name="TAG">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="76" parent="47" name="LIQUIBASE">
+        <data-type>varchar(20)|0</data-type>
+      </column>
+      <column id="77" parent="48" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="78" parent="48" name="LOCKED">
+        <mandatory>1</mandatory>
+        <data-type>bit(1)|0</data-type>
+      </column>
+      <column id="79" parent="48" name="LOCKGRANTED">
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="80" parent="48" name="LOCKEDBY">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <key id="81" parent="48" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="82" parent="49" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="83" parent="49" name="number">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="84" parent="49" name="survey_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="85" parent="49" name="FK_access_numbers_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="86" parent="49" name="UK_access_numbers_number">
+        <columns>number</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <key id="87" parent="49" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <key id="88" parent="49" name="UK_access_numbers_number">
+        <columns>number</columns>
+        <underlying-index>UK_access_numbers_number</underlying-index>
+      </key>
+      <foreign-key id="89" parent="49" name="access_numbers_ibfk_1">
+        <columns>survey_id</columns>
+        <ref-key>~.survey_stats.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="90" parent="50" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="91" parent="50" name="respondent_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="92" parent="50" name="question_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="93" parent="50" name="option_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="94" parent="50" name="timestamp">
+        <mandatory>1</mandatory>
+        <data-type>timestamp|0</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <column id="95" parent="50" name="type">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;option_answer&apos;</default-expression>
+      </column>
+      <column id="96" parent="50" name="answer_text">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <index id="97" parent="50" name="FK_answers_questions">
+        <columns>question_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="98" parent="50" name="FK_answers_question_options">
+        <columns>option_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="99" parent="50" name="FK_answers_respondents">
+        <columns>respondent_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="100" parent="50" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="101" parent="50" name="FK_answers_respondents">
+        <columns>respondent_id</columns>
+        <ref-key>~.respondents.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="102" parent="50" name="FK_answers_questions">
+        <columns>question_id</columns>
+        <ref-key>~.pages.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="103" parent="50" name="FK_answers_question_options">
+        <columns>option_id</columns>
+        <ref-key>~.question_options.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="104" parent="51" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="105" parent="51" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="106" parent="51" name="date">
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="107" parent="51" name="type">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="108" parent="51" name="text">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="109" parent="51" name="speed">
+        <data-type>int(3)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="110" parent="51" name="input_file_name">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="111" parent="51" name="state">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;INACTIVE&apos;</default-expression>
+      </column>
+      <column id="112" parent="51" name="current_position">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="113" parent="51" name="retries_max">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="114" parent="51" name="retries_interval">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="115" parent="51" name="retries_enabled">
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <index id="116" parent="51" name="FK_deliveries_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="117" parent="51" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="118" parent="51" name="FK_deliveries_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="119" parent="52" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="120" parent="52" name="delivery_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="121" parent="52" name="msisdn">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="122" parent="52" name="state">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;NEW&apos;</default-expression>
+      </column>
+      <column id="123" parent="52" name="last_update">
+        <data-type>datetime|0</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <index id="124" parent="52" name="FK_delivery_abonents_deliveries">
+        <columns>delivery_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="125" parent="52" name="state_idx">
+        <columns>state</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="126" parent="52" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="127" parent="52" name="FK_delivery_abonents_deliveries">
+        <columns>delivery_id</columns>
+        <ref-key>~.deliveries.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="128" parent="53" name="question_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="129" parent="53" name="answer">
+        <mandatory>1</mandatory>
+        <data-type>text|0</data-type>
+      </column>
+      <column id="130" parent="53" name="option_order">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="131" parent="53" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="132" parent="53" name="deleted">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="133" parent="53" name="next_page">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="134" parent="53" name="FK_question_options_questions">
+        <columns>question_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="135" parent="53" name="next_question_id">
+        <columns>next_page</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="136" parent="53" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="137" parent="53" name="FK_question_options_questions">
+        <columns>question_id</columns>
+        <ref-key>~.pages.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="138" parent="53" name="question_options_ibfk_1">
+        <columns>next_page</columns>
+        <ref-key>~.pages.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="139" parent="54" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="140" parent="54" name="MSISDN">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="141" parent="54" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="142" parent="54" name="registered">
+        <mandatory>1</mandatory>
+        <data-type>timestamp|0</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <column id="143" parent="54" name="answer_count">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="144" parent="54" name="finished">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="145" parent="54" name="coupon">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="146" parent="54" name="source">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="147" parent="54" name="source_type">
+        <data-type>varchar(32)|0</data-type>
+      </column>
+      <index id="148" parent="54" name="idx_search_1">
+        <columns>survey_id
+registered
+source</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="149" parent="54" name="survey_id">
+        <columns>survey_id
+coupon</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <key id="150" parent="54" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <key id="151" parent="54" name="survey_id">
+        <columns>survey_id
+coupon</columns>
+        <underlying-index>survey_id</underlying-index>
+      </key>
+      <foreign-key id="152" parent="54" name="FK_respondents_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="153" parent="55" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="154" parent="55" name="date">
+        <mandatory>1</mandatory>
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="155" parent="55" name="value">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="156" parent="55" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="157" parent="55" name="last_update">
+        <data-type>datetime|0</data-type>
+      </column>
+      <index id="158" parent="55" name="FK_survey_invitations_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="159" parent="55" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="160" parent="55" name="FK_survey_invitations_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="161" parent="56" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="162" parent="56" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="163" parent="56" name="position">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="164" parent="56" name="length">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="165" parent="56" name="mode">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="166" parent="56" name="active">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <index id="167" parent="56" name="FK_survey_pattern_survey">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="168" parent="56" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="169" parent="56" name="FK_survey_pattern_survey">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="170" parent="57" name="answeredCount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="171" parent="57" name="campaign">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="172" parent="57" name="registeredCount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="173" parent="57" name="sent">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="174" parent="57" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="175" parent="57" name="update_status">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;undefined&apos;</default-expression>
+      </column>
+      <column id="176" parent="57" name="last_update">
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="177" parent="57" name="telegram_token">
+        <data-type>varchar(1024)|0</data-type>
+      </column>
+      <column id="178" parent="57" name="telegram_username">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <key id="179" parent="57" name="PRIMARY">
+        <columns>survey_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="180" parent="57" name="FK_survey_stats_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="181" parent="58" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="182" parent="58" name="active">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="183" parent="58" name="expires">
+        <mandatory>1</mandatory>
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="184" parent="58" name="startdate">
+        <mandatory>1</mandatory>
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="185" parent="58" name="owner_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="186" parent="58" name="owner_id">
+        <columns>owner_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="187" parent="58" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="188" parent="58" name="surveys_ibfk_1">
+        <columns>owner_id</columns>
+        <ref-key>~.users.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="189" parent="59" name="end_text">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="190" parent="59" name="title">
+        <data-type>varchar(200)|0</data-type>
+      </column>
+      <column id="191" parent="59" name="welcome_text">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="192" parent="59" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="193" parent="59" name="end_sms_enabled">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="194" parent="59" name="end_sms_text">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="195" parent="59" name="end_sms_from">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <key id="196" parent="59" name="PRIMARY">
+        <columns>survey_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="197" parent="59" name="FK_surveys_text_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="198" parent="60" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="199" parent="60" name="user_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="200" parent="60" name="FK_surveys_users_users">
+        <columns>user_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="201" parent="60" name="PRIMARY">
+        <columns>survey_id
+user_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="202" parent="60" name="FK_surveys_users_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="203" parent="60" name="FK_surveys_users_users">
+        <columns>user_id</columns>
+        <ref-key>~.users.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="204" parent="61" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="205" parent="61" name="icon">
+        <data-type>blob|0</data-type>
+      </column>
+      <column id="206" parent="61" name="skin">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <key id="207" parent="61" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="208" parent="62" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="209" parent="62" name="email">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="210" parent="62" name="full_name">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="211" parent="62" name="users_name">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="212" parent="62" name="password">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="213" parent="62" name="blocked">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="214" parent="62" name="role">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="215" parent="62" name="company">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="216" parent="62" name="phone_number">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="217" parent="62" name="locale">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;EN&apos;</default-expression>
+      </column>
+      <column id="218" parent="62" name="only_own_surveys">
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="219" parent="62" name="allow_invitations">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="220" parent="62" name="esdp_password">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="221" parent="62" name="esdp_login">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="222" parent="62" name="show_c2s_list">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="223" parent="62" name="esdp_provider">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="224" parent="62" name="time_zone_id">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;Europe/Moscow&apos;</default-expression>
+      </column>
+      <column id="225" parent="62" name="ui_profile_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="226" parent="62" name="manager_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="227" parent="62" name="show_all_clients">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="228" parent="62" name="allow_preview">
+        <comment>Manager &amp; associated clients are allowed to preview surveys</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="229" parent="62" name="allow_profile_change">
+        <comment>UI profile change is allowed</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="230" parent="62" name="allow_c2s">
+        <comment>Manager is allowed to bind C2S numbers</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="231" parent="62" name="allow_overall_stats">
+        <comment>Manager &amp; associated clients are allowed to view inter-survey statistics</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="232" parent="62" name="allow_survey_stats">
+        <comment>Manager &amp; associated clients are allowed to view survey statistics</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="233" parent="62" name="allow_telegram">
+        <comment>Manager &amp; associated clients are allowed binding to Telegram channel</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <index id="234" parent="62" name="email">
+        <columns>email</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <index id="235" parent="62" name="FK_users_ui_profiles">
+        <columns>ui_profile_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="236" parent="62" name="FK_user_manager">
+        <columns>manager_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="237" parent="62" name="role_id">
+        <columns>role</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="238" parent="62" name="users_name">
+        <columns>users_name</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <key id="239" parent="62" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <key id="240" parent="62" name="email">
+        <columns>email</columns>
+        <underlying-index>email</underlying-index>
+      </key>
+      <key id="241" parent="62" name="users_name">
+        <columns>users_name</columns>
+        <underlying-index>users_name</underlying-index>
+      </key>
+      <foreign-key id="242" parent="62" name="users_ibfk_1">
+        <columns>ui_profile_id</columns>
+        <ref-key>~.ui_profiles.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="243" parent="62" name="users_ibfk_2">
+        <columns>manager_id</columns>
+        <ref-key>~.DATABASECHANGELOGLOCK.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="244" parent="63" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="245" parent="63" name="title">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="246" parent="63" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="247" parent="63" name="sent_count">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="248" parent="63" name="deleted">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="249" parent="63" name="default_page_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="250" parent="63" name="enabled_default_answer">
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="251" parent="63" name="type">
+        <mandatory>1</mandatory>
+        <data-type>varchar(15)|0</data-type>
+      </column>
+      <column id="252" parent="63" name="ext_link_name">
+        <data-type>varchar(70)|0</data-type>
+      </column>
+      <column id="253" parent="63" name="ext_link_url">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <index id="254" parent="63" name="FK_questions_question">
+        <columns>default_page_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="255" parent="63" name="FK_questions_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="256" parent="63" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="257" parent="63" name="FK_questions_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="258" parent="63" name="FK_questions_question">
+        <columns>default_page_id</columns>
+        <ref-key>~.DATABASECHANGELOGLOCK.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <argument id="259" parent="64" name="delivery">
+        <direction>IN</direction>
+        <data-type>int(11)|0</data-type>
+      </argument>
+      <argument id="260" parent="65" name="delivery">
+        <direction>IN</direction>
+        <data-type>int(11)|0</data-type>
+      </argument>
+      <argument id="261" parent="65" name="subscribers">
+        <direction>IN</direction>
+        <data-type>int(11)|0</data-type>
+      </argument>
+    </database-model>
+  </data-source>
+  <data-source name="IPS PROD NEW" uuid="144c8093-5b96-4d6c-901c-a595c8889474">
+    <database-info product="MySQL" version="5.6.31-log" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+      <extra-name-characters>#@</extra-name-characters>
+      <identifier-quote-string>`</identifier-quote-string>
+    </database-info>
+    <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact"/>
+    <database-model serializer="dbm" rdbms="MYSQL" format-version="2.6">
+      <schema id="1" name="ips">
+        <visible>1</visible>
+      </schema>
+      <schema id="2" name="information_schema"/>
+      <schema id="3" name="test"/>
+      <table id="4" parent="1" name="DATABASECHANGELOG"/>
+      <table id="5" parent="1" name="DATABASECHANGELOGLOCK"/>
+      <table id="6" parent="1" name="access_numbers"/>
+      <table id="7" parent="1" name="answers"/>
+      <table id="8" parent="1" name="deliveries"/>
+      <table id="9" parent="1" name="delivery_subscribers"/>
+      <table id="10" parent="1" name="pages"/>
+      <table id="11" parent="1" name="question_options"/>
+      <table id="12" parent="1" name="respondents"/>
+      <table id="13" parent="1" name="survey_invitations"/>
+      <table id="14" parent="1" name="survey_pattern"/>
+      <table id="15" parent="1" name="survey_stats"/>
+      <table id="16" parent="1" name="surveys"/>
+      <table id="17" parent="1" name="surveys_text"/>
+      <table id="18" parent="1" name="surveys_users"/>
+      <table id="19" parent="1" name="ui_profiles"/>
+      <table id="20" parent="1" name="users"/>
+      <column id="21" parent="4" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="22" parent="4" name="AUTHOR">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="23" parent="4" name="FILENAME">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="24" parent="4" name="DATEEXECUTED">
+        <mandatory>1</mandatory>
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="25" parent="4" name="ORDEREXECUTED">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="26" parent="4" name="EXECTYPE">
+        <mandatory>1</mandatory>
+        <data-type>varchar(10)|0</data-type>
+      </column>
+      <column id="27" parent="4" name="MD5SUM">
+        <data-type>varchar(35)|0</data-type>
+      </column>
+      <column id="28" parent="4" name="DESCRIPTION">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="29" parent="4" name="COMMENTS">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="30" parent="4" name="TAG">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="31" parent="4" name="LIQUIBASE">
+        <data-type>varchar(20)|0</data-type>
+      </column>
+      <column id="32" parent="5" name="ID">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="33" parent="5" name="LOCKED">
+        <mandatory>1</mandatory>
+        <data-type>bit(1)|0</data-type>
+      </column>
+      <column id="34" parent="5" name="LOCKGRANTED">
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="35" parent="5" name="LOCKEDBY">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <key id="36" parent="5" name="PRIMARY">
+        <columns>ID</columns>
+        <primary>1</primary>
+      </key>
+      <column id="37" parent="6" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="38" parent="6" name="number">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="39" parent="6" name="survey_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="40" parent="6" name="FK_access_numbers_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="41" parent="6" name="UK_access_numbers_number">
+        <columns>number</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <key id="42" parent="6" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <key id="43" parent="6" name="UK_access_numbers_number">
+        <columns>number</columns>
+        <underlying-index>UK_access_numbers_number</underlying-index>
+      </key>
+      <foreign-key id="44" parent="6" name="access_numbers_ibfk_1">
+        <columns>survey_id</columns>
+        <ref-key>~.survey_stats.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="45" parent="7" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="46" parent="7" name="respondent_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="47" parent="7" name="question_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="48" parent="7" name="option_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="49" parent="7" name="timestamp">
+        <mandatory>1</mandatory>
+        <data-type>timestamp|0</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <column id="50" parent="7" name="type">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;option_answer&apos;</default-expression>
+      </column>
+      <column id="51" parent="7" name="answer_text">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <index id="52" parent="7" name="FK_answers_questions">
+        <columns>question_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="53" parent="7" name="FK_answers_question_options">
+        <columns>option_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="54" parent="7" name="FK_answers_respondents">
+        <columns>respondent_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="55" parent="7" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="56" parent="7" name="FK_answers_respondents">
+        <columns>respondent_id</columns>
+        <ref-key>~.respondents.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="57" parent="7" name="FK_answers_questions">
+        <columns>question_id</columns>
+        <ref-key>~.pages.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="58" parent="7" name="FK_answers_question_options">
+        <columns>option_id</columns>
+        <ref-key>~.question_options.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="59" parent="8" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="60" parent="8" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="61" parent="8" name="date">
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="62" parent="8" name="type">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="63" parent="8" name="state">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;INACTIVE&apos;</default-expression>
+      </column>
+      <column id="64" parent="8" name="text">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="65" parent="8" name="speed">
+        <data-type>int(3)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="66" parent="8" name="input_file_name">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="67" parent="8" name="retries_enabled">
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="68" parent="8" name="retries_max">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="69" parent="8" name="retries_interval">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="70" parent="8" name="FK_deliveries_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="71" parent="8" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="72" parent="8" name="FK_deliveries_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="73" parent="9" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="74" parent="9" name="delivery_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="75" parent="9" name="msisdn">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="76" parent="9" name="state">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;NEW&apos;</default-expression>
+      </column>
+      <column id="77" parent="9" name="last_update">
+        <data-type>datetime|0</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <index id="78" parent="9" name="FK_delivery_subscribers_deliveries">
+        <columns>delivery_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="79" parent="9" name="state_idx">
+        <columns>state</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="80" parent="9" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="81" parent="9" name="FK_delivery_subscribers_deliveries">
+        <columns>delivery_id</columns>
+        <ref-key>~.deliveries.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="82" parent="10" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="83" parent="10" name="title">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="84" parent="10" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="85" parent="10" name="sent_count">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="86" parent="10" name="deleted">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="87" parent="10" name="default_page_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="88" parent="10" name="enabled_default_answer">
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="89" parent="10" name="type">
+        <mandatory>1</mandatory>
+        <data-type>varchar(15)|0</data-type>
+      </column>
+      <column id="90" parent="10" name="ext_link_name">
+        <data-type>varchar(70)|0</data-type>
+      </column>
+      <column id="91" parent="10" name="ext_link_url">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <index id="92" parent="10" name="FK_questions_question">
+        <columns>default_page_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="93" parent="10" name="FK_questions_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="94" parent="10" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="95" parent="10" name="FK_questions_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="96" parent="10" name="FK_questions_question">
+        <columns>default_page_id</columns>
+        <ref-key>~.DATABASECHANGELOGLOCK.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="97" parent="11" name="question_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="98" parent="11" name="answer">
+        <mandatory>1</mandatory>
+        <data-type>text|0</data-type>
+      </column>
+      <column id="99" parent="11" name="option_order">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="100" parent="11" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="101" parent="11" name="deleted">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="102" parent="11" name="next_page">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="103" parent="11" name="FK_next_question_id">
+        <columns>next_page</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="104" parent="11" name="FK_question_options_questions">
+        <columns>question_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="105" parent="11" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="106" parent="11" name="FK_question_options_questions">
+        <columns>question_id</columns>
+        <ref-key>~.pages.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="107" parent="11" name="question_options_ibfk_1">
+        <columns>next_page</columns>
+        <ref-key>~.pages.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="108" parent="12" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="109" parent="12" name="MSISDN">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="110" parent="12" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="111" parent="12" name="registered">
+        <mandatory>1</mandatory>
+        <data-type>timestamp|0</data-type>
+        <default-expression>CURRENT_TIMESTAMP</default-expression>
+      </column>
+      <column id="112" parent="12" name="answer_count">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="113" parent="12" name="finished">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="114" parent="12" name="coupon">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="115" parent="12" name="source">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="116" parent="12" name="source_type">
+        <data-type>varchar(32)|0</data-type>
+      </column>
+      <index id="117" parent="12" name="FK_respondents_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="118" parent="12" name="idx_search_1">
+        <columns>survey_id
+registered
+source</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="119" parent="12" name="registered_idx">
+        <columns>registered</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="120" parent="12" name="survey_coupon_key">
+        <columns>survey_id
+coupon</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <key id="121" parent="12" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <key id="122" parent="12" name="survey_coupon_key">
+        <columns>survey_id
+coupon</columns>
+        <underlying-index>survey_coupon_key</underlying-index>
+      </key>
+      <foreign-key id="123" parent="12" name="FK_respondents_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="124" parent="13" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="125" parent="13" name="date">
+        <mandatory>1</mandatory>
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="126" parent="13" name="value">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="127" parent="13" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="128" parent="13" name="last_update">
+        <data-type>datetime|0</data-type>
+      </column>
+      <index id="129" parent="13" name="FK_survey_invitations_surveys">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="130" parent="13" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="131" parent="13" name="FK_survey_invitations_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="132" parent="14" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="133" parent="14" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="134" parent="14" name="position">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="135" parent="14" name="length">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="136" parent="14" name="mode">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="137" parent="14" name="active">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <index id="138" parent="14" name="FK_survey_pattern_survey">
+        <columns>survey_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="139" parent="14" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="140" parent="14" name="FK_survey_pattern_survey">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="141" parent="15" name="answeredCount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="142" parent="15" name="campaign">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="143" parent="15" name="registeredCount">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="144" parent="15" name="sent">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="145" parent="15" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="146" parent="15" name="update_status">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;undefined&apos;</default-expression>
+      </column>
+      <column id="147" parent="15" name="last_update">
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="148" parent="15" name="telegram_token">
+        <data-type>varchar(1024)|0</data-type>
+      </column>
+      <column id="149" parent="15" name="telegram_username">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <key id="150" parent="15" name="PRIMARY">
+        <columns>survey_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="151" parent="15" name="FK_survey_stats_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="152" parent="16" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="153" parent="16" name="active">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="154" parent="16" name="expires">
+        <mandatory>1</mandatory>
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="155" parent="16" name="startdate">
+        <mandatory>1</mandatory>
+        <data-type>datetime|0</data-type>
+      </column>
+      <column id="156" parent="16" name="owner_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="157" parent="16" name="surveys_owner_id">
+        <columns>owner_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="158" parent="16" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="159" parent="16" name="surveys_ibfk_1">
+        <columns>owner_id</columns>
+        <ref-key>~.users.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="160" parent="17" name="end_text">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="161" parent="17" name="title">
+        <data-type>varchar(200)|0</data-type>
+      </column>
+      <column id="162" parent="17" name="welcome_text">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="163" parent="17" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="164" parent="17" name="end_sms_enabled">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="165" parent="17" name="end_sms_text">
+        <data-type>text|0</data-type>
+      </column>
+      <column id="166" parent="17" name="end_sms_from">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <key id="167" parent="17" name="PRIMARY">
+        <columns>survey_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="168" parent="17" name="FK_surveys_text_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="169" parent="18" name="survey_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="170" parent="18" name="user_id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+      </column>
+      <index id="171" parent="18" name="FK_surveys_users_users">
+        <columns>user_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <key id="172" parent="18" name="PRIMARY">
+        <columns>survey_id
+user_id</columns>
+        <primary>1</primary>
+      </key>
+      <foreign-key id="173" parent="18" name="FK_surveys_users_surveys">
+        <columns>survey_id</columns>
+        <ref-key>~.surveys.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="174" parent="18" name="FK_surveys_users_users">
+        <columns>user_id</columns>
+        <ref-key>~.users.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <column id="175" parent="19" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="176" parent="19" name="icon">
+        <data-type>blob|0</data-type>
+      </column>
+      <column id="177" parent="19" name="skin">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <key id="178" parent="19" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <column id="179" parent="20" name="id">
+        <mandatory>1</mandatory>
+        <data-type>int(11)|0</data-type>
+        <sequence-identity>1</sequence-identity>
+      </column>
+      <column id="180" parent="20" name="email">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="181" parent="20" name="full_name">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="182" parent="20" name="users_name">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="183" parent="20" name="password">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="184" parent="20" name="blocked">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="185" parent="20" name="role">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="186" parent="20" name="company">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="187" parent="20" name="phone_number">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="188" parent="20" name="locale">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;EN&apos;</default-expression>
+      </column>
+      <column id="189" parent="20" name="only_own_surveys">
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="190" parent="20" name="allow_invitations">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="191" parent="20" name="esdp_login">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="192" parent="20" name="esdp_password">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="193" parent="20" name="show_c2s_list">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="194" parent="20" name="esdp_provider">
+        <data-type>varchar(255)|0</data-type>
+      </column>
+      <column id="195" parent="20" name="time_zone_id">
+        <mandatory>1</mandatory>
+        <data-type>varchar(255)|0</data-type>
+        <default-expression>&apos;Europe/Moscow&apos;</default-expression>
+      </column>
+      <column id="196" parent="20" name="ui_profile_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="197" parent="20" name="manager_id">
+        <data-type>int(11)|0</data-type>
+      </column>
+      <column id="198" parent="20" name="show_all_clients">
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;0&apos;</default-expression>
+      </column>
+      <column id="199" parent="20" name="allow_profile_change">
+        <comment>UI profile change is allowed</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="200" parent="20" name="allow_c2s">
+        <comment>Manager is allowed to bind C2S numbers</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="201" parent="20" name="allow_overall_stats">
+        <comment>Manager &amp; associated clients are allowed to view inter-survey statistics</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="202" parent="20" name="allow_telegram">
+        <comment>Manager &amp; associated clients are allowed binding to Telegram channel</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <column id="203" parent="20" name="allow_preview">
+        <comment>Manager &amp; associated clients are allowed to preview surveys</comment>
+        <mandatory>1</mandatory>
+        <data-type>tinyint(1)|0</data-type>
+        <default-expression>&apos;1&apos;</default-expression>
+      </column>
+      <index id="204" parent="20" name="email">
+        <columns>email</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <index id="205" parent="20" name="FK_users_ui_profiles">
+        <columns>ui_profile_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="206" parent="20" name="FK_user_manager">
+        <columns>manager_id</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="207" parent="20" name="role_id">
+        <columns>role</columns>
+        <desc-columns></desc-columns>
+      </index>
+      <index id="208" parent="20" name="users_name">
+        <columns>users_name</columns>
+        <desc-columns></desc-columns>
+        <unique>1</unique>
+      </index>
+      <key id="209" parent="20" name="PRIMARY">
+        <columns>id</columns>
+        <primary>1</primary>
+      </key>
+      <key id="210" parent="20" name="email">
+        <columns>email</columns>
+        <underlying-index>email</underlying-index>
+      </key>
+      <key id="211" parent="20" name="users_name">
+        <columns>users_name</columns>
+        <underlying-index>users_name</underlying-index>
+      </key>
+      <foreign-key id="212" parent="20" name="users_ibfk_1">
+        <columns>ui_profile_id</columns>
+        <ref-key>~.ui_profiles.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+      <foreign-key id="213" parent="20" name="users_ibfk_2">
+        <columns>manager_id</columns>
+        <ref-key>~.DATABASECHANGELOGLOCK.PRIMARY</ref-key>
+        <cascade-update-rule>restrict</cascade-update-rule>
+        <cascade-delete-rule>restrict</cascade-delete-rule>
+      </foreign-key>
+    </database-model>
   </data-source>
 </component>

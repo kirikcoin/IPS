@@ -1,13 +1,6 @@
 package mobi.eyeline.ips.repository;
 
-import mobi.eyeline.ips.model.Answer;
-import mobi.eyeline.ips.model.OptionAnswer;
-import mobi.eyeline.ips.model.Question;
-import mobi.eyeline.ips.model.QuestionOption;
-import mobi.eyeline.ips.model.Respondent;
-import mobi.eyeline.ips.model.Survey;
-import mobi.eyeline.ips.model.SurveySession;
-import mobi.eyeline.ips.model.TextAnswer;
+import mobi.eyeline.ips.model.*;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -23,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.criterion.Restrictions.*;
 
@@ -145,45 +139,52 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                                   String filter,
                                   Integer accessNumberId,
                                   String orderProperty,
-                                  boolean asc,
+                                  Boolean asc,
                                   int limit,
                                   int offset) {
 
-    final Session session = getSessionFactory().getCurrentSession();
+    final Session session = getSessionFactory().openSession();
 
-    final Criteria criteria = getCriteria(session, survey, from, to, null, filter, accessNumberId);
-    criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
+    try {
+      survey = (Survey) session.load(Survey.class, survey.getId());
 
-    criteria.setFirstResult(offset).setMaxResults(limit);
+      final Criteria criteria = getCriteria(session, survey, from, to, null, filter, accessNumberId);
+      criteria.createAlias("survey", "survey", JoinType.LEFT_OUTER_JOIN);
 
-    {
-      final String property;
-      if (orderProperty != null) {
-        switch (orderProperty) {
-          case "respondent":
-            property = "msisdn";
-            break;
-          case "date":
-            property = "startDate";
-            break;
-          case "questions":
-            property = "answersCount";
-            break;
-          case "source":
-            property = "source";
-            break;
-          default:
-            throw new RuntimeException("Unexpected sort column: " + orderProperty);
+      criteria.setFirstResult(offset).setMaxResults(limit);
+
+      {
+        final String property;
+        if (orderProperty != null) {
+          switch (orderProperty) {
+            case "respondent":
+              property = "msisdn";
+              break;
+            case "date":
+              property = "startDate";
+              break;
+            case "questions":
+              property = "answersCount";
+              break;
+            case "source":
+              property = "source";
+              break;
+            default:
+              throw new RuntimeException("Unexpected sort column: " + orderProperty);
+          }
+
+        } else {
+          property = "startDate";
         }
-
-      } else {
-        property = "startDate";
-      }
-      criteria.addOrder(asc ? Order.asc(property) : Order.desc(property));
+        criteria.addOrder(toBoolean(asc) ? Order.asc(property) : Order.desc(property));
     }
 
-    //noinspection unchecked
-    return asSessions(survey, (List<Respondent>) criteria.list());
+      //noinspection unchecked
+      return asSessions(survey, (List<Respondent>) criteria.list());
+
+    } finally {
+      session.close();
+    }
   }
 
   private List<SurveySession> asSessions(Survey survey, List<Respondent> respondents) {
@@ -229,14 +230,20 @@ public class AnswerRepository extends BaseRepository<Answer, Integer> {
                    Integer accessNumberId,
                    Boolean hasCoupon) {
 
-    final Session session = getSessionFactory().getCurrentSession();
+    final Session session = getSessionFactory().openSession();
+    try {
+      survey = (Survey) session.load(Survey.class, survey.getId());
 
-    final Criteria criteria =
-        getCriteria(session, survey, from, to, hasCoupon, filter, accessNumberId);
+      final Criteria criteria =
+              getCriteria(session, survey, from, to, hasCoupon, filter, accessNumberId);
 
-    criteria.setProjection(Projections.rowCount());
+      criteria.setProjection(Projections.rowCount());
 
-    return fetchInt(criteria);
+      return fetchInt(criteria);
+
+    } finally {
+      session.close();
+    }
   }
 
   private Criteria getCriteria(Session session,

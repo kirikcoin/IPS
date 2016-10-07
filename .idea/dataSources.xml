@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="1017344600">
+  <component name="DataSourceManagerImpl" format="xml" hash="3889145883">
     <data-source source="LOCAL" name="ips PRODUCTION" read-only="true" uuid="f8c5509d-e2a3-4f91-bf92-c16f95f8ac3d">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://192.168.10.19/ips?useUnicode=true&amp;characterEncoding=UTF-8</jdbc-url>
-      <user-name>ips</user-name>
-      <user-password>dff8dfc1dfccdfc5df9edffadfdedfcedfc0dfcc</user-password>
-      <schema-pattern>ips.*</schema-pattern>
-      <default-schemas>ips.*</default-schemas>
       <driver-properties>
         <property name="zeroDateTimeBehavior" value="convertToNull" />
         <property name="tinyInt1isBit" value="false" />
       </driver-properties>
-      <libraries />
     </data-source>
     <data-source source="LOCAL" name="ips_migration_test@localhost" uuid="8a0faba2-40c8-473c-b7da-7c50341265f8">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost/ips_migration_test?useUnicode=true&amp;characterEncoding=UTF-8</jdbc-url>
-      <user-name>user</user-name>
-      <user-password>dfcbdfc2dfe4dfc8dfe3dfc0dff8</user-password>
-      <schema-pattern>ips_migration_test.*</schema-pattern>
-      <default-schemas>ips.* ips_migration_test.*</default-schemas>
       <driver-properties>
         <property name="zeroDateTimeBehavior" value="convertToNull" />
         <property name="tinyInt1isBit" value="false" />
       </driver-properties>
-      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="IPS PROD NEW" uuid="144c8093-5b96-4d6c-901c-a595c8889474">
+      <driver-ref>mysql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://89.249.22.35:3306/ips</jdbc-url>
+      <driver-properties>
+        <property name="autoReconnect" value="true" />
+        <property name="zeroDateTimeBehavior" value="convertToNull" />
+        <property name="tinyInt1isBit" value="false" />
+        <property name="characterEncoding" value="utf8" />
+        <property name="characterSetResults" value="utf8" />
+        <property name="yearIsDateType" value="false" />
+      </driver-properties>
     </data-source>
   </component>
 </project>
-

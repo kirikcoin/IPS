@@ -217,4 +217,36 @@ public class InvitationDeliveryRepository extends BaseRepository<InvitationDeliv
         .setEntity("survey", survey)
         .uniqueResult()).intValue();
   }
+
+  public void delete(int deliveryId) {
+    final Session session = getSessionFactory().openSession();
+    Transaction transaction = null;
+    try {
+      transaction = session.beginTransaction();
+
+      final InvitationDelivery delivery = (InvitationDelivery) session.load(InvitationDelivery.class, deliveryId);
+
+      session
+          .createQuery("delete from DeliverySubscriber where invitationDelivery = :delivery")
+          .setEntity("delivery", delivery)
+          .executeUpdate();
+
+      session.delete(delivery);
+
+      transaction.commit();
+
+    } catch (HibernateException e) {
+      if ((transaction != null) && transaction.isActive()) {
+        try {
+          transaction.rollback();
+        } catch (HibernateException ee) {
+          logger.error(e.getMessage(), e);
+        }
+      }
+      throw e;
+
+    } finally {
+      session.close();
+    }
+  }
 }
