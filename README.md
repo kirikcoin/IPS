@@ -1,6 +1,6 @@
 # IPS
 
-*IPS is a service where you can create a survey and see its statistics. The survey is provided to an interviewee by means of [MiniApps](https://dev.miniapps.run) or can be published directly via USSD/SMS or Telegram. See our [wiki](https://docs.miniapps.pro/display/MINIAPPS/How+to+connect+IPS+survey) for how it works.*
+*IPS (aka Interactive Polling Service) is a service where you can create a survey and see its statistics. The survey is provided to an interviewee by means of [MiniApps](https://dev.miniapps.run) or can be published directly via USSD/SMS or Telegram. See our [wiki](https://docs.miniapps.pro/display/MINIAPPS/How+to+connect+IPS+survey) for how it works.*
 
 IPS is a polling/quiz system. Poll is built as a sequence of related questions. A polling is conducted in a pre-defined time period, that is it has the beginning and end time. Questions are divided into two groups:
 - Questions with preset answers to choose from;
